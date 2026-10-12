@@ -1557,7 +1557,9 @@ app.post('/api/chat', optionalAuth, limitEither(
 
     const stream = client.messages.stream({
       model,
-      max_tokens: internal ? 500 : 2048,
+      // Sermon Research briefs run long (translations, debates, voices); at 2048
+      // they stopped mid-sentence. Everything else keeps the shorter cap.
+      max_tokens: internal ? 500 : (groundCommentary ? 6000 : 2048),
       system: cachedSystem(system + AI_SAFETY_BLOCK, urlContext + memoryContext + historyContext + commentaryContext + widerContext),
       messages: trimmed,
     });

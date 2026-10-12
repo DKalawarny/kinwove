@@ -97,6 +97,7 @@ Offer 3–6 varied options — a true story, an everyday analogy, a modern paral
 
 SOURCING & TRUST (this is what earns a pastor's confidence):
 • Cite by name, and name the specific work where you can — "Wright, The Resurrection of the Son of God", not just "Wright".
+• Author and title are enough. Do NOT attach a commentary series, publisher, volume, year, or page number to a work unless you are certain of it. A book placed in the wrong series (calling something NICNT, Hermeneia, WBC, or Pillar when it belongs elsewhere) is exactly the slip a pastor who owns the book will catch. When you are not certain, leave the series out.
 • Every scripture reference: Book Chapter:Verse.
 • Be honest about the medium: your citations are recalled from training, not pulled from a live library. So never invent a precise quotation, a page number, or a source you're unsure exists. Attribute the idea, paraphrase the claim, and tell the pastor to verify any direct quote before preaching it. Say "I'm recalling this as…" when your confidence is soft. A pastor's credibility rests on you getting this right — accuracy over impressiveness, always.
 • Do not hide complexity or manufacture certainty where real debate exists.
@@ -449,7 +450,9 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       const researchSystem = researchMemory
         ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\nThe pastor is mid-series. Use this to connect dots across weeks, reference established terms and decisions naturally, as a colleague who was in the room. Do not announce that you have memory.\n${researchMemory}`
         : RESEARCH_SYSTEM;
-      const system = researchMode ? researchSystem : PASTORAL_SYSTEM + (PER_TYPE[personType] ?? '');
+      const readerVersion = readingVersion();
+      const versionNote = `\n\n── THE PASTOR'S TRANSLATION ──\nThe pastor reads in the ${readerVersion.name}. When you quote the passage itself, quote it in that translation and label it, so it matches the Bible open beside this chat, and end the quotation with its reference in parentheses, like (John 3:16–18), so the pastor can tap it and check it. The translation comparison still shows the others.`;
+      const system = researchMode ? researchSystem + versionNote : PASTORAL_SYSTEM + (PER_TYPE[personType] ?? '');
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { testamentOf } from './bibleRefUtils.js';
 import { plainDashes } from './lib/plainDashes.js';
+import { tokenizeInline, parseTable } from './lib/inlineMarks.js';
 
 // Matches: (Book Ch:v) parenthesised refs, **Book Ch:v** bold refs, and extended/historical tags
 const REF_REGEX =
@@ -17,17 +18,13 @@ const PARAPHRASE_RE = /^\s*(paraphrasing\s+|the idea in\s+)/i;
 // already cites several of them it reads as clutter, and it made the answer look
 // like a search results page rather than something written.
 // markdown spans along the way (research answers use it heavily).
-function splitInline(s, keyBase) {
-  const out = [];
-  const boldRe = /\*\*([^*\n][^*]*?)\*\*/g;
-  let last = 0, mb;
-  while ((mb = boldRe.exec(s)) !== null) {
-    if (mb.index > last) out.push(<span key={`${keyBase}-p${last}`} style={{ whiteSpace: 'pre-wrap' }}>{s.slice(last, mb.index)}</span>);
-    out.push(<strong key={`${keyBase}-b${mb.index}`} style={{ fontWeight: 700 }}>{mb[1]}</strong>);
-    last = mb.index + mb[0].length;
-  }
-  if (last < s.length) out.push(<span key={`${keyBase}-end`} style={{ whiteSpace: 'pre-wrap' }}>{s.slice(last)}</span>);
-  return out;
+function splitInline(s, keyBase, italics) {
+  return tokenizeInline(s, italics).map((p, i) => {
+    if (p.t === 'bold') return <strong key={`${keyBase}-${i}`} style={{ fontWeight: 700 }}>{p.v}</strong>;
+    if (p.t === 'bolditalic') return <strong key={`${keyBase}-${i}`} style={{ fontWeight: 700, fontStyle: 'italic' }}>{p.v}</strong>;
+    if (p.t === 'italic') return <em key={`${keyBase}-${i}`} style={{ fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>{p.v}</em>;
+    return <span key={`${keyBase}-${i}`} style={{ whiteSpace: 'pre-wrap' }}>{p.v}</span>;
+  });
 }
 
 /**
@@ -59,7 +56,11 @@ export default function MsgText({ text, onRefClick, refStatus, plain = false }) 
       if (/^\s*(---+|\*\*\*+)\s*$/.test(stripped)) {
         return { isDivider: true, isParaphrase: false, isHeading: false, parts: [] };
       }
-      const para = headingMatch ? stripped.slice(headingMatch[0].length) : stripped;
+      // AI replies only: a "> " quote marker is dropped (the quotation marks already
+      // say it's a quote) and a pipe table becomes a real table.
+      const unquoted = plain ? stripped.replace(/^[ \t]*>[ \t]?/gm, '') : stripped;
+      const table = plain && !headingMatch ? parseTable(unquoted) : null;
+      const para = table ? table.before : headingMatch ? unquoted.slice(headingMatch[0].length) : unquoted;
       const isHeading = !!headingMatch;
       const isParaphrase = PARAPHRASE_RE.test(para);
       // Apply ref regex within this paragraph
@@ -80,9 +81,9 @@ export default function MsgText({ text, onRefClick, refStatus, plain = false }) 
         last = m.index + v.length;
       }
       if (last < para.length) parts.push({ t: 'text', v: para.slice(last) });
-      return { isParaphrase, isHeading, parts };
+      return { isParaphrase, isHeading, parts, table };
     });
-  }, [text]);
+  }, [text, plain]);
 
   return (
     <>
@@ -146,9 +147,28 @@ export default function MsgText({ text, onRefClick, refStatus, plain = false }) 
               </span>
             );
           }
-          return <span key={i}>{splitInline(p.v, `${si}-${i}`)}</span>;
+          return <span key={i}>{splitInline(p.v, `${si}-${i}`, plain)}</span>;
         });
 
+        if (seg.table) {
+          const [head, ...rows] = seg.table.rows;
+          const cell = { padding: '6px 10px', borderBottom: '1px solid rgba(26,17,8,0.10)', textAlign: 'left', verticalAlign: 'top' };
+          return (
+            <span key={si} style={{ display: 'block' }}>
+              {inner.length > 0 && <span style={{ display: 'block', marginBottom: 6 }}>{inner}</span>}
+              <span style={{ display: 'block', overflowX: 'auto' }}>
+                <table style={{ borderCollapse: 'collapse', fontSize: '0.94em', lineHeight: 1.5, width: '100%' }}>
+                  <thead>
+                    <tr>{head.map((c, ci) => <th key={ci} style={{ ...cell, fontWeight: 700, borderBottom: '1.5px solid rgba(26,17,8,0.22)' }}>{splitInline(c, `${si}-h${ci}`, plain)}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r, ri) => <tr key={ri}>{r.map((c, ci) => <td key={ci} style={cell}>{splitInline(c, `${si}-r${ri}-${ci}`, plain)}</td>)}</tr>)}
+                  </tbody>
+                </table>
+              </span>
+            </span>
+          );
+        }
         if (seg.isDivider) {
           return <span key={si} style={{ display: 'block', borderTop: '1px solid rgba(26,17,8,0.12)', margin: '10px 0' }} />;
         }
