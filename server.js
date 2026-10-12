@@ -1755,6 +1755,7 @@ Return ONLY a valid JSON array of ${length} objects. No markdown, no explanation
 // Results are returned for copy/paste only (never stored — sermon_content rows
 // would leak onto the church feed via the feed_items view).
 const REPURPOSE_SYSTEM = `You repurpose a pastor's sermon into shareable content. Same ground rules as all kinwove ministry writing: stay tightly inside the pastor's outline and passage — never introduce theology or examples they didn't cover. Never invent quotes, statistics, or attributions. Tone: warm, plain, honest — never church-brochure, never clickbait.
+Never use an em dash or en dash (— or –) between words. Use a comma, a colon, or a new sentence. No one writes with dashes; they read as machine-written.
 
 Return ONLY valid JSON, no markdown fences, in exactly this shape:
 {
