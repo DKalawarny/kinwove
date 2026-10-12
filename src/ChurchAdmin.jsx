@@ -21,6 +21,7 @@ const SermonComposer  = lazy(() => import('./SermonComposer.jsx'));
 const ChurchAiChat    = lazy(() => import('./ChurchAiChat.jsx'));
 const BibleReader     = lazy(() => import('./BibleReader.jsx'));
 const DeskPanel       = lazy(() => import('./DeskPanel.jsx'));
+const NotesSection    = lazy(() => import('./DeskPanel.jsx').then((m) => ({ default: m.NotesSection })));
 
 function DividerHandle({ onMouseDown, onSwap, swapTitle = 'Swap sides' }) {
   const [hovered, setHovered] = useState(false);
@@ -2430,6 +2431,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   const [notesRefreshKey, setNotesRefreshKey] = useState(0);
   // Note → thread: series title queued for ChurchAiChat to load (cleared once loaded)
   const [studySessionToOpen, setStudySessionToOpen] = useState(null);
+  const [studySessionTitle, setStudySessionTitle] = useState('');
   // Desk "Use in sermon →": picked prep notes queued as a composer draft
   // ({title, scriptureRef, summary}), cleared once the composer applies it
   const [sermonPrefill, setSermonPrefill] = useState(null);
@@ -2569,6 +2571,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 onNoteSaved={() => setNotesRefreshKey(k => k + 1)}
                 openSessionTitle={studySessionToOpen}
                 onSessionOpened={() => setStudySessionToOpen(null)}
+                onSessionTitle={setStudySessionTitle}
               />
             </div>
 
@@ -2577,7 +2580,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
               <>
                 <DividerHandle onMouseDown={onDeskDragStart} onSwap={toggleDeskSide} swapTitle="Move the desk to the other side" />
                 <Suspense fallback={null}>
-                  <DeskPanel session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
+                  <DeskPanel currentSeries={studySessionTitle} session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
                 </Suspense>
               </>
             )}
@@ -2598,6 +2601,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 }}>
                   <Suspense fallback={null}>
                     <DeskPanel
+                      currentSeries={studySessionTitle}
                       session={session}
                       profile={profile}
                       churchId={churchId}
@@ -2642,7 +2646,11 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
           />
         )}
         {tab === 'notes' && (
-          <NotesPanel session={session} churchId={churchId} onOpenSession={(title) => { setStudySessionToOpen(title); setTab('ask'); }} />
+          <div style={{ maxWidth: 860, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 420 }}>
+            <Suspense fallback={null}>
+              <NotesSection wide session={session} churchId={churchId} onOpenSession={(title) => { setStudySessionToOpen(title); setTab('ask'); }} onUseInSermon={sendNotesToSermon} />
+            </Suspense>
+          </div>
         )}
         {tab === 'settings' && (
           <SettingsPanel

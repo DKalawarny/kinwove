@@ -4,6 +4,7 @@ import { supabase } from './supabase.js';
 import { useDraft } from './useDraft.js';
 import { parseRef } from './bibleRefUtils.js';
 import { studySessionTitles } from './studySessions.js';
+import { appendToSermonDoc, section, DOC_SOURCE } from './lib/sermonDoc.js';
 
 const BibleReader = lazy(() => import('./BibleReader.jsx'));
 
@@ -140,8 +141,42 @@ function printAllNotes(notes) {
   w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
 }
 
+// ── Podium view: the document full screen, large type, for reading while preaching ──
+function PodiumView({ note, onClose }) {
+  const [size, setSize] = useState(() => { try { return parseInt(localStorage.getItem('kw_podium_size'), 10) || 26; } catch { return 26; } });
+  const [dark, setDark] = useState(() => { try { return localStorage.getItem('kw_podium_dark') === '1'; } catch { return false; } });
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  function resize(d) { setSize((s) => { const n = Math.max(18, Math.min(48, s + d)); try { localStorage.setItem('kw_podium_size', String(n)); } catch { /* ignore */ } return n; }); }
+  function flip() { setDark((v) => { try { localStorage.setItem('kw_podium_dark', v ? '0' : '1'); } catch { /* ignore */ } return !v; }); }
+  const bg = dark ? '#14100B' : '#FFFDF5';
+  const ink = dark ? '#F5EDD8' : T.ink;
+  const pill = { background: 'transparent', color: ink, border: `1px solid ${dark ? 'rgba(245,237,216,0.3)' : 'rgba(26,17,8,0.2)'}`, borderRadius: 999, padding: '7px 15px', fontSize: 14, fontWeight: 600, cursor: 'pointer' };
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: bg, color: ink, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 'calc(12px + env(safe-area-inset-top, 0px)) 20px 12px', borderBottom: `1px solid ${dark ? 'rgba(245,237,216,0.12)' : 'rgba(26,17,8,0.08)'}`, flexShrink: 0 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', opacity: 0.6, flex: 1 }}>Podium view</span>
+        <button onClick={() => resize(-2)} title="Smaller text" style={pill}>A−</button>
+        <button onClick={() => resize(2)} title="Larger text" style={pill}>A+</button>
+        <button onClick={flip} title={dark ? 'Light page' : 'Dark page'} style={pill}>{dark ? 'Light' : 'Dark'}</button>
+        <button onClick={onClose} style={{ ...pill, background: ink, color: bg, borderColor: ink }}>Done</button>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div className="kw-podium" style={{ maxWidth: 900, margin: '0 auto', padding: '36px 32px 120px', fontFamily: T.display, fontSize: size, lineHeight: 1.6 }}>
+          {note.title && <div style={{ fontFamily: T.serif, fontWeight: 600, fontSize: size * 1.35, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '0.8em' }}>{note.title}</div>}
+          <style>{`.kw-podium h2{font-family:${T.serif};font-size:1.15em;font-weight:600;margin:1.2em 0 0.3em;line-height:1.25}.kw-podium h3{font-family:${T.serif};font-size:1em;font-weight:600;margin:1em 0 0.2em}.kw-podium p{margin:0 0 0.7em}.kw-podium ul{padding-left:1.2em;margin:0.4em 0}.kw-podium table{font-size:0.8em}`}</style>
+          <div dangerouslySetInnerHTML={{ __html: toEditorHtml(note.body) }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Notes section ─────────────────────────────────────────────────────────────
-function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon }) {
+export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon, currentSeries = '', wide = false }) {
   const userId = session?.user?.id;
   const [notes, setNotes]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -149,6 +184,7 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
   const [formTitle, setFormTitle] = useState('');
   const [formBody, setFormBody]   = useState('');
   const [creating, setCreating]   = useState(false);
+  const [podiumNote, setPodiumNote] = useState(null);
 
   const [editingId, setEditingId]           = useState(null);
   const [editTitle, setEditTitle]           = useState('');
@@ -202,6 +238,11 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
   }
 
   function openSermonPicker(seriesKey) {
+    const all = seriesNotesInOrder(seriesKey);
+    if (all.length === 1) { // one document: nothing to pick, take it as it stands
+      onUseInSermon?.({ seriesName: seriesKey, scriptureRef: detectScriptureRef(all) || detectScriptureRef([{ title: stripHtml(all[0].body).slice(0, 400) }]), summary: stitchNotes(all) });
+      return;
+    }
     setPickerIds(new Set(seriesNotesInOrder(seriesKey).map(n => n.id)));
     setPickerSeries(seriesKey);
   }
@@ -223,12 +264,13 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
   const clearNewNoteDraft = useDraft(`note-new:${churchId ?? ''}`, formBody, setFormBody, userId);
   const editDraftKey = (id) => (userId && id ? `kw:draft:${userId}:note-edit:${id}` : null);
 
-  useEffect(() => {
+  function loadNotes() {
     if (!churchId) return;
     supabase.from('church_notes')
       .select('*').eq('church_id', churchId).order('updated_at', { ascending: false })
       .then(({ data }) => { setNotes(data ?? []); setLoading(false); }, () => setLoading(false));
-  }, [churchId, refreshKey]);
+  }
+  useEffect(() => { loadNotes(); }, [churchId, refreshKey]);
 
   // Populate contentEditable when entering edit mode
   useEffect(() => {
@@ -259,14 +301,10 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
   async function createNote() {
     if (!formBody.trim() || !churchId || !userId) return;
     setCreating(true);
-    const { data, error } = await supabase.from('church_notes').insert({
-      church_id: churchId, author_id: userId,
-      title: formTitle.trim(), body: formBody.trim(),
-      series: formSeries.trim() || null,
-    }).select().single();
+    const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: formSeries, html: section.own(formTitle.trim(), formBody.trim()) });
     setCreating(false);
     if (error) return;
-    setNotes(prev => [data, ...prev]);
+    loadNotes();
     setFormTitle(''); setFormBody(''); clearNewNoteDraft(); setFormSeries(''); setShowForm(false);
   }
 
@@ -345,9 +383,9 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
           </button>
         )}
         <button
-          onClick={() => { setShowForm(v => !v); setEditingId(null); }}
+          onClick={() => { if (!showForm && !formSeries && currentSeries) setFormSeries(currentSeries); setShowForm(v => !v); setEditingId(null); }}
           style={{ background: showForm ? T.ink : 'transparent', color: showForm ? T.cream : T.inkMuted, border: `1px solid ${showForm ? T.ink : 'rgba(26,17,8,0.14)'}`, borderRadius: 999, padding: '4px 11px', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}
-        >{showForm ? 'Cancel' : 'Notes'}</button>
+        >{showForm ? 'Cancel' : 'Add a note'}</button>
       </div>
 
       {/* Quick-create form (plain text — immediately opens rich editor on create) */}
@@ -366,14 +404,14 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
           />
           <input
             value={formSeries} onChange={e => setFormSeries(e.target.value)}
-            placeholder="Series (optional, e.g. Romans, Christmas 2026)"
+            placeholder="Sermon or session name (leave blank for general notes)"
             list="series-list"
             style={{ width: '100%', border: 'none', borderTop: '1px solid rgba(26,17,8,0.08)', background: 'transparent', fontSize: 12, color: T.inkSoft, outline: 'none', padding: '7px 0 0', marginTop: 6, boxSizing: 'border-box' }}
           />
           <div style={{ display: 'flex', gap: 7, marginTop: 8, alignItems: 'center' }}>
             <button onClick={createNote} disabled={creating || !formBody.trim()}
               style={{ ...btnBase, background: T.ink, color: T.cream, opacity: creating || !formBody.trim() ? 0.5 : 1 }}>
-              {creating ? 'Creating…' : 'Create note'}
+              {creating ? 'Adding…' : 'Add to notes'}
             </button>
             <span style={{ fontSize: 11, color: T.inkMuted }}>⌘↵</span>
           </div>
@@ -404,6 +442,9 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
         for (const k of Object.keys(grouped)) {
           grouped[k].sort((a, b) => (a.sort_order ?? 1e9) - (b.sort_order ?? 1e9));
         }
+        // Newest sermon first, so years of weeks read back in order; general notes last
+        const newest = (k) => Math.max(...grouped[k].map(n => new Date(n.created_at ?? n.updated_at).getTime()));
+        allSeries.sort((a, b) => newest(b) - newest(a));
         const keys = [...allSeries, '']; // named series first, unsorted last
         const hasAnySeries = allSeries.length > 0;
 
@@ -418,7 +459,7 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
                 {(key || hasAnySeries) && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: key ? 4 : 0 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: key ? T.gold : T.inkMuted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flexShrink: 1 }}>
-                      {key || 'Unsorted'}
+                      {key || 'General notes'}
                     </span>
                     <div style={{ flex: 1, height: 1, background: key ? `rgba(184,115,58,0.25)` : 'rgba(26,17,8,0.08)' }} />
                     {key && onOpenSession && sessionTitles.has(key) && (
@@ -503,7 +544,7 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
                       } catch { /* ignore */ }
                     }}
                     onKeyDown={e => { if (e.key === 'Enter' && e.metaKey) { e.preventDefault(); saveEdit(note.id); } }}
-                    style={{ width: '100%', minHeight: 180, fontSize: 14, fontFamily: T.display, color: T.ink, outline: 'none', lineHeight: 1.75, boxSizing: 'border-box' }}
+                    style={{ width: '100%', minHeight: wide ? 420 : 180, fontSize: wide ? 17 : 14, fontFamily: T.display, color: T.ink, outline: 'none', lineHeight: 1.75, boxSizing: 'border-box' }}
                   />
                   {/* Action bar */}
                   <div style={{ display: showDonePrompt ? 'none' : 'flex', alignItems: 'center', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
@@ -515,6 +556,11 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
                       onClick={() => printNote({ ...note, title: editTitle, body: editorRef.current?.innerHTML ?? note.body })}
                       style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
                       🖨 Print
+                    </button>
+                    <button
+                      onClick={() => setPodiumNote({ ...note, title: editTitle, body: editorRef.current?.innerHTML ?? note.body })}
+                      style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
+                      Podium
                     </button>
                     <button onClick={() => { if (isDirty) setShowDonePrompt(true); else setEditingId(null); }}
                       style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
@@ -598,11 +644,15 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
                     {dateStr}
                     {note.source && (
                       <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 700, letterSpacing: 0.7, textTransform: 'uppercase', color: note.source === 'bible' ? '#8E5528' : '#3a6b8a', background: note.source === 'bible' ? 'rgba(142,85,40,0.10)' : 'rgba(58,107,138,0.10)', borderRadius: 4, padding: '1px 6px', verticalAlign: 'middle' }}>
-                        {note.source === 'bible' ? 'Bible' : note.source === 'research' ? 'Research' : 'Ask'}
+                        {note.source === DOC_SOURCE ? 'Sermon notes' : note.source === 'bible' ? 'Bible' : note.source === 'research' ? 'Research' : 'Ask'}
                       </span>
                     )}
                   </span>
                   <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                    <button onClick={() => setPodiumNote(note)} title="Full screen, large type, for reading while you preach"
+                      style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
+                      Podium
+                    </button>
                     <button onClick={() => startEdit(note)}
                       style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
                       Edit
@@ -618,6 +668,8 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
         </>
         );
       })()}
+
+      {podiumNote && <PodiumView note={podiumNote} onClose={() => setPodiumNote(null)} />}
 
       {/* "Use in sermon →" note picker — covers the whole Desk panel */}
       {pickerSeries !== null && (
@@ -688,7 +740,7 @@ function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseI
 // matches DeskPanel content area: calc(100vh-130px) minus ~58px tab bar.
 const BIBLE_TOP_OFFSET = 126;
 
-export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right' }) {
+export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right', currentSeries = '' }) {
   const [activeTab, setActiveTab] = useState(initialTab ?? 'bible');
 
   // Three-pane Bible/Notes split — draggable, remembered (% of desk width).
@@ -758,6 +810,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
                 profile={bibleProfile}
                 topOffset={BIBLE_TOP_OFFSET}
                 churchNoteContext={churchId}
+                churchNoteSeries={currentSeries}
               />
             </div>
           </Suspense>
@@ -788,7 +841,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
         </div>
         {/* Notes pane */}
         <div style={{ flex: `${100 - split3} 1 0`, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} />
+          <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />
         </div>
       </div>
     );
@@ -855,11 +908,12 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
                 profile={bibleProfile}
                 topOffset={BIBLE_TOP_OFFSET}
                 churchNoteContext={churchId}
+                churchNoteSeries={currentSeries}
               />
             </div>
           </Suspense>
         )}
-        {activeTab === 'notes' && <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} />}
+        {activeTab === 'notes' && <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
       </div>
     </div>
   );

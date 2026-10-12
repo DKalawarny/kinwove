@@ -20,6 +20,7 @@ import { BOOK_AUTHORS } from './bookAuthors.js';
 import { isWiderCanonText, WiderCanonTag } from './widerCanon.jsx';
 import Tip from './Tip.jsx';
 import { VERSIONS, DEFAULT_BIBLE_ID } from './bibleRefUtils.js';
+import { appendToSermonDoc, section } from './lib/sermonDoc.js';
 
 // Bible API is proxied through /api/bible to keep the key server-side
 
@@ -1143,7 +1144,7 @@ function IlluminatedCap({ seedKey, letter, quote, red, dark, scale = 1 }) {
   );
 }
 
-export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, topOffset = 0, fillParent = false, churchNoteContext = null }) {
+export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, topOffset = 0, fillParent = false, churchNoteContext = null, churchNoteSeries = '' }) {
   const uid = session?.user?.id ?? 'guest';
 
   // ── Navigation state ────────────────────────────────────────────────────────
@@ -1231,6 +1232,8 @@ export default function BibleReader({ session, profile, homeKey = 0, onClose, on
   // prep, not personal journaling (Daniel, 7/19).
   const [noteSeries, setNoteSeries]       = useState('');
   const [newSeriesMode, setNewSeriesMode] = useState(false);
+  // In Study the note belongs to the session that is open beside the Bible
+  useEffect(() => { if (churchNoteSeries) { setNoteSeries(churchNoteSeries); setNewSeriesMode(false); } }, [churchNoteSeries]);
   const [seriesOptions, setSeriesOptions] = useState([]);
   useEffect(() => {
     if (!churchNoteContext) return;
@@ -1990,11 +1993,7 @@ Return up to 5 matches, best first. If nothing matches, return []. No explanatio
     const verseRef = `${book?.name ?? bookId} ${chNum}:${noteVerse.number}`;
     if (churchNoteContext) {
       const verseText = noteVerse.text?.replace(/^["\u201c\u201d]+|["\u201c\u201d]+$/g, '').trim() ?? '';
-      const body = [verseText ? `"${verseText}", ${verseRef}` : verseRef, noteText.trim()].filter(Boolean).join('\n\n');
-      await supabase.from('church_notes').insert({
-        church_id: churchNoteContext, author_id: session.user.id,
-        title: verseRef, body, series: noteSeries.trim() || null, source: 'bible',
-      });
+      await appendToSermonDoc(supabase, { churchId: churchNoteContext, userId: session.user.id, series: noteSeries, html: section.verse(verseRef, (noteVerse.text ?? '').trim() || verseText, noteText.trim()) });
       setNoteSaving(false);
       setNoteOpen(false);
       return;
@@ -3015,10 +3014,7 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                       const title = verseMatch ? verseMatch[1] : (question.slice(0, 70) || m.content.slice(0, 70));
                       const body = question ? `Q: ${question}\n\n${m.content}` : m.content;
                       const { error } = churchNoteContext
-                        ? await supabase.from('church_notes').insert({
-                            church_id: churchNoteContext, author_id: session.user.id,
-                            title, body, series: noteSeries.trim() || null, source: 'bible',
-                          })
+                        ? await appendToSermonDoc(supabase, { churchId: churchNoteContext, userId: session.user.id, series: noteSeries, html: section.answer(question, m.content) })
                         : await supabase.from('user_notes').insert({
                             user_id: session.user.id, title, body, source: 'bible',
                           });
@@ -3792,7 +3788,7 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                     style={{ border: `1px solid ${T.line}`, borderRadius: 8, padding: '7px 10px', fontSize: 13, background: T.white, color: T.ink, fontFamily: T.sans }}
                   >
                     <option value="">No series</option>
-                    {seriesOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                    {[...new Set([churchNoteSeries, ...seriesOptions].filter(Boolean))].map((s) => <option key={s} value={s}>{s}</option>)}
                     <option value="__new__">+ New series…</option>
                   </select>
                 ) : (

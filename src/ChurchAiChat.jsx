@@ -10,6 +10,7 @@ import { PERSON_TYPES } from './constants.js';
 import { PER_TYPE } from './prompts.js';
 import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE_ID } from './bibleRefUtils.js';
 import { readConvs, writeConvs } from './studySessions.js';
+import { appendToSermonDoc, section } from './lib/sermonDoc.js';
 
 const PASTORAL_SYSTEM = `You are a theological assistant for Christian church leaders and pastors. You speak from within the historic Christian faith — you hold that Jesus is Lord, that the Bible is the authoritative Word of God, and that the gospel is true. You are not a neutral academic observer. You are a well-read, pastorally grounded colleague helping a minister do their work better.
 
@@ -244,7 +245,7 @@ function HistoryModal({ open, onClose, conversations, onLoad, onDelete, onNew })
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened }) {
+export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened, onSessionTitle }) {
   const userId  = session?.user?.id;
   const plan    = churchPlan ?? 'church_base';
   const ttsVoice = profile?.tts_voice ?? 'onyx';
@@ -378,36 +379,8 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   async function saveSelectionToNotes() {
     if (!selNote || selNote.saved || !churchId || !userId) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
-    const src = researchMode ? 'research' : 'ask';
-    let error = null;
-    if (sessionTitle) {
-      // Highlights collect into ONE running "Highlights" note per named
-      // session — each save appends, so the series stays one tidy card
-      // instead of a pile of clips. The note body may have been rich-edited
-      // (HTML) in the Desk, so append in kind.
-      const { data: existing } = await supabase.from('church_notes')
-        .select('id, body').eq('church_id', churchId).eq('author_id', userId)
-        .eq('series', sessionTitle).eq('title', 'Highlights').limit(1);
-      if (existing?.length) {
-        const cur = existing[0];
-        const isHtml = /<[a-z]/i.test(cur.body || '');
-        const esc = selNote.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-        const body = isHtml ? `${cur.body}<br><br>${esc}` : `${cur.body}\n\n${selNote.text}`;
-        ({ error } = await supabase.from('church_notes')
-          .update({ body, updated_at: new Date().toISOString() }).eq('id', cur.id));
-      } else {
-        ({ error } = await supabase.from('church_notes').insert({
-          church_id: churchId, author_id: userId,
-          title: 'Highlights', body: selNote.text, series: sessionTitle, source: src,
-        }));
-      }
-    } else {
-      // Un-named session: no series to collect under — plain single note
-      ({ error } = await supabase.from('church_notes').insert({
-        church_id: churchId, author_id: userId,
-        title: '', body: selNote.text, series: null, source: src,
-      }));
-    }
+    // A selected line is pasted onto the end of this session's one document.
+    const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.clip(selNote.text) });
     if (!error) {
       setSelNote((s) => (s ? { ...s, saved: true } : s));
       onNoteSaved?.();
@@ -415,6 +388,9 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       setTimeout(() => setSelNote(null), 1400);
     }
   }
+
+  // The desk (Bible pane, notes form) files things under the open session
+  useEffect(() => { onSessionTitle?.(convTitle !== 'New conversation' ? convTitle : ''); }, [convTitle]);
 
   // Persist conversation to localStorage
   useEffect(() => {
@@ -544,12 +520,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     const answer   = messages[assistantIdx]?.content ?? '';
     if (!answer) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
-    const title = question.slice(0, 70) || answer.slice(0, 70);
-    const body  = question ? `Q: ${question}\n\n${answer}` : answer;
-    const { error } = await supabase.from('church_notes').insert({
-      church_id: churchId, author_id: userId,
-      title, body, series: sessionTitle, source: researchMode ? 'research' : 'ask',
-    });
+    const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.answer(question, answer) });
     if (!error) { setSavedToNoteIdx((prev) => ({ ...prev, [assistantIdx]: true })); onNoteSaved?.(); }
   }
 
