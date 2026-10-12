@@ -312,11 +312,6 @@ function SermonTeaserCard({ sermon, isMember, onOpenChurch }) {
             {sermon.scripture_ref}
           </div>
         )}
-        {sermon.summary && (
-          <div style={{ fontFamily: T.serif, fontSize: 14, color: T.inkSoft, lineHeight: 1.6, marginBottom: 14 }}>
-            {sermon.summary.slice(0, 120)}{sermon.summary.length > 120 ? '…' : ''}
-          </div>
-        )}
         <button
           onClick={() => onOpenChurch?.(sermon.church_id)}
           style={{

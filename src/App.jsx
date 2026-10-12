@@ -385,7 +385,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   // copy in step with what the system actually guarantees.
   const trustPoints = [
     'Never invents quotes, statistics, or scripture. "I don\'t know" is built in',
-    'Commentary citations are quoted from real sources, never recalled from memory',
+    'Classic commentaries are quoted from the real text. Modern scholars are named and paraphrased, never given invented quotes',
     'Every scripture reference is checked against the actual Bible text',
     'Honest when faithful Christians genuinely disagree. It tells you that',
     'No denominational agenda, designed to point to Jesus, never to push',

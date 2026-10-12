@@ -1445,7 +1445,9 @@ app.post('/api/chat', optionalAuth, limitEither(
   const isFirstTurn = messages.length === 1 && messages[0].role === 'user';
 
   // Never replay a stored answer to someone in crisis — they get a live one.
-  if (isFirstTurn && personType && !hasImages && !internal && !crisisBypass) {
+  // Sermon Research is its own prompt (and quotes the pastor's translation), so it
+  // neither reads from nor writes to the cache that Ask answers share.
+  if (isFirstTurn && personType && !hasImages && !internal && !crisisBypass && !groundCommentary) {
     const cached = await lookupCachedAnswer(personType, lastUserMsg);
     if (cached?.answer) {
       send('cache_hit', { id: cached.id });
@@ -1593,7 +1595,7 @@ app.post('/api/chat', optionalAuth, limitEither(
     // Never cache image conversations — every image is unique context.
     // ...and never write one into the shared cache: qa_cache holds question_raw
     // verbatim with no user_id, and a crisis disclosure has no business there.
-    if (isFirstTurn && personType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass) {
+    if (isFirstTurn && personType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass && !groundCommentary) {
       writeCacheEntry({ personType, question: lastUserMsg, answer: fullText, model });
     }
     logQaEvent({
@@ -1625,6 +1627,8 @@ const SERMON_SYSTEM = `You are a ministry content writer helping a pastor extend
 GROUND RULES
 - Stay tightly grounded in the pastor's outline and the passage they preached. Do not introduce theology, doctrine, or examples they didn't cover.
 - Tone: warm, plain, honest — like a trusted friend who knows the Bible. Never preachy, never motivational-poster, never church-brochure.
+- Never use an em dash or en dash (— or –) between words. Use a comma, a colon, or a new sentence. No one writes with dashes; they read as machine-written.
+- Plain text only. No markdown: no asterisks for emphasis, no # headings, no bullet symbols.
 - Banned phrases (never use these): "Let's explore", "As we journey", "Take a moment to", "In your own walk", "How does [X] make you feel?", "What does [X] mean to you personally?", "Let us remember", "May we", "How can we apply this to our daily lives?", "Reflect on a time when".
 
 DAILY QUESTIONS — daily_verse × 7
@@ -3483,7 +3487,6 @@ app.post('/api/research/update-memory', requireAuth, async (req, res) => {
   const today = new Date().toISOString().slice(0, 10);
 
   try {
-    const [profile] = await pr.json();
     const existing = (await readSecrets(req.userId, 'research_memory'))?.research_memory ?? '';
 
     const convoText = messages.slice(-20)
@@ -4577,7 +4580,6 @@ function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaU
         <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:10px">This week's sermon</div>
         <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:600;color:${ink};margin:0 0 10px;letter-spacing:-0.025em;line-height:1.15">${escHtml(sermon.title)}</h1>
         ${sermon.scripture_ref ? `<div style="font-size:14px;color:${gold};font-style:italic;margin-bottom:14px">${escHtml(sermon.scripture_ref)}</div>` : ''}
-        ${sermon.summary ? `<p style="font-size:15px;color:${soft};line-height:1.7;margin:0 0 22px;font-family:Georgia,serif">${escHtml(sermon.summary.slice(0, 280))}${sermon.summary.length > 280 ? '…' : ''}</p>` : ''}
         <a href="${ctaUrl ?? 'https://www.kinwove.com'}" style="display:inline-block;background:${ink};color:#FDF8F0;text-decoration:none;border-radius:999px;padding:12px 26px;font-size:14px;font-weight:600">Read this week's devotional →</a>
       </td></tr>
 

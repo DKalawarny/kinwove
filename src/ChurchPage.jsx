@@ -1079,11 +1079,6 @@ export default function ChurchPage({
                     {latestSermon.scripture_ref}
                   </div>
                 )}
-                {latestSermon.summary && (
-                  <div style={{ fontFamily: T.serif, fontSize: 14.5, color: T.inkSoft, lineHeight: 1.65, marginBottom: 12, whiteSpace: 'pre-wrap' }}>
-                    {latestSermon.summary}
-                  </div>
-                )}
                 {onOpenSermon && (
                   <button onClick={() => onOpenSermon(latestSermon.id)} style={{
                     background: T.ink, color: T.cream, border: 'none', borderRadius: 999,

@@ -44,9 +44,21 @@ function htmlToPlain(html) {
   return s.split('\n').map(l => l.trimEnd()).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
+// Saved AI answers carry markdown; the outline is a plain textarea, so drop the symbols.
+function plainOutline(text) {
+  return text
+    .replace(/^\s*(-{3,}|\*{3,})\s*$/gm, '')
+    .replace(/^\s*#{1,6}\s+/gm, '')
+    .replace(/^[ \t]*>[ \t]?/gm, '')
+    .replace(/\*\*([^*\n]+?)\*\*/g, '$1')
+    .replace(/(?<![*\w])\*(?![\s*])([^*\n]+?)(?<![\s*])\*(?![*\w])/g, '$1')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 function stitchNotes(notes) {
   return notes.map(n => {
-    const body = htmlToPlain(n.body);
+    const body = plainOutline(htmlToPlain(n.body));
     const title = (n.title || '').replace(/^Q:\s+/, '').trim();
     return title ? `${title}\n\n${body}` : body;
   }).filter(Boolean).join('\n\n');

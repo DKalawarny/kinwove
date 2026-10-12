@@ -569,9 +569,8 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     }
 
     if (publish) {
-      const announcementBody = summary.trim()
-        ? `${title.trim()}\n\n${summary.trim()}`
-        : title.trim();
+      // The outline is the pastor's working notes, so it stays out of the public post.
+      const announcementBody = title.trim();
       const announcementData = {
         sermon_id:               sermonId,
         is_sermon_announcement:  true,
@@ -750,6 +749,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
           <label style={{ fontSize: 12, color: T.inkSoft, fontWeight: 500, display: 'block', marginBottom: 6 }}>
             Sermon outline · paste your notes
           </label>
+          <div style={{ fontSize: 12, color: T.inkMuted, margin: '-2px 0 6px' }}>Only you see this. The week below is drafted from it.</div>
           <textarea
             value={summary}
             onChange={(e) => setSummary(e.target.value)}

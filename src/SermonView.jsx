@@ -177,11 +177,6 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
               {sermon.scripture_ref}
             </div>
           )}
-          {sermon.summary && (
-            <p style={{ fontFamily: T.serif, fontSize: 15.5, color: T.inkSoft, lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>
-              {sermon.summary}
-            </p>
-          )}
           {Array.isArray(sermon.image_urls) && sermon.image_urls.length > 0 && (
             <PostImageGrid urls={sermon.image_urls} />
           )}
