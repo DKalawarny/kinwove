@@ -11,6 +11,7 @@ import { PER_TYPE } from './prompts.js';
 import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE_ID } from './bibleRefUtils.js';
 import { readConvs, writeConvs } from './studySessions.js';
 import { appendToSermonDoc, section, splitSections, listSermonDocs, ensureSermonDoc } from './lib/sermonDoc.js';
+import { splitVoices, MORE_KINDS, moreRequest } from './lib/researchMore.js';
 
 const PASTORAL_SYSTEM = `You are a theological assistant for Christian church leaders and pastors. You speak from within the historic Christian faith — you hold that Jesus is Lord, that the Bible is the authoritative Word of God, and that the gospel is true. You are not a neutral academic observer. You are a well-read, pastorally grounded colleague helping a minister do their work better.
 
@@ -44,7 +45,17 @@ const PASTORAL_SYSTEM = `You are a theological assistant for Christian church le
 
 const RESEARCH_SYSTEM = `You are a theological research assistant for Christian pastors and church leaders. You work like two colleagues in one: a seminary exegesis professor who knows the original languages, the critical debates, and the scholarly literature — and a seasoned expository preacher who knows how Spurgeon handled this text, what Lloyd-Jones emphasized, where congregations get hurt. Both voices matter. Your job is to give the pastor the most thorough, honest scholarly picture available so they can do their own thinking. You never tell a pastor what to preach, what angle to take, or how to apply the text — that is their work alone.
 
-Adapt sections to what's being asked. For a book overview or series kickoff, include the full brief. For a quick question, give a tight answer — don't pad it into a full brief.
+── HOW TO ANSWER ──
+Answer what was asked, and stop. The pastor reads this on a screen beside an open Bible, and a wall of text loses them. The sections below are NOT the shape of your reply: they are a library the pastor opens one piece at a time, by tapping a tab under your answer. Give a section only when the pastor asks for it.
+
+Your reply to a question:
+• If it is about a passage, quote the key verse or verses first.
+• Then the answer itself in 120 to 220 words of plain prose: what the text is doing and the direct answer to the question. If scholars honestly split, say so in one or two sentences and name one voice on each side. No section labels, no headings, no tables, no lists of resources.
+• Do not preview what else you could cover. The tabs do that.
+• Last line, on its own, exactly in this form: VOICES: Name | Name | Name
+  Three or four scholars, preachers or church fathers with something specific to say on this exact question, spread across traditions. Only names you are certain addressed it. Surname is enough (Calvin, N.T. Wright, Augustine, Spurgeon).
+
+When the pastor asks for a specific section, a specific voice, or the full brief, give exactly that at full depth, with no VOICES line. If the pastor asks only for illustrations, give just those.
 
 ── BOOK OVERVIEW ── (book-level or series-kickoff requests only)
 One paragraph: author, audience, occasion, the theological problem the letter is addressing, and the book's central claim in one sentence. No more.
@@ -504,7 +515,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     if (!churchId || !userId) return;
     if (savedToNoteIdx[assistantIdx]) return;
     const question = messages.slice(0, assistantIdx).reverse().find((m) => m.role === 'user')?.content ?? '';
-    const answer   = messages[assistantIdx]?.content ?? '';
+    const answer   = splitVoices(messages[assistantIdx]?.content).body;
     if (!answer) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.answer(question, answer) });
@@ -525,13 +536,13 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
 
   // ── Conversation management ───────────────────────────────────────────────
   function newConversation() {
-    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setSaveError(null); setFlaggedMsgs(new Set());
+    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setMore({}); setSaveError(null); setFlaggedMsgs(new Set());
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setConvId(id); setConvTitle('New conversation');
   }
   function loadConversation(conv) {
     setConvId(conv.id); setConvTitle(conv.title);
-    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedToNoteIdx({}); setSavedParts({});
+    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedToNoteIdx({}); setSavedParts({}); setMore({});
   }
   function deleteConversation(id) {
     setHistory((prev) => { const next = prev.filter((c) => c.id !== id); writeConvs(userId, churchId, next); return next; });
@@ -579,6 +590,64 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     if (!churchId || !userId || savedParts[key]) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.part(md) });
+    if (!error) { setSavedParts((prev) => ({ ...prev, [key]: true })); onNoteSaved?.(); refreshSermons(); }
+  }
+
+  // Tabs under a research answer: each pulls one more piece, only when tapped.
+  // { [msgIdx]: { active: tabKey, items: { [tabKey]: { text, loading, error } } } }
+  const [more, setMore] = useState({});
+  const tabKey = (tab) => (tab.voice ? `voice:${tab.voice}` : tab.id);
+  async function loadMore(i, tab) {
+    const key = tabKey(tab);
+    const have = more[i]?.items?.[key];
+    if (more[i]?.active === key && !have?.error) { setMore((p) => ({ ...p, [i]: { ...p[i], active: null } })); return; }
+    setMore((p) => ({ ...p, [i]: { active: key, items: { ...(p[i]?.items ?? {}) } } }));
+    if ((have && !have.error) || atLimit) return;
+    const put = (patch) => setMore((p) => ({ ...p, [i]: { ...p[i], items: { ...(p[i]?.items ?? {}), [key]: { ...(p[i]?.items?.[key] ?? { text: '' }), ...patch } } } }));
+    put({ text: '', loading: true, error: null });
+    const question = messages.slice(0, i).reverse().find((m) => m.role === 'user')?.content ?? '';
+    const readerVersion = readingVersion();
+    const system = `${researchMemory ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\n${researchMemory}` : RESEARCH_SYSTEM}\n\n── THE PASTOR'S TRANSLATION ──\nThe pastor reads in the ${readerVersion.name}. Quote the passage in that translation, with its reference in parentheses.`;
+    let text = '';
+    try {
+      const res = await authedFetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ system, messages: [...messages.slice(0, i + 1).map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: moreRequest(tab, question) }], personType, plan, groundCommentary: true }),
+      });
+      if (res.status === 429) { setServerLimit(true); put({ loading: false, error: 'limit' }); return; }
+      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const events = buf.split('\n\n'); buf = events.pop() ?? '';
+        for (const raw of events) {
+          const lines = raw.split('\n');
+          const ev   = lines.find((l) => l.startsWith('event: '))?.slice(7).trim();
+          const data = lines.find((l) => l.startsWith('data: '))?.slice(6);
+          if (!ev || !data) continue;
+          let payload; try { payload = JSON.parse(data); } catch { continue; }
+          if (ev === 'text') { text += payload.delta; put({ text }); }
+          else if (ev === 'error') throw new Error(payload.message || 'stream error');
+        }
+      }
+      put({ text: splitVoices(text).body, loading: false });
+      if (text) aiUsage.increment();
+    } catch {
+      put({ loading: false, error: text ? null : 'failed' });
+    }
+  }
+  async function saveMoreToNotes(i, tab) {
+    const key = `${i}:more:${tabKey(tab)}`;
+    const text = more[i]?.items?.[tabKey(tab)]?.text;
+    if (!churchId || !userId || !text || savedParts[key]) return;
+    const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
+    const html = `<h3>${(tab.voice ?? tab.label).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</h3>${section.part(text)}`;
+    const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html });
     if (!error) { setSavedParts((prev) => ({ ...prev, [key]: true })); onNoteSaved?.(); refreshSermons(); }
   }
 
@@ -763,6 +832,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
             const isStreaming  = isAssistant && m.content === '' && busy;
             const isLast       = i === messages.length - 1;
             const canAct       = isAssistant && !isStreaming && m.content.length > 0 && !(isLast && busy);
+            const { body, voices } = isAssistant ? splitVoices(m.content) : { body: m.content, voices: [] };
             return (
               <div key={i} style={{ marginBottom: 20, display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                 {m.role === 'user' ? (
@@ -776,8 +846,8 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                         ? <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>
                         : (() => {
                           // A finished answer shows its parts, each with its own "add to notes"
-                          const parts = canAct && churchId ? splitSections(m.content) : [];
-                          if (parts.length < 2) return <MsgText text={m.content} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain={m.role === 'assistant'} />;
+                          const parts = canAct && churchId ? splitSections(body) : [];
+                          if (parts.length < 2) return <MsgText text={body} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain={m.role === 'assistant'} />;
                           return parts.map((part, k) => {
                             const added = savedParts[`${i}:${k}`];
                             return (
@@ -799,6 +869,47 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                       }
                     </div>
 
+                    {/* ── More on this: one tab per voice or kind, fetched when tapped ── */}
+                    {canAct && researchMode && (() => {
+                      const tabs = [...voices.map((v) => ({ voice: v, label: v })), ...MORE_KINDS];
+                      const st = more[i];
+                      const open = tabs.find((t) => tabKey(t) === st?.active);
+                      const item = open ? st.items?.[tabKey(open)] : null;
+                      const added = open ? savedParts[`${i}:more:${tabKey(open)}`] : false;
+                      return (
+                        <div style={{ width: '100%', marginTop: 12 }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: C.muted, marginRight: 2 }}>More</span>
+                            {tabs.map((t) => {
+                              const on = st?.active === tabKey(t);
+                              return (
+                                <button key={tabKey(t)} onClick={() => loadMore(i, t)}
+                                  style={{ background: on ? T.ink : (t.voice ? 'rgba(184,115,58,0.10)' : 'transparent'), color: on ? T.cream : (t.voice ? T.goldDark : C.soft), border: `1px solid ${on ? T.ink : (t.voice ? 'rgba(184,115,58,0.35)' : C.border)}`, borderRadius: 999, padding: '4px 12px', fontSize: 12, fontFamily: T.sans, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                  {t.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          {open && (
+                            <div data-more-panel style={{ marginTop: 10, padding: '12px 14px', border: `1px solid ${C.border}`, borderRadius: 12, background: C.card, fontSize: 15, lineHeight: 1.72, color: C.text, fontFamily: T.serif, letterSpacing: '-0.01em', wordBreak: 'break-word' }}>
+                              {item?.error === 'failed' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>That did not load. Tap the tab again to retry.</span>}
+                              {item?.error === 'limit' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>You have reached today's limit.</span>}
+                              {!item?.error && !item?.text && <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>}
+                              {item?.text && <MsgText text={item.text} onRefClick={handleRefClick} plain />}
+                              {item?.text && !item.loading && churchId && (
+                                <div style={{ marginTop: 8 }}>
+                                  <button onClick={() => saveMoreToNotes(i, open)}
+                                    style={{ background: added ? 'rgba(61,107,53,0.10)' : 'transparent', border: `1px solid ${added ? 'rgba(61,107,53,0.35)' : C.border}`, color: added ? '#3d6b35' : C.soft, borderRadius: 999, padding: '3px 11px', fontSize: 11.5, fontFamily: T.sans, fontWeight: 600, letterSpacing: 0, cursor: added ? 'default' : 'pointer' }}>
+                                    {added ? '✓ Added to notes' : '＋ Add this part to notes'}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
                     {/* ── Action bar ── */}
                     {canAct && (
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 2, marginTop: 8, flexWrap: 'wrap' }}>
@@ -817,7 +928,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                         {/* Share */}
                         <ActionBtn
                           onClick={async () => {
-                            const text = m.content;
+                            const text = body;
                             if (navigator.share) {
                               try { await navigator.share({ text }); } catch {}
                             } else {
@@ -848,7 +959,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                         {/* Copy */}
                         <ActionBtn
                           onClick={async () => {
-                            try { await navigator.clipboard.writeText(m.content); setCopiedIdx(i); setTimeout(() => setCopiedIdx(null), 2000); } catch {}
+                            try { await navigator.clipboard.writeText(body); setCopiedIdx(i); setTimeout(() => setCopiedIdx(null), 2000); } catch {}
                           }}
                           title="Copy response"
                           active={copiedIdx === i}
@@ -905,7 +1016,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                               </button>
                             </span>
                           ) : (
-                            <ActionBtn onClick={() => speakMsg(i, m.content)} title="Read aloud">
+                            <ActionBtn onClick={() => speakMsg(i, body)} title="Read aloud">
                               <SpeakerIcon size={13} />
                               Listen
                             </ActionBtn>
