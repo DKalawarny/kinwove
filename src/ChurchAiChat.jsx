@@ -233,6 +233,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const inputRef     = useRef(null);
   const scrollRef    = useRef(null);
   const userScrolled = useRef(false);
+  const lastTop      = useRef(0);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   useEffect(() => {
@@ -247,9 +248,17 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     const el = scrollRef.current;
     if (!el) return;
     const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    // we only ever scroll down, so any move up is the reader's: stop following at once
+    const up = el.scrollTop < lastTop.current - 2;
+    lastTop.current = el.scrollTop;
+    if (up && busy) { userScrolled.current = true; setShowScrollBtn(true); return; }
     userScrolled.current = !nearBottom;
     setShowScrollBtn(!nearBottom);
   }
+
+  // While an answer is still arriving, a part can be added once the next part is
+  // under way: its own text is final by then.
+  const partReady = (parts, k, loading) => !loading || k < parts.length - 2 || (k === parts.length - 2 && parts[parts.length - 1].includes('\n\n'));
 
   function scrollToBottom() {
     userScrolled.current = false;
@@ -765,14 +774,15 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                         ? <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>
                         : (() => {
                           // A finished answer shows its parts, each with its own "add to notes"
-                          const parts = canAct && churchId ? splitSections(body) : [];
+                          const loading = isLast && busy;
+                          const parts = isAssistant && churchId ? splitSections(body) : [];
                           if (parts.length < 2) return <MsgText text={body} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain={m.role === 'assistant'} />;
                           return parts.map((part, k) => {
                             const added = savedParts[`${i}:${k}`];
                             return (
                               <div key={k} style={{ padding: '10px 0 8px', borderTop: k ? `1px solid ${C.border}` : 'none' }}>
                                 <MsgText text={part} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain />
-                                <div style={{ marginTop: 6 }}>
+                                {partReady(parts, k, loading) && <div style={{ marginTop: 6 }}>
                                   <button
                                     onClick={() => savePartToNotes(i, k, part)}
                                     title={added ? 'Added to this sermon\'s notes' : 'Add just this part to this sermon\'s notes'}
@@ -780,7 +790,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                                   >
                                     {added ? '✓ Added to notes' : '＋ Add this part to notes'}
                                   </button>
-                                </div>
+                                </div>}
                               </div>
                             );
                           });
@@ -814,12 +824,30 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                               {item?.error === 'failed' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>That did not load. Tap the tab again to retry.</span>}
                               {item?.error === 'limit' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>You have used all your questions for now. Tabs you already opened still work.</span>}
                               {!item?.error && !item?.text && <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>}
-                              {item?.text && <MsgText text={item.text} onRefClick={handleRefClick} plain />}
+                              {item?.text && (() => {
+                                const parts = churchId ? splitSections(item.text) : [];
+                                if (parts.length < 2) return <MsgText text={item.text} onRefClick={handleRefClick} plain />;
+                                return parts.map((part, k) => {
+                                  const pk = `more:${tabKey(open)}:${k}`;
+                                  const got = savedParts[`${i}:${pk}`];
+                                  return (
+                                    <div key={k} style={{ padding: '10px 0 8px', borderTop: k ? `1px solid ${C.border}` : 'none' }}>
+                                      <MsgText text={part} onRefClick={handleRefClick} plain />
+                                      {partReady(parts, k, item.loading) && <div style={{ marginTop: 6 }}>
+                                        <button onClick={() => savePartToNotes(i, pk, part)}
+                                          style={{ background: got ? 'rgba(61,107,53,0.10)' : 'transparent', border: `1px solid ${got ? 'rgba(61,107,53,0.35)' : C.border}`, color: got ? '#3d6b35' : C.soft, borderRadius: 999, padding: '3px 11px', fontSize: 11.5, fontFamily: T.sans, fontWeight: 600, letterSpacing: 0, cursor: got ? 'default' : 'pointer' }}>
+                                          {got ? '✓ Added to notes' : '＋ Add this part to notes'}
+                                        </button>
+                                      </div>}
+                                    </div>
+                                  );
+                                });
+                              })()}
                               {item?.text && !item.loading && churchId && (
                                 <div style={{ marginTop: 8 }}>
                                   <button onClick={() => saveMoreToNotes(i, open)}
                                     style={{ background: added ? 'rgba(61,107,53,0.10)' : 'transparent', border: `1px solid ${added ? 'rgba(61,107,53,0.35)' : C.border}`, color: added ? '#3d6b35' : C.soft, borderRadius: 999, padding: '3px 11px', fontSize: 11.5, fontFamily: T.sans, fontWeight: 600, letterSpacing: 0, cursor: added ? 'default' : 'pointer' }}>
-                                    {added ? '✓ Added to notes' : '＋ Add this part to notes'}
+                                    {added ? '✓ Added to notes' : (splitSections(item.text).length < 2 ? '＋ Add this part to notes' : '＋ Add this whole tab to notes')}
                                   </button>
                                 </div>
                               )}
