@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mdToHtml, section, joinSections, escHtml } from '../src/lib/sermonDoc.js';
+import { mdToHtml, section, joinSections, escHtml, splitSections } from '../src/lib/sermonDoc.js';
 
 test('markdown shapes from a research answer become rich text', () => {
   assert.equal(mdToHtml('## The Passage'), '<h3>The Passage</h3>');
@@ -43,4 +43,38 @@ test('appending keeps what is there, and upgrades an old plain-text body', () =>
   assert.equal(joinSections('', '<p>new</p>'), '<p>new</p>');
   assert.equal(joinSections('<p>old</p>', '<p>new</p>'), '<p>old</p><p><br></p><p>new</p>');
   assert.equal(joinSections('old line & more\nsecond', '<p>new</p>'), 'old line &amp; more<br>second<p><br></p><p>new</p>');
+});
+
+test('an answer splits into its own parts at headings and dividers', () => {
+  const md = [
+    'Here is a tight answer.',
+    '---',
+    '## The Passage',
+    '"Now Thomas was not with them." (John 20:24)',
+    '---',
+    'THE REAL DEBATES',
+    '1. Does Thomas actually touch Jesus',
+    '**Position A.** He does.',
+    '**Position B.** He does not.',
+    '6. The one thing that usually isn\'t helpful',
+    'Ultimatums. Community withdrawal as a coercive tool.',
+    '── GO DEEPER ──',
+    'Two commentaries.',
+  ].join('\n\n');
+  const parts = splitSections(md);
+  assert.equal(parts.length, 5);
+  assert.equal(parts[0], 'Here is a tight answer.');
+  assert.ok(parts[1].startsWith('## The Passage'));
+  assert.ok(parts[2].startsWith('THE REAL DEBATES\n\n1. Does Thomas actually touch Jesus'));
+  assert.ok(parts[2].includes('Position B'));
+  assert.ok(parts[3].startsWith('6. The one thing that usually'));
+  assert.ok(parts[4].startsWith('── GO DEEPER ──'));
+});
+
+test('ordinary prose is one part, and list items are not mistaken for headings', () => {
+  assert.deepEqual(splitSections('One paragraph.\n\nAnother paragraph, still the same answer.'), ['One paragraph.\n\nAnother paragraph, still the same answer.']);
+  assert.equal(splitSections('Intro.\n\n1. Have you ever doubted?\n2. What helped?\n\nClosing line.').length, 1);
+  assert.equal(splitSections('Intro.\n\n1. This is a full sentence that ends with a period.\n\nMore prose.').length, 1);
+  assert.equal(splitSections('He said OK.\n\nNASA is an agency.\n\nThen more.').length, 1);
+  assert.deepEqual(splitSections(''), []);
 });

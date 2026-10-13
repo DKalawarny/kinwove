@@ -2432,6 +2432,8 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   // Note → thread: series title queued for ChurchAiChat to load (cleared once loaded)
   const [studySessionToOpen, setStudySessionToOpen] = useState(null);
   const [studySessionTitle, setStudySessionTitle] = useState('');
+  const [newSermonRequest, setNewSermonRequest] = useState(null);
+  const requestNewSermon = (name) => setNewSermonRequest((prev) => ({ name, n: (prev?.n ?? 0) + 1 }));
   // Desk "Use in sermon →": picked prep notes queued as a composer draft
   // ({title, scriptureRef, summary}), cleared once the composer applies it
   const [sermonPrefill, setSermonPrefill] = useState(null);
@@ -2572,6 +2574,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 openSessionTitle={studySessionToOpen}
                 onSessionOpened={() => setStudySessionToOpen(null)}
                 onSessionTitle={setStudySessionTitle}
+                newSermonRequest={newSermonRequest}
               />
             </div>
 
@@ -2580,7 +2583,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
               <>
                 <DividerHandle onMouseDown={onDeskDragStart} onSwap={toggleDeskSide} swapTitle="Move the desk to the other side" />
                 <Suspense fallback={null}>
-                  <DeskPanel currentSeries={studySessionTitle} session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
+                  <DeskPanel currentSeries={studySessionTitle} onNewSermon={requestNewSermon} session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
                 </Suspense>
               </>
             )}
@@ -2601,7 +2604,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 }}>
                   <Suspense fallback={null}>
                     <DeskPanel
-                      currentSeries={studySessionTitle}
+                      currentSeries={studySessionTitle} onNewSermon={requestNewSermon}
                       session={session}
                       profile={profile}
                       churchId={churchId}

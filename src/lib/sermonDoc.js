@@ -62,6 +62,39 @@ export const section = {
   own: (title, body) => `${title ? `<h2>${escHtml(title)}</h2>` : ''}<p>${escHtml(body).replace(/\n/g, '<br>')}</p>`,
 };
 
+// One part of an answer, pasted without the question above it.
+section.part = (md) => mdToHtml(String(md ?? '').split('\n').map((l) => plainDashes(l)).join('\n'));
+
+// A research answer is long; a pastor usually wants one part of it. Split it at
+// its own headings and dividers so each part can be added on its own.
+const isDivider = (p) => /^(-{3,}|\*{3,})$/.test(p);
+function isHeading(p) {
+  if (p.includes('\n')) return false;
+  return /^#{1,6}\s+\S/.test(p)
+    || /^[─—–-]{1,3}\s*\S.*\S\s*[─—–-]{1,3}$/.test(p)
+    || /^\*\*[^*]+\*\*:?$/.test(p)
+    || (/^\d{1,2}[.)]\s+\S/.test(p) && p.length <= 110 && !/[.!:;,]$/.test(p))
+    || (/^[A-Z0-9][A-Z0-9 ,'’&:()\/-]{3,70}$/.test(p) && /[A-Z]{3}/.test(p));
+}
+export function splitSections(md) {
+  const paras = String(md ?? '').replace(/\r/g, '').split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
+  const out = [];
+  let cur = [];
+  const onlyHeadings = () => cur.length > 0 && cur.every(isHeading);
+  const flush = () => { if (cur.length) out.push(cur.join('\n\n')); cur = []; };
+  for (const para of paras) {
+    if (isDivider(para)) { if (!onlyHeadings()) flush(); continue; }
+    // a heading starts a new part, unless the part so far is itself only headings
+    // ("THE REAL DEBATES" followed by "1. Does Thomas touch Jesus?")
+    if (isHeading(para) && cur.length && !onlyHeadings()) flush();
+    cur.push(para);
+  }
+  flush();
+  // a trailing lone heading has nothing under it: fold it into the part before
+  if (out.length > 1 && isHeading(out[out.length - 1])) { const last = out.pop(); out[out.length - 1] += `\n\n${last}`; }
+  return out;
+}
+
 // An older document body may still be plain text; make it HTML before appending.
 function asHtml(body) {
   if (!body) return '';
@@ -71,6 +104,30 @@ function asHtml(body) {
 export function joinSections(existingBody, html) {
   const cur = asHtml(existingBody);
   return cur ? `${cur}<p><br></p>${html}` : html;
+}
+
+// Sermons that have a document, newest first: [{ id, title, created_at }]
+export async function listSermonDocs(supabase, churchId) {
+  if (!churchId) return [];
+  const { data } = await supabase.from('church_notes').select('id, series, created_at')
+    .eq('church_id', churchId).eq('source', DOC_SOURCE).not('series', 'is', null)
+    .order('created_at', { ascending: false });
+  const seen = new Set();
+  return (data ?? []).filter((r) => r.series?.trim() && !seen.has(r.series.trim()) && seen.add(r.series.trim()))
+    .map((r) => ({ id: r.id, title: r.series.trim(), created_at: r.created_at }));
+}
+
+// "New sermon": make its (empty) document now, so it has a page from the start.
+export async function ensureSermonDoc(supabase, { churchId, userId, series }) {
+  const name = (series || '').trim();
+  if (!churchId || !userId || !name) return { error: new Error('missing') };
+  const { data: found } = await supabase.from('church_notes').select('id')
+    .eq('church_id', churchId).eq('author_id', userId).eq('source', DOC_SOURCE).eq('series', name).limit(1);
+  if (found?.length) return { id: found[0].id };
+  const { data, error } = await supabase.from('church_notes').insert({
+    church_id: churchId, author_id: userId, title: name, body: '', series: name, source: DOC_SOURCE,
+  }).select('id').single();
+  return { error, id: data?.id };
 }
 
 // Paste a section onto the end of the session's document, creating it on first use.

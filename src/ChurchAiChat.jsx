@@ -10,7 +10,7 @@ import { PERSON_TYPES } from './constants.js';
 import { PER_TYPE } from './prompts.js';
 import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE_ID } from './bibleRefUtils.js';
 import { readConvs, writeConvs } from './studySessions.js';
-import { appendToSermonDoc, section } from './lib/sermonDoc.js';
+import { appendToSermonDoc, section, splitSections, listSermonDocs, ensureSermonDoc } from './lib/sermonDoc.js';
 
 const PASTORAL_SYSTEM = `You are a theological assistant for Christian church leaders and pastors. You speak from within the historic Christian faith — you hold that Jesus is Lord, that the Bible is the authoritative Word of God, and that the gospel is true. You are not a neutral academic observer. You are a well-read, pastorally grounded colleague helping a minister do their work better.
 
@@ -245,7 +245,7 @@ function HistoryModal({ open, onClose, conversations, onLoad, onDelete, onNew })
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened, onSessionTitle }) {
+export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened, onSessionTitle, newSermonRequest }) {
   const userId  = session?.user?.id;
   const plan    = churchPlan ?? 'church_base';
   const ttsVoice = profile?.tts_voice ?? 'onyx';
@@ -538,13 +538,13 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
 
   // ── Conversation management ───────────────────────────────────────────────
   function newConversation() {
-    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSaveError(null); setFlaggedMsgs(new Set());
+    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setSaveError(null); setFlaggedMsgs(new Set());
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setConvId(id); setConvTitle('New conversation');
   }
   function loadConversation(conv) {
     setConvId(conv.id); setConvTitle(conv.title);
-    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set());
+    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedToNoteIdx({}); setSavedParts({});
   }
   function deleteConversation(id) {
     setHistory((prev) => { const next = prev.filter((c) => c.id !== id); writeConvs(userId, churchId, next); return next; });
@@ -562,14 +562,40 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     onSessionOpened?.();
   }, [openSessionTitle]);
 
-  // Existing note series suggested when naming a session — so new research can
-  // join an existing series (notes saved here land under the session title)
-  const [seriesOptions, setSeriesOptions] = useState([]);
-  useEffect(() => {
-    if (!churchId) return;
-    supabase.from('church_notes').select('series').eq('church_id', churchId).not('series', 'is', null)
-      .then(({ data }) => setSeriesOptions([...new Set((data ?? []).map((r) => r.series?.trim()).filter(Boolean))].sort()), () => {});
-  }, [churchId]);
+  // The sermons this church has a document for, newest first. The session title
+  // doubles as a picker: bring up an old sermon, or one made ahead of time.
+  const [sermons, setSermons] = useState([]);
+  const [sermonMenuOpen, setSermonMenuOpen] = useState(false);
+  const [newSermonName, setNewSermonName] = useState('');
+  function refreshSermons() { listSermonDocs(supabase, churchId).then(setSermons, () => {}); }
+  useEffect(() => { refreshSermons(); }, [churchId]);
+  function switchToSermon(title) {
+    setSermonMenuOpen(false);
+    if (title === convTitle) return;
+    const conv = history.find((c) => c.title === title);
+    if (conv) loadConversation(conv);
+    else { newConversation(); setConvTitle(title); }
+  }
+  async function createSermon(rawName) {
+    const name = (rawName || '').trim();
+    if (!name || !churchId || !userId) return;
+    setSermonMenuOpen(false); setNewSermonName('');
+    newConversation(); setConvTitle(name);
+    await ensureSermonDoc(supabase, { churchId, userId, series: name });
+    refreshSermons();
+    onNoteSaved?.();
+  }
+  // "New sermon" pressed in the notes pane
+  useEffect(() => { if (newSermonRequest?.name) createSermon(newSermonRequest.name); }, [newSermonRequest?.n]);
+  // Add one part of an answer to the sermon's page
+  const [savedParts, setSavedParts] = useState({});
+  async function savePartToNotes(msgIdx, partIdx, md) {
+    const key = `${msgIdx}:${partIdx}`;
+    if (!churchId || !userId || savedParts[key]) return;
+    const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
+    const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.part(md) });
+    if (!error) { setSavedParts((prev) => ({ ...prev, [key]: true })); onNoteSaved?.(); refreshSermons(); }
+  }
 
   return (
     <>
@@ -584,13 +610,46 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
             <input
               value={convTitle === 'New conversation' ? '' : convTitle}
               onChange={e => setConvTitle(e.target.value || 'New conversation')}
-              placeholder="Name this session…"
-              list="study-session-series"
-              style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: C.text, letterSpacing: '-0.01em', padding: 0, flex: 1, minWidth: 0 }}
+              placeholder="Name this sermon…"
+              style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: C.text, letterSpacing: '-0.01em', padding: 0, flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
             />
-            <datalist id="study-session-series">
-              {seriesOptions.map((s) => <option key={s} value={s} />)}
-            </datalist>
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <button
+                onClick={() => { if (!sermonMenuOpen) refreshSermons(); setSermonMenuOpen((v) => !v); }}
+                title="Your sermons"
+                style={{ background: sermonMenuOpen ? 'rgba(184,115,58,0.18)' : 'transparent', border: `1px solid ${sermonMenuOpen ? T.gold : C.border}`, color: C.soft, borderRadius: 999, padding: '4px 10px', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}
+              >
+                Sermons <span style={{ fontSize: 9, opacity: 0.6 }}>▾</span>
+              </button>
+              {sermonMenuOpen && <div onClick={() => setSermonMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
+              {sermonMenuOpen && (
+                <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: T.white, border: `1px solid ${T.line}`, borderRadius: 14, boxShadow: '0 8px 32px rgba(44,24,16,0.18)', width: 'min(340px, 80vw)', zIndex: 200, overflow: 'hidden' }}>
+                  <form onSubmit={(e) => { e.preventDefault(); createSermon(newSermonName); }} style={{ display: 'flex', gap: 6, padding: 10, borderBottom: `1px solid ${T.line}` }}>
+                    <input
+                      autoFocus value={newSermonName} onChange={(e) => setNewSermonName(e.target.value)}
+                      placeholder="New sermon name…"
+                      style={{ flex: 1, minWidth: 0, border: `1px solid ${T.line}`, borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: T.sans, color: T.ink, background: T.parchment, outline: 'none' }}
+                    />
+                    <button type="submit" disabled={!newSermonName.trim()} style={{ background: T.ink, color: T.cream, border: 'none', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: newSermonName.trim() ? 1 : 0.5 }}>Create</button>
+                  </form>
+                  <div style={{ maxHeight: 320, overflowY: 'auto' }}>
+                    {sermons.length === 0 && (
+                      <div style={{ padding: '14px 14px', fontSize: 12.5, color: T.inkMuted, lineHeight: 1.5 }}>No sermons yet. Name one above to start its page.</div>
+                    )}
+                    {sermons.map((sm) => {
+                      const active = sm.title === convTitle;
+                      return (
+                        <button key={sm.id} onClick={() => switchToSermon(sm.title)}
+                          style={{ width: '100%', textAlign: 'left', background: active ? 'rgba(184,115,58,0.10)' : 'none', border: 'none', borderBottom: `1px solid ${T.line}`, padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
+                          <span style={{ fontFamily: T.serif, fontSize: 14, fontWeight: 600, color: active ? T.goldDark : T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sm.title}</span>
+                          <span style={{ fontSize: 11, color: T.inkMuted, flexShrink: 0 }}>{new Date(sm.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -816,7 +875,28 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                     <div data-msg-role="assistant" style={{ maxWidth: '100%', background: 'transparent', fontSize: 15, lineHeight: 1.72, color: C.text, fontFamily: T.serif, letterSpacing: '-0.01em', wordBreak: 'break-word' }}>
                       {isStreaming
                         ? <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>
-                        : <MsgText text={m.content} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain={m.role === 'assistant'} />
+                        : (() => {
+                          // A finished answer shows its parts, each with its own "add to notes"
+                          const parts = canAct && churchId ? splitSections(m.content) : [];
+                          if (parts.length < 2) return <MsgText text={m.content} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain={m.role === 'assistant'} />;
+                          return parts.map((part, k) => {
+                            const added = savedParts[`${i}:${k}`];
+                            return (
+                              <div key={k} style={{ padding: '10px 0 8px', borderTop: k ? `1px solid ${C.border}` : 'none' }}>
+                                <MsgText text={part} onRefClick={handleRefClick} refStatus={refStatusMap[i]} plain />
+                                <div style={{ marginTop: 6 }}>
+                                  <button
+                                    onClick={() => savePartToNotes(i, k, part)}
+                                    title={added ? 'Added to this sermon\'s notes' : 'Add just this part to this sermon\'s notes'}
+                                    style={{ background: added ? 'rgba(61,107,53,0.10)' : 'transparent', border: `1px solid ${added ? 'rgba(61,107,53,0.35)' : C.border}`, color: added ? '#3d6b35' : C.soft, borderRadius: 999, padding: '3px 11px', fontSize: 11.5, fontFamily: T.sans, fontWeight: 600, letterSpacing: 0, cursor: added ? 'default' : 'pointer' }}
+                                  >
+                                    {added ? '✓ Added to notes' : '＋ Add this part to notes'}
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()
                       }
                     </div>
 
@@ -828,10 +908,10 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                         {churchId && (
                           <ActionBtn
                             onClick={() => saveToNotes(i)}
-                            title={savedToNoteIdx[i] ? 'Saved to Notes' : 'Save to Notes'}
+                            title={savedToNoteIdx[i] ? 'The whole answer is on this sermon\'s page' : 'Add the whole answer to this sermon\'s page'}
                             active={savedToNoteIdx[i]}
                           >
-                            📝 {savedToNoteIdx[i] ? 'Noted' : 'Note'}
+                            📝 {savedToNoteIdx[i] ? 'Whole answer added' : 'Add whole answer'}
                           </ActionBtn>
                         )}
 
