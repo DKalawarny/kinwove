@@ -420,6 +420,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     setMessages(next);
     setBusy(true);
     let assistantContent = '';
+    let fromSaved = false;
     try {
       const researchSystem = researchMemory
         ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\nThe pastor is mid-series. Use this to connect dots across weeks, reference established terms and decisions naturally, as a colleague who was in the room. Do not announce that you have memory.\n${researchMemory}`
@@ -430,7 +431,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode }),
+        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode, researchVersion: readerVersion.id }),
       });
       if (res.status === 429) {
         // Limit reached — show the upgrade wall, and put the question back in
@@ -456,6 +457,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
           const data = lines.find((l) => l.startsWith('data: '))?.slice(6);
           if (!ev || !data) continue;
           let payload; try { payload = JSON.parse(data); } catch { continue; }
+          if (ev === 'cache_hit') fromSaved = true;
           if (ev === 'text') {
             assistantContent += payload.delta;
             setMessages((m) => { const c = m.slice(); c[c.length - 1] = { role: 'assistant', content: c[c.length - 1].content + payload.delta }; return c; });
@@ -466,7 +468,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     } finally {
       setBusy(false);
       if (assistantContent) {
-        aiUsage.increment();
+        if (!fromSaved) aiUsage.increment();
         validateRefsForMsg(next.length, assistantContent);
         if (researchMode) {
           const allMsgs = [...next.map((m) => ({ role: m.role, content: m.content })), { role: 'assistant', content: assistantContent }];
@@ -610,11 +612,12 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     const readerVersion = readingVersion();
     const system = `${researchMemory ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\n${researchMemory}` : RESEARCH_SYSTEM}\n\n── THE PASTOR'S TRANSLATION ──\nThe pastor reads in the ${readerVersion.name}. Quote the passage in that translation, with its reference in parentheses.`;
     let text = '';
+    let fromSaved = false;
     try {
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: [...messages.slice(0, i + 1).map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: moreRequest(tab, question) }], personType, plan, groundCommentary: true }),
+        body: JSON.stringify({ system, messages: [...(i === 1 ? [] : messages.slice(0, i + 1).map((m) => ({ role: m.role, content: m.content }))), { role: 'user', content: moreRequest(tab, question) }], personType, plan, groundCommentary: true, researchVersion: readerVersion.id }),
       });
       if (res.status === 429) { setServerLimit(true); put({ loading: false, error: 'limit' }); return; }
       if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
@@ -632,6 +635,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
           const data = lines.find((l) => l.startsWith('data: '))?.slice(6);
           if (!ev || !data) continue;
           let payload; try { payload = JSON.parse(data); } catch { continue; }
+          if (ev === 'cache_hit') fromSaved = true;
           if (ev === 'text') { text += payload.delta; put({ text }); }
           else if (ev === 'error') throw new Error(payload.message || 'stream error');
         }
@@ -639,7 +643,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       put({ text: splitVoices(text).body, loading: false });
       const done = splitVoices(text).body;
       if (done) setMessages((m) => m.map((x, k) => (k === i ? { ...x, more: { ...(x.more ?? {}), [key]: done } } : x)));
-      if (text) aiUsage.increment();
+      if (text && !fromSaved) aiUsage.increment();
     } catch {
       put({ loading: false, error: text ? null : 'failed' });
     }

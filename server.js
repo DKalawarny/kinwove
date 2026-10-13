@@ -1445,10 +1445,13 @@ app.post('/api/chat', optionalAuth, limitEither(
   const isFirstTurn = messages.length === 1 && messages[0].role === 'user';
 
   // Never replay a stored answer to someone in crisis — they get a live one.
-  // Sermon Research is its own prompt (and quotes the pastor's translation), so it
-  // neither reads from nor writes to the cache that Ask answers share.
-  if (isFirstTurn && personType && !hasImages && !internal && !crisisBypass && !groundCommentary) {
-    const cached = await lookupCachedAnswer(personType, lastUserMsg);
+  // Sermon Research is its own prompt and quotes the pastor's translation, so its
+  // answers are stored apart from Ask's, one set per translation. The same research
+  // question (or the same tab under it) is answered once and replayed after that.
+  const researchVersion = String(req.body?.researchVersion ?? '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40);
+  const cacheType = groundCommentary ? (researchVersion ? `research-v1:${researchVersion}` : null) : personType;
+  if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass) {
+    const cached = await lookupCachedAnswer(cacheType, lastUserMsg);
     if (cached?.answer) {
       send('cache_hit', { id: cached.id });
       // Replay at live-generation pace (~570 chars/s with a beat of "thought"
@@ -1458,7 +1461,8 @@ app.post('/api/chat', optionalAuth, limitEither(
         send('text', { delta: cached.answer.slice(i, i + 16) });
         await new Promise((r) => setTimeout(r, 28));
       }
-      incrementAiUsage(req.userId, usagePeriod);
+      // a research answer already paid for is not charged to the pastor again
+      if (!groundCommentary) incrementAiUsage(req.userId, usagePeriod);
       send('done', { stop_reason: 'end_turn', cached: true });
       res.end();
       // Fire-and-forget: bump hit count + log event.
@@ -1595,8 +1599,8 @@ app.post('/api/chat', optionalAuth, limitEither(
     // Never cache image conversations — every image is unique context.
     // ...and never write one into the shared cache: qa_cache holds question_raw
     // verbatim with no user_id, and a crisis disclosure has no business there.
-    if (isFirstTurn && personType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass && !groundCommentary) {
-      writeCacheEntry({ personType, question: lastUserMsg, answer: fullText, model });
+    if (isFirstTurn && cacheType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass) {
+      writeCacheEntry({ personType: cacheType, question: lastUserMsg, answer: fullText, model });
     }
     logQaEvent({
       personType,
