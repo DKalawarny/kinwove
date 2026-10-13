@@ -588,12 +588,9 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const sermonBar = (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, marginRight: 8 }}>
       <KinwoveStar size={15} style={{ flexShrink: 0 }} />
-      <input
-        value={convTitle === 'New conversation' ? '' : convTitle}
-        onChange={e => setConvTitle(e.target.value || 'New conversation')}
-        placeholder="Name this sermon…"
-        style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: B.text, letterSpacing: '-0.01em', padding: 0, flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
-      />
+      <span style={{ fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: convTitle === 'New conversation' ? B.soft : B.text, opacity: convTitle === 'New conversation' ? 0.7 : 1, letterSpacing: '-0.01em', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {convTitle === 'New conversation' ? 'No sermon open' : convTitle}
+      </span>
       <div style={{ position: 'relative', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
         <button
           onClick={() => { if (!sermonMenuOpen) refreshSermons(); setSermonMenuOpen((v) => !v); }}
