@@ -412,11 +412,13 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const [serverLimit, setServerLimit] = useState(false);
   const atLimit = aiUsage.atLimit || serverLimit;
 
-  async function send(text) {
+  async function send(text, opts = {}) {
     const prompt = (text ?? input).trim();
     if (!prompt || busy || atLimit) return;
     setInput(''); setError(null); setTimeout(() => inputRef.current?.focus(), 0);
-    const next = [...messages, { role: 'user', content: prompt }];
+    // "Fresh answer" asks the opening question again from a clean start
+    if (opts.fresh) { setMore({}); setSavedParts({}); setSavedToNoteIdx({}); }
+    const next = [...(opts.fresh ? [] : messages), { role: 'user', content: prompt }];
     setMessages(next);
     setBusy(true);
     let assistantContent = '';
@@ -431,7 +433,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode, researchVersion: readerVersion.id }),
+        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode, researchVersion: readerVersion.id, fresh: opts.fresh === true }),
       });
       if (res.status === 429) {
         // Limit reached — show the upgrade wall, and put the question back in
@@ -929,6 +931,13 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                             active={savedToNoteIdx[i]}
                           >
                             📝 {savedToNoteIdx[i] ? 'Whole answer added' : 'Add whole answer'}
+                          </ActionBtn>
+                        )}
+
+                        {/* Fresh answer: only on the opening answer, before any follow-up */}
+                        {researchMode && i === 1 && messages.length === 2 && (
+                          <ActionBtn onClick={() => send(messages[0].content, { fresh: true })} title="Ask this again for a new take">
+                            ↻ Fresh answer
                           </ActionBtn>
                         )}
 

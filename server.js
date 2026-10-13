@@ -1450,7 +1450,9 @@ app.post('/api/chat', optionalAuth, limitEither(
   // question (or the same tab under it) is answered once and replayed after that.
   const researchVersion = String(req.body?.researchVersion ?? '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40);
   const cacheType = groundCommentary ? (researchVersion ? `research-v1:${researchVersion}` : null) : personType;
-  if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass) {
+  // "Fresh answer": the pastor asked for a new take, so skip the saved copy this once
+  const wantsFresh = groundCommentary && req.body?.fresh === true;
+  if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass && !wantsFresh) {
     const cached = await lookupCachedAnswer(cacheType, lastUserMsg);
     if (cached?.answer) {
       send('cache_hit', { id: cached.id });
