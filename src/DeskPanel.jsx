@@ -176,7 +176,7 @@ function PodiumView({ note, onClose }) {
 }
 
 // ── Notes section ─────────────────────────────────────────────────────────────
-export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon, currentSeries = '', wide = false }) {
+export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon, currentSeries = '', wide = false, live = false }) {
   const userId = session?.user?.id;
   const [notes, setNotes]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -185,6 +185,13 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
   const [formBody, setFormBody]   = useState('');
   const [creating, setCreating]   = useState(false);
   const [podiumNote, setPodiumNote] = useState(null);
+  // Live mode (the Study desk): the open session's document stays open in the
+  // pane, and each thing saved from the chat or the Bible lands in it as you watch.
+  const [showList, setShowList] = useState(false);
+  const lastBodyRef = useRef('');   // the document body as last read from / written to the database
+  const isDirtyRef  = useRef(false);
+  const editingIdRef = useRef(null);
+  const autoSaveRef = useRef(null);
 
   const [editingId, setEditingId]           = useState(null);
   const [editTitle, setEditTitle]           = useState('');
@@ -268,9 +275,40 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
     if (!churchId) return;
     supabase.from('church_notes')
       .select('*').eq('church_id', churchId).order('updated_at', { ascending: false })
-      .then(({ data }) => { setNotes(data ?? []); setLoading(false); }, () => setLoading(false));
+      .then(({ data }) => { setNotes(data ?? []); setLoading(false); syncOpenDoc(data ?? []); }, () => setLoading(false));
   }
   useEffect(() => { loadNotes(); }, [churchId, refreshKey]);
+
+  // Something was just pasted onto the open document from outside the editor.
+  // Bring it in without losing anything typed here that isn't saved yet.
+  function syncOpenDoc(list) {
+    const id = editingIdRef.current;
+    if (!live || !id || !editorRef.current) return;
+    const fresh = list.find(n => n.id === id);
+    if (!fresh || fresh.body === lastBodyRef.current) return;
+    const prev = lastBodyRef.current || '';
+    if (!isDirtyRef.current) {
+      editorRef.current.innerHTML = toEditorHtml(fresh.body);
+      lastBodyRef.current = fresh.body;
+    } else if (prev && (fresh.body || '').startsWith(prev)) {
+      editorRef.current.insertAdjacentHTML('beforeend', fresh.body.slice(prev.length));
+      saveEdit(id);
+    } else return;
+    requestAnimationFrame(() => editorRef.current?.lastElementChild?.scrollIntoView({ block: 'end', behavior: 'smooth' }));
+  }
+
+  // Keep the open session's document open in the pane.
+  const liveDoc = live && currentSeries
+    ? notes.find(n => n.source === DOC_SOURCE && (n.series?.trim() || '') === currentSeries.trim())
+    : null;
+  useEffect(() => {
+    if (!live || showList) return;
+    if (liveDoc && editingId !== liveDoc.id && !isDirtyRef.current) startEdit(liveDoc);
+    if (!liveDoc && editingId && !isDirtyRef.current) setEditingId(null);
+  }, [live, showList, liveDoc?.id, currentSeries]);
+  useEffect(() => { isDirtyRef.current = isDirty; }, [isDirty]);
+  useEffect(() => { editingIdRef.current = editingId; }, [editingId]);
+  const liveOpen = live && !showList && !!liveDoc && editingId === liveDoc.id;
 
   // Populate contentEditable when entering edit mode
   useEffect(() => {
@@ -288,6 +326,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
       }
     } catch { /* ignore */ }
     setShowDonePrompt(false);
+    if (live && !showList) return;
     editorRef.current.focus();
     // move cursor to end
     const range = document.createRange();
@@ -310,6 +349,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
 
   function startEdit(note) {
     setEditInitBody(note.body || '');
+    lastBodyRef.current = note.body || '';
     setEditTitle(note.title || '');
     setEditSeries(note.series || '');
     setSaveState('idle');
@@ -327,6 +367,8 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
     const { error } = await supabase.from('church_notes').update(updates).eq('id', noteId);
     if (error) { setSaveState('error'); return; }
     setNotes(prev => prev.map(n => n.id === noteId ? { ...n, ...updates } : n));
+    lastBodyRef.current = html;
+    isDirtyRef.current = false;
     setIsDirty(false);
     try { const k = editDraftKey(noteId); if (k) localStorage.removeItem(k); } catch { /* ignore */ }
     setSaveState('saved');
@@ -376,7 +418,13 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 0 10px', flexShrink: 0 }}>
         <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: T.inkMuted, flex: 1 }}>Notes</span>
-        {notes.length > 1 && (
+        {live && liveDoc && (
+          <button onClick={() => { if (!showList && isDirtyRef.current) saveEdit(editingId); setShowList(v => !v); if (!showList) setEditingId(null); }}
+            style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 9px', fontSize: 11, color: T.inkMuted, cursor: 'pointer' }}>
+            {showList ? 'This sermon' : 'All notes'}
+          </button>
+        )}
+        {notes.length > 1 && !liveOpen && (
           <button onClick={() => printAllNotes(notes)} title="Print all notes"
             style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 9px', fontSize: 11, color: T.inkMuted, cursor: 'pointer' }}>
             🖨 All
@@ -430,11 +478,19 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
         </div>
       )}
 
+      {live && currentSeries && !liveDoc && !loading && !showList && (
+        <div style={{ background: 'linear-gradient(160deg,#FFFCF0,#FFF8E4)', border: '1px dashed rgba(184,115,58,0.35)', borderRadius: 12, padding: '14px 14px', marginBottom: 12, fontSize: 12.5, color: T.inkSoft, lineHeight: 1.6, flexShrink: 0 }}>
+          <div style={{ fontFamily: T.serif, fontSize: 15, fontWeight: 600, color: T.ink, marginBottom: 4 }}>{currentSeries}</div>
+          Everything you save for this sermon lands here on one page: answers, verses, and your own words.
+        </div>
+      )}
+
       {notes.length > 0 && (() => {
+        const shown = liveOpen ? notes.filter(n => n.id === editingId) : notes;
         // Derive sorted series list + group notes
-        const allSeries = [...new Set(notes.map(n => n.series?.trim()).filter(Boolean))].sort();
+        const allSeries = [...new Set(shown.map(n => n.series?.trim()).filter(Boolean))].sort();
         const grouped = {};
-        notes.forEach(n => {
+        shown.forEach(n => {
           const key = n.series?.trim() || '';
           (grouped[key] = grouped[key] ?? []).push(n);
         });
@@ -537,14 +593,16 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                     contentEditable
                     suppressContentEditableWarning
                     onInput={() => {
+                      isDirtyRef.current = true;
                       setIsDirty(true); setShowDonePrompt(false);
+                      if (liveOpen) { clearTimeout(autoSaveRef.current); autoSaveRef.current = setTimeout(() => saveEdit(note.id), 1200); }
                       try {
                         const k = editDraftKey(note.id);
                         if (k) localStorage.setItem(k, editorRef.current.innerHTML);
                       } catch { /* ignore */ }
                     }}
                     onKeyDown={e => { if (e.key === 'Enter' && e.metaKey) { e.preventDefault(); saveEdit(note.id); } }}
-                    style={{ width: '100%', minHeight: wide ? 420 : 180, fontSize: wide ? 17 : 14, fontFamily: T.display, color: T.ink, outline: 'none', lineHeight: 1.75, boxSizing: 'border-box' }}
+                    style={{ width: '100%', minHeight: wide ? 420 : liveOpen ? 380 : 180, fontSize: wide ? 17 : liveOpen ? 15 : 14, fontFamily: T.display, color: T.ink, outline: 'none', lineHeight: 1.75, boxSizing: 'border-box' }}
                   />
                   {/* Action bar */}
                   <div style={{ display: showDonePrompt ? 'none' : 'flex', alignItems: 'center', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
@@ -562,10 +620,12 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
                       Podium
                     </button>
+                    {!liveOpen && (
                     <button onClick={() => { if (isDirty) setShowDonePrompt(true); else setEditingId(null); }}
                       style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
                       Done
                     </button>
+                    )}
                     <div style={{ flex: 1 }} />
                     {confirmDelete === note.id ? (
                       <>
@@ -742,6 +802,7 @@ const BIBLE_TOP_OFFSET = 126;
 
 export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right', currentSeries = '' }) {
   const [activeTab, setActiveTab] = useState(initialTab ?? 'bible');
+  const [bibleSaves, setBibleSaves] = useState(0); // a verse note saved in the Bible pane refreshes the notes pane
 
   // Three-pane Bible/Notes split — draggable, remembered (% of desk width).
   // Order is flippable too (divider ⇄): bible-first | notes-first.
@@ -757,7 +818,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
   }
   const [split3, setSplit3] = useState(() => {
     const saved = localStorage.getItem('kw_desk_split3');
-    return saved ? Math.max(30, Math.min(70, parseInt(saved, 10))) : 55;
+    return saved ? Math.max(30, Math.min(70, parseInt(saved, 10))) : 46;
   });
   function onSplitDragStart(e) {
     e.preventDefault();
@@ -811,6 +872,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
                 topOffset={BIBLE_TOP_OFFSET}
                 churchNoteContext={churchId}
                 churchNoteSeries={currentSeries}
+                onChurchNoteSaved={() => setBibleSaves(n => n + 1)}
               />
             </div>
           </Suspense>
@@ -841,7 +903,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
         </div>
         {/* Notes pane */}
         <div style={{ flex: `${100 - split3} 1 0`, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />
+          <NotesSection live session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />
         </div>
       </div>
     );
@@ -909,11 +971,12 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
                 topOffset={BIBLE_TOP_OFFSET}
                 churchNoteContext={churchId}
                 churchNoteSeries={currentSeries}
+                onChurchNoteSaved={() => setBibleSaves(n => n + 1)}
               />
             </div>
           </Suspense>
         )}
-        {activeTab === 'notes' && <NotesSection session={session} churchId={churchId} refreshKey={refreshKey} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
+        {activeTab === 'notes' && <NotesSection live session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
       </div>
     </div>
   );

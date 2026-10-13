@@ -1144,7 +1144,7 @@ function IlluminatedCap({ seedKey, letter, quote, red, dark, scale = 1 }) {
   );
 }
 
-export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, topOffset = 0, fillParent = false, churchNoteContext = null, churchNoteSeries = '' }) {
+export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, topOffset = 0, fillParent = false, churchNoteContext = null, churchNoteSeries = '', onChurchNoteSaved }) {
   const uid = session?.user?.id ?? 'guest';
 
   // ── Navigation state ────────────────────────────────────────────────────────
@@ -1994,6 +1994,7 @@ Return up to 5 matches, best first. If nothing matches, return []. No explanatio
     if (churchNoteContext) {
       const verseText = noteVerse.text?.replace(/^["\u201c\u201d]+|["\u201c\u201d]+$/g, '').trim() ?? '';
       await appendToSermonDoc(supabase, { churchId: churchNoteContext, userId: session.user.id, series: noteSeries, html: section.verse(verseRef, (noteVerse.text ?? '').trim() || verseText, noteText.trim()) });
+      onChurchNoteSaved?.();
       setNoteSaving(false);
       setNoteOpen(false);
       return;
@@ -3018,7 +3019,7 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                         : await supabase.from('user_notes').insert({
                             user_id: session.user.id, title, body, source: 'bible',
                           });
-                      if (!error) setRdSavedIdx((prev) => ({ ...prev, [i]: true }));
+                      if (!error) { setRdSavedIdx((prev) => ({ ...prev, [i]: true })); if (churchNoteContext) onChurchNoteSaved?.(); }
                     }}
                     title={rdSavedIdx[i] ? 'Saved to Notes' : 'Save to Notes'}
                     style={{

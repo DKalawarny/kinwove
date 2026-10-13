@@ -2447,7 +2447,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   // Three-pane desk needs more room — its own remembered width
   const [deskWidth3, setDeskWidth3] = useState(() => {
     const saved = localStorage.getItem('kw_desk_width3');
-    return saved ? Math.max(560, Math.min(1000, parseInt(saved, 10))) : 760;
+    return saved ? Math.max(560, Math.min(1000, parseInt(saved, 10))) : 900;
   });
   // Which side the desk lives on (chat takes the other) — divider ⇄ flips it
   const [deskSide, setDeskSide] = useState(() => (localStorage.getItem('kw_desk_side') === 'left' ? 'left' : 'right'));
