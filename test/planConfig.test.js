@@ -31,7 +31,7 @@ test('expired plan gates AI to zero — AI-only gating, not full lockout', () =>
 test('church plans keep their expected caps', () => {
   assert.equal(PLAN_LIMITS.church_base.limit, 250);
   assert.equal(PLAN_LIMITS.church_pro.limit, 600);
-  assert.equal(PLAN_LIMITS.trial.limit, 100);
+  assert.equal(PLAN_LIMITS.trial.limit, 200);
   assert.equal(SERMON_PAID_LIMITS.church_base, 250);
 });
 

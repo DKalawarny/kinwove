@@ -14,7 +14,7 @@ export const TRIAL_DAYS = 35;
 // 'expired' = trial ended + unpaid → AI off, rest of dashboard still usable.
 export const PLAN_LIMITS = {
   free:              { period: 'weekly',        limit: 5   },  // 5 free questions/week
-  trial:             { period: 'church-trial',  limit: 100 },  // church 5-week trial taste
+  trial:             { period: 'church-trial',  limit: 200 },  // church 5-week trial taste
   premium:           { period: 'monthly',       limit: 200 },  // Individual
   premium_plus:      { period: 'monthly',       limit: 270 },  // Individual Pro
   church_base:       { period: 'monthly',       limit: 250 },  // Church Base

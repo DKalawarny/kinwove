@@ -176,7 +176,7 @@ function PodiumView({ note, onClose }) {
 }
 
 // ── Notes section ─────────────────────────────────────────────────────────────
-export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon, currentSeries = '', wide = false, live = false, onNewSermon }) {
+export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession, onUseInSermon, currentSeries = '', wide = false, live = false }) {
   const userId = session?.user?.id;
   const [notes, setNotes]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -188,8 +188,6 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
   // Live mode (the Study desk): the open session's document stays open in the
   // pane, and each thing saved from the chat or the Bible lands in it as you watch.
   const [showList, setShowList] = useState(false);
-  const [namingSermon, setNamingSermon] = useState(false);
-  const [sermonName, setSermonName] = useState('');
   const lastBodyRef = useRef('');   // the document body as last read from / written to the database
   const isDirtyRef  = useRef(false);
   const editingIdRef = useRef(null);
@@ -420,12 +418,6 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 0 10px', flexShrink: 0 }}>
         <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: T.inkMuted, flex: 1 }}>Notes</span>
-        {live && onNewSermon && (
-          <button onClick={() => setNamingSermon(v => !v)}
-            style={{ background: namingSermon ? T.ink : T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '4px 12px', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-            {namingSermon ? 'Cancel' : '+ New sermon'}
-          </button>
-        )}
         {live && notes.length > 0 && (
           <button onClick={() => { if (!showList && isDirtyRef.current) saveEdit(editingId); setShowList(v => !v); if (!showList) setEditingId(null); }}
             style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 9px', fontSize: 11, color: T.inkMuted, cursor: 'pointer' }}>
@@ -443,15 +435,6 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
           style={{ background: showForm ? T.ink : 'transparent', color: showForm ? T.cream : T.inkMuted, border: `1px solid ${showForm ? T.ink : 'rgba(26,17,8,0.14)'}`, borderRadius: 999, padding: '4px 11px', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}
         >{showForm ? 'Cancel' : 'Add a note'}</button>}
       </div>
-
-      {namingSermon && (
-        <form onSubmit={(e) => { e.preventDefault(); const n = sermonName.trim(); if (!n) return; onNewSermon?.(n); setSermonName(''); setNamingSermon(false); setShowList(false); }}
-          style={{ display: 'flex', gap: 6, marginBottom: 10, flexShrink: 0 }}>
-          <input autoFocus value={sermonName} onChange={e => setSermonName(e.target.value)} placeholder="Name the sermon…"
-            style={{ flex: 1, minWidth: 0, border: '1px solid rgba(184,115,58,0.35)', borderRadius: 8, padding: '7px 10px', fontSize: 14, fontFamily: T.serif, fontWeight: 600, color: T.ink, background: '#FFFDF5', outline: 'none' }} />
-          <button type="submit" disabled={!sermonName.trim()} style={{ ...btnBase, background: T.ink, color: T.cream, opacity: sermonName.trim() ? 1 : 0.5 }}>Create</button>
-        </form>
-      )}
 
       {/* Quick-create form (plain text — immediately opens rich editor on create) */}
       {showForm && (
@@ -535,7 +518,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       {key || 'General notes'}
                     </span>
                     <div style={{ flex: 1, height: 1, background: key ? `rgba(184,115,58,0.25)` : 'rgba(26,17,8,0.08)' }} />
-                    {key && onOpenSession && sessionTitles.has(key) && (
+                    {key && onOpenSession && !live && sessionTitles.has(key) && (
                       <button
                         onClick={() => onOpenSession(key)}
                         title="Reopen this research session in the chat"
@@ -817,7 +800,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
 // matches DeskPanel content area: calc(100vh-130px) minus ~58px tab bar.
 const BIBLE_TOP_OFFSET = 126;
 
-export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right', currentSeries = '', onNewSermon }) {
+export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right', currentSeries = '' }) {
   const [activeTab, setActiveTab] = useState(initialTab ?? 'bible');
   const [bibleSaves, setBibleSaves] = useState(0); // a verse note saved in the Bible pane refreshes the notes pane
 
@@ -920,7 +903,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
         </div>
         {/* Notes pane */}
         <div style={{ flex: `${100 - split3} 1 0`, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <NotesSection live onNewSermon={onNewSermon} session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />
+          <NotesSection live session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />
         </div>
       </div>
     );
@@ -993,7 +976,7 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
             </div>
           </Suspense>
         )}
-        {activeTab === 'notes' && <NotesSection live onNewSermon={onNewSermon} session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
+        {activeTab === 'notes' && <NotesSection live session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
       </div>
     </div>
   );

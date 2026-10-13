@@ -12,6 +12,7 @@ import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE
 import { readConvs, writeConvs } from './studySessions.js';
 import { appendToSermonDoc, section, splitSections, listSermonDocs, ensureSermonDoc } from './lib/sermonDoc.js';
 import { splitVoices, MORE_KINDS, moreRequest } from './lib/researchMore.js';
+import { researchSystem } from './researchPrompt.js';
 
 const PASTORAL_SYSTEM = `You are a theological assistant for Christian church leaders and pastors. You speak from within the historic Christian faith — you hold that Jesus is Lord, that the Bible is the authoritative Word of God, and that the gospel is true. You are not a neutral academic observer. You are a well-read, pastorally grounded colleague helping a minister do their work better.
 
@@ -42,79 +43,6 @@ const PASTORAL_SYSTEM = `You are a theological assistant for Christian church le
 • Every scripture claim gets a citation (Book Chapter:Verse).
 • Never fabricate or misquote a verse. If uncertain of a reference, say so.
 • No filler openers. No sycophancy. Just good, grounded theology.`;
-
-const RESEARCH_SYSTEM = `You are a theological research assistant for Christian pastors and church leaders. You work like two colleagues in one: a seminary exegesis professor who knows the original languages, the critical debates, and the scholarly literature — and a seasoned expository preacher who knows how Spurgeon handled this text, what Lloyd-Jones emphasized, where congregations get hurt. Both voices matter. Your job is to give the pastor the most thorough, honest scholarly picture available so they can do their own thinking. You never tell a pastor what to preach, what angle to take, or how to apply the text — that is their work alone.
-
-── HOW TO ANSWER ──
-Answer what was asked, and stop. The pastor reads this on a screen beside an open Bible, and a wall of text loses them. The sections below are NOT the shape of your reply: they are a library the pastor opens one piece at a time, by tapping a tab under your answer. Give a section only when the pastor asks for it.
-
-Your reply to a question:
-• If it is about a passage, quote the key verse or verses first.
-• Then the answer itself in 120 to 220 words of plain prose: what the text is doing and the direct answer to the question. If scholars honestly split, say so in one or two sentences and name one voice on each side. No section labels, no headings, no tables, no lists of resources.
-• Do not preview what else you could cover. The tabs do that.
-• Last line, on its own, exactly in this form: VOICES: Name | Name | Name
-  Three or four scholars, preachers or church fathers with something specific to say on this exact question, spread across traditions. Only names you are certain addressed it. Surname is enough (Calvin, N.T. Wright, Augustine, Spurgeon).
-
-When the pastor asks for a specific section, a specific voice, or the full brief, give exactly that at full depth, with no VOICES line. If the pastor asks only for illustrations, give just those.
-
-── BOOK OVERVIEW ── (book-level or series-kickoff requests only)
-One paragraph: author, audience, occasion, the theological problem the letter is addressing, and the book's central claim in one sentence. No more.
-
-── SERIES SKELETON ── (book-level or multi-week requests only)
-Suggested passage divisions for a preaching series. For each unit: reference + one sentence on what it covers + the central tension or question in that unit. This is a structural map, not a prescription.
-
-── PASSAGE IN CONTEXT ──
-Where does this passage sit in the book's argument? What came immediately before and after? What is the author doing at this exact moment — building a case, pivoting, answering an objection, giving application, closing a thought? 2–3 sentences. This is the observation phase — what the text is doing before asking what it means.
-
-── LITERARY STRUCTURE ──
-What is the shape of this passage? Show the structure: chiasm, parallelism, list, contrast, inclusio, repeated words, rhetorical question, command + reason, or other devices. Show it visually where it helps. The structure often carries meaning the prose summary misses.
-
-── TRANSLATION COMPARISON ──
-Show the key contested verse(s) in ESV, NIV, KJV, NASB, and NLT side by side. Flag exactly where translations diverge. For each divergence, name the interpretive decision behind it — not just what they chose, but why the choice matters for meaning.
-
-── THE CENTRAL CLAIM ──
-One sentence. What is this text asserting — in the author's own terms? Not what to preach. The exegetical idea: the timeless theological claim the passage makes, stated as a complete thought. This is the anchor everything else hangs on.
-
-── CULTURAL & HISTORICAL BACKGROUND ──
-What does a 21st-century reader not know that a first-century reader knew instinctively? Cover the world behind the text: the city, the social structures, the economic realities, the political context, the religious landscape. What did this passage's original audience hear that we miss? Draw on the IVP Bible Background Commentary (Keener), Josephus, Philo, Greco-Roman sources, and archaeology where relevant. This is what makes the text's claims land with their original weight.
-
-── ORIGINAL LANGUAGE ──
-The key Greek or Hebrew words that unlock this passage. For each: original script, transliteration, pronunciation, Strong's number, full semantic range, translation comparison, verbal voice/tense/mood where it changes the meaning, and why this specific word matters for understanding what the author intended.
-
-── THE REAL DEBATES ──
-The 2–4 interpretive questions scholars actually contest. For each: state the question in plain language, name specific scholars on each side with their tradition, give their reasoning in 2–3 sentences each, and name what's driving the disagreement. No false consensus. No blending into one synthesized view.
-
-Draw from across traditions — select the voices most relevant to this passage:
-• Reformed — Calvin, Grudem, D.A. Carson, Douglas Moo, R.C. Sproul
-• Wesleyan/Arminian — Wesley, Adam Clarke, Thomas Oden, Craig Keener
-• Anglican/Evangelical — Stott, N.T. Wright, F.F. Bruce, I. Howard Marshall
-• Church Fathers — Chrysostom, Augustine, Origen, Jerome, Irenaeus
-• Critical/Academic — WBC, Hermeneia, NICNT/NICOT, Anchor Bible
-• Catholic — Aquinas, Jerome, modern Catholic exegesis where it adds meaningful perspective
-
-── EXPOSITORY VOICES ──
-How have the great expository preachers handled this text? 2–3 voices from: Spurgeon, Martyn Lloyd-Jones, John MacArthur, Tim Keller, Kent Hughes, Warren Wiersbe, Charles Simeon, John Stott. What did they emphasize? What did they see in this passage that the academics miss? 2–3 sentences per voice. These are different from the scholars above — these are preachers speaking to congregations, and that perspective is irreplaceable.
-
-── CROSS-REFERENCES ──
-4–6 passages that directly illuminate this text. For each: the reference, one sentence on the connection, and whether it confirms, complicates, or develops the reading.
-
-── PASTORAL WARNINGS ──
-Where do people get hurt by bad readings of this text? What are the most common misreadings — and what are the real-world consequences for a congregation? Where has this passage been used to harm, control, or exclude? Name it plainly so the pastor walks in with eyes open.
-
-── GO DEEPER ──
-4 resources: 2 exegetical commentaries (for original meaning and scholarly debate) + 2 expository commentaries (for preaching precedent). Exact title, author, one sentence on why it's the right tool for this passage specifically.
-
-── ILLUSTRATIONS ── (when the pastor asks for one, or a point genuinely begs it)
-Offer 3–6 varied options — a true story, an everyday analogy, a modern parallel, a historical example, an apt quotation, a striking statistic. For each: the illustration in 2–4 sentences, its source or origin, and the one truth it makes land. Vary the register — head and heart. Flag plainly any story you cannot verify: a mis-told or apocryphal illustration from the pulpit costs a pastor credibility, so mark "verify before using" on anything you're not certain of. If the pastor asks ONLY for illustrations, give just this — don't wrap it in the full brief.
-
-SOURCING & TRUST (this is what earns a pastor's confidence):
-• Cite by name, and name the specific work where you can — "Wright, The Resurrection of the Son of God", not just "Wright".
-• Author and title are enough. Do NOT attach a commentary series, publisher, volume, year, or page number to a work unless you are certain of it. A book placed in the wrong series (calling something NICNT, Hermeneia, WBC, or Pillar when it belongs elsewhere) is exactly the slip a pastor who owns the book will catch. When you are not certain, leave the series out.
-• Every scripture reference: Book Chapter:Verse.
-• Be honest about the medium: your citations are recalled from training, not pulled from a live library. So never invent a precise quotation, a page number, or a source you're unsure exists. Attribute the idea, paraphrase the claim, and tell the pastor to verify any direct quote before preaching it. Say "I'm recalling this as…" when your confidence is soft. A pastor's credibility rests on you getting this right — accuracy over impressiveness, always.
-• Do not hide complexity or manufacture certainty where real debate exists.
-• No filler openers. No sycophancy. Get to the substance in the first line.
-• Never tell the pastor what to preach, what to say, or how to apply the text. That is their work alone.`;
 
 const STARTERS = [
   'What does the Greek word "charis" (grace) actually mean in its New Testament context?',
@@ -266,7 +194,6 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const [researchMode, setResearchMode] = useState(true);
   const C = dark ? DARK : LIGHT;
   function toggleDark() { setDark((d) => { localStorage.setItem('church_ask_dark', d ? '0' : '1'); return !d; }); }
-  function toggleResearch() { setResearchMode((v) => { const next = !v; localStorage.setItem('church_ask_research', next ? '1' : '0'); return next; }); }
 
   const aiUsage = useAiUsage(userId, plan);
   const { speakingId, paused: ttsPaused, speak: speakMsg, stop: stopTts, pause: pauseTts, resume: resumeTts, rewind: rewindTts, supported: ttsSupported } = useTextToSpeech({ voice: ttsVoice });
@@ -291,29 +218,9 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const [copiedIdx, setCopiedIdx] = useState(null);
   const [flaggedMsgs, setFlaggedMsgs] = useState(new Set());
 
-  // Series memory
-  const [researchMemory, setResearchMemory] = useState(null); // raw text from DB
-
-  useEffect(() => {
-    if (!userId) return;
-    // research_memory moved to profile_secrets, where RLS is "your own row" —
-    // it used to sit on profiles, where any signed-in account could read anyone's.
-    supabase.from('profile_secrets').select('research_memory').eq('user_id', userId).maybeSingle()
-      .then(({ data }) => { if (data?.research_memory) setResearchMemory(data.research_memory); }, () => {});
-  }, [userId]);
-
-  function parseMemory(mem) {
-    if (!mem) return null;
-    const series   = (mem.match(/^SERIES:\s*(.+)/m) ?? [])[1]?.trim() ?? null;
-    const sessions = parseInt((mem.match(/^SESSIONS:\s*(\d+)/m) ?? [])[1] ?? '0', 10);
-    return series ? { series, sessions } : null;
-  }
-
-  async function clearResearchMemory() {
-    setResearchMemory(null);
-    newConversation();
-    await authedFetch('/api/research/clear-memory', { method: 'POST' });
-  }
+  // What this sermon's research has covered so far. Kept with the sermon's saved
+  // conversation, so one sermon's research never leaks into another's.
+  const [researchMemory, setResearchMemory] = useState(null);
 
   // Mode
   const [personType]     = useState(() => localStorage.getItem(`church_ask_mode_${userId}`) ?? 'deeper');
@@ -376,6 +283,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   }
   async function saveSelectionToNotes() {
     if (!selNote || selNote.saved || !churchId || !userId) return;
+    if (needSermon()) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     // A selected line is pasted onto the end of this session's one document.
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.clip(selNote.text) });
@@ -390,21 +298,21 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   // The desk (Bible pane, notes form) files things under the open session
   useEffect(() => { onSessionTitle?.(convTitle !== 'New conversation' ? convTitle : ''); }, [convTitle]);
 
-  // Persist conversation to localStorage
+  // Persist conversation to localStorage. A chat with no sermon open is listed in
+  // history under its first question, but that never becomes a sermon name.
   useEffect(() => {
     if (messages.length === 0) return;
     const firstUser = messages.find((m) => m.role === 'user')?.content ?? '';
-    const hasCustomTitle = convTitle !== 'New conversation';
-    const title = hasCustomTitle ? convTitle : (firstUser ? firstUser.slice(0, 70) + (firstUser.length > 70 ? '…' : '') : convTitle);
-    setConvTitle(title);
-    const updated = { id: convId, title, messages, updatedAt: Date.now() };
+    const named = convTitle !== 'New conversation';
+    const title = named ? convTitle : (firstUser ? firstUser.slice(0, 70) + (firstUser.length > 70 ? '…' : '') : convTitle);
+    const updated = { id: convId, title, named, messages, memory: researchMemory, updatedAt: Date.now() };
     setHistory((prev) => {
       const next = [updated, ...prev.filter((c) => c.id !== convId)].slice(0, 50);
       writeConvs(userId, churchId, next);
       return next;
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages]);
+  }, [messages, researchMemory, convTitle]);
 
   // ── Send ──────────────────────────────────────────────────────────────────
   // Server said limit reached (its count is authoritative and can differ from
@@ -424,16 +332,15 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     let assistantContent = '';
     let fromSaved = false;
     try {
-      const researchSystem = researchMemory
-        ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\nThe pastor is mid-series. Use this to connect dots across weeks, reference established terms and decisions naturally, as a colleague who was in the room. Do not announce that you have memory.\n${researchMemory}`
-        : RESEARCH_SYSTEM;
       const readerVersion = readingVersion();
-      const versionNote = `\n\n── THE PASTOR'S TRANSLATION ──\nThe pastor reads in the ${readerVersion.name}. When you quote the passage itself, quote it in that translation and label it, so it matches the Bible open beside this chat, and end the quotation with its reference in parentheses, like (John 3:16–18), so the pastor can tap it and check it. The translation comparison still shows the others.`;
-      const system = researchMode ? researchSystem + versionNote : PASTORAL_SYSTEM + (PER_TYPE[personType] ?? '');
+      // The opening question goes without this sermon's memory, so its answer can be saved and replayed
+      const system = researchMode
+        ? researchSystem({ versionName: readerVersion.name, memory: next.length === 1 ? null : researchMemory })
+        : PASTORAL_SYSTEM + (PER_TYPE[personType] ?? '');
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode, researchVersion: readerVersion.id, fresh: opts.fresh === true }),
+        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode, researchVersionName: readerVersion.name, fresh: opts.fresh === true }),
       });
       if (res.status === 429) {
         // Limit reached — show the upgrade wall, and put the question back in
@@ -477,7 +384,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
           authedFetch('/api/research/update-memory', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: allMsgs }),
+            body: JSON.stringify({ messages: allMsgs, perSermon: true, prior: researchMemory ?? '' }),
           }).then(r => r.json()).then(d => { if (d.memory) setResearchMemory(d.memory); }).catch(() => {});
         }
       }
@@ -518,6 +425,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   async function saveToNotes(assistantIdx) {
     if (!churchId || !userId) return;
     if (savedToNoteIdx[assistantIdx]) return;
+    if (needSermon()) return;
     const question = messages.slice(0, assistantIdx).reverse().find((m) => m.role === 'user')?.content ?? '';
     const answer   = splitVoices(messages[assistantIdx]?.content).body;
     if (!answer) return;
@@ -540,13 +448,19 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
 
   // ── Conversation management ───────────────────────────────────────────────
   function newConversation() {
-    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setMore({}); setSaveError(null); setFlaggedMsgs(new Set());
+    setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setMore({}); setResearchMemory(null); setSaveError(null); setFlaggedMsgs(new Set());
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setConvId(id); setConvTitle('New conversation');
   }
   function loadConversation(conv) {
-    setConvId(conv.id); setConvTitle(conv.title);
+    setConvId(conv.id); setConvTitle(conv.named === false ? 'New conversation' : conv.title); setResearchMemory(conv.memory ?? null);
     setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedToNoteIdx({}); setSavedParts({}); setMore({});
+  }
+  // "Clear this chat": empty the chat, keep the sermon open
+  function clearChat() {
+    const keep = convTitle;
+    newConversation();
+    setConvTitle(keep);
   }
   function deleteConversation(id) {
     setHistory((prev) => { const next = prev.filter((c) => c.id !== id); writeConvs(userId, churchId, next); return next; });
@@ -571,18 +485,28 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const [newSermonName, setNewSermonName] = useState('');
   function refreshSermons() { listSermonDocs(supabase, churchId).then(setSermons, () => {}); }
   useEffect(() => { refreshSermons(); }, [churchId]);
+  // a chat started with no sermon open: naming or picking a sermon keeps it
+  const looseChat = convTitle === 'New conversation' && messages.length > 0;
+  const [saveHint, setSaveHint] = useState(false);
+  // Saving needs a sermon to save to. With none open, ask for one instead of guessing.
+  function needSermon() {
+    if (convTitle !== 'New conversation') return false;
+    refreshSermons(); setSaveHint(true); setSermonMenuOpen(true);
+    return true;
+  }
   function switchToSermon(title) {
-    setSermonMenuOpen(false);
+    setSermonMenuOpen(false); setSaveHint(false);
     if (title === convTitle) return;
-    const conv = history.find((c) => c.title === title);
+    const conv = history.find((c) => c.title === title && c.named !== false);
     if (conv) loadConversation(conv);
-    else { newConversation(); setConvTitle(title); }
+    else { if (!looseChat) newConversation(); setConvTitle(title); }
   }
   async function createSermon(rawName) {
     const name = (rawName || '').trim();
     if (!name || !churchId || !userId) return;
-    setSermonMenuOpen(false); setNewSermonName('');
-    newConversation(); setConvTitle(name);
+    setSermonMenuOpen(false); setNewSermonName(''); setSaveHint(false);
+    if (!looseChat) newConversation();
+    setConvTitle(name);
     await ensureSermonDoc(supabase, { churchId, userId, series: name });
     refreshSermons();
     onNoteSaved?.();
@@ -592,6 +516,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   async function savePartToNotes(msgIdx, partIdx, md) {
     const key = `${msgIdx}:${partIdx}`;
     if (!churchId || !userId || savedParts[key]) return;
+    if (needSermon()) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.part(md) });
     if (!error) { setSavedParts((prev) => ({ ...prev, [key]: true })); onNoteSaved?.(); refreshSermons(); }
@@ -607,19 +532,21 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     const have = more[i]?.items?.[key] ?? (kept ? { text: kept } : null);
     if (more[i]?.active === key && !have?.error) { setMore((p) => ({ ...p, [i]: { ...p[i], active: null } })); return; }
     setMore((p) => ({ ...p, [i]: { active: key, items: { ...(p[i]?.items ?? {}) } } }));
-    if ((have && !have.error) || atLimit) return;
+    if (have && !have.error) return;
     const put = (patch) => setMore((p) => ({ ...p, [i]: { ...p[i], items: { ...(p[i]?.items ?? {}), [key]: { ...(p[i]?.items?.[key] ?? { text: '' }), ...patch } } } }));
+    if (atLimit) { put({ text: '', loading: false, error: 'limit' }); return; }
     put({ text: '', loading: true, error: null });
     const question = messages.slice(0, i).reverse().find((m) => m.role === 'user')?.content ?? '';
     const readerVersion = readingVersion();
-    const system = `${researchMemory ? `${RESEARCH_SYSTEM}\n\n── YOUR SERIES CONTEXT ──\n${researchMemory}` : RESEARCH_SYSTEM}\n\n── THE PASTOR'S TRANSLATION ──\nThe pastor reads in the ${readerVersion.name}. Quote the passage in that translation, with its reference in parentheses.`;
+    // Tabs under the opening answer stand alone (no memory), so they can be saved and replayed too
+    const system = researchSystem({ versionName: readerVersion.name, memory: i === 1 ? null : researchMemory });
     let text = '';
     let fromSaved = false;
     try {
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: [...(i === 1 ? [] : messages.slice(0, i + 1).map((m) => ({ role: m.role, content: m.content }))), { role: 'user', content: moreRequest(tab, question) }], personType, plan, groundCommentary: true, researchVersion: readerVersion.id }),
+        body: JSON.stringify({ system, messages: [...(i === 1 ? [] : messages.slice(0, i + 1).map((m) => ({ role: m.role, content: m.content }))), { role: 'user', content: moreRequest(tab, question) }], personType, plan, groundCommentary: true, researchTab: true, researchVersionName: readerVersion.name }),
       });
       if (res.status === 429) { setServerLimit(true); put({ loading: false, error: 'limit' }); return; }
       if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
@@ -654,6 +581,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     const key = `${i}:more:${tabKey(tab)}`;
     const text = more[i]?.items?.[tabKey(tab)]?.text ?? messages[i]?.more?.[tabKey(tab)];
     if (!churchId || !userId || !text || savedParts[key]) return;
+    if (needSermon()) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const html = `<h3>${(tab.voice ?? tab.label).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</h3>${section.part(text)}`;
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html });
@@ -683,9 +611,12 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
         >
           + New sermon
         </button>
-        {sermonMenuOpen && <div onClick={() => setSermonMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
+        {sermonMenuOpen && <div onClick={() => { setSermonMenuOpen(false); setSaveHint(false); }} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
         {sermonMenuOpen && (
           <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: T.white, border: `1px solid ${T.line}`, borderRadius: 14, boxShadow: '0 8px 32px rgba(44,24,16,0.18)', width: 'min(340px, 80vw)', zIndex: 200, overflow: 'hidden' }}>
+            {saveHint && (
+              <div style={{ padding: '10px 12px 0', fontSize: 12.5, color: T.goldDark, fontFamily: T.sans, fontWeight: 600, lineHeight: 1.45 }}>Name a sermon or pick one, then add it again. This chat comes with it.</div>
+            )}
             <form onSubmit={(e) => { e.preventDefault(); createSermon(newSermonName); }} style={{ display: 'flex', gap: 6, padding: 10, borderBottom: `1px solid ${T.line}` }}>
               <input
                 autoFocus value={newSermonName} onChange={(e) => setNewSermonName(e.target.value)}
@@ -740,8 +671,8 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                     <span>{dark ? 'Light mode' : 'Dark mode'}</span>
                   </span>
                 </button>
-                <button onClick={() => { newConversation(); setMenuOpen(false); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', borderBottom: `1px solid ${C.border}`, padding: '13px 16px', fontSize: 14, color: C.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 16, lineHeight: 1 }}>+</span><span style={{ fontWeight: 700 }}>New conversation</span>
+                <button onClick={() => { clearChat(); setMenuOpen(false); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', borderBottom: `1px solid ${C.border}`, padding: '13px 16px', fontSize: 14, color: C.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontSize: 16, lineHeight: 1 }}>↺</span><span style={{ fontWeight: 700 }}>Clear this chat</span>
                 </button>
                 <button onClick={() => { setHistoryOpen(true); setMenuOpen(false); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '13px 16px', fontSize: 14, color: C.text, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 15 }}>◷</span><span>Conversation history</span>
@@ -751,27 +682,6 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
           </div>
           </div>{/* end right-side flex group */}
         </div>
-
-        {/* ── Series memory banner ── */}
-        {researchMode && (() => {
-          const mem = parseMemory(researchMemory);
-          if (!mem) return null;
-          return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(184,115,58,0.07)', border: `1px solid rgba(184,115,58,0.20)`, borderRadius: 8, padding: '7px 12px', marginBottom: 8, flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13 }}>📚</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: T.goldDark }}>{mem.series}</span>
-                <span style={{ fontSize: 11, color: T.inkMuted }}>· {mem.sessions} session{mem.sessions !== 1 ? 's' : ''}</span>
-              </div>
-              <button
-                onClick={clearResearchMemory}
-                style={{ background: 'none', border: 'none', fontSize: 11, color: T.inkMuted, cursor: 'pointer', padding: '2px 6px', borderRadius: 6, textDecoration: 'underline' }}
-              >
-                New series
-              </button>
-            </div>
-          );
-        })()}
 
         {/* ── Messages ── */}
         <div
@@ -902,7 +812,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                           {open && (
                             <div data-more-panel style={{ marginTop: 10, padding: '12px 14px', border: `1px solid ${C.border}`, borderRadius: 12, background: C.card, fontSize: 15, lineHeight: 1.72, color: C.text, fontFamily: T.serif, letterSpacing: '-0.01em', wordBreak: 'break-word' }}>
                               {item?.error === 'failed' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>That did not load. Tap the tab again to retry.</span>}
-                              {item?.error === 'limit' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>You have reached today's limit.</span>}
+                              {item?.error === 'limit' && <span style={{ fontFamily: T.sans, fontSize: 13, color: C.soft }}>You have used all your questions for now. Tabs you already opened still work.</span>}
                               {!item?.error && !item?.text && <span style={{ color: T.inkMuted, fontStyle: 'italic' }}>…</span>}
                               {item?.text && <MsgText text={item.text} onRefClick={handleRefClick} plain />}
                               {item?.text && !item.loading && churchId && (

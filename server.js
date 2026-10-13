@@ -18,6 +18,7 @@ import { ANSWERS_FA_BY_SLUG } from './content/answers-fa.js';
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
+import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
 import { isCrisisMessage } from './src/safetyPatterns.js';
 import { renderLegalPage } from './content/legal.js';
 
@@ -1448,8 +1449,12 @@ app.post('/api/chat', optionalAuth, limitEither(
   // Sermon Research is its own prompt and quotes the pastor's translation, so its
   // answers are stored apart from Ask's, one set per translation. The same research
   // question (or the same tab under it) is answered once and replayed after that.
-  const researchVersion = String(req.body?.researchVersion ?? '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40);
-  const cacheType = groundCommentary ? (researchVersion ? `research-v1:${researchVersion}` : null) : personType;
+  // A research answer is only saved or replayed when the instructions sent with it are
+  // exactly ours for that translation. Anything else (edited instructions, a sermon's
+  // memory attached) is answered live and never stored for other pastors.
+  const researchVersionName = String(req.body?.researchVersionName ?? '').replace(/[^A-Za-z0-9 .()'-]/g, '').slice(0, 60).trim();
+  const researchIsStock = groundCommentary && !!researchVersionName && system === RESEARCH_SYSTEM + researchVersionNote(researchVersionName);
+  const cacheType = groundCommentary ? (researchIsStock ? `research-v2:${researchVersionName}` : null) : personType;
   // "Fresh answer": the pastor asked for a new take, so skip the saved copy this once
   const wantsFresh = groundCommentary && req.body?.fresh === true;
   if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass && !wantsFresh) {
@@ -1559,6 +1564,9 @@ app.post('/api/chat', optionalAuth, limitEither(
     if (crisisBypass && model === 'claude-haiku-4-5-20251001') {
       model = 'claude-sonnet-4-6';
     }
+    // A research tab is one short, focused piece; its request is long only because it
+    // repeats the question, which must not send it to the most expensive model.
+    if (groundCommentary && req.body?.researchTab === true) model = 'claude-sonnet-4-6';
     if (internal) model = 'claude-haiku-4-5-20251001';
 
     const trimmed = windowHistory(messages);
@@ -3487,6 +3495,9 @@ Write only the updated profile. No preamble, no labels.`,
 // ── Research memory: update series context after a research session ───────────
 app.post('/api/research/update-memory', requireAuth, async (req, res) => {
   const { messages } = req.body ?? {};
+  // Study keeps this memory with each sermon's conversation and sends it back in
+  // `prior`; nothing is stored on the pastor's account for those.
+  const perSermon = req.body?.perSermon === true;
   if (!Array.isArray(messages) || messages.length < 2) return res.json({ ok: true });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.json({ ok: true });
 
@@ -3494,7 +3505,9 @@ app.post('/api/research/update-memory', requireAuth, async (req, res) => {
   const today = new Date().toISOString().slice(0, 10);
 
   try {
-    const existing = (await readSecrets(req.userId, 'research_memory'))?.research_memory ?? '';
+    const existing = perSermon
+      ? String(req.body?.prior ?? '').slice(0, 3000)
+      : ((await readSecrets(req.userId, 'research_memory'))?.research_memory ?? '');
 
     const convoText = messages.slice(-20)
       .filter(m => m.role === 'user' || m.role === 'assistant')
@@ -3527,7 +3540,7 @@ ${convoText}`,
     const memory = resp.content?.[0]?.text?.trim() ?? '';
     if (!memory) return res.json({ ok: true });
 
-    await writeSecrets(req.userId, { research_memory: memory });
+    if (!perSermon) await writeSecrets(req.userId, { research_memory: memory });
 
     res.json({ ok: true, memory });
   } catch (e) {
