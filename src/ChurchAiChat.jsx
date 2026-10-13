@@ -430,7 +430,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
       const res = await authedFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system, messages: next, personType, plan, groundCommentary: researchMode }),
+        body: JSON.stringify({ system, messages: next.map((m) => ({ role: m.role, content: m.content })), personType, plan, groundCommentary: researchMode }),
       });
       if (res.status === 429) {
         // Limit reached — show the upgrade wall, and put the question back in
@@ -469,7 +469,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
         aiUsage.increment();
         validateRefsForMsg(next.length, assistantContent);
         if (researchMode) {
-          const allMsgs = [...next, { role: 'assistant', content: assistantContent }];
+          const allMsgs = [...next.map((m) => ({ role: m.role, content: m.content })), { role: 'assistant', content: assistantContent }];
           authedFetch('/api/research/update-memory', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -599,7 +599,8 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const tabKey = (tab) => (tab.voice ? `voice:${tab.voice}` : tab.id);
   async function loadMore(i, tab) {
     const key = tabKey(tab);
-    const have = more[i]?.items?.[key];
+    const kept = messages[i]?.more?.[key];
+    const have = more[i]?.items?.[key] ?? (kept ? { text: kept } : null);
     if (more[i]?.active === key && !have?.error) { setMore((p) => ({ ...p, [i]: { ...p[i], active: null } })); return; }
     setMore((p) => ({ ...p, [i]: { active: key, items: { ...(p[i]?.items ?? {}) } } }));
     if ((have && !have.error) || atLimit) return;
@@ -636,6 +637,8 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
         }
       }
       put({ text: splitVoices(text).body, loading: false });
+      const done = splitVoices(text).body;
+      if (done) setMessages((m) => m.map((x, k) => (k === i ? { ...x, more: { ...(x.more ?? {}), [key]: done } } : x)));
       if (text) aiUsage.increment();
     } catch {
       put({ loading: false, error: text ? null : 'failed' });
@@ -643,7 +646,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   }
   async function saveMoreToNotes(i, tab) {
     const key = `${i}:more:${tabKey(tab)}`;
-    const text = more[i]?.items?.[tabKey(tab)]?.text;
+    const text = more[i]?.items?.[tabKey(tab)]?.text ?? messages[i]?.more?.[tabKey(tab)];
     if (!churchId || !userId || !text || savedParts[key]) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const html = `<h3>${(tab.voice ?? tab.label).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</h3>${section.part(text)}`;
@@ -874,7 +877,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                       const tabs = [...voices.map((v) => ({ voice: v, label: v })), ...MORE_KINDS];
                       const st = more[i];
                       const open = tabs.find((t) => tabKey(t) === st?.active);
-                      const item = open ? st.items?.[tabKey(open)] : null;
+                      const item = open ? (st.items?.[tabKey(open)] ?? (m.more?.[tabKey(open)] ? { text: m.more[tabKey(open)] } : null)) : null;
                       const added = open ? savedParts[`${i}:more:${tabKey(open)}`] : false;
                       return (
                         <div style={{ width: '100%', marginTop: 12 }}>
@@ -885,7 +888,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                               return (
                                 <button key={tabKey(t)} onClick={() => loadMore(i, t)}
                                   style={{ background: on ? T.ink : (t.voice ? 'rgba(184,115,58,0.10)' : 'transparent'), color: on ? T.cream : (t.voice ? T.goldDark : C.soft), border: `1px solid ${on ? T.ink : (t.voice ? 'rgba(184,115,58,0.35)' : C.border)}`, borderRadius: 999, padding: '4px 12px', fontSize: 12, fontFamily: T.sans, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                                  {t.label}
+                                  {t.label}{!on && (st?.items?.[tabKey(t)]?.text || m.more?.[tabKey(t)]) ? ' ✓' : ''}
                                 </button>
                               );
                             })}
