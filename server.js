@@ -1687,7 +1687,7 @@ Output ONLY valid JSON. Schema:
   ]
 }
 
-No prose outside the JSON. No markdown fences. Begin output with { and end with }. Inside any "body" string, escape line breaks as \\n — never use a raw newline inside a JSON string.`;
+No prose outside the JSON. No markdown fences. Begin output with { and end with }. Inside any "body" string, escape line breaks as \\n — never use a raw newline inside a JSON string. Never put a double quote character inside a string value: when you quote scripture or speech, use single quotes ('Unless I see...'), because an unescaped double quote breaks the JSON.`;
 
 const VALID_TARGET_KINDS = ['daily_verse', 'going_deeper', 'kid_version'];
 const TARGET_KIND_INSTRUCTIONS = {
