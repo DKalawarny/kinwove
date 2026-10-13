@@ -2432,8 +2432,8 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   // Note → thread: series title queued for ChurchAiChat to load (cleared once loaded)
   const [studySessionToOpen, setStudySessionToOpen] = useState(null);
   const [studySessionTitle, setStudySessionTitle] = useState('');
-  const [newSermonRequest, setNewSermonRequest] = useState(null);
-  const requestNewSermon = (name) => setNewSermonRequest((prev) => ({ name, n: (prev?.n ?? 0) + 1 }));
+  // Slot for the sermon bar (name, Sermons list, New sermon) across the top of Study
+  const [sermonBarEl, setSermonBarEl] = useState(null);
   // Desk "Use in sermon →": picked prep notes queued as a composer draft
   // ({title, scriptureRef, summary}), cleared once the composer applies it
   const [sermonPrefill, setSermonPrefill] = useState(null);
@@ -2560,6 +2560,8 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
           />
         )}
         {tab === 'ask' && (
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <div ref={setSermonBarEl} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, padding: '10px 16px', background: T.parchment, borderBottom: `1px solid ${T.line}`, position: 'relative', zIndex: 5 }} />
           <div style={{ display: 'flex', flexDirection: deskSide === 'left' ? 'row-reverse' : 'row', flex: 1, minHeight: 0, overflow: 'hidden', position: 'relative', alignItems: 'stretch' }}>
             {/* Chat — takes remaining width */}
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -2574,7 +2576,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 openSessionTitle={studySessionToOpen}
                 onSessionOpened={() => setStudySessionToOpen(null)}
                 onSessionTitle={setStudySessionTitle}
-                newSermonRequest={newSermonRequest}
+                sermonBarEl={sermonBarEl}
               />
             </div>
 
@@ -2583,7 +2585,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
               <>
                 <DividerHandle onMouseDown={onDeskDragStart} onSwap={toggleDeskSide} swapTitle="Move the desk to the other side" />
                 <Suspense fallback={null}>
-                  <DeskPanel currentSeries={studySessionTitle} onNewSermon={requestNewSermon} session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
+                  <DeskPanel currentSeries={studySessionTitle} session={session} profile={profile} churchId={churchId} width={isThreePane ? deskWidth3 : deskWidth} threePane={isThreePane} side={deskSide} refreshKey={notesRefreshKey} onOpenSession={setStudySessionToOpen} onUseInSermon={sendNotesToSermon} />
                 </Suspense>
               </>
             )}
@@ -2604,7 +2606,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 }}>
                   <Suspense fallback={null}>
                     <DeskPanel
-                      currentSeries={studySessionTitle} onNewSermon={requestNewSermon}
+                      currentSeries={studySessionTitle}
                       session={session}
                       profile={profile}
                       churchId={churchId}
@@ -2619,6 +2621,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 </div>
               </>
             )}
+          </div>
           </div>
         )}
         {tab === 'bible' && (

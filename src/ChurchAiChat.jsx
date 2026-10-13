@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { T } from './theme.js';
 import { authedFetch, supabase } from './supabase.js';
 import { useAiUsage } from './useAiUsage.js';
@@ -6,7 +7,6 @@ import { useTextToSpeech } from './useTextToSpeech.js';
 import AiLimitWall from './AiLimitWall.jsx';
 import MsgText from './MsgText.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
-import { PERSON_TYPES } from './constants.js';
 import { PER_TYPE } from './prompts.js';
 import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE_ID } from './bibleRefUtils.js';
 import { readConvs, writeConvs } from './studySessions.js';
@@ -245,13 +245,14 @@ function HistoryModal({ open, onClose, conversations, onLoad, onDelete, onNew })
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened, onSessionTitle, newSermonRequest }) {
+export default function ChurchAiChat({ session, profile, churchId, churchPlan, onOpenDesk, inSplit, onNoteSaved, openSessionTitle, onSessionOpened, onSessionTitle, sermonBarEl }) {
   const userId  = session?.user?.id;
   const plan    = churchPlan ?? 'church_base';
   const ttsVoice = profile?.tts_voice ?? 'onyx';
 
   const [dark, setDark] = useState(() => localStorage.getItem('church_ask_dark') === '1');
-  const [researchMode, setResearchMode] = useState(() => localStorage.getItem('church_ask_research') === '1');
+  // Church Study is sermon research; the personal modes live on the personal side
+  const [researchMode, setResearchMode] = useState(true);
   const C = dark ? DARK : LIGHT;
   function toggleDark() { setDark((d) => { localStorage.setItem('church_ask_dark', d ? '0' : '1'); return !d; }); }
   function toggleResearch() { setResearchMode((v) => { const next = !v; localStorage.setItem('church_ask_research', next ? '1' : '0'); return next; }); }
@@ -304,21 +305,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   }
 
   // Mode
-  const [personType, setPersonType]     = useState(() => localStorage.getItem(`church_ask_mode_${userId}`) ?? 'deeper');
-  const [modePickerOpen, setModePickerOpen] = useState(false);
-
-  function setMode(id) {
-    if (id === '__research__') {
-      setResearchMode(true);
-      localStorage.setItem('church_ask_research', '1');
-      newConversation();
-    } else {
-      setPersonType(id);
-      localStorage.setItem(`church_ask_mode_${userId}`, id);
-      if (researchMode) { setResearchMode(false); localStorage.setItem('church_ask_research', '0'); newConversation(); }
-    }
-    setModePickerOpen(false);
-  }
+  const [personType]     = useState(() => localStorage.getItem(`church_ask_mode_${userId}`) ?? 'deeper');
 
   // UI
   const [menuOpen, setMenuOpen]       = useState(false);
@@ -585,8 +572,6 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     refreshSermons();
     onNoteSaved?.();
   }
-  // "New sermon" pressed in the notes pane
-  useEffect(() => { if (newSermonRequest?.name) createSermon(newSermonRequest.name); }, [newSermonRequest?.n]);
   // Add one part of an answer to the sermon's page
   const [savedParts, setSavedParts] = useState({});
   async function savePartToNotes(msgIdx, partIdx, md) {
@@ -597,6 +582,64 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     if (!error) { setSavedParts((prev) => ({ ...prev, [key]: true })); onNoteSaved?.(); refreshSermons(); }
   }
 
+  // The sermon bar: name, list and New sermon. On the Study screen it sits across
+  // the top of all three panes (portaled into the slot ChurchAdmin gives us).
+  const B = sermonBarEl ? { text: T.ink, border: T.line, soft: T.inkSoft } : C;
+  const sermonBar = (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, marginRight: 8 }}>
+      <KinwoveStar size={15} style={{ flexShrink: 0 }} />
+      <input
+        value={convTitle === 'New conversation' ? '' : convTitle}
+        onChange={e => setConvTitle(e.target.value || 'New conversation')}
+        placeholder="Name this sermon…"
+        style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: B.text, letterSpacing: '-0.01em', padding: 0, flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
+      />
+      <div style={{ position: 'relative', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        <button
+          onClick={() => { if (!sermonMenuOpen) refreshSermons(); setSermonMenuOpen((v) => !v); }}
+          title="Your sermons"
+          style={{ background: sermonMenuOpen ? 'rgba(184,115,58,0.18)' : 'transparent', border: `1px solid ${sermonMenuOpen ? T.gold : B.border}`, color: B.soft, borderRadius: 999, padding: '4px 10px', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}
+        >
+          Sermons <span style={{ fontSize: 9, opacity: 0.6 }}>▾</span>
+        </button>
+        <button
+          onClick={() => { refreshSermons(); setSermonMenuOpen(true); }}
+          style={{ background: T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', marginLeft: 6 }}
+        >
+          + New sermon
+        </button>
+        {sermonMenuOpen && <div onClick={() => setSermonMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
+        {sermonMenuOpen && (
+          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: T.white, border: `1px solid ${T.line}`, borderRadius: 14, boxShadow: '0 8px 32px rgba(44,24,16,0.18)', width: 'min(340px, 80vw)', zIndex: 200, overflow: 'hidden' }}>
+            <form onSubmit={(e) => { e.preventDefault(); createSermon(newSermonName); }} style={{ display: 'flex', gap: 6, padding: 10, borderBottom: `1px solid ${T.line}` }}>
+              <input
+                autoFocus value={newSermonName} onChange={(e) => setNewSermonName(e.target.value)}
+                placeholder="New sermon name…"
+                style={{ flex: 1, minWidth: 0, border: `1px solid ${T.line}`, borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: T.sans, color: T.ink, background: T.parchment, outline: 'none' }}
+              />
+              <button type="submit" disabled={!newSermonName.trim()} style={{ background: T.ink, color: T.cream, border: 'none', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: newSermonName.trim() ? 1 : 0.5 }}>Create</button>
+            </form>
+            <div style={{ maxHeight: 320, overflowY: 'auto' }}>
+              {sermons.length === 0 && (
+                <div style={{ padding: '14px 14px', fontSize: 12.5, color: T.inkMuted, lineHeight: 1.5 }}>No sermons yet. Name one above to start its page.</div>
+              )}
+              {sermons.map((sm) => {
+                const active = sm.title === convTitle;
+                return (
+                  <button key={sm.id} onClick={() => switchToSermon(sm.title)}
+                    style={{ width: '100%', textAlign: 'left', background: active ? 'rgba(184,115,58,0.10)' : 'none', border: 'none', borderBottom: `1px solid ${T.line}`, padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
+                    <span style={{ fontFamily: T.serif, fontSize: 14, fontWeight: 600, color: active ? T.goldDark : T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sm.title}</span>
+                    <span style={{ fontSize: 11, color: T.inkMuted, flexShrink: 0 }}>{new Date(sm.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <HistoryModal open={historyOpen} onClose={() => setHistoryOpen(false)} conversations={history} onLoad={loadConversation} onDelete={deleteConversation} onNew={newConversation} />
@@ -605,152 +648,11 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
 
         {/* ── Header ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10, borderBottom: `1px solid ${C.border}`, marginBottom: 4, flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, marginRight: 8 }}>
-            <KinwoveStar size={15} style={{ flexShrink: 0 }} />
-            <input
-              value={convTitle === 'New conversation' ? '' : convTitle}
-              onChange={e => setConvTitle(e.target.value || 'New conversation')}
-              placeholder="Name this sermon…"
-              style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 15, fontFamily: T.serif, fontWeight: 600, color: C.text, letterSpacing: '-0.01em', padding: 0, flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
-            />
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <button
-                onClick={() => { if (!sermonMenuOpen) refreshSermons(); setSermonMenuOpen((v) => !v); }}
-                title="Your sermons"
-                style={{ background: sermonMenuOpen ? 'rgba(184,115,58,0.18)' : 'transparent', border: `1px solid ${sermonMenuOpen ? T.gold : C.border}`, color: C.soft, borderRadius: 999, padding: '4px 10px', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}
-              >
-                Sermons <span style={{ fontSize: 9, opacity: 0.6 }}>▾</span>
-              </button>
-              {sermonMenuOpen && <div onClick={() => setSermonMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
-              {sermonMenuOpen && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: T.white, border: `1px solid ${T.line}`, borderRadius: 14, boxShadow: '0 8px 32px rgba(44,24,16,0.18)', width: 'min(340px, 80vw)', zIndex: 200, overflow: 'hidden' }}>
-                  <form onSubmit={(e) => { e.preventDefault(); createSermon(newSermonName); }} style={{ display: 'flex', gap: 6, padding: 10, borderBottom: `1px solid ${T.line}` }}>
-                    <input
-                      autoFocus value={newSermonName} onChange={(e) => setNewSermonName(e.target.value)}
-                      placeholder="New sermon name…"
-                      style={{ flex: 1, minWidth: 0, border: `1px solid ${T.line}`, borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: T.sans, color: T.ink, background: T.parchment, outline: 'none' }}
-                    />
-                    <button type="submit" disabled={!newSermonName.trim()} style={{ background: T.ink, color: T.cream, border: 'none', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: newSermonName.trim() ? 1 : 0.5 }}>Create</button>
-                  </form>
-                  <div style={{ maxHeight: 320, overflowY: 'auto' }}>
-                    {sermons.length === 0 && (
-                      <div style={{ padding: '14px 14px', fontSize: 12.5, color: T.inkMuted, lineHeight: 1.5 }}>No sermons yet. Name one above to start its page.</div>
-                    )}
-                    {sermons.map((sm) => {
-                      const active = sm.title === convTitle;
-                      return (
-                        <button key={sm.id} onClick={() => switchToSermon(sm.title)}
-                          style={{ width: '100%', textAlign: 'left', background: active ? 'rgba(184,115,58,0.10)' : 'none', border: 'none', borderBottom: `1px solid ${T.line}`, padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
-                          <span style={{ fontFamily: T.serif, fontSize: 14, fontWeight: 600, color: active ? T.goldDark : T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sm.title}</span>
-                          <span style={{ fontSize: 11, color: T.inkMuted, flexShrink: 0 }}>{new Date(sm.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {sermonBarEl
+            ? <>{createPortal(sermonBar, sermonBarEl)}<span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: C.muted, flex: 1 }}>Research</span></>
+            : sermonBar}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-
-            {/* ── Switch Mode button ── */}
-            <div style={{ position: 'relative' }}>
-              {(() => {
-                // Same unknown-person_type gap as Chat.jsx — render a label, not an empty chip.
-                const person = researchMode ? { emoji: '📚', label: 'Research' }
-                  : (PERSON_TYPES.find((p) => p.id === personType) ?? (personType ? { emoji: '', label: 'Your mode' } : PERSON_TYPES[0]));
-                return (
-                  <button
-                    onClick={() => setModePickerOpen((v) => !v)}
-                    style={{
-                      background: modePickerOpen ? 'rgba(184,115,58,0.22)' : C.card,
-                      border: `1px solid ${modePickerOpen ? T.gold : C.border}`,
-                      borderRadius: 999, padding: '4px 12px',
-                      fontSize: 12, color: modePickerOpen ? T.goldDark : C.soft,
-                      cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    {person?.emoji} {person?.label}
-                    <span style={{ fontSize: 9, opacity: 0.6, marginLeft: 1 }}>▾</span>
-                  </button>
-                );
-              })()}
-
-              {modePickerOpen && <div onClick={() => setModePickerOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
-              {modePickerOpen && (
-                <div style={{
-                  position: 'fixed', top: '50%', left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  background: T.white, border: `1px solid ${T.line}`,
-                  borderRadius: 16, boxShadow: '0 12px 48px rgba(44,24,16,0.18)',
-                  padding: 10, zIndex: 200,
-                  width: 'min(calc(100vw - 32px), 420px)',
-                  maxHeight: '85vh', overflowY: 'auto',
-                }}>
-                  <div style={{ padding: '2px 4px 8px', fontSize: 10, letterSpacing: '0.07em', textTransform: 'uppercase', color: T.inkMuted, fontWeight: 700 }}>
-                    Switch mode
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                    {/* Sermon Research — full-width hero card */}
-                    {(() => {
-                      const active = researchMode;
-                      return (
-                        <button
-                          onClick={() => setMode('__research__')}
-                          onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = active ? 'rgba(184,115,58,0.14)' : 'rgba(184,115,58,0.08)'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = active ? 'rgba(184,115,58,0.10)' : 'rgba(184,115,58,0.04)'; }}
-                          style={{
-                            gridColumn: '1 / -1',
-                            textAlign: 'left', cursor: 'pointer',
-                            background: active ? 'rgba(184,115,58,0.10)' : 'rgba(184,115,58,0.04)',
-                            border: `1.5px solid ${active ? T.gold : 'rgba(184,115,58,0.30)'}`,
-                            borderRadius: 12, padding: '14px 14px',
-                            transition: 'background 0.12s', position: 'relative',
-                            display: 'flex', alignItems: 'center', gap: 14,
-                          }}
-                        >
-                          {active && <span style={{ position: 'absolute', top: 10, right: 12, fontSize: 10, color: T.goldDark, fontWeight: 700 }}>✓</span>}
-                          <div style={{ fontSize: 28, lineHeight: 1, flexShrink: 0 }}>📚</div>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                              <span style={{ fontSize: 13, fontWeight: 700, color: active ? T.goldDark : T.ink }}>Sermon Research</span>
-                              <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.gold, background: 'rgba(184,115,58,0.12)', borderRadius: 999, padding: '2px 7px' }}>For pastors</span>
-                            </div>
-                            <div style={{ fontSize: 11, color: T.inkMuted, lineHeight: 1.45 }}>Original languages · named scholars · where traditions disagree · preaching angles</div>
-                          </div>
-                        </button>
-                      );
-                    })()}
-                    {PERSON_TYPES.map((pt) => {
-                      const active = !researchMode && pt.id === personType;
-                      return (
-                        <button
-                          key={pt.id}
-                          onClick={() => setMode(pt.id)}
-                          onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgba(184,115,58,0.06)'; }}
-                          onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = T.parchment; }}
-                          style={{
-                            textAlign: 'left', cursor: 'pointer',
-                            background: active ? 'rgba(184,115,58,0.10)' : T.parchment,
-                            border: `1.5px solid ${active ? T.gold : 'transparent'}`,
-                            borderRadius: 12, padding: '10px 10px',
-                            transition: 'background 0.12s', position: 'relative',
-                          }}
-                        >
-                          {active && <span style={{ position: 'absolute', top: 7, right: 9, fontSize: 10, color: T.goldDark, fontWeight: 700 }}>✓</span>}
-                          <div style={{ fontSize: 20, marginBottom: 5, lineHeight: 1 }}>{pt.emoji}</div>
-                          <div style={{ fontSize: 12.5, fontWeight: 700, color: active ? T.goldDark : T.ink, marginBottom: 3 }}>{pt.label}</div>
-                          <div style={{ fontSize: 10.5, color: T.inkMuted, lineHeight: 1.45 }}>{pt.description}</div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
           <div style={{ position: 'relative' }}>
             <button onClick={() => setMenuOpen((v) => !v)} style={{ background: menuOpen ? 'rgba(184,115,58,0.18)' : 'transparent', border: `1px solid ${menuOpen ? T.gold : C.border}`, color: C.soft, borderRadius: 999, padding: '5px 11px', fontSize: 16, cursor: 'pointer', lineHeight: 1 }}>⋮</button>
             {menuOpen && <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
