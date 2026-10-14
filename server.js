@@ -511,7 +511,7 @@ async function writeCacheEntry({ personType, question, answer, model }) {
         person_type: personType,
         question_normalized: normalized,
         question_raw: question.slice(0, 4000),
-        answer: answer.slice(0, 16000),
+        answer: answer.slice(0, 40000),
         model_used: model ?? null,
       }),
     });
