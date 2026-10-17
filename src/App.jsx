@@ -3347,6 +3347,7 @@ export default function App() {
           profile={profile}
           onBack={() => goBack(session ? 'feed' : 'landing')}
           onOpenChurch={(id) => { setViewingChurchId(id); setStage('church'); }}
+          onJoined={(id) => setProfile((p) => (p ? { ...p, church_id: id } : p))}
           onApply={() => {
             if (session && profile) { setStage('pastor-apply'); }
             else { setPendingPastorApply(true); setAuthStage('auth'); }

@@ -3703,6 +3703,31 @@ app.get('/api/church/by-invite-code', async (req, res) => {
 });
 
 // Rotate a church's invite code — requires auth, verifies caller is the pastor
+// Join with a church's invite code. Done here with the service role because a
+// private church can't be read by someone who isn't a member yet, so the client
+// can neither load it nor check the code. The rejoin guard trigger still applies.
+app.post('/api/church/join-by-code', requireAuth, limitAuthed({ capacity: 10, refillPerSec: 10 / 300 }), async (req, res) => {
+  const code = String(req.body?.code ?? '').trim().toUpperCase();
+  if (!code || code.length > 40) return res.status(400).json({ error: 'bad code' });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' };
+  try {
+    const [church] = await fetch(`${SUPABASE_URL}/rest/v1/churches?invite_code=eq.${encodeURIComponent(code)}&select=id,name&limit=1`, { headers: h }).then((r) => r.json());
+    if (!church) return res.json({ church: null });
+    const up = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}`, {
+      method: 'PATCH', headers: { ...h, Prefer: 'return=minimal' }, body: JSON.stringify({ church_id: church.id }),
+    });
+    if (!up.ok) {
+      const msg = await up.text();
+      return res.status(/rejoin/i.test(msg) ? 403 : 500).json({ error: /rejoin/i.test(msg) ? 'blocked' : 'failed' });
+    }
+    res.json({ church });
+  } catch (e) {
+    console.error('[church/join-by-code]', e?.message);
+    res.status(500).json({ error: 'failed' });
+  }
+});
+
 app.post('/api/church/rotate-invite-code', requireAuth, async (req, res) => {
   const { churchId } = req.body ?? {};
   if (!churchId) return res.status(400).json({ error: 'churchId required' });

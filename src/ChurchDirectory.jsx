@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { supabase } from './supabase.js';
+import { supabase, authedFetch } from './supabase.js';
 import { T } from './theme.js';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import { notifyChurchJoined } from './churchJoinNotify.js';
 
-export default function ChurchDirectory({ session, profile, onBack, onOpenChurch, onApply }) {
+export default function ChurchDirectory({ session, profile, onBack, onOpenChurch, onApply, onJoined }) {
   const [churches, setChurches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -18,6 +19,22 @@ export default function ChurchDirectory({ session, profile, onBack, onOpenChurch
     if (!code) return;
     setCodeLoading(true);
     setCodeError(null);
+    // Signed in: a church code joins straight away (a private church can't even
+    // be opened until you're a member). Youth codes still open the church page.
+    if (session?.user?.id) {
+      const res = await authedFetch('/api/church/join-by-code', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }),
+      }).catch(() => null);
+      const body = await res?.json().catch(() => ({})) ?? {};
+      if (body.church) {
+        setCodeLoading(false);
+        notifyChurchJoined(body.church.id);
+        onJoined?.(body.church.id);
+        onOpenChurch?.(body.church.id);
+        return;
+      }
+      if (body.error === 'blocked') { setCodeLoading(false); setCodeError("You can't rejoin this church. Reach out to a pastor if this is a mistake."); return; }
+    }
     const res = await fetch(`/api/church/by-invite-code?code=${encodeURIComponent(code)}`);
     const { church: ch } = await res.json();
     setCodeLoading(false);
