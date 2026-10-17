@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import MsgText from './MsgText.jsx';
 import { languageInstruction } from './languages.js';
 import { ArrowLeft, ChevronLeft, ChevronRight, X, Search } from 'lucide-react';
 import { T } from './theme.js';
@@ -2983,12 +2984,13 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                   color: isAssistant ? CC.text : T.cream,
                   border: isAssistant ? `1px solid ${chatDark ? CC.border : 'rgba(184,115,58,0.28)'}` : 'none',
                   borderRadius: isAssistant ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
-                  padding: '10px 14px', fontSize: 14, fontFamily: T.serif, lineHeight: 1.65, whiteSpace: 'pre-wrap',
+                  padding: '10px 14px', fontSize: 14, fontFamily: T.serif, lineHeight: 1.65, whiteSpace: isAssistant && m.content ? 'normal' : 'pre-wrap',
                 }}>
                   {isAssistant && !isStreaming && isWiderCanonText(m.content) && (
                     <div><WiderCanonTag dark={chatDark} /></div>
                   )}
-                  {m.content || (isStreaming ? (
+                  {/* answers are markdown: render it, and drop dashes, the same way the main chat does */}
+                  {isAssistant && m.content ? <MsgText text={m.content} plain /> : m.content || (isStreaming ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 18 }}>
                       {[0, 0.16, 0.32].map((delay, k) => (
                         <span key={k} style={{
