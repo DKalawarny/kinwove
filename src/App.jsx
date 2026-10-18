@@ -553,29 +553,6 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
       </section>
       </div>
 
-      {/* ── Answers: the public answer pages, for anyone who wants to read before signing up ── */}
-      <section style={{ padding: '80px 24px 8px', maxWidth: 900, margin: '0 auto', width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>
-        <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 14 }}>Hard questions, honest answers</div>
-        <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(22px, 3vw, 32px)', color: T.cream, fontWeight: 600, margin: '0 0 26px', letterSpacing: '-0.02em' }}>Read before you ask.</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 760, margin: '0 auto' }}>
-          {[
-            ['why-does-god-allow-suffering', 'Why does God allow suffering?'],
-            ['can-i-trust-the-bible', 'Can I trust the Bible?'],
-            ['how-can-i-believe-when-i-have-doubts', 'How can I believe when I have doubts?'],
-            ['is-the-resurrection-of-jesus-real', 'Is the resurrection real?'],
-            ['will-god-forgive-me', 'Will God forgive me?'],
-            ['what-if-church-hurt-you', 'What if church hurt you?'],
-          ].map(([slug, q]) => (
-            <a key={slug} href={`/answers/${slug}`}
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,162,74,0.28)', borderRadius: 999, padding: '10px 18px', fontSize: 14, color: 'rgba(253,248,240,0.85)', textDecoration: 'none', fontFamily: T.serif }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = T.honey; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(212,162,74,0.28)'; }}
-            >{q}</a>
-          ))}
-        </div>
-        <a href="/answers" style={{ display: 'inline-block', marginTop: 20, fontSize: 13.5, color: T.honey, textDecoration: 'none' }}>See all the answers →</a>
-      </section>
-
       {/* ── Bottom CTA ── */}
       <section style={{ padding: '96px 24px 108px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 700, height: 500, background: 'radial-gradient(ellipse at 50% 0%, rgba(184,115,58,0.09) 0%, transparent 65%)', pointerEvents: 'none' }} />
