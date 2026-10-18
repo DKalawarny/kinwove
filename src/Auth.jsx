@@ -5,6 +5,7 @@ import { getStoredUtm, clearStoredUtm } from './utm.js';
 import { Turnstile, TURNSTILE_ENABLED } from './Turnstile.jsx';
 import { isNativeApp } from './native.js';
 import { recordTermsAcceptance, markTermsPending } from './termsConsent.js';
+import { KinwoveWordmark } from './components/brand/KinwoveWordmark.jsx';
 
 function Field({ label, children }) {
   return (
@@ -23,7 +24,7 @@ const input = {
   borderRadius: 10,
   padding: '11px 14px',
   fontSize: 15,
-  background: T.cream,
+  background: T.white,
   color: T.ink,
   outline: 'none',
   fontFamily: 'inherit',
@@ -192,7 +193,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
     return (
       <div style={wrap}>
         <div style={card}>
-          <div style={eyebrow}>kinwove</div>
+          <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
           <h2 style={title}>Reset your password</h2>
           {resetSent ? (
             <>
@@ -226,7 +227,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
     return (
       <div style={wrap}>
         <div style={card}>
-          <div style={eyebrow}>kinwove</div>
+          <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
           <h2 style={title}>Set a new password</h2>
           <form onSubmit={handleUpdatePassword}>
             <Field label="New password">
@@ -244,7 +245,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
     return (
       <div style={wrap}>
         <div style={card}>
-          <div style={eyebrow}>kinwove</div>
+          <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
           <h2 style={title}>Check your email</h2>
           <p style={{ color: T.inkSoft, fontSize: 15, lineHeight: 1.6 }}>
             We sent a confirmation link to <strong>{email}</strong>. Click it and
@@ -268,7 +269,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: T.goldDark, fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 16 }}>
           ← Back
         </button>
-        <div style={eyebrow}>kinwove</div>
+        <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
         <h2 style={title}>{mode === 'signin' ? 'Welcome back' : 'Join the journey'}</h2>
 
         {/* Google blocks OAuth inside embedded webviews (disallowed_useragent)
@@ -441,9 +442,11 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
   );
 }
 
+// Same dawn-over-hills scene as the landing hero, darkened, so signing in feels like the same place.
+const AUTH_BG = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/site-video/hero-hills.jpg`;
 const wrap = {
   minHeight: '100vh',
-  background: `linear-gradient(180deg, ${T.cream} 0%, ${T.parchment} 100%)`,
+  background: `linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.62) 60%, rgba(26,17,10,0.9) 100%), url("${AUTH_BG}") center / cover no-repeat, #1A110A`,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -451,10 +454,12 @@ const wrap = {
 };
 
 const card = {
-  background: T.white,
-  borderRadius: 18,
-  border: `1px solid ${T.line}`,
-  padding: 'clamp(20px, 5.5vw, 32px)',
+  background: T.parchment,
+  borderRadius: 22,
+  border: '1px solid rgba(26,17,10,0.12)',
+  borderTop: `3px solid ${T.honey}`,
+  boxShadow: '0 24px 80px rgba(0,0,0,0.45)',
+  padding: 'clamp(22px, 5.5vw, 34px)',
   maxWidth: 420,
   width: '100%',
 };
@@ -465,7 +470,7 @@ const eyebrow = {
   fontWeight: 500,
   letterSpacing: '-0.02em',
   color: T.goldDark,
-  marginBottom: 14,
+  marginBottom: 18,
 };
 
 const title = {

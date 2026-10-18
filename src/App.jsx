@@ -3100,7 +3100,7 @@ export default function App() {
           referralRef={referralRef}
           onPastorIntent={() => {
             if (session && profile) { setStage('pastor-apply'); }
-            else { setPendingPastorApply(true); setAuthStage('auth'); }
+            else { setPendingPastorApply(true); setAuthInitialMode('signup'); setAuthStage('auth'); }
           }}
         />
       )}
@@ -3356,7 +3356,7 @@ export default function App() {
           onJoined={(id) => setProfile((p) => (p ? { ...p, church_id: id } : p))}
           onApply={() => {
             if (session && profile) { setStage('pastor-apply'); }
-            else { setPendingPastorApply(true); setAuthStage('auth'); }
+            else { setPendingPastorApply(true); setAuthInitialMode('signup'); setAuthStage('auth'); }
           }}
         />
       )}
@@ -3728,7 +3728,7 @@ export default function App() {
           onApplyAsPastor={() => {
             setPeopleSearchOpen(false);
             if (session && profile) setStage('pastor-apply');
-            else { setPendingPastorApply(true); setAuthStage('auth'); }
+            else { setPendingPastorApply(true); setAuthInitialMode('signup'); setAuthStage('auth'); }
           }}
           onStartDM={(uid) => { setPeopleSearchOpen(false); startDM(uid); }}
         />
