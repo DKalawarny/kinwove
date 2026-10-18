@@ -381,6 +381,9 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   const DIMLO = 'rgba(253,248,240,0.38)';
   const RULE  = 'rgba(255,255,255,0.06)';
   const [doorVideo, setDoorVideo] = useState(null);
+  const reduceMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches, []);
+  const narrow = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 600, []);
+  const HERO_BG = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/site-video/hero-hills`;
 
   // These are enforced server-side (truthfulness rules on every AI surface,
   // commentary grounding, live scripture-reference verification) — keep the
@@ -397,8 +400,17 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   return (
     <div style={{ minHeight: '100vh', background: '#1A110A', display: 'flex', flexDirection: 'column', fontFamily: T.sans }}>
 
+      {/* ── Hero: the armchair clip from the For you video moves slowly behind the headline ── */}
+      <div style={{ position: 'relative', minHeight: '100svh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <img src={HERO_BG + '.jpg'} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+        {!reduceMotion && (
+          <video autoPlay muted loop playsInline poster={HERO_BG + '.jpg'} src={HERO_BG + '.mp4'}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+        )}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 52%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.58) 60%, rgba(0,0,0,0.74) 100%), linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 70%, #1A110A 100%)' }} />
+
       {/* ── Nav ── */}
-      <header style={{ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 32px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${RULE}` }}>
+      <header style={{ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 32px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
           <KinwoveWordmark size={26} textColor={T.cream} starColor={T.honey} />
         </div>
@@ -417,23 +429,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
         )}
       </header>
 
-      {/* ── Hero ── */}
-      <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '52px 24px 36px', position: 'relative', overflow: 'hidden' }}>
-        {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 900, height: 600, background: 'radial-gradient(ellipse at 50% 30%, rgba(184,115,58,0.14) 0%, rgba(184,115,58,0.04) 50%, transparent 72%)', pointerEvents: 'none' }} />
-
-        {/* Wordmark — the arrival moment */}
-        <div style={{ marginBottom: 16, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* Focused glow behind the wordmark */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 560, height: 180, background: 'radial-gradient(ellipse at 50% 50%, rgba(212,162,74,0.13) 0%, rgba(168,85,48,0.07) 45%, transparent 70%)', pointerEvents: 'none' }} />
-          <KinwoveWordmark size={88} textColor={T.cream} starColor={T.honey} />
-        </div>
-
-        {/* Honey star — punctuation between brand and message */}
-        <div style={{ marginBottom: 26 }}>
-          <KinwoveStar size={9} color="rgba(212,162,74,0.5)" />
-        </div>
-
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '24px 16px 80px', position: 'relative', zIndex: 2 }}>
         {referralRef && (
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(184,115,58,0.12)', border: '1px solid rgba(184,115,58,0.25)', borderRadius: 999, padding: '7px 16px', marginBottom: 28, fontSize: 13, color: DIM, animation: 'fadeIn 0.5s ease both' }}>
             <KinwoveStar size={11} color={T.gold} />
@@ -441,11 +437,11 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
           </div>
         )}
 
-        <h1 style={{ fontFamily: T.serif, fontSize: 'clamp(38px, 7vw, 80px)', lineHeight: 1.05, margin: '0 0 22px', fontWeight: 600, letterSpacing: '-0.028em', color: T.cream, maxWidth: 820, position: 'relative' }}>
-          You don't have to have it<br />figured out to <em style={{ color: T.gold, fontStyle: 'italic', fontWeight: 500 }}>belong here.</em>
+        <h1 style={{ fontFamily: T.serif, fontSize: 'clamp(38px, 6.4vw, 76px)', lineHeight: 1.04, margin: '0 0 20px', fontWeight: 600, letterSpacing: '-0.028em', color: T.cream, maxWidth: 900, textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
+          You don't have to have it{narrow ? ' ' : <br />}figured out to <em style={{ color: '#E08A5A', fontStyle: 'italic', fontWeight: 500 }}>belong here.</em>
         </h1>
 
-        <p style={{ fontFamily: T.serif, fontSize: 18, lineHeight: 1.72, color: DIM, maxWidth: 520, margin: '0 0 34px', position: 'relative' }}>
+        <p style={{ fontFamily: T.serif, fontSize: 'clamp(16px, 1.8vw, 19px)', lineHeight: 1.6, color: 'rgba(245,237,216,0.78)', maxWidth: 560, margin: '0 0 34px', textShadow: '0 1px 16px rgba(0,0,0,0.5)' }}>
           AI that stays in scripture. Real people at every stage. Tools for your church between Sundays.
         </p>
 
@@ -453,6 +449,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
           <GuestQuestion onSignUp={onBegin} initialQuestion={initialQuestion} landingMode />
         </div>
       </main>
+      </div>
 
       {/* ── Two doors — the same product, two very different reasons to walk in.
              Each box is a complete pitch; nobody has to read the other one.

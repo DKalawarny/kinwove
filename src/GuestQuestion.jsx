@@ -392,30 +392,42 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         <>
           {landingMode ? (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10, marginBottom: 20 }}>
+              {/* Landing hero: one large ask bar, the examples as small chips under it */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(245,237,216,0.96)', borderRadius: 999, padding: '8px 8px 8px 24px', boxShadow: '0 14px 50px rgba(0,0,0,0.45)' }}>
+                <input
+                  ref={taRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); ask(); } }}
+                  placeholder="Ask anything about faith…"
+                  aria-label="Ask a question"
+                  style={{ flex: 1, minWidth: 0, border: 0, outline: 0, background: 'none', fontFamily: T.serif, fontSize: 18, color: '#1A110A' }}
+                />
+                <button onClick={() => ask()} disabled={!input.trim()}
+                  style={{ background: '#1A110A', color: T.cream, border: 0, borderRadius: 999, padding: '13px 24px', fontWeight: 600, fontSize: 15, cursor: input.trim() ? 'pointer' : 'default', whiteSpace: 'nowrap', opacity: input.trim() ? 1 : 0.85 }}
+                >Ask →</button>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 18 }}>
                 {EXAMPLE_QUESTIONS.map((q) => (
                   <button
                     key={q}
                     onClick={() => ask(q)}
                     style={{
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(184,115,58,0.3)',
-                      borderRadius: 999, padding: '10px 18px',
-                      fontSize: 13.5, color: 'rgba(253,248,240,0.75)',
-                      cursor: 'pointer', lineHeight: 1.45,
-                      transition: 'all 0.15s', fontFamily: 'inherit',
+                      background: 'rgba(20,12,5,0.45)',
+                      border: '1px solid rgba(245,237,216,0.22)',
+                      borderRadius: 999, padding: '8px 15px',
+                      fontSize: 13.5, color: 'rgba(245,237,216,0.88)',
+                      cursor: 'pointer', lineHeight: 1.4,
+                      backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+                      transition: 'border-color 0.15s', fontFamily: 'inherit',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = T.gold; e.currentTarget.style.color = T.cream; e.currentTarget.style.background = 'rgba(184,115,58,0.12)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(184,115,58,0.3)'; e.currentTarget.style.color = 'rgba(253,248,240,0.75)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.5)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.22)'; }}
                   >
                     {q}
                   </button>
                 ))}
               </div>
-              <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'rgba(253,248,240,0.25)', textAlign: 'center', marginBottom: 16 }}>
-                or ask your own
-              </div>
-              <InputRow value={input} onChange={setInput} onSend={() => ask()} taRef={taRef} />
             </>
           ) : (
             <>
