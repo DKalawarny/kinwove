@@ -70,7 +70,7 @@ export async function loadChurchContext(churchId) {
     supabase.from('churches').select('id, name, city, region').eq('id', churchId).maybeSingle(),
     supabase.from('sermons').select('id, title, scripture_ref, week_starts_on')
       .eq('church_id', churchId).eq('is_published', true)
-      .order('week_starts_on', { ascending: false }).limit(1).maybeSingle(),
+      .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('church_id', churchId),
   ]);
   return {

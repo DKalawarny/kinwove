@@ -20,11 +20,14 @@ const KIND_LABEL = {
 function todayISO() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
-  // pick the Monday of this week
+  // The daily questions follow Sunday's sermon, so the week starts on the coming
+  // Monday (today if it is Monday). The Monday of the current week put a sermon
+  // published on Sunday into the six days that had already passed.
   const day = d.getDay();
-  const diff = (day === 0 ? -6 : 1) - day;
-  const monday = new Date(d.getTime() + diff * 86400000);
-  return monday.toISOString().slice(0, 10);
+  const diff = day === 1 ? 0 : (8 - day) % 7;
+  const monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}`;
 }
 
 // Convert a UTC ISO string → 'YYYY-MM-DDTHH:MM' in local time (for datetime-local inputs).
@@ -221,7 +224,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
       .from('sermons')
       .select('*')
       .eq('church_id', churchId)
-      .order('week_starts_on', { ascending: false })
+      .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false })
       .then(({ data }) => {
         setSermons(data ?? []);
         setLoading(false);
@@ -409,7 +412,8 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     setError(null);
     try {
       const existingItems = content
-        .filter((c, i) => i !== idx && c.kind === 'daily_verse')
+        // The day being replaced is included too: the server lists it as the one to move away from
+        .filter((c) => c.kind === 'daily_verse')
         .map((c) => ({ day: c.day ?? null, scripture: c.scripture ?? '', body: c.body ?? '' }));
 
       const r = await authedFetch('/api/sermon/generate', {
@@ -623,7 +627,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
       .from('sermons')
       .select('*')
       .eq('church_id', churchId)
-      .order('week_starts_on', { ascending: false });
+      .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false });
     setSermons(refreshed ?? []);
 
     setSaving(false);
@@ -797,13 +801,15 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
               }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.ink, marginBottom: 3, display: 'flex', alignItems: 'center' }}>
-                    <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> {sermonAi.isTrial ? `You've used all ${sermonAi.limit} trial AI uses` : `You've used your ${FREE_SERMON_LIMIT} free AI sermons`}
+                    <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> {sermonAi.isBeta ? `You've used this month's ${sermonAi.limit} AI uses` : sermonAi.isTrial ? `You've used all ${sermonAi.limit} trial AI uses` : `You've used your ${FREE_SERMON_LIMIT} free AI sermons`}
                   </div>
                   <div style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.5 }}>
-                    Upgrade to keep generating. Your congregation won't notice the difference in prep time, but you will.
+                    {sermonAi.isBeta
+                      ? 'They reset on the 1st. Everything you have written is still here to edit and publish.'
+                      : "Upgrade to keep generating. Your congregation won't notice the difference in prep time, but you will."}
                   </div>
                 </div>
-                <button
+                {!sermonAi.isBeta && <button
                   onClick={handleUpgrade}
                   disabled={upgradeBusy}
                   style={{
@@ -819,7 +825,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
                   }}
                 >
                   {upgradeBusy ? 'Opening…' : 'Unlock AI →'}
-                </button>
+                </button>}
               </div>
             ) : (
               <>
@@ -841,6 +847,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
                     remaining={sermonAi.remaining}
                     isTrial={sermonAi.isTrial}
                     isFree={sermonAi.isFree}
+                    isBeta={sermonAi.isBeta}
                   />
                 )}
               </>
@@ -891,9 +898,11 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
                   let day = 1;
                   while (usedDays.has(day)) day += 1;
                   // Default schedule: 8 AM local on that day of the configured week.
+                  // Past the seven days it goes out now: with no time it stayed a
+                  // hidden draft that the congregation never saw.
                   const scheduled_at = day <= 7
                     ? defaultScheduledAt(weekStartsOn, day)
-                    : null;
+                    : new Date().toISOString();
                   return [
                     ...arr,
                     { kind: 'daily_verse', day, body: '', scripture: '', scheduled_at, _local: true },

@@ -491,7 +491,7 @@ export function UpgradeWall({ onBack, session }) {
    - At limit: nothing — the gate replaces the button upstream
    - Paid: nothing — unlimited
 ── */
-export function SermonAiNudge({ remaining, isTrial, isFree }) {
+export function SermonAiNudge({ remaining, isTrial, isFree, isBeta }) {
   if (!isFree && !isTrial) return null;
   if (remaining <= 0) return null;
 
@@ -499,7 +499,9 @@ export function SermonAiNudge({ remaining, isTrial, isFree }) {
   const lowThreshold = isTrial ? 10 : 1;
   if (remaining > lowThreshold) return null;
 
-  const label = isTrial
+  const label = isBeta
+    ? `${remaining} AI uses left this month`
+    : isTrial
     ? `${remaining} AI uses left in your trial`
     : `${remaining} free ${remaining === 1 ? 'sermon' : 'sermons'} left`;
 

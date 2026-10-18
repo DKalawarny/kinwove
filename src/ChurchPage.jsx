@@ -142,7 +142,7 @@ export default function ChurchPage({
         .select('id, title, scripture_ref, summary, week_starts_on')
         .eq('church_id', churchId)
         .eq('is_published', true)
-        .order('week_starts_on', { ascending: false })
+        .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle(),
     ]).then(async ([{ data: c, error: cErr }, { count }, { data: serm }]) => {

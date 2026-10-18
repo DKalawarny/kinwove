@@ -15,6 +15,7 @@ import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { usePlan } from './usePlan.js';
 import { TrialBanner, SeatNudge } from './PlanGate.jsx';
 import { studySessionTitles } from './studySessions.js';
+import { useEscape } from './useEscape.js';
 
 const PastorDashboard = lazy(() => import('./PastorDashboard.jsx'));
 const SermonComposer  = lazy(() => import('./SermonComposer.jsx'));
@@ -236,6 +237,7 @@ function SettingsPanel({ church, churchId, session, onOpenChurchPage, onChurchUp
   const [pinDraft, setPinDraft]   = useState(church?.pinned_post ?? '');
   const [savingPin, setSavingPin] = useState(false);
   const [showQr, setShowQr]       = useState(false);
+  useEscape(showQr, () => setShowQr(false));
   const [copied, setCopied]       = useState(false);
   const [announceCopied, setAnnounceCopied] = useState(false);
   const [downloadingQr, setDownloadingQr]   = useState(false);
@@ -1591,7 +1593,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                           ``,
                           `Hi!`,
                           ``,
-                          `You're invited to join ${churchName} on kinwove — a space where our congregation connects between Sundays.`,
+                          `You're invited to join ${churchName} on kinwove, a space where our congregation connects between Sundays.`,
                           ``,
                           `Join here: ${joinUrl}`,
                           ``,
@@ -2380,7 +2382,7 @@ function NotesPanel({ session, churchId, onOpenSession }) {
   );
 }
 
-export default function ChurchAdmin({ session, profile, churchId, onBack, onOpenChurchPage, onOpenChurchHub, onOpenSermon, initialTab }) {
+export default function ChurchAdmin({ session, profile, churchId, onBack, onOpenChurchPage, onOpenChurchHub, onOpenSermon, onOpenCareInbox, initialTab }) {
   // Allow deep-links into a specific tab (e.g. ChurchPage's "Edit in Pastor
   // settings" lands on Settings, not Overview). Falls back to overview.
   const VALID_TABS = ['overview', 'people', 'ask', 'bible', 'sermons', 'notes', 'settings'];
@@ -2544,6 +2546,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
             churchId={churchId}
             onOpenComposer={openSermonInComposer}
             onOpenCareAdmin={() => setTab('people')}
+            onOpenCareInbox={onOpenCareInbox}
             onOpenChurchPage={onOpenChurchPage}
             onOpenSettings={gotoSettings}
             onOpenPeople={() => setTab('people')}

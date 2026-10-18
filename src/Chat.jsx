@@ -22,6 +22,7 @@ import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE
 import { cleanText } from './moderation.js';
 import { isWiderCanonText, WiderCanonTag } from './widerCanon.jsx';
 import { syncUiFlag, useUiFlagState } from './uiFlags.js';
+import { useEscape } from './useEscape.js';
 
 const GUEST_COUNT_KEY = 'kinwove:guest_count';
 
@@ -195,6 +196,7 @@ function PersonTypeWelcome({ personType }) {
   // Keys MUST match the real PERSON_TYPES ids in constants.js — otherwise every
   // type falls back to "Curious" and the app misidentifies who it's talking to.
   const config = {
+    believer:      { icon: 'scripture',label: 'Believer',      desc: 'Growing in faith and want to go deeper.' },
     curious:       { icon: 'doubt',    label: 'Curious',       desc: 'Every honest question is a door worth opening.' },
     seeking:       { icon: 'peace',    label: 'Seeking',       desc: 'Whatever brought you here matters.' },
     skeptic:       { icon: 'doubt',    label: 'Skeptical',     desc: 'Doubt deserves honest answers, not deflection.' },
@@ -822,7 +824,7 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
 // ── Capability hint strip near the camera / attach button ────────────────────
 const IMG_HINTS = [
   { icon: '📷', text: 'Attach a photo: Bible pages, handwritten notes, journal entries' },
-  { icon: '📜', text: 'Photo a Hebrew scroll or Greek manuscript — kinwove can read it' },
+  { icon: '📜', text: 'Photo a Hebrew scroll or Greek manuscript. kinwove can read it' },
   { icon: '🔤', text: 'Ask about the original Hebrew or Greek word behind any translation' },
   { icon: '✍️', text: 'Snap a handwritten question or note and ask about it' },
 ];
@@ -944,6 +946,7 @@ export default function Chat({
   const [flaggedMsgs,   setFlaggedMsgs]   = useState(new Set());
   const [flagToast,     setFlagToast]     = useState(false);
   const [versePopover,  setVersePopover]  = useState(null); // { refRaw, verseId, text } | null
+  useEscape(!!versePopover, () => setVersePopover(null));
   const [shareContent, setShareContent] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modePickerOpen, setModePickerOpen] = useState(false);

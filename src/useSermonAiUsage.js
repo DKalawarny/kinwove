@@ -6,6 +6,7 @@ export const TRIAL_MSG_LIMIT    = 100;  // total during 5-week trial
 
 // Monthly caps for paid church plans — single source of truth in planConfig.js
 import { SERMON_PAID_LIMITS as PAID_LIMITS } from './planConfig.js';
+import { PAYMENTS_LIVE } from './usePlan.js';
 
 const PERIOD_FREE  = 'sermon-lifetime';
 const PERIOD_TRIAL = 'sermon-trial';
@@ -23,11 +24,15 @@ function currentMonthKey() {
 export function useSermonAiUsage(userId, plan = 'free') {
   const isFree  = !plan || plan === 'free';
   const isTrial = plan === 'trial';
+  // While payments are off a trial can't be upgraded, so a lifetime cap would
+  // lock a church out for good. In the beta a trial church gets the Base plan's
+  // monthly allowance instead, and it resets on the 1st.
+  const isBeta  = isTrial && !PAYMENTS_LIVE;
   const paidCap = PAID_LIMITS[plan] ?? null;
   const isPaid  = !isFree && !isTrial && paidCap !== null;
 
-  const period = isTrial ? PERIOD_TRIAL : isFree ? PERIOD_FREE : currentMonthKey();
-  const limit  = isFree ? FREE_SERMON_LIMIT : isTrial ? TRIAL_MSG_LIMIT : paidCap;
+  const period = isBeta ? currentMonthKey() : isTrial ? PERIOD_TRIAL : isFree ? PERIOD_FREE : currentMonthKey();
+  const limit  = isBeta ? PAID_LIMITS.church_base : isFree ? FREE_SERMON_LIMIT : isTrial ? TRIAL_MSG_LIMIT : paidCap;
 
   const [used, setUsed] = useState(null);
 
@@ -57,5 +62,5 @@ export function useSermonAiUsage(userId, plan = 'free') {
     setUsed((u) => (u ?? 0) + 1);
   }
 
-  return { loading, used: used ?? 0, remaining, atLimit, isFree, isTrial, isPaid, limit, increment };
+  return { loading, used: used ?? 0, remaining, atLimit, isFree, isTrial, isBeta, isPaid, limit, increment };
 }

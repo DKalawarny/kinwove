@@ -22,6 +22,7 @@ import SponsoredCard from './SponsoredCard.jsx';
 import LinkPreview, { stripFirstUrl } from './LinkPreview.jsx';
 import { track } from './analytics.js';
 import { cleanText } from './moderation.js';
+import { useEscape } from './useEscape.js';
 const PostComposer = lazy(() => import('./PostComposer.jsx'));
 
 // Each reaction owns its own register: Yes is the casual like (blue-grey),
@@ -329,6 +330,7 @@ function SermonTeaserCard({ sermon, isMember, onOpenChurch }) {
 function PostCard({ post, index = 0, session, currentUserId, userProfile, userGroup, onReact, onReplySubmit, onRepost, onSendDM, isFollowing, onFollow, onViewProfile, tabColor = '#A85530', tabText = '#8E5528', isSaved = false, onSaveToggle, isAuthorBlocked = false, onBlockAuthor, defaultCommentsOpen = false, churchName = null }) {
   const [bodyExpanded,   setBodyExpanded]   = useState(false);
   const [commentsOpen,   setCommentsOpen]   = useState(defaultCommentsOpen);
+  useEscape(commentsOpen, () => setCommentsOpen(false));
   // post.post_comments is the embedded select from loadPosts; it's a thin
   // shape ({id, body, created_at, profiles}) hydrated by the relationship.
   // Optimistic appends use the same shape so the UI doesn't flicker.
@@ -1085,6 +1087,7 @@ function FeaturedThread({ thread, onRespond, tabColor = '#A85530' }) {
 
 function PrayerCard({ prayer, session, currentUserId, onPray, onViewProfile, tabColor = '#A85530', tabText = '#8E5528' }) {
   const [encOpen,    setEncOpen]    = useState(false);
+  useEscape(encOpen, () => setEncOpen(false));
   const [encs,       setEncs]       = useState(null);
   const [encInput,   setEncInput]   = useState('');
   const [encLoading, setEncLoading] = useState(false);
@@ -1574,7 +1577,7 @@ useEffect(() => {
               .select('id, title, scripture_ref, summary, week_starts_on, church_id')
               .in('church_id', ids)
               .eq('is_published', true)
-              .order('week_starts_on', { ascending: false })
+              .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false })
               .limit(ids.length * 3);
             const seenChurches = new Set();
             const sermonTeasers = (sermons ?? [])

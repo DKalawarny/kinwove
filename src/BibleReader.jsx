@@ -1925,8 +1925,22 @@ Return up to 5 matches, best first. If nothing matches, return []. No explanatio
       }
       try {
         const match = raw.match(/\[[\s\S]*\]/);
-        const verses = match ? JSON.parse(match[0]) : [];
-        setSearchResults(Array.isArray(verses) ? verses : []);
+        const found = match ? JSON.parse(match[0]) : [];
+        const verses = Array.isArray(found) ? found : [];
+        setSearchResults(verses);
+        // The model only finds the reference. The wording shown comes from the
+        // translation being read, never from the model's memory of a verse.
+        Promise.all(verses.map(async (item) => {
+          const p = parseRef(item?.ref);
+          if (!p || p.verse == null) return item;
+          try {
+            const r = await fetch(`/api/bible/${bibleId}/verses/${p.bookId}.${p.chapter}.${p.verse}`);
+            if (!r.ok) return item;
+            const j = await r.json();
+            const real = String(j?.data?.content ?? '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/g, ' ').replace(/^\s*\d+\s*/, '').replace(/\s+/g, ' ').trim();
+            return real ? { ...item, text: real } : item;
+          } catch { return item; }
+        })).then((withText) => setSearchResults((cur) => (cur === verses ? withText : cur)));
         // The model sometimes answers in prose instead of JSON — usually a
         // sensible clarifying question. Showing "No verses found" in that case
         // threw away the one useful thing it said.
@@ -2024,6 +2038,19 @@ Return up to 5 matches, best first. If nothing matches, return []. No explanatio
         source: 'verse',
       });
     }
+    setNoteSaving(false);
+    setNoteOpen(false);
+  }
+
+  // Delete really deletes. It used to blank the text and call saveNote, which
+  // ran with the old text still in its closure and saved the note again.
+  async function deleteNote() {
+    if (!session?.user?.id || !noteVerse) return;
+    setNoteSaving(true);
+    await supabase.from('bible_notes').delete()
+      .eq('user_id', session.user.id).eq('book_id', bookId).eq('chapter', chNum).eq('verse', noteVerse.number);
+    setNoteMap((prev) => { const next = { ...prev }; delete next[noteVerse.number]; return next; });
+    setNoteText('');
     setNoteSaving(false);
     setNoteOpen(false);
   }
@@ -3809,7 +3836,7 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
             <div style={{ display: 'flex', gap: 10, marginTop: 12, justifyContent: 'flex-end' }}>
               {noteMap[noteVerse.number] && (
                 <button
-                  onClick={() => { setNoteText(''); setTimeout(saveNote, 0); }}
+                  onClick={deleteNote}
                   disabled={noteSaving}
                   style={{ background: 'none', border: 'none', color: '#A53F2B', fontSize: 13, cursor: 'pointer', padding: '8px 4px' }}
                 >

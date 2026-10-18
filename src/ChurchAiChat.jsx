@@ -307,6 +307,19 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   // The desk (Bible pane, notes form) files things under the open session
   useEffect(() => { onSessionTitle?.(convTitle !== 'New conversation' ? convTitle : ''); }, [convTitle]);
 
+  // Reopen the sermon that was open, so a reload doesn't land on "No sermon open"
+  const openKey = `kw:study-open:${userId}:${churchId}`;
+  useEffect(() => {
+    if (convTitle !== 'New conversation') { try { localStorage.setItem(openKey, convId); } catch { /* ignore */ } }
+  }, [convId, convTitle, openKey]);
+  useEffect(() => {
+    let id = null;
+    try { id = localStorage.getItem(openKey); } catch { /* ignore */ }
+    const conv = id && history.find((c) => c.id === id && c.named !== false);
+    if (conv) loadConversation(conv);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Persist conversation to localStorage. A chat with no sermon open is listed in
   // history under its first question, but that never becomes a sermon name.
   useEffect(() => {
@@ -440,7 +453,12 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     if (!answer) return;
     const sessionTitle = convTitle !== 'New conversation' ? convTitle : null;
     const { error } = await appendToSermonDoc(supabase, { churchId, userId, series: sessionTitle, html: section.answer(question, answer) });
-    if (!error) { setSavedToNoteIdx((prev) => ({ ...prev, [assistantIdx]: true })); onNoteSaved?.(); }
+    if (!error) {
+      setSavedToNoteIdx((prev) => ({ ...prev, [assistantIdx]: true }));
+      // Kept on the message so the saved conversation still knows after a reload
+      setMessages((prev) => prev.map((m, i) => (i === assistantIdx ? { ...m, addedWhole: true } : m)));
+      onNoteSaved?.();
+    }
   }
 
   // ── Flag ──────────────────────────────────────────────────────────────────
@@ -460,10 +478,12 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
     setMessages([]); setInput(''); setError(null); setSavedToNoteIdx({}); setSavedParts({}); setMore({}); setResearchMemory(null); setSaveError(null); setFlaggedMsgs(new Set());
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setConvId(id); setConvTitle('New conversation');
+    try { localStorage.removeItem(openKey); } catch { /* ignore */ }
   }
   function loadConversation(conv) {
     setConvId(conv.id); setConvTitle(conv.named === false ? 'New conversation' : conv.title); setResearchMemory(conv.memory ?? null);
-    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedToNoteIdx({}); setSavedParts({}); setMore({});
+    setMessages(conv.messages); setSaveError(null); setError(null); setFlaggedMsgs(new Set()); setSavedParts({}); setMore({});
+    setSavedToNoteIdx(Object.fromEntries((conv.messages ?? []).map((m, i) => [i, !!m.addedWhole]).filter(([, v]) => v)));
   }
   // "Clear this chat": empty the chat, keep the sermon open
   function clearChat() {

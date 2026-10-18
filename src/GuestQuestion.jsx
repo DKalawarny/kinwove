@@ -217,6 +217,9 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
   const [suggestions, setSuggestions] = useState([]);
   const [shareContent, setShareContent] = useState({ q: '', a: '' });
   const [storedCount] = useState(() => loadStoredCount());
+  // Set when the server's per-connection daily cap answers 429, so the sign-up
+  // prompt shows right away (storedCount is only read once, at mount).
+  const [limitHit, setLimitHit] = useState(false);
   const taRef = useRef(null);
   const bottomRef = useRef(null);
 
@@ -231,7 +234,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
     try { return JSON.parse(localStorage.getItem('kinwove:pendingConv') || 'null')?.q ?? null; }
     catch { return null; }
   })();
-  const maxReached = exchangeCount >= MAX_EXCHANGES && !busy;
+  const maxReached = (exchangeCount >= MAX_EXCHANGES || limitHit) && !busy;
   const hasMessages = messages.length > 0 || (storedCount >= MAX_EXCHANGES);
 
   function getSystem() {
@@ -327,6 +330,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         // Hit the server-side daily IP cap — treat as max reached
         saveStoredCount(MAX_EXCHANGES);
         setMessages((prev) => prev.filter((_, i) => i !== assistantIdx));
+        setLimitHit(true);
         setBusy(false);
         return;
       }

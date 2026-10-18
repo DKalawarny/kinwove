@@ -281,7 +281,7 @@ function SermonRow({ sermon, onEdit, onTogglePublish, busy }) {
   );
 }
 
-export default function PastorDashboard({ session, profile, churchId, onBack, onOpenComposer, onOpenCareAdmin, onOpenChurchPage, onOpenSettings, onOpenPeople, embedded = false }) {
+export default function PastorDashboard({ session, profile, churchId, onBack, onOpenComposer, onOpenCareAdmin, onOpenCareInbox, onOpenChurchPage, onOpenSettings, onOpenPeople, embedded = false }) {
   const [loading, setLoading] = useState(true);
   const [church, setChurch] = useState(null);
   const [memberCount, setMemberCount] = useState(0);
@@ -497,7 +497,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
           .from('sermons')
           .select('*')
           .eq('church_id', churchId)
-          .order('week_starts_on', { ascending: false }),
+          .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false }),
         supabase
           .from('church_roles')
           .select('*, profiles(display_name)')
@@ -750,7 +750,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
         </div>
         <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
           <StatTile label="Questions asked" value={recentAnonCount} sublabel="last 7 days" accent={T.goldDark} />
-          <StatTile label="Care convos" value={careCount} sublabel="last 7 days" onClick={onOpenCareAdmin} />
+          <StatTile label="Care convos" value={careCount} sublabel="last 7 days" onClick={onOpenCareInbox ?? onOpenCareAdmin} />
           <StatTile label="Care team" value={careTeamSize} sublabel="active" onClick={onOpenCareAdmin} />
         </div>
 

@@ -14,6 +14,7 @@ import PostImageGrid from './PostImageGrid.jsx';
 import { codeToFlag } from './countries.js';
 import { useUiKit } from './uikit.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import { useEscape } from './useEscape.js';
 
 function renderWithMentions(text, mentions, onViewProfile, onViewChurch) {
   if (!mentions?.length || !text) return text;
@@ -475,6 +476,7 @@ export default function PostCard({
   const [mine, setMine]           = useState({}); // { amen: true }
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [commentsOpen, setCommentsOpen] = useState(defaultCommentsOpen);
+  useEscape(commentsOpen, () => setCommentsOpen(false));
   const [localCommentCount, setLocalCommentCount] = useState(commentCount);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hiddenLocally, setHiddenLocally] = useState(false);

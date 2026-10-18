@@ -72,9 +72,11 @@ export default function ChurchModeShell({
       }}>
         {/* Identity row — full-bleed: brand left, switcher right.
             paddingRight reserves the fixed Bell/Messages FAB zone. */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 168px 8px 18px', borderBottom: '1px solid rgba(253,248,240,0.07)' }}>
-          <KinwoveWordmark size={21} textColor="#f4e9d4" starColor={T.honey} />
-          <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: T.honey, opacity: 0.85, whiteSpace: 'nowrap', marginTop: 2 }}>
+        {/* On a phone the brand label and "· personal" text hide so the toggle clears the Bell/Messages buttons */}
+        <style>{`@media (max-width: 640px) { .cms-forch, .cms-personal-label { display: none; } .cms-identity { padding-right: 112px !important; padding-left: 14px !important; } }`}</style>
+        <div className="cms-identity" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 168px 8px 18px', borderBottom: '1px solid rgba(253,248,240,0.07)' }}>
+          <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}><KinwoveWordmark size={21} textColor="#f4e9d4" starColor={T.honey} /></span>
+          <span className="cms-forch" style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: T.honey, opacity: 0.85, whiteSpace: 'nowrap', marginTop: 2 }}>
             for churches
           </span>
           <div style={{ flex: 1 }} />
@@ -84,7 +86,7 @@ export default function ChurchModeShell({
             fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.14em', whiteSpace: 'nowrap',
           }}>
             <button
-              onClick={() => !isVisitorView ? undefined : onOpenChurchHub?.() ?? onBack?.()}
+              onClick={() => { if (!isVisitorView) return; if (onOpenChurchHub) onOpenChurchHub(); else onBack?.(); }}
               style={{
                 background: 'none', border: 'none', padding: 0, cursor: isVisitorView ? 'pointer' : 'default',
                 color: isVisitorView ? 'rgba(253,248,240,0.5)' : T.cream,
@@ -120,7 +122,7 @@ export default function ChurchModeShell({
               onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(253,248,240,0.08)')}
             >
               <span aria-hidden="true" style={{ fontSize: 12 }}>⇄</span>
-              {firstName ? `${firstName} · personal` : 'Personal'}
+              <span className="cms-personal-label">{firstName ? `${firstName} · personal` : 'Personal'}</span>
             </button>
           )}
         </div>
@@ -137,15 +139,19 @@ export default function ChurchModeShell({
             </h1>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 2, overflowX: 'auto', paddingBottom: 8 }}>
-            {TABS.map((t) => (
-              <TabButton
-                key={t.id}
-                tab={t}
-                active={tab === t.id}
-                onClick={() => onTabChange?.(t.id)}
-              />
-            ))}
+          {/* Centred when the tabs fit; when they don't, the row starts at its left
+              edge and scrolls (justifyContent:center pushed Overview off-screen). */}
+          <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
+            <div style={{ display: 'flex', gap: 2, width: 'max-content', margin: '0 auto' }}>
+              {TABS.map((t) => (
+                <TabButton
+                  key={t.id}
+                  tab={t}
+                  active={tab === t.id}
+                  onClick={() => onTabChange?.(t.id)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

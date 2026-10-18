@@ -2277,10 +2277,14 @@ export default function App() {
   // which reloads the SPA back to the home/landing stage.
   // We push a sentinel history entry on mount so there's always something to pop,
   // then re-push after each intercept so subsequent back presses are also caught.
+  // The sign-in screen is an overlay, not a stage, so Back closes it first.
+  const authStageRef = useRef(authStage);
+  authStageRef.current = authStage;
   useEffect(() => {
     window.history.pushState({ kw: 1 }, '');
     function handlePopState() {
-      goBack();
+      if (authStageRef.current === 'auth') setAuthStage('idle');
+      else goBack();
       window.history.pushState({ kw: 1 }, '');
     }
     window.addEventListener('popstate', handlePopState);
@@ -2916,7 +2920,7 @@ export default function App() {
             padding: '12px 20px', textAlign: 'center',
             fontSize: 14, fontFamily: T.sans, lineHeight: 1.4,
           }}>
-            ✶ You've been invited to join a church on kinwove — sign in or create an account to accept.
+            ✶ You've been invited to join a church on kinwove. Sign in or create an account to accept.
           </div>
         )}
         <Auth
@@ -3511,6 +3515,7 @@ export default function App() {
       })()}
       {(stage === 'pastor-dashboard') && session && pastorChurchId && (
         <ChurchAdmin
+          onOpenCareInbox={() => setStage('care-inbox')}
           session={session}
           profile={profile}
           churchId={pastorChurchId}
@@ -3521,6 +3526,7 @@ export default function App() {
       )}
       {stage === 'church-admin' && session && (pastorChurchId || (profile?.is_pastor && profile?.church_id)) && (
         <ChurchAdmin
+          onOpenCareInbox={() => setStage('care-inbox')}
           session={session}
           profile={profile}
           churchId={pastorChurchId || profile.church_id}

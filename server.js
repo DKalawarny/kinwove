@@ -1864,8 +1864,12 @@ app.post('/api/sermon/generate', requireAuth, requirePastor, limitAuthed({ capac
       })
       .join('\n');
 
+    // The day being replaced: without it the model often wrote the same question again.
+    const current = (existingItems ?? []).find((it) => it && it.day === singleDay);
+    const currentText = current ? `${(current.scripture || '').toString().trim()} — "${(current.body || '').toString().replace(/\s+/g, ' ').trim().slice(0, 300)}"` : '';
     const single = [
       `⚠ IMPORTANT: Replace ONLY day ${singleDay ?? '(unspecified)'} of the daily questions with one new daily_verse item.`,
+      ...(currentText ? [`The pastor asked for something different from what this day says now. Do not reuse its topic, angle or question:\n- ${currentText}`] : []),
       otherTopics
         ? `The other days currently cover these topics — DO NOT recycle them and do NOT land on a closing question that asks the same thing in different words:\n${otherTopics}`
         : `No other days are filled in yet — pick the topic from the sermon that has the most discussion energy.`,
@@ -4282,91 +4286,36 @@ app.post('/api/anon/ask', limitAnon({ capacity: 6, refillPerSec: 6 / 300 }), asy
 
 // ── Welcome DM (Tom-from-MySpace style system account) ───────────────────────
 // On new user signup, the client calls POST /api/welcome-dm.
-// We auto-create (once) a "kinwove" system account via the Supabase Admin Auth
-// API, then create a DM conversation + insert the welcome message using the
+// The sender is the one profile flagged is_system_account (or SYSTEM_ACCOUNT_ID);
+// we create a DM conversation + insert the welcome message using the
 // service role key (bypasses RLS so no additional policies needed).
 
-const SYSTEM_EMAIL = 'system-theway@theway.internal';
 let _systemAccountId = process.env.SYSTEM_ACCOUNT_ID ?? null;
-
-async function upsertSystemProfile(id) {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return;
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates,return=minimal',
-      },
-      body: JSON.stringify({
-        id,
-        display_name: 'kinwove',
-        // DiceBear illustrated avatar — gold-toned, seed "Faith"
-        avatar_config: { style: 'lorelei', seed: 'Faith', bgColor: 'fef3c7' },
-        person_type: 'believer',
-      }),
-    });
-  } catch (e) {
-    console.error('[kinwove] system profile upsert error:', e?.message);
-  }
-}
 
 async function getOrCreateSystemAccount() {
   if (_systemAccountId) return _systemAccountId;
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return null;
 
-  // 1. Try env var shortcut (admin can pre-set this)
-  // Already returned above.
-
-  // 2. Look for existing system account by email
+  // Only ever the one profile flagged is_system_account. The old fallback asked
+  // GoTrue's admin list by email, but that endpoint ignores ?email= and
+  // returns an arbitrary user (often the newest sign-up), which then got renamed
+  // "kinwove" and posted the daily verse and welcome DMs as that person.
+  // If the flagged row is missing we return null: nothing is sent, nobody is renamed.
   try {
-    const listR = await fetch(
-      `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(SYSTEM_EMAIL)}&page=1&per_page=1`,
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?is_system_account=eq.true&select=id&limit=2`,
       { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } },
     );
-    if (listR.ok) {
-      const payload = await listR.json();
-      const found = Array.isArray(payload?.users) ? payload.users[0] : null;
-      if (found?.id) {
-        _systemAccountId = found.id;
-        await upsertSystemProfile(_systemAccountId);
-        console.log(`[kinwove] system account found: ${_systemAccountId}`);
-        return _systemAccountId;
-      }
+    const rows = r.ok ? await r.json() : [];
+    if (Array.isArray(rows) && rows.length === 1 && rows[0]?.id) {
+      _systemAccountId = rows[0].id;
+      console.log(`[kinwove] system account: ${_systemAccountId}`);
+      return _systemAccountId;
     }
+    console.error(`[kinwove] system account not resolved (${Array.isArray(rows) ? rows.length : 'error'} flagged rows); set SYSTEM_ACCOUNT_ID`);
   } catch (e) {
     console.error('[kinwove] system account lookup error:', e?.message);
   }
-
-  // 3. Create new auth user for the system account
-  try {
-    const createR = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: SYSTEM_EMAIL,
-        email_confirm: true,
-        user_metadata: { display_name: 'kinwove', is_system: true },
-      }),
-    });
-    const data = await createR.json();
-    if (data?.id) {
-      _systemAccountId = data.id;
-      await upsertSystemProfile(_systemAccountId);
-      console.log(`[kinwove] system account created: ${_systemAccountId}`);
-      return _systemAccountId;
-    }
-    console.error('[kinwove] system account create failed:', JSON.stringify(data));
-  } catch (e) {
-    console.error('[kinwove] system account create error:', e?.message);
-  }
-
   return null;
 }
 

@@ -79,7 +79,7 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
       .select('id, title, week_starts_on')
       .eq('church_id', sermon.church_id)
       .eq('is_published', true)
-      .order('week_starts_on', { ascending: false })
+      .order('week_starts_on', { ascending: false }).order('created_at', { ascending: false })
       .then(({ data }) => setSiblings(data ?? []));
     supabase
       .from('churches')
@@ -111,7 +111,8 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
     );
   }
 
-  const week    = formatWeekOf(sermon.week_starts_on);
+  // week_starts_on is the Monday after the sermon, so the sermon itself was the day before.
+  const week    = sermon.week_starts_on ? formatWeekOf(new Date(new Date(sermon.week_starts_on + 'T00:00:00').getTime() - 86400000).toLocaleDateString('en-CA')) : null;
   const now     = Date.now();
   // Daily questions = new unified flow (daily_verse) PLUS any legacy
   // group_question rows on older sermons.
