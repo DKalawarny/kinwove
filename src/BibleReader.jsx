@@ -1174,6 +1174,14 @@ export default function BibleReader({ session, profile, homeKey = 0, onClose, on
   }
   const [chatDark, setChatDark] = useState(() => localStorage.getItem('rdr_chat_dark') === '1');
   const [selectedVerse, setSelectedVerse] = useState(null);
+  // Bring the verse menu fully into view when it opens; near the top of the
+  // chapter its last row sat behind the sticky chapter bar.
+  const verseMenuRef = useRef(null);
+  useEffect(() => {
+    if (!selectedVerse) return;
+    const id = requestAnimationFrame(() => verseMenuRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+    return () => cancelAnimationFrame(id);
+  }, [selectedVerse?.number]); // eslint-disable-line react-hooks/exhaustive-deps
   // The commentary sheet is pinned to the visual viewport while the keyboard is
   // up — on a fixed 65vh the keyboard buried its composer and pushed the close
   // button out of reach (Daniel, 8/24).
@@ -3541,7 +3549,7 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                       {' '}
                       {showMenu && (
                         <span style={{ display: 'inline-block', verticalAlign: 'top' }}>
-                          <span style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', background: dark ? '#1A0E07' : T.white, border: `1px solid ${C.border}`, borderRadius: 12, padding: '8px 10px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', margin: '4px 0 4px 4px' }}>
+                          <span ref={verseMenuRef} style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', background: dark ? '#1A0E07' : T.white, border: `1px solid ${C.border}`, borderRadius: 12, padding: '8px 10px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', margin: '4px 0 4px 4px', scrollMarginTop: 140, scrollMarginBottom: 90 }}>
                             {/* Free-form ask — opens this book's chat with the input focused,
                                 no canned prompt. For "explain why…" or any question at all. */}
                             <button onClick={() => { setSelectedVerse(null); setSelEnd(null); setChatOpen(true); setTimeout(() => chatInputRef.current?.focus(), 300); }} style={{ background: `linear-gradient(135deg, ${T.gold} 0%, #c47020 100%)`, border: '1px solid transparent', borderRadius: 999, padding: '9px 14px', fontSize: 12.5, fontWeight: 600, color: T.cream, cursor: 'pointer', whiteSpace: 'nowrap' }}>

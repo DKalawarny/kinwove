@@ -89,7 +89,7 @@ function ReplyRow({ reply, myId, isPastor, groupId, onDelete }) {
 
   function deleteNested(id) {
     setNested((prev) => prev.filter((n) => n.id !== id));
-    supabase.from('group_posts').delete().eq('id', id);
+    supabase.from('group_posts').delete().eq('id', id).then(null, () => {});
   }
 
   return (
@@ -210,7 +210,7 @@ function ThreadCard({ thread, groupId, myId, isPastor, onDelete, onPin, refreshK
 
   function deleteReply(id) {
     setReplies((prev) => prev.filter((r) => r.id !== id));
-    supabase.from('group_posts').delete().eq('id', id);
+    supabase.from('group_posts').delete().eq('id', id).then(null, () => {});
   }
 
   return (
@@ -369,7 +369,7 @@ export default function GroupSpace({ group, role, session, profile, onLeave, onC
     if (!myId || !group?.id) return;
     supabase.from('group_member_seen')
       .upsert({ group_id: group.id, member_id: myId, last_seen_at: new Date().toISOString() },
-               { onConflict: 'group_id,member_id' });
+               { onConflict: 'group_id,member_id' }).then(null, () => {});
   }, [group.id, myId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load ALL kinwove users when invite opens (cached per mount)
@@ -498,7 +498,7 @@ export default function GroupSpace({ group, role, session, profile, onLeave, onC
 
   async function deleteThread(id) {
     setThreads((prev) => prev.filter((t) => t.id !== id));
-    await supabase.from('group_posts').delete().eq('id', id);
+    await supabase.from('group_posts').delete().eq('id', id).then(null, () => {});
   }
 
   async function pinThread(threadId) {
@@ -558,7 +558,7 @@ export default function GroupSpace({ group, role, session, profile, onLeave, onC
   async function deleteMsg(id) {
     setMessages((prev) => prev.filter((m) => m.id !== id));
     setDeletingId(null);
-    supabase.from('group_messages').delete().eq('id', id);
+    supabase.from('group_messages').delete().eq('id', id).then(null, () => {});
   }
 
   return (

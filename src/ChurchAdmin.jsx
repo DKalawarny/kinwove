@@ -64,6 +64,19 @@ function qrUrl(url) {
   return `https://quickchart.io/qr?text=${encodeURIComponent(url)}&size=320&margin=2&dark=2C1810&light=FDF8F0`;
 }
 
+// Print a just-written card window once its QR image has loaded (a fixed delay
+// could print before the image arrived, leaving the bulletin without a code).
+// Capped at 4s so a failed image still prints the code and link.
+function printWhenQrLoaded(w) {
+  let done = false;
+  const go = () => { if (done) return; done = true; w.print(); };
+  const img = w.document.querySelector('img');
+  if (!img || img.complete) { setTimeout(go, 150); return; }
+  img.addEventListener('load', go);
+  img.addEventListener('error', go);
+  setTimeout(go, 4000);
+}
+
 const CHURCH_BANNER_PRESETS = [
   { key: 'ink',    label: 'Ink',      bg: '#1e1208' },
   { key: 'forest', label: 'Sage',     bg: '#2e3e28' },
@@ -1647,7 +1660,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                         </div></body></html>`);
                         w.document.close();
                         w.focus();
-                        setTimeout(() => w.print(), 600);
+                        printWhenQrLoaded(w);
                       }}
                       style={{
                         background: 'transparent', border: `1px solid ${T.line}`, borderRadius: 999,
@@ -1737,7 +1750,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                         const w = window.open('', '_blank');
                         if (!w) return; // popup blocked / native webview
                         w.document.write(`<!DOCTYPE html><html><head><title>Join ${church?.name ?? 'our church'} Youth on kinwove</title><style>body{font-family:Georgia,serif;background:#FDF8F0;color:#2C1810;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;}.card{border:2px solid #A85530;border-radius:18px;padding:48px 56px;max-width:480px;text-align:center;}.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A85530;font-weight:700;margin-bottom:16px;}h1{font-size:28px;font-weight:600;margin:0 0 8px;letter-spacing:-0.5px;}.sub{font-size:15px;color:#5A4733;line-height:1.6;margin-bottom:28px;}.code{font-family:monospace;font-size:36px;font-weight:700;letter-spacing:6px;border:1.5px solid #D9C9A8;border-radius:10px;padding:10px 20px;display:inline-block;margin-bottom:20px;}.url{font-size:13px;color:#8E5528;word-break:break-all;margin-bottom:32px;}img{border-radius:8px;border:1px solid #D9C9A8;}.footer{font-size:11px;color:#A89070;margin-top:32px;letter-spacing:1px;}@media print{body{background:#fff;}.card{border-color:#ccc;}}</style></head><body><div class="card"><div class="eyebrow">kinwove · Youth Group</div><h1>${church?.name ?? 'Our Church'}</h1><p class="sub">Scan the QR code or enter the code below<br>to join the youth group on kinwove.</p><img src="${qrUrl(youthJoinUrl)}" width="200" height="200" /><br><br><div class="code">${youthCode}</div><div class="url">${youthJoinUrl}</div><div class="footer">kinwove.com</div></div></body></html>`);
-                        w.document.close(); w.focus(); setTimeout(() => w.print(), 600);
+                        w.document.close(); w.focus(); printWhenQrLoaded(w);
                       }}
                       style={{ background: 'transparent', border: `1px solid ${T.line}`, borderRadius: 999, padding: '7px 14px', fontSize: 13, color: T.inkSoft, cursor: 'pointer' }}
                     >🖨️ Print</button>
@@ -2222,8 +2235,10 @@ function NotesPanel({ session, churchId, onOpenSession }) {
   }
 
   async function deleteNote(id) {
+    const gone = notes.find((n) => n.id === id);
     await supabase.from('church_notes').delete().eq('id', id);
     setNotes((prev) => prev.filter((n) => n.id !== id));
+    if (gone?.source === 'doc') window.dispatchEvent(new CustomEvent('kw:sermon-page-deleted', { detail: { series: gone.series ?? gone.title } }));
     setConfirmDelete(null);
     if (expandedId === id) setExpandedId(null);
   }

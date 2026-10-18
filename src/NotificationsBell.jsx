@@ -42,7 +42,10 @@ const KIND_COPY = {
 };
 
 function NotificationRow({ n, onClick, onFriendAction, onAvatarClick, onRoleAccepted, onMarkRead }) {
-  const copy = KIND_COPY[n.kind] ?? { verb: n.kind, Icon: null, emoji: <KinwoveStar size={10} /> };
+  const base = KIND_COPY[n.kind] ?? { verb: n.kind, Icon: null, emoji: <KinwoveStar size={10} /> };
+  // A reply in a sermon discussion goes to the comment's author, who usually
+  // isn't the pastor: "commented on your sermon" told them the wrong thing.
+  const copy = n.kind === 'sermon_comment' && n.data?.reply ? { ...base, verb: 'replied to your comment' } : base;
   const actor = n.actor_profile;
 
   // Anonymous care messages: don't reveal sender identity

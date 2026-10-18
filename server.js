@@ -18,6 +18,7 @@ import { ANSWERS_FA_BY_SLUG } from './content/answers-fa.js';
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
+import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
 import { isCrisisMessage } from './src/safetyPatterns.js';
 import { renderLegalPage } from './content/legal.js';
@@ -1971,6 +1972,10 @@ app.post('/api/sermon/generate', requireAuth, requirePastor, limitAuthed({ capac
         items = [];
       }
     }
+    // The prompt says no dashes, but the model still slips them into questions people read.
+    items = items.map((it) => (it && typeof it === 'object'
+      ? { ...it, ...(typeof it.body === 'string' ? { body: plainDashes(it.body) } : {}), ...(typeof it.scripture === 'string' ? { scripture: plainDashes(it.scripture) } : {}) }
+      : it));
     res.json({ content: items });
   } catch (err) {
     // Surface enough detail to diagnose without leaking secrets. The Anthropic

@@ -2966,7 +2966,9 @@ export default function App() {
           existing={profile}
           onSave={(p) => {
             const isFirstTime = profileEditOrigin === 'idle' && !pendingPastorApply && !profile?.is_pastor;
-            setProfile(p);
+            // Merge: the form only carries the fields it edits, so replacing the
+            // profile dropped plan, church and the rest until the next reload.
+            setProfile((prev) => ({ ...(prev ?? {}), ...p }));
             setAuthStage('idle');
             if (pendingPastorApply) { setPendingPastorApply(false); setStage('pastor-apply'); }
             else {
@@ -3013,7 +3015,7 @@ export default function App() {
           onEdit={() => { setProfileEditOrigin('profile-view'); setAuthStage('profile-setup'); }}
           onSignOut={() => { setSession(null); setProfile(null); setAuthStage('idle'); }}
           onClose={() => setAuthStage('idle')}
-          onProfileUpdate={(p) => setProfile(p)}
+          onProfileUpdate={(p) => setProfile((prev) => ({ ...(prev ?? {}), ...p }))}
           onSetPersonType={(pt) => setPersonType(pt)}
         />
       </>
@@ -3053,7 +3055,8 @@ export default function App() {
   // Bell + Messages stay — pastors need member-join + DM signals in church mode.
   const inChurchMode = stage === 'church-admin';
   // Hide on full-screen flows that have no header room at all.
-  const showTopRight = showNav && !['onboarding', 'intake', 'anon-welcome', 'church-entry'].includes(stage);
+  // On a phone the Ask panel covers the screen; the floating bell/messages sat on its header.
+  const showTopRight = showNav && !['onboarding', 'intake', 'anon-welcome', 'church-entry'].includes(stage) && !(chatPanelOpen && !isDesktop);
 
   const HEADER_H = 56; // global app header height on desktop
 
@@ -3235,7 +3238,7 @@ export default function App() {
           onEditProfile={() => { setProfileEditOrigin('me'); setAuthStage('profile-setup'); }}
           onSignOut={() => { supabase.auth.signOut(); setSession(null); setProfile(null); setStage('landing'); }}
           onDeleteAccount={() => setShowDeleteAccount(true)}
-          onProfileUpdate={(p) => setProfile(p)}
+          onProfileUpdate={(p) => setProfile((prev) => ({ ...(prev ?? {}), ...p }))}
           onViewProfile={(uid) => setViewingUserId(uid)}
           onOpenChat={(q) => { if (!currentConvId) startChatFromProfile(); if (q) setPrefilledInput(q); setChatPanelOpen(true); }}
           onFindPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
@@ -3378,7 +3381,7 @@ export default function App() {
                 goBack('churches');
               }
             }}
-            onProfileUpdate={(p) => setProfile(p)}
+            onProfileUpdate={(p) => setProfile((prev) => ({ ...(prev ?? {}), ...p }))}
             onViewProfile={(uid) => setViewingUserId(uid)}
             onOpenSermon={(id) => { setViewingSermonId(id); setStage('sermon-view'); }}
             onOpenAdmin={pastorChurchId

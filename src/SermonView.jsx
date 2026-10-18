@@ -301,7 +301,7 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
             padding: `${SPACE[5]}px ${SPACE[5]}px ${SPACE[4]}px`,
           }}>
             <div style={{ fontFamily: T.serif, fontSize: 14, color: T.inkMuted, lineHeight: 1.6, marginBottom: SPACE[3] }}>
-              What stood out from Sunday? Replies show your name unless you check "Anonymously."
+              What stood out from Sunday? Replies show your name unless you check "Anon."
             </div>
             <Suspense fallback={<div style={{ color: T.inkMuted, fontSize: 13, fontFamily: T.serif }}>Loading…</div>}>
               <SermonDiscussion

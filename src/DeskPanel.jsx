@@ -389,8 +389,10 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
   }
 
   async function deleteNote(noteId) {
+    const gone = notes.find(n => n.id === noteId);
     await supabase.from('church_notes').delete().eq('id', noteId);
     setNotes(prev => prev.filter(n => n.id !== noteId));
+    if (gone?.source === 'doc') window.dispatchEvent(new CustomEvent('kw:sermon-page-deleted', { detail: { series: gone.series ?? gone.title } }));
     try { const k = editDraftKey(noteId); if (k) localStorage.removeItem(k); } catch { /* ignore */ }
     setEditingId(null); setConfirmDelete(null);
   }

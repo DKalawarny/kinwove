@@ -10,6 +10,7 @@ import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { PER_TYPE } from './prompts.js';
 import { extractRefs, parseRef, toApiPassageId, readingVersion, VALIDATION_BIBLE_ID } from './bibleRefUtils.js';
 import { readConvs, writeConvs } from './studySessions.js';
+import { useEscape } from './useEscape.js';
 import { appendToSermonDoc, section, splitSections, listSermonDocs, ensureSermonDoc } from './lib/sermonDoc.js';
 import { splitVoices, MORE_KINDS, moreRequest } from './lib/researchMore.js';
 import { researchSystem } from './researchPrompt.js';
@@ -307,6 +308,19 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   // The desk (Bible pane, notes form) files things under the open session
   useEffect(() => { onSessionTitle?.(convTitle !== 'New conversation' ? convTitle : ''); }, [convTitle]);
 
+  // A sermon's page deleted from Notes closes it here and drops it from the list.
+  useEffect(() => {
+    const onGone = (e) => {
+      const series = e.detail?.series;
+      if (!series) return;
+      if (convTitle === series) newConversation();
+      setHistory((prev) => { const next = prev.filter((c) => !(c.named !== false && c.title === series)); writeConvs(userId, churchId, next); return next; });
+    };
+    window.addEventListener('kw:sermon-page-deleted', onGone);
+    return () => window.removeEventListener('kw:sermon-page-deleted', onGone);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [convTitle]);
+
   // Reopen the sermon that was open, so a reload doesn't land on "No sermon open"
   const openKey = `kw:study-open:${userId}:${churchId}`;
   useEffect(() => {
@@ -511,6 +525,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   // doubles as a picker: bring up an old sermon, or one made ahead of time.
   const [sermons, setSermons] = useState([]);
   const [sermonMenuOpen, setSermonMenuOpen] = useState(false);
+  useEscape(sermonMenuOpen, () => setSermonMenuOpen(false));
   const [newSermonName, setNewSermonName] = useState('');
   function refreshSermons() { listSermonDocs(supabase, churchId).then(setSermons, () => {}); }
   useEffect(() => { refreshSermons(); }, [churchId]);

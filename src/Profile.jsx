@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { LANGUAGES } from './languages.js';
 import { ArrowLeft, Check } from 'lucide-react';
 import { supabase, authedFetch } from './supabase.js';
@@ -11,7 +11,9 @@ import { COUNTRIES, codeToFlag } from './countries.js';
 
 // Spiritual-state options only — chat-mode types (group, guided, kids) are
 // intentionally excluded here; they live in constants.js for the AI prompts.
-const PROFILE_PERSON_TYPES = ['curious','seeking','skeptic','heard-things','new-faith','deeper','inter-faith'];
+// 'believer' is offered by the guest on-ramp, so it has to be here too or a believer
+// can't see or keep their own answer when they edit their profile.
+const PROFILE_PERSON_TYPES = ['believer','curious','seeking','skeptic','heard-things','new-faith','deeper','inter-faith'];
 
 // Names that cannot be used as a display name (case-insensitive)
 const RESERVED_NAMES = ['kinwove', 'admin', 'system', 'moderator', 'support', 'help', 'the way'];
@@ -509,6 +511,7 @@ export default function ProfileSetup({ user, existing, onSave, onCancel }) {
 
   const [prevTradition] = useState(existing?.tradition ?? 'Still Discovering');
   const [saving, setSaving]               = useState(false);
+  const savedPayloadRef = useRef(null);
   const [error, setError]                 = useState(null);
   const [showMilestone, setShowMilestone] = useState(false);
 
@@ -552,6 +555,7 @@ export default function ProfileSetup({ user, existing, onSave, onCancel }) {
     const { error: err } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
     setSaving(false);
     if (err) return setError(err.message);
+    savedPayloadRef.current = payload;
     if (isNewHome) setShowMilestone(true);
     else onSave(payload);
   }
@@ -564,7 +568,7 @@ export default function ProfileSetup({ user, existing, onSave, onCancel }) {
         <HomeFound
           tradition={form.tradition}
           name={[form.first_name, form.last_name].filter(Boolean).join(' ')}
-          onContinue={() => { setShowMilestone(false); onSave(form); }}
+          onContinue={() => { setShowMilestone(false); onSave(savedPayloadRef.current ?? form); }}
         />
       )}
 

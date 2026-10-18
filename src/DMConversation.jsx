@@ -373,7 +373,7 @@ export default function DMConversation({ session, profile, conversationId, other
   async function deleteMsg(id) {
     setMessages((prev) => prev.filter((m) => m.id !== id));
     setDeletingId(null);
-    supabase.from('dm_messages').delete().eq('id', id);
+    supabase.from('dm_messages').delete().eq('id', id).then(null, () => {});
   }
 
   function startEdit(msg) {
@@ -389,7 +389,7 @@ export default function DMConversation({ session, profile, conversationId, other
     setMessages((prev) => prev.map((m) => m.id === id ? { ...m, body } : m));
     setEditingId(null);
     setEditBody('');
-    supabase.from('dm_messages').update({ body }).eq('id', id);
+    supabase.from('dm_messages').update({ body }).eq('id', id).then(null, () => {});
   }
 
   function cancelEdit() {
