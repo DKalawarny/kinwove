@@ -547,6 +547,12 @@ export default function ProfileSetup({ user, existing, onSave, onCancel }) {
       gender: ['Man','Woman','Prefer not to say'].includes(formRest.gender) ? formRest.gender : null,
       exploring_since: ['Just started','A few months','About a year','Several years'].includes(formRest.exploring_since) ? formRest.exploring_since : null,
       birthday: formRest.birthday || null,
+      // Fields left empty stay empty: saving used to write "" and the
+      // "Still Discovering" default over profiles that never answered them.
+      ...Object.fromEntries(['city', 'background', 'what_brought'].filter((k) => !formRest[k]?.trim?.() && existing?.[k] == null).map((k) => [k, null])),
+      ...(!countryText && existing?.country == null ? { country: null } : {}),
+      ...(formRest.tradition === 'Still Discovering' && existing?.tradition == null ? { tradition: null } : {}),
+      ...(Array.isArray(formRest.looking_for) && formRest.looking_for.length === 0 && existing?.looking_for == null ? { looking_for: null } : {}),
       ...(existing?.avatar_config ? { avatar_config: existing.avatar_config } : {}),
       ...(isNewHome ? { home_found_at: new Date().toISOString() } : {}),
       updated_at: new Date().toISOString(),
