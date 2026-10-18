@@ -7,6 +7,7 @@ import { flushPendingTerms } from './termsConsent.js';
 import { effectivePersonalPlan } from './planConfig.js';
 import { KinwoveWordmark } from './components/brand/KinwoveWordmark.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import { DoorVideoCover, DoorVideoPlayer } from './components/DoorVideo.jsx';
 import { KinwoveAppIcon } from './components/brand/KinwoveAppIcon.jsx';
 
 function ScreenLoader() {
@@ -379,6 +380,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   const DIM   = 'rgba(253,248,240,0.55)';
   const DIMLO = 'rgba(253,248,240,0.38)';
   const RULE  = 'rgba(255,255,255,0.06)';
+  const [doorVideo, setDoorVideo] = useState(null);
 
   // These are enforced server-side (truthfulness rules on every AI surface,
   // commentary grounding, live scripture-reference verification) — keep the
@@ -453,18 +455,20 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
       </main>
 
       {/* ── Two doors — the same product, two very different reasons to walk in.
-             Each box is a complete pitch; nobody has to read the other one. ── */}
+             Each box is a complete pitch; nobody has to read the other one.
+             Same card twice, colours flipped: cream for you, dark for churches. ── */}
       <section style={{ padding: '10px 24px 72px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>Two ways in</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center' }}>
           {/* Door 1 — For you */}
-          <div style={{ flex: '1 1 320px', maxWidth: 420, background: 'linear-gradient(165deg, rgba(212,162,74,0.13) 0%, rgba(212,162,74,0.05) 60%)', border: '1px solid rgba(212,162,74,0.5)', borderRadius: 20, padding: '30px 28px 26px', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 40px rgba(212,162,74,0.08)' }}>
-            <div style={{ fontSize: 24, marginBottom: 14 }}>🕊️</div>
-            <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: T.cream, margin: '0 0 10px', letterSpacing: '-0.018em' }}>For you</h3>
-            <p style={{ fontFamily: T.serif, fontSize: 15.5, color: DIM, lineHeight: 1.7, margin: '0 0 18px' }}>
+          <div style={{ flex: '1 1 320px', maxWidth: 420, background: T.cream, border: '1px solid rgba(26,17,10,0.12)', borderTop: `3px solid ${T.honey}`, borderRadius: 20, padding: '16px 16px 26px', display: 'flex', flexDirection: 'column' }}>
+            <DoorVideoCover name="you" onOpen={() => setDoorVideo('you')} />
+            <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: '#1A110A', margin: '0 0 10px', letterSpacing: '-0.018em' }}>🕊️ For you</h3>
+            <p style={{ fontFamily: T.serif, fontSize: 15.5, color: 'rgba(26,17,10,0.68)', lineHeight: 1.7, margin: '0 0 18px' }}>
               Honest answers to the questions you actually have, doubt included. An AI that stays in scripture and says "I don't know" when it doesn't, a Bible you can ask anything, and people at every stage of the same road.
             </p>
-            <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(212,162,74,0.75)', lineHeight: 1.7, margin: '0 0 10px' }}>
+            <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 13.5, color: T.gold, lineHeight: 1.7, margin: '0 0 10px' }}>
               For the curious · the skeptic · the searching · the believer
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 22px' }}>
@@ -474,27 +478,27 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
                 'Notes, highlights, and reading plans',
                 'Real people and churches, whenever you\'re ready',
               ].map((b) => (
-                <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: DIM, lineHeight: 1.55, textAlign: 'left' }}>
+                <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: 'rgba(26,17,10,0.68)', lineHeight: 1.55, textAlign: 'left' }}>
                   <KinwoveStar size={9} color={T.gold} style={{ flexShrink: 0, marginTop: 4 }} />
                   {b}
                 </div>
               ))}
             </div>
             <div style={{ marginTop: 'auto' }}>
-              <button onClick={onBegin} style={{ background: T.gold, color: T.cream, border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(184,115,58,0.35)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
+              <button onClick={onBegin} style={{ background: '#1A110A', color: T.cream, border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
               >Start asking →</button>
+            </div>
             </div>
           </div>
           {/* Door 2 — For your church */}
-          <div style={{ flex: '1 1 320px', maxWidth: 420, background: 'rgba(14,9,4,0.72)', border: '1px solid rgba(255,255,255,0.09)', borderTop: `3px solid ${T.honey}`, borderRadius: 20, padding: '28px 28px 26px', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 24, marginBottom: 14 }}>⛪</div>
+          <div style={{ flex: '1 1 320px', maxWidth: 420, background: '#120B05', border: '1px solid rgba(245,237,216,0.16)', borderTop: `3px solid ${T.honey}`, borderRadius: 20, padding: '16px 16px 26px', display: 'flex', flexDirection: 'column' }}>
+            <DoorVideoCover name="church" onOpen={() => setDoorVideo('church')} />
+            <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
             <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: T.cream, margin: '0 0 10px', letterSpacing: '-0.018em' }}>
-              For your church
+              ⛪ For your church
               <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: T.honey, marginLeft: 10, verticalAlign: 'middle' }}>kinwove for churches</span>
             </h3>
-            <p style={{ fontFamily: T.serif, fontSize: 15.5, color: DIM, lineHeight: 1.7, margin: '0 0 18px' }}>
+            <p style={{ fontFamily: T.serif, fontSize: 15.5, color: 'rgba(245,237,216,0.62)', lineHeight: 1.7, margin: '0 0 18px' }}>
               Sunday's sermon becomes a week of engagement. A research desk for sermon prep, daily questions your congregation actually answers, and a prayer wall that tells you how your people are really doing.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 12px' }}>
@@ -504,7 +508,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
                 'A soft front door. New people can meet your church before they ever walk in',
                 'Care tools, so you know how your people are really doing',
               ].map((b) => (
-                <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: DIM, lineHeight: 1.55, textAlign: 'left' }}>
+                <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: 'rgba(245,237,216,0.62)', lineHeight: 1.55, textAlign: 'left' }}>
                   <KinwoveStar size={9} color={T.honey} style={{ flexShrink: 0, marginTop: 4 }} />
                   {b}
                 </div>
@@ -514,14 +518,19 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
               Church page free forever · pastor tools free for 35 days · no card
             </div>
             <div style={{ marginTop: 'auto' }}>
-              <button onClick={onPastorIntent} style={{ background: 'transparent', color: T.cream, border: `1.5px solid rgba(253,248,240,0.4)`, padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(253,248,240,0.1)'; e.currentTarget.style.borderColor = 'rgba(253,248,240,0.7)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(253,248,240,0.4)'; }}
+              <button onClick={onPastorIntent} style={{ background: T.cream, color: '#1A110A', border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
               >Set up your church →</button>
+            </div>
             </div>
           </div>
         </div>
       </section>
+      {doorVideo === 'you' && (
+        <DoorVideoPlayer name="you" endTitle="Bring your questions." endLabel="Start asking →" onEndAction={onBegin} onClose={() => setDoorVideo(null)} />
+      )}
+      {doorVideo === 'church' && (
+        <DoorVideoPlayer name="church" endTitle="From your study to their whole week." endLabel="Set up your church →" onEndAction={onPastorIntent} onClose={() => setDoorVideo(null)} />
+      )}
 
       {/* ── Section rule ── */}
       <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${RULE}, transparent)`, margin: '0 40px' }} />
