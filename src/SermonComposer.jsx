@@ -805,7 +805,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
                   </div>
                   <div style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.5 }}>
                     {sermonAi.isBeta
-                      ? 'They reset on the 1st. Everything you have written is still here to edit and publish.'
+                      ? <>They reset on the 1st. Everything you have written is still here to edit and publish. Every draft is written live by AI, and that costs real money to run, which is why there's a monthly amount. Need more before then? <a href="mailto:hello@kinwove.com?subject=More%20sermon%20AI%20uses" style={{ color: T.goldDark }}>Email hello@kinwove.com</a> and we'll add some.</>
                       : "Upgrade to keep generating. Your congregation won't notice the difference in prep time, but you will."}
                   </div>
                 </div>

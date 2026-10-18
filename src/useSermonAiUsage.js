@@ -35,23 +35,25 @@ export function useSermonAiUsage(userId, plan = 'free') {
   const limit  = isBeta ? PAID_LIMITS.church_base : isFree ? FREE_SERMON_LIMIT : isTrial ? TRIAL_MSG_LIMIT : paidCap;
 
   const [used, setUsed] = useState(null);
+  const [topup, setTopup] = useState(0);  // extra uses granted by hand ("email us and we'll add some")
 
   const load = useCallback(async () => {
     if (!userId) { setUsed(0); return; }
     const { data } = await supabase
       .from('ai_usage')
-      .select('count')
+      .select('count, topup')
       .eq('user_id', userId)
       .eq('period', period)
       .maybeSingle();
     setUsed(data?.count ?? 0);
+    setTopup(data?.topup ?? 0);
   }, [userId, period]);
 
   useEffect(() => { load(); }, [load]);
 
   const loading   = used === null;
-  const atLimit   = !loading && limit !== null && (used ?? 0) >= limit;
-  const remaining = limit !== null ? Math.max(0, limit - (used ?? 0)) : Infinity;
+  const atLimit   = !loading && limit !== null && (used ?? 0) >= limit + topup;
+  const remaining = limit !== null ? Math.max(0, limit + topup - (used ?? 0)) : Infinity;
 
   async function increment() {
     if (!userId) return;

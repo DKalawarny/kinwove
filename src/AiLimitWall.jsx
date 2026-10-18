@@ -298,6 +298,9 @@ export default function AiLimitWall({ plan, panelMode, onTopupSuccess }) {
                 ? "You've used this month's research questions. They reset on the 1st. Your notes and sermons are all still here to keep working on."
                 : "You've used all your AI messages for this month. They reset on your next billing date, or top up now to keep going."}
             </div>
+            {churchBeta && <div style={{ fontSize: 12.5, color: T.inkMuted, lineHeight: 1.6, maxWidth: 300, marginTop: 8 }}>
+              Every answer is written live by AI, and that costs real money to run, which is why there's a monthly amount. Need more before then? <a href="mailto:hello@kinwove.com?subject=More%20research%20questions" style={{ color: T.goldDark }}>Email hello@kinwove.com</a> and we'll add some.
+            </div>}
             {!churchBeta && <div style={{ fontSize: 12, color: T.inkMuted, lineHeight: 1.6, maxWidth: 280, marginTop: 8, fontFamily: T.serif, fontStyle: 'italic' }}>
               Thank you for subscribing: your support keeps kinwove open to everyone, no matter where they are or what they can pay.
             </div>}
