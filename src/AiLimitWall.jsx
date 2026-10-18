@@ -161,6 +161,8 @@ export default function AiLimitWall({ plan, panelMode, onTopupSuccess }) {
   // Promo codes upgrade the PERSONAL plan — on church-plan walls (Study tab
   // etc.) they can't unlock anything, so offering one there just confuses.
   const isChurchPlan = ['trial', 'church_base', 'church_pro'].includes(plan);
+  // A church in the free beta: nothing to buy, nobody subscribed, it simply resets on the 1st.
+  const churchBeta = isChurchPlan && !PAYMENTS_LIVE;
   const isFree = plan === 'free' || !plan;
   const [session, setSession] = useState(null);
   const [upgrading, setUpgrading] = useState(null); // null | 'premium' | 'premium_plus' | 'topup'
@@ -292,11 +294,13 @@ export default function AiLimitWall({ plan, panelMode, onTopupSuccess }) {
         <>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 13.5, color: T.inkSoft, lineHeight: 1.6, maxWidth: 300 }}>
-              You've used all your AI messages for this month. They reset on your next billing date, or top up now to keep going.
+              {churchBeta
+                ? "You've used this month's research questions. They reset on the 1st. Your notes and sermons are all still here to keep working on."
+                : "You've used all your AI messages for this month. They reset on your next billing date, or top up now to keep going."}
             </div>
-            <div style={{ fontSize: 12, color: T.inkMuted, lineHeight: 1.6, maxWidth: 280, marginTop: 8, fontFamily: T.serif, fontStyle: 'italic' }}>
+            {!churchBeta && <div style={{ fontSize: 12, color: T.inkMuted, lineHeight: 1.6, maxWidth: 280, marginTop: 8, fontFamily: T.serif, fontStyle: 'italic' }}>
               Thank you for subscribing: your support keeps kinwove open to everyone, no matter where they are or what they can pay.
-            </div>
+            </div>}
           </div>
 
           {PAYMENTS_LIVE && <div style={{
@@ -314,7 +318,7 @@ export default function AiLimitWall({ plan, panelMode, onTopupSuccess }) {
 
           {!isChurchPlan && <PromoCodeInput onSuccess={onTopupSuccess ?? (() => window.location.reload())} />}
 
-          {!PAYMENTS_LIVE && (
+          {!PAYMENTS_LIVE && !churchBeta && (
             <div style={{ fontSize: 13, color: T.inkSoft, textAlign: 'center', lineHeight: 1.6, maxWidth: 280 }}>
               Top-ups open soon, your messages reset on your next cycle.
             </div>
