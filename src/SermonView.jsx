@@ -105,7 +105,9 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
             background: 'none', border: 'none', color: T.goldDark, fontSize: 14, cursor: 'pointer',
             padding: '10px 0', marginBottom: 8, minHeight: 44, display: 'flex', alignItems: 'center',
           }}>← Back</button>
-          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.inkMuted }}>Sermon not found.</div>
+          {/* Notifications for a deleted sermon stay in the list (like Facebook); tapping one lands here */}
+          <div style={{ fontFamily: T.serif, fontSize: 20, color: T.ink, fontWeight: 600, marginBottom: 6 }}>This sermon isn't available anymore.</div>
+          <div style={{ fontFamily: T.serif, fontSize: 15.5, color: T.inkMuted, lineHeight: 1.6 }}>The church may have removed it.</div>
         </div>
       </div>
     );
