@@ -390,24 +390,22 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   // copy in step with what the system actually guarantees.
   const trustPoints = [
     'Never invents quotes, statistics, or scripture. "I don\'t know" is built in',
-    'Classic commentaries are quoted from the real text. Modern scholars are named and paraphrased, never given invented quotes',
     'Every scripture reference is checked against the actual Bible text',
     'Honest when faithful Christians genuinely disagree. It tells you that',
-    'No denominational agenda, designed to point to Jesus, never to push',
   ];
 
 
   return (
     <div style={{ minHeight: '100vh', background: '#1A110A', display: 'flex', flexDirection: 'column', fontFamily: T.sans }}>
 
-      {/* ── Hero: the armchair clip from the For you video moves slowly behind the headline ── */}
+      {/* ── Hero: dawn over the hills moves slowly behind the headline ── */}
       <div style={{ position: 'relative', minHeight: '100svh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <img src={HERO_BG + '.jpg'} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         {!reduceMotion && (
           <video autoPlay muted loop playsInline poster={HERO_BG + '.jpg'} src={HERO_BG + '.mp4'}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         )}
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 52%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.58) 60%, rgba(0,0,0,0.74) 100%), linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 70%, #1A110A 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(26,17,10,0) 72%, #1A110A 100%), radial-gradient(ellipse 70% 60% at 50% 52%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.58) 60%, rgba(0,0,0,0.74) 100%), linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%)' }} />
 
       {/* ── Nav ── */}
       <header style={{ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 32px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2 }}>
@@ -420,7 +418,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
           </button>
         ) : (
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: DIMLO, fontSize: 14, cursor: 'pointer', padding: '8px 4px' }}>Sign in</button>
+            <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: 'rgba(253,248,240,0.85)', fontSize: 14, cursor: 'pointer', padding: '8px 4px', textShadow: '0 1px 8px rgba(0,0,0,0.5)' }}>Sign in</button>
             <button onClick={onBegin} style={{ background: T.gold, color: T.cream, border: 'none', padding: '9px 20px', borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(184,115,58,0.35)' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
               onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
@@ -471,8 +469,10 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 22px' }}>
               {[
                 'Ask anything, honest answers with the verses to check',
+                'Ask in your own language, 49 and counting',
                 'The full Bible, to read or listen to',
                 'Notes, highlights, and reading plans',
+                'No real name needed, so you can ask what you\'d never ask out loud',
                 'Real people and churches, whenever you\'re ready',
               ].map((b) => (
                 <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: 'rgba(26,17,10,0.68)', lineHeight: 1.55, textAlign: 'left' }}>
@@ -493,14 +493,13 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
             <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
             <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: T.cream, margin: '0 0 10px', letterSpacing: '-0.018em' }}>
               ⛪ For your church
-              <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: T.honey, marginLeft: 10, verticalAlign: 'middle' }}>kinwove for churches</span>
             </h3>
             <p style={{ fontFamily: T.serif, fontSize: 15.5, color: 'rgba(245,237,216,0.62)', lineHeight: 1.7, margin: '0 0 18px' }}>
               Sunday's sermon becomes a week of engagement. A research desk for sermon prep, daily questions your congregation actually answers, and a prayer wall that tells you how your people are really doing.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 12px' }}>
               {[
-                'A research desk that preps your sermon from real sources',
+                'A research desk with named scholars, the original Greek and Hebrew, and where they disagree',
                 'Sunday\'s outline becomes a week of daily questions',
                 'A soft front door. New people can meet your church before they ever walk in',
                 'Care tools, so you know how your people are really doing',
@@ -512,7 +511,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
               ))}
             </div>
             <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(212,162,74,0.75)', lineHeight: 1.7, margin: '0 0 22px' }}>
-              Church page free forever · pastor tools free for 35 days · no card
+              Free for churches while we're in beta · no card
             </div>
             <div style={{ marginTop: 'auto' }}>
               <button onClick={onPastorIntent} style={{ background: T.cream, color: '#1A110A', border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
@@ -529,39 +528,53 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
         <DoorVideoPlayer name="church" endTitle="From your study to their whole week." endLabel="Set up your church →" onEndAction={onPastorIntent} onClose={() => setDoorVideo(null)} />
       )}
 
-      {/* ── Section rule ── */}
-      <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${RULE}, transparent)`, margin: '0 40px' }} />
-
-
-
-      {/* ── AI trust ── */}
-      <section style={{ padding: '88px 32px 92px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: 48 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 18 }}>Why not just ask ChatGPT?</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(26px, 3.6vw, 40px)', color: T.cream, fontWeight: 600, margin: '0 0 20px', letterSpacing: '-0.022em', lineHeight: 1.12, maxWidth: 640 }}>
-            We know you might not trust AI<br />with something this important.
+      {/* ── AI trust: a cream band breaks up the dark ── */}
+      <div style={{ background: T.cream, width: '100%' }}>
+      <section style={{ padding: '80px 24px 84px', maxWidth: 900, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.gold, marginBottom: 18 }}>Why not just ask ChatGPT?</div>
+          <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(26px, 3.6vw, 40px)', color: '#1A110A', fontWeight: 600, margin: '0 0 20px', letterSpacing: '-0.022em', lineHeight: 1.12, maxWidth: 640 }}>
+            We know you might not trust AI{narrow ? ' ' : <br />}with something this important.
           </h2>
-          <p style={{ fontFamily: T.serif, fontSize: 17, color: DIM, maxWidth: 540, lineHeight: 1.75, margin: 0 }}>
+          <p style={{ fontFamily: T.serif, fontSize: 17, color: 'rgba(26,17,10,0.68)', maxWidth: 540, lineHeight: 1.75, margin: 0 }}>
             Most AI will invent a Bible verse before it will admit it doesn't know.
             For a question about God, that's not acceptable. kinwove was built with one
-            rule at its core: <em style={{ color: T.cream, fontStyle: 'italic' }}>if it's not in the text, we don't say it.</em>
+            rule at its core: <em style={{ color: '#1A110A', fontStyle: 'italic' }}>if it's not in the text, we don't say it.</em>
           </p>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12, maxWidth: 800, margin: '0 auto' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12, maxWidth: 820, margin: '0 auto' }}>
           {trustPoints.map((t) => (
-            <div key={t} style={{ flex: '1 1 240px', maxWidth: 258, display: 'flex', alignItems: 'flex-start', gap: 12, padding: '16px 18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,115,58,0.14)', borderRadius: 12, textAlign: 'left' }}>
+            <div key={t} style={{ flex: '1 1 220px', maxWidth: 262, display: 'flex', alignItems: 'flex-start', gap: 12, padding: '18px 18px', background: T.white, border: '1px solid rgba(26,17,10,0.1)', borderRadius: 14, textAlign: 'left' }}>
               <KinwoveStar size={11} color={T.gold} style={{ flexShrink: 0, marginTop: 2 }} />
-              <span style={{ fontSize: 13.5, color: DIM, lineHeight: 1.6 }}>{t}</span>
+              <span style={{ fontSize: 14, color: 'rgba(26,17,10,0.75)', lineHeight: 1.6 }}>{t}</span>
             </div>
           ))}
         </div>
       </section>
+      </div>
 
-      <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${RULE}, transparent)`, margin: '0 40px' }} />
-
-
-
-
+      {/* ── Answers: the public answer pages, for anyone who wants to read before signing up ── */}
+      <section style={{ padding: '80px 24px 8px', maxWidth: 900, margin: '0 auto', width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 14 }}>Hard questions, honest answers</div>
+        <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(22px, 3vw, 32px)', color: T.cream, fontWeight: 600, margin: '0 0 26px', letterSpacing: '-0.02em' }}>Read before you ask.</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 760, margin: '0 auto' }}>
+          {[
+            ['why-does-god-allow-suffering', 'Why does God allow suffering?'],
+            ['can-i-trust-the-bible', 'Can I trust the Bible?'],
+            ['how-can-i-believe-when-i-have-doubts', 'How can I believe when I have doubts?'],
+            ['is-the-resurrection-of-jesus-real', 'Is the resurrection real?'],
+            ['will-god-forgive-me', 'Will God forgive me?'],
+            ['what-if-church-hurt-you', 'What if church hurt you?'],
+          ].map(([slug, q]) => (
+            <a key={slug} href={`/answers/${slug}`}
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,162,74,0.28)', borderRadius: 999, padding: '10px 18px', fontSize: 14, color: 'rgba(253,248,240,0.85)', textDecoration: 'none', fontFamily: T.serif }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = T.honey; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(212,162,74,0.28)'; }}
+            >{q}</a>
+          ))}
+        </div>
+        <a href="/answers" style={{ display: 'inline-block', marginTop: 20, fontSize: 13.5, color: T.honey, textDecoration: 'none' }}>See all the answers →</a>
+      </section>
 
       {/* ── Bottom CTA ── */}
       <section style={{ padding: '96px 24px 108px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
@@ -574,20 +587,25 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
           <p style={{ fontFamily: T.serif, fontSize: 17, color: DIM, lineHeight: 1.72, maxWidth: 400, margin: '0 auto 48px' }}>
             No right beliefs required. No background check. Free to explore wherever you are.
           </p>
-          <button onClick={onBegin}
-            style={{ background: T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '16px 44px', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: '0 6px 24px rgba(184,115,58,0.4)', letterSpacing: '-0.01em', fontFamily: T.sans }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
-          >
-            Get started free →
-          </button>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+            <button onClick={onBegin}
+              style={{ background: T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '16px 40px', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: '0 6px 24px rgba(184,115,58,0.4)', letterSpacing: '-0.01em', fontFamily: T.sans }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
+            >
+              Get started free →
+            </button>
+            {onPastorIntent && (
+              <button onClick={onPastorIntent}
+                style={{ background: 'transparent', color: T.cream, border: '1.5px solid rgba(253,248,240,0.4)', borderRadius: 999, padding: '16px 34px', fontSize: 16, fontWeight: 600, cursor: 'pointer', letterSpacing: '-0.01em', fontFamily: T.sans }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(253,248,240,0.75)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(253,248,240,0.4)'; }}
+              >
+                Set up your church →
+              </button>
+            )}
+          </div>
           <div style={{ marginTop: 16, fontSize: 12, color: DIMLO }}>No credit card · Takes 30 seconds</div>
-          {onPastorIntent && (
-            <div style={{ marginTop: 14, fontSize: 13, color: DIMLO }}>
-              Bringing a church?{' '}
-              <button onClick={onPastorIntent} style={{ background: 'none', border: 'none', color: T.gold, fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Set it up free →</button>
-            </div>
-          )}
           {!session && (
             <div style={{ marginTop: 20, fontSize: 13, color: DIMLO }}>
               Already here?{' '}
@@ -603,6 +621,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
           Real answers to hard faith questions.
         </div>
         <span style={{ fontSize: 11.5 }}>
+          <a href="/answers" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Answers</a> &nbsp;·&nbsp;
           <a href="/privacy" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Privacy</a> &nbsp;·&nbsp;
           <a href="/terms" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Terms</a> &nbsp;·&nbsp;
           <a href="mailto:hello@kinwove.com" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Contact</a>
@@ -2171,7 +2190,7 @@ export default function App() {
   // history, and analytics event labels are descriptive rather than static.
   useEffect(() => {
     const TITLES = {
-      landing:           'kinwove — AI Bible Study, Church Community & Faith Questions',
+      landing:           'kinwove: AI Bible Study, Church Community & Faith Questions',
       home:              'Feed · kinwove',
       feed:              'Community · kinwove',
       church:            'Churches · kinwove',
@@ -3706,7 +3725,7 @@ export default function App() {
       />
       {/* suppressed while reading scripture — mid-chapter is the wrong moment
           to interrupt; the banner shows once they navigate elsewhere */}
-      <InstallPrompt triggerNow={installTrigger} suppressed={stage === 'read'} />
+      <InstallPrompt triggerNow={installTrigger} suppressed={stage === 'read' || stage === 'landing'} />
       <PastorPrompt
         open={showPastorPrompt}
         onApply={() => { setShowPastorPrompt(false); setStage('pastor-apply'); }}
