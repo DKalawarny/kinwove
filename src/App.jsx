@@ -554,39 +554,37 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
       </div>
 
       {/* ── Bottom CTA ── */}
-      <section style={{ padding: '96px 24px 108px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 700, height: 500, background: 'radial-gradient(ellipse at 50% 0%, rgba(184,115,58,0.09) 0%, transparent 65%)', pointerEvents: 'none' }} />
+      {/* The hills come back here, faded in, so the page ends where it began */}
+      <section style={{ padding: '110px 24px 120px', textAlign: 'center', position: 'relative', overflow: 'hidden', background: `linear-gradient(180deg, #1A110A 0%, rgba(26,17,10,0.72) 38%, rgba(26,17,10,0.8) 100%), url("${HERO_BG}.jpg") center 70% / cover no-repeat, #1A110A` }}>
         <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>Begin</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(30px, 5vw, 58px)', fontWeight: 600, color: T.cream, lineHeight: 1.05, marginBottom: 20, letterSpacing: '-0.026em' }}>
+          <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(30px, 5vw, 58px)', fontWeight: 600, color: T.cream, lineHeight: 1.05, marginBottom: 20, letterSpacing: '-0.026em', textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
             Start asking.<br />We'll meet you there.
           </h2>
-          <p style={{ fontFamily: T.serif, fontSize: 17, color: DIM, lineHeight: 1.72, maxWidth: 400, margin: '0 auto 48px' }}>
+          <p style={{ fontFamily: T.serif, fontSize: 17, color: 'rgba(245,237,216,0.8)', lineHeight: 1.72, maxWidth: 400, margin: '0 auto 40px', textShadow: '0 1px 16px rgba(0,0,0,0.5)' }}>
             No right beliefs required. No background check. Free to explore wherever you are.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
             <button onClick={onBegin}
-              style={{ background: T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '16px 40px', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: '0 6px 24px rgba(184,115,58,0.4)', letterSpacing: '-0.01em', fontFamily: T.sans }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
+              style={{ background: T.cream, color: '#1A110A', border: 'none', borderRadius: 999, padding: '16px 40px', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: '0 14px 50px rgba(0,0,0,0.45)', letterSpacing: '-0.01em', fontFamily: T.sans }}
             >
               Get started free →
             </button>
             {onPastorIntent && (
               <button onClick={onPastorIntent}
-                style={{ background: 'transparent', color: T.cream, border: '1.5px solid rgba(253,248,240,0.4)', borderRadius: 999, padding: '16px 34px', fontSize: 16, fontWeight: 600, cursor: 'pointer', letterSpacing: '-0.01em', fontFamily: T.sans }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(253,248,240,0.75)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(253,248,240,0.4)'; }}
+                style={{ background: 'rgba(20,12,5,0.45)', color: T.cream, border: '1.5px solid rgba(245,237,216,0.5)', borderRadius: 999, padding: '16px 34px', fontSize: 16, fontWeight: 600, cursor: 'pointer', letterSpacing: '-0.01em', fontFamily: T.sans, backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.85)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.5)'; }}
               >
                 Set up your church →
               </button>
             )}
           </div>
-          <div style={{ marginTop: 16, fontSize: 12, color: DIMLO }}>No credit card · Takes 30 seconds</div>
+          <div style={{ marginTop: 18, fontSize: 12.5, color: 'rgba(245,237,216,0.7)' }}>No credit card · Takes 30 seconds</div>
           {!session && (
-            <div style={{ marginTop: 20, fontSize: 13, color: DIMLO }}>
+            <div style={{ marginTop: 20, fontSize: 13, color: 'rgba(245,237,216,0.65)' }}>
               Already here?{' '}
-              <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: DIM, fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Sign in</button>
+              <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: T.cream, fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Sign in</button>
             </div>
           )}
         </div>
