@@ -349,4 +349,4 @@ export const ADS = [
 // Privacy Policy change in a way people should re-agree to — it is what gets
 // written to terms_acceptances, so the log stays meaningful across revisions.
 // Shown on /terms and /privacy so what someone reads matches what we record.
-export const TERMS_VERSION = '2026-08-19';
+export const TERMS_VERSION = '2026-10-18';

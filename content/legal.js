@@ -9,10 +9,10 @@
 
 import { TERMS_VERSION } from '../src/constants.js';
 
-const EFFECTIVE = 'August 19, 2026';
+const EFFECTIVE = 'October 18, 2026';
 const CONTACT = 'hello@kinwove.com';
-// TODO(Daniel): confirm legal entity name + province for the governing-law line.
-const ENTITY = 'kinwove';
+// Sarlia Digital Inc. (BC1612519), incorporated 18 Oct 2026; kinwove is its product.
+const ENTITY = 'Sarlia Digital Inc.';
 const JURISDICTION = 'the Province of British Columbia, Canada';
 
 const PRIVACY = {
@@ -46,7 +46,7 @@ const TERMS = {
     { h: 'kinwove is in beta', p: `kinwove is currently in beta and free to use. Features may change, break, or be withdrawn without notice, and data can occasionally be lost, so please don't rely on kinwove as the only copy of anything that matters to you. We'd rather build this in the open with you than wait years for perfect, but that means accepting it as a work in progress. Everything in the section below applies with particular force while the service is free.` },
     { h: 'Disclaimers &amp; liability', p: `kinwove is provided "as is" and "as available," without warranties of any kind, whether express or implied: including any implied warranty that it is fit for a particular purpose, uninterrupted, or error-free. You use it at your own discretion and risk. To the fullest extent permitted by law, neither ${ENTITY} nor its owners, directors, officers, employees, contractors, or suppliers is liable for indirect, incidental, special or consequential damages, or for any loss of data, goodwill, or profits, and their total combined liability for any claim is limited to the amount you paid us in the 12 months before it arose (or, where you paid nothing, one hundred Canadian dollars). Those people and companies are intended beneficiaries of this section and may rely on it directly. Nothing here excludes liability that cannot be excluded by law.` },
     { h: 'Changes to these terms', p: `We may update these terms; we'll revise the date above and, for material changes, notify you in the app or by email. Continued use after changes means you accept them.` },
-    { h: 'Governing law &amp; contact', p: `These terms are governed by the laws of ${JURISDICTION}. Questions? Email <a href="mailto:${CONTACT}">${CONTACT}</a>.` },
+    { h: 'Governing law &amp; contact', p: `kinwove is operated by ${ENTITY}, and these terms are an agreement between you and ${ENTITY}. They are governed by the laws of ${JURISDICTION}. Questions? Email <a href="mailto:${CONTACT}">${CONTACT}</a>.` },
   ],
 };
 
