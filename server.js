@@ -31,6 +31,8 @@ const app = express();
 // token. Without this, every per-IP rate limit is spoofable.
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3001;
+// IndexNow: the key file below proves we own the host; Bing reads it before trusting a ping.
+const INDEXNOW_KEY = 'a49fa5d517bbadf58d58c6c7eff8861b';
 
 if (!process.env.ANTHROPIC_API_KEY) {
   console.error('\n[kinwove] Missing ANTHROPIC_API_KEY. Copy .env.example to .env and add your key.\n');
@@ -6165,6 +6167,10 @@ ${entries.join('\n')}
     }
   });
 
+  app.get(`/${INDEXNOW_KEY}.txt`, (_req, res) => {
+    res.type('text/plain').send(INDEXNOW_KEY);
+  });
+
   // /robots.txt — the static file in /public is served first; this is a fallback
   // for dev where /public isn't being served as static files.
   app.get('/robots.txt', (_req, res) => {
@@ -6265,7 +6271,33 @@ app.get('/answers', (_req, res) => {
   app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
 }
 
+// After a deploy, tell Bing (and the other IndexNow engines) which pages exist.
+// Reads the LIVE sitemap so only pages that are actually deployed get announced.
+// Never throws: a failed ping must not affect the server.
+async function pingIndexNow() {
+  try {
+    const xml = await (await fetch('https://www.kinwove.com/sitemap.xml')).text();
+    const urlList = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim()).slice(0, 10000);
+    if (!urlList.length) return console.warn('[indexnow] sitemap had no urls');
+    const r = await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        host: 'www.kinwove.com',
+        key: INDEXNOW_KEY,
+        keyLocation: `https://www.kinwove.com/${INDEXNOW_KEY}.txt`,
+        urlList,
+      }),
+    });
+    console.log(`[indexnow] ${urlList.length} urls → ${r.status}`);
+  } catch (e) {
+    console.warn('[indexnow] ping failed:', e?.message);
+  }
+}
+
 app.listen(PORT, () => {
   console.log(`[kinwove] api listening on http://localhost:${PORT}`);
+  // Only on Render, so a local server never pings for production.
+  if (process.env.RENDER === 'true') setTimeout(pingIndexNow, 3 * 60 * 1000);
 });
 
