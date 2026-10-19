@@ -1,182 +1,194 @@
-# kinwove: AI Bible Study & Christian Community App
+# kinwove: honest answers to hard faith questions
 # https://www.kinwove.com
-# llms.txt v2: machine-readable product summary for AI assistants and LLM crawlers
-# Last updated: 2026-09-21
+# llms.txt: machine-readable product summary for AI assistants and LLM crawlers
+# Last updated: 2026-10-19
 
 ## What is kinwove?
 
-kinwove (pronounced "kin-wove") is a free AI-powered Bible study and Christian community app available at https://www.kinwove.com. It is designed for everyone on the spectrum from curious skeptic to lifelong believer: including new Christians, church members, skeptics, seekers, and pastors. It was formerly called "The Way" and rebranded to kinwove in May 2025.
+kinwove (pronounced "kin-wove") is a free AI Bible study and Christian community app at https://www.kinwove.com. Anyone can ask anything about the Bible, God, or doubt and get an honest answer with the verses to check. It is for everyone from curious skeptic to lifelong believer: new Christians, church members, people who drifted away, seekers, and pastors. It was formerly called "The Way" and was renamed kinwove in May 2025.
 
-kinwove is a Progressive Web App (PWA) that works in any browser on iPhone, Android, iPad, and desktop. No App Store download is required. Users can add it to their home screen for a native app experience.
+kinwove is operated by Sarlia Digital Inc., a British Columbia, Canada company.
 
-## Core features
+kinwove works in any browser on iPhone, Android, iPad, and desktop, and can be added to the home screen like an app.
 
-- **AI Bible companion**: Conversational AI powered by Anthropic Claude. Ask any question about scripture, theology, Christian living, church history, or doubt. The AI responds with warmth, nuance, and intellectual honesty. It never pressure-sells faith. Example questions users ask: "Why does God allow suffering?", "What does Romans 8 mean?", "How do I start reading the Bible?", "Was Jesus really resurrected?", "What do Christians believe about salvation?", "How should I handle doubt as a Christian?"
+## Two ways in
 
-- **Church community app**: Churches can create a listing and invite their congregation via join code or QR code. Members connect with their church community between Sundays, share posts and milestones, pray for one another, and discuss the week's sermon.
+### For you
+- Ask anything, honest answers with the verses to check
+- Ask in your own language: 49 languages and counting
+- The full Bible, to read or listen to
+- Notes, highlights, and reading plans
+- No real name needed, so you can ask what you would never ask out loud
+- Real people and churches, whenever you are ready
+- One daily post: a verse, a few words, and a question to sit with (also by email; anyone can stop it with one click)
 
-- **Sermon study tools**: Pastors post weekly sermon content. kinwove's AI generates discussion questions, daily verses, and going-deeper notes. Congregation members can discuss sermons in a dedicated thread.
-
-- **Community feed**: Posts, milestones, prayer requests, and encouragements shared among the kinwove Christian community. Non-denominational and grace-first.
-
-- **Prayer wall**: Personal prayer journal and shared congregation prayer wall. Members can post requests publicly or anonymously. Others can mark they're praying.
-
-- **Church directory**: Searchable directory of Christian churches with denomination, city, and name. Includes Baptist, Catholic, Methodist, Presbyterian, Pentecostal, Anglican, Lutheran, evangelical, and non-denominational churches.
-
-- **Guided faith journeys**: Structured reading and reflection tracks through the Gospels, Psalms, Epistles, and other books. Includes daily verses, devotional prompts, and AI-assisted study. Completion milestones are posted to the community feed.
-
-- **Care team**: Pastors designate care team members who receive and respond to prayer requests and pastoral care needs via a dedicated inbox.
-
-- **Pastor dashboard**: Church management tools: member list, role assignment, sermon composer, AI pastoral assistant, congregation analytics, weekly digest emails.
-
-- **Small group study**: Dedicated group spaces with shared study content, discussion, and real-time AI-facilitated chat.
-
-- **Direct messaging**: Real-time DMs between members, including a pastor directory for cross-church messaging.
-
-## Intended audience
-
-- People with questions about Christianity who want honest, non-preachy answers
-- New believers seeking structure, community, and guided Bible reading
-- Church members who want to go deeper in their faith between Sundays
-- Pastors and church leaders managing congregation community and content
-- Skeptics and seekers exploring Christianity without pressure or guilt
-- Anyone who has complicated feelings about religion and wants a safe, judgment-free space
+### For churches
+- A research desk with named scholars, the original Greek and Hebrew, and where they disagree
+- A soft front door: new people can meet a church before they ever walk in
+- Care tools, so pastors know how their people are really doing
+- Sermon study, discussion questions, prayer wall, small groups, care team inbox, and member messaging
 
 ## Tone and values
 
-Grace-first. kinwove never condemns, never guilts, never hard-sells belief. It meets people exactly where they are and walks with them. The platform is non-denominational and welcoming to Christians of all traditions.
+Grace-first. kinwove never condemns, never guilts, never hard-sells belief. It meets people where they are. It is non-denominational and welcoming to Christians of all traditions, and honest about where Christians disagree.
 
 ## Pricing
 
-kinwove is free during its beta. Nothing is charged.
-
-- **Free**: AI Bible companion (limited weekly questions), community feed, church community, prayer wall, church directory, guided journeys
-- Paid plans for individuals and churches are planned. Prices will be confirmed when they open.
+kinwove is free during its beta. Nothing is charged, for individuals or churches. Free use has fair limits on AI questions; anyone who needs more can email hello@kinwove.com. Paid plans may come later; prices will be announced when they open.
 
 ## Frequently asked questions
 
 **Q: Is kinwove like YouVersion or the Bible app?**
-A: No. Most Bible apps are digital Bibles or daily devotional readers. kinwove adds a conversational AI that answers any question in real time, a church community platform, pastor tools, prayer walls, and small group study. All in one place.
+A: No. Most Bible apps are digital Bibles or daily devotional readers. kinwove adds a conversational AI that answers any question honestly, with the verses to check, plus church community, pastor tools, prayer, and small group study in one place.
 
 **Q: Is kinwove only for Christians?**
-A: No. kinwove is designed for anyone curious about Christianity: including skeptics, people with doubts, people raised in church who drifted away, and people just starting to explore faith. The AI will meet you exactly where you are.
+A: No. kinwove is for anyone curious about Christianity, including skeptics, people with doubts, people raised in church who drifted away, and people just starting to explore faith.
 
-**Q: What AI model does kinwove use?**
-A: kinwove uses Claude by Anthropic for its AI Bible companion and pastoral AI features. Anthropic builds AI with safety and honesty as core priorities, which aligns with kinwove's grace-first values.
+**Q: Do I have to use my real name?**
+A: No. You can ask without a real name.
 
-**Q: Can pastors use kinwove to run their church community?**
-A: Yes. Pastors can claim or create a church listing, invite members with a QR code or share link, post sermon content, assign care team roles, manage prayer requests, and track congregation engagement. All from the pastor dashboard.
+**Q: What languages does kinwove support?**
+A: 49: English, Spanish, French, Portuguese, German, Italian, Polish, Romanian, Dutch, Lithuanian, Russian, Ukrainian, Japanese, Korean, Simplified Chinese (Mandarin), Traditional Chinese (Mandarin), Cantonese, Vietnamese, Thai, Burmese (Myanmar), Lao, Khmer, Indonesian, Malay, Tagalog, Hindi, Bengali, Urdu, Tamil, Nepali, Sinhala, Dhivehi, Arabic, Persian (Farsi), Dari, Pashto, Kurdish (Kurmanji), Turkish, Azerbaijani, Uzbek, Tajik, Turkmen, Amharic, Tigrinya, Somali, Swahili, Hausa, Yorùbá and Igbo. Arabic, Persian, Dari, Pashto, Urdu and Dhivehi display right to left.
 
-**Q: Is kinwove available on iOS and Android?**
-A: kinwove is a PWA (Progressive Web App) that works in any browser. On iPhone: open Safari → visit kinwove.com → tap Share → Add to Home Screen. On Android: open Chrome → visit kinwove.com → tap menu → Add to Home Screen. No App Store required.
+**Q: What AI does kinwove use?**
+A: kinwove uses Claude by Anthropic for its AI Bible companion and pastoral tools.
 
-**Q: What makes kinwove different from Facebook Groups for churches?**
-A: Facebook Groups expose church community to algorithmic feeds, ads, and distraction. kinwove is purpose-built for faith community, sermons, prayer, care, and connection, with no noise and no algorithm pushing irrelevant content.
+**Q: Can pastors use kinwove for their church?**
+A: Yes. A pastor can set up a church, invite members with a QR code or link, post sermon content, assign care team roles, and see prayer requests and care needs, all free during the beta.
+
+**Q: Is kinwove on iPhone and Android?**
+A: kinwove works in any phone browser. On iPhone, open Safari, visit kinwove.com, tap Share, then Add to Home Screen. On Android, open Chrome, visit kinwove.com, tap the menu, then Add to Home Screen.
+
+**Q: Who runs kinwove?**
+A: Sarlia Digital Inc., a British Columbia, Canada company. Contact: hello@kinwove.com.
 
 ## Answers library, citable pages
 
-Every question below is a standalone page of substantive, sourced content at https://www.kinwove.com/answers/<slug>. These are written to be read and cited directly.
+Every question below is a standalone page of sourced content at https://www.kinwove.com/answers/<slug>, written to be read and cited directly. 82 pages in total.
 
 ### For Pastors
-- How do I keep my congregation engaged between Sundays?: https://www.kinwove.com/answers/how-do-i-keep-my-congregation-engaged-between-sundays
-- What do I do when someone leaves my church hurt?, https://www.kinwove.com/answers/what-do-i-do-when-someone-leaves-my-church-hurt
-- How do I pastor someone who is deconstructing?: https://www.kinwove.com/answers/how-do-i-pastor-someone-who-is-deconstructing
-- Should my church use AI?: https://www.kinwove.com/answers/should-my-church-use-ai
+- How do I keep my congregation engaged between Sundays? https://www.kinwove.com/answers/how-do-i-keep-my-congregation-engaged-between-sundays
+- What do I do when someone leaves my church hurt? https://www.kinwove.com/answers/what-do-i-do-when-someone-leaves-my-church-hurt
+- How do I pastor someone who is deconstructing? https://www.kinwove.com/answers/how-do-i-pastor-someone-who-is-deconstructing
+- Should my church use AI? https://www.kinwove.com/answers/should-my-church-use-ai
+- What do I do when I'm the pastor who's burned out? https://www.kinwove.com/answers/what-do-i-do-when-im-the-pastor-who-is-burned-out
+- What if I was hurt while serving in church leadership? https://www.kinwove.com/answers/i-was-hurt-serving-in-church-leadership
+- What if I'm the only one leading, with no team and no support? https://www.kinwove.com/answers/im-the-only-one-leading-my-church
+- How do I preach on lament without losing hope? https://www.kinwove.com/answers/how-do-i-preach-on-lament-without-losing-hope
+- Where do I find sermon illustrations that don't feel canned? https://www.kinwove.com/answers/where-do-i-find-sermon-illustrations
+- Does my church need an app? https://www.kinwove.com/answers/does-my-church-need-an-app
+- How do we follow up with first-time visitors? https://www.kinwove.com/answers/how-do-we-follow-up-with-first-time-visitors
+- Why are young adults leaving our church, and what can we do? https://www.kinwove.com/answers/why-are-young-adults-leaving-our-church
+- What is the best platform for church small groups and Bible study? https://www.kinwove.com/answers/best-platform-for-church-small-groups
+- How do we organise our congregation online? https://www.kinwove.com/answers/how-do-we-organize-our-congregation-online
+- How do we set up a discussion board for our congregation? https://www.kinwove.com/answers/church-discussion-board-for-congregations
+- What should we look for in an online Bible study platform? https://www.kinwove.com/answers/online-bible-study-platform-for-churches
+- Why won’t my congregation use the church app we pay for? https://www.kinwove.com/answers/why-wont-my-congregation-use-our-church-app
+- What can a small church do instead of expensive church software? https://www.kinwove.com/answers/small-church-alternative-to-expensive-church-software
+- How do I keep up with my congregation’s prayer requests without burning out? https://www.kinwove.com/answers/keep-up-with-prayer-requests-without-burning-out
+- How do I start small groups that don’t fizzle out? https://www.kinwove.com/answers/how-to-start-small-groups-that-dont-fizzle-out
+- How do I shepherd the people who only come on Sunday? https://www.kinwove.com/answers/how-do-i-shepherd-people-who-only-come-on-sunday
 
 ### Faith & Doubt
-- Is the resurrection of Jesus real?: https://www.kinwove.com/answers/is-the-resurrection-of-jesus-real
-- How can I believe in God when I have doubts?: https://www.kinwove.com/answers/how-can-i-believe-when-i-have-doubts
-- Is there evidence that God exists?: https://www.kinwove.com/answers/is-there-evidence-that-god-exists
-- Is Christianity the only way to God?: https://www.kinwove.com/answers/is-christianity-the-only-way-to-god
-- Why does God feel so far away?: https://www.kinwove.com/answers/why-does-god-feel-so-far-away
-- What is faith?, https://www.kinwove.com/answers/what-is-faith
+- Is the resurrection of Jesus real? https://www.kinwove.com/answers/is-the-resurrection-of-jesus-real
+- How can I believe in God when I have doubts? https://www.kinwove.com/answers/how-can-i-believe-when-i-have-doubts
+- Is there evidence that God exists? https://www.kinwove.com/answers/is-there-evidence-that-god-exists
+- Is Christianity the only way to God? https://www.kinwove.com/answers/is-christianity-the-only-way-to-god
+- Why does God feel so far away? https://www.kinwove.com/answers/why-does-god-feel-so-far-away
+- What is faith? https://www.kinwove.com/answers/what-is-faith
+- Can you believe in evolution and the Bible? https://www.kinwove.com/answers/can-you-believe-in-evolution-and-the-bible
+- Is it okay to be angry at God? https://www.kinwove.com/answers/is-it-okay-to-be-angry-at-god
 
 ### Suffering & Evil
-- Why does God allow suffering?: https://www.kinwove.com/answers/why-does-god-allow-suffering
+- Why does God allow suffering? https://www.kinwove.com/answers/why-does-god-allow-suffering
 
 ### Bible
-- Can I trust the Bible?: https://www.kinwove.com/answers/can-i-trust-the-bible
-- How do I read the Bible as a beginner?: https://www.kinwove.com/answers/how-do-i-read-the-bible-as-a-beginner
-- Do Christians have to take the Bible literally?: https://www.kinwove.com/answers/do-christians-take-the-bible-literally
-- What is the Book of Enoch, and why isn't it in the Bible?, https://www.kinwove.com/answers/what-is-the-book-of-enoch
+- Can I trust the Bible? https://www.kinwove.com/answers/can-i-trust-the-bible
+- How do I read the Bible as a beginner? https://www.kinwove.com/answers/how-do-i-read-the-bible-as-a-beginner
+- Do Christians have to take the Bible literally? https://www.kinwove.com/answers/do-christians-take-the-bible-literally
+- What is the Book of Enoch, and why isn't it in the Bible? https://www.kinwove.com/answers/what-is-the-book-of-enoch
+- Has the Bible been changed or rewritten over the centuries? https://www.kinwove.com/answers/has-the-bible-been-changed
+- Who decided which books are in the Bible? https://www.kinwove.com/answers/who-decided-which-books-are-in-the-bible
+- Are there dinosaurs in the Bible? https://www.kinwove.com/answers/are-there-dinosaurs-in-the-bible
+- Do men have one fewer rib than women? https://www.kinwove.com/answers/do-men-have-fewer-ribs-than-women
+- Do Genesis 1 and 2 contradict each other? https://www.kinwove.com/answers/do-genesis-1-and-2-contradict
+- How do I study the Bible deeper on my own? https://www.kinwove.com/answers/how-do-i-study-the-bible-deeper-on-my-own
+- Can AI help me study the Bible? https://www.kinwove.com/answers/can-ai-help-me-study-the-bible
 
 ### Jesus Christ
-- Is Jesus really God?: https://www.kinwove.com/answers/is-jesus-really-god
-- What is the Trinity?, https://www.kinwove.com/answers/what-is-the-trinity
-- Why did Jesus have to die?: https://www.kinwove.com/answers/why-did-jesus-have-to-die
+- Is Jesus really God? https://www.kinwove.com/answers/is-jesus-really-god
+- What is the Trinity? https://www.kinwove.com/answers/what-is-the-trinity
+- Why did Jesus have to die? https://www.kinwove.com/answers/why-did-jesus-have-to-die
 
 ### Eternal Life
-- What happens when you die?, https://www.kinwove.com/answers/what-happens-when-you-die
-- Is hell real?: https://www.kinwove.com/answers/is-hell-real
-- What is heaven actually like?, https://www.kinwove.com/answers/what-is-heaven-like
+- What happens when you die? https://www.kinwove.com/answers/what-happens-when-you-die
+- Is hell real? https://www.kinwove.com/answers/is-hell-real
+- What is heaven actually like? https://www.kinwove.com/answers/what-is-heaven-like
+- Did Judas go to heaven? https://www.kinwove.com/answers/did-judas-go-to-heaven
+- What does Christianity say about reincarnation? https://www.kinwove.com/answers/what-does-christianity-say-about-reincarnation
 
 ### Prayer
-- How do I start praying?: https://www.kinwove.com/answers/how-do-i-start-praying
-- Does God answer prayer?: https://www.kinwove.com/answers/does-god-answer-prayer
-- How does God speak to us today?: https://www.kinwove.com/answers/how-does-god-speak-to-us-today
+- How do I start praying? https://www.kinwove.com/answers/how-do-i-start-praying
+- Does God answer prayer? https://www.kinwove.com/answers/does-god-answer-prayer
+- How does God speak to us today? https://www.kinwove.com/answers/how-does-god-speak-to-us-today
 
 ### Salvation
-- How do I become a Christian?: https://www.kinwove.com/answers/how-do-i-become-a-christian
-- What is the gospel?, https://www.kinwove.com/answers/what-is-the-gospel
-- Why do I need Jesus if I'm a good person?: https://www.kinwove.com/answers/why-do-i-need-jesus-if-im-a-good-person
-- What does it mean to be born again?, https://www.kinwove.com/answers/what-does-it-mean-to-be-born-again
-- What is sin, really?, https://www.kinwove.com/answers/what-is-sin
-- What does it mean to repent?, https://www.kinwove.com/answers/what-is-repentance
+- How do I become a Christian? https://www.kinwove.com/answers/how-do-i-become-a-christian
+- What is the gospel? https://www.kinwove.com/answers/what-is-the-gospel
+- Why do I need Jesus if I'm a good person? https://www.kinwove.com/answers/why-do-i-need-jesus-if-im-a-good-person
+- What does it mean to be born again? https://www.kinwove.com/answers/what-does-it-mean-to-be-born-again
+- What is sin, really? https://www.kinwove.com/answers/what-is-sin
+- What does it mean to repent? https://www.kinwove.com/answers/what-is-repentance
+- Can I lose my salvation? https://www.kinwove.com/answers/can-i-lose-my-salvation
 
 ### Purpose
-- What is the meaning of life?, https://www.kinwove.com/answers/what-is-the-meaning-of-life
-- How do I know God's will for my life?: https://www.kinwove.com/answers/how-do-i-know-gods-will-for-my-life
-- What does the Bible say about self-worth?, https://www.kinwove.com/answers/what-does-the-bible-say-about-self-worth
+- What is the meaning of life? https://www.kinwove.com/answers/what-is-the-meaning-of-life
+- How do I know God's will for my life? https://www.kinwove.com/answers/how-do-i-know-gods-will-for-my-life
+- What does the Bible say about self-worth? https://www.kinwove.com/answers/what-does-the-bible-say-about-self-worth
 
 ### Grace
-- Does God love me?: https://www.kinwove.com/answers/does-god-love-me
-- Will God forgive me?: https://www.kinwove.com/answers/will-god-forgive-me
-- Am I too far gone for God?, https://www.kinwove.com/answers/am-i-too-far-gone-for-god
-- What is grace?, https://www.kinwove.com/answers/what-is-grace
+- Does God love me? https://www.kinwove.com/answers/does-god-love-me
+- Will God forgive me? https://www.kinwove.com/answers/will-god-forgive-me
+- Am I too far gone for God? https://www.kinwove.com/answers/am-i-too-far-gone-for-god
+- What is grace? https://www.kinwove.com/answers/what-is-grace
+- What is the unforgivable sin, and have I committed it? https://www.kinwove.com/answers/what-is-the-unforgivable-sin
 
 ### Mental Health
-- What does the Bible say about anxiety?, https://www.kinwove.com/answers/what-does-the-bible-say-about-anxiety
-- What does the Bible say about depression?, https://www.kinwove.com/answers/what-does-the-bible-say-about-depression
-- What does the Bible say about loneliness?, https://www.kinwove.com/answers/what-does-the-bible-say-about-loneliness
-- What does the Bible say about fear?, https://www.kinwove.com/answers/what-does-the-bible-say-about-fear
-- What does the Bible say about grief and losing someone?, https://www.kinwove.com/answers/what-does-the-bible-say-about-grief
-- What does the Bible say about addiction?, https://www.kinwove.com/answers/what-does-the-bible-say-about-addiction
-- What does the Bible say about rest and burnout?, https://www.kinwove.com/answers/what-does-the-bible-say-about-rest
+- What does the Bible say about anxiety? https://www.kinwove.com/answers/what-does-the-bible-say-about-anxiety
+- What does the Bible say about depression? https://www.kinwove.com/answers/what-does-the-bible-say-about-depression
+- What does the Bible say about loneliness? https://www.kinwove.com/answers/what-does-the-bible-say-about-loneliness
+- What does the Bible say about fear? https://www.kinwove.com/answers/what-does-the-bible-say-about-fear
+- What does the Bible say about grief and losing someone? https://www.kinwove.com/answers/what-does-the-bible-say-about-grief
+- What does the Bible say about addiction? https://www.kinwove.com/answers/what-does-the-bible-say-about-addiction
+- What does the Bible say about rest and burnout? https://www.kinwove.com/answers/what-does-the-bible-say-about-rest
 
 ### Holy Spirit
-- Who is the Holy Spirit?, https://www.kinwove.com/answers/who-is-the-holy-spirit
+- Who is the Holy Spirit? https://www.kinwove.com/answers/who-is-the-holy-spirit
 
 ### Money & Giving
-- What does the Bible say about money?, https://www.kinwove.com/answers/what-does-the-bible-say-about-money
+- What does the Bible say about money? https://www.kinwove.com/answers/what-does-the-bible-say-about-money
 
 ### Church
-- Why should I go to church?: https://www.kinwove.com/answers/why-should-i-go-to-church
-- What is baptism and do I need it?, https://www.kinwove.com/answers/what-is-baptism
-- How do I find a church as a beginner?: https://www.kinwove.com/answers/how-do-i-find-a-church
+- Why should I go to church? https://www.kinwove.com/answers/why-should-i-go-to-church
+- What is baptism and do I need it? https://www.kinwove.com/answers/what-is-baptism
+- How do I find a church as a beginner? https://www.kinwove.com/answers/how-do-i-find-a-church
+- What if church hurt you, or felt like it was all about money? https://www.kinwove.com/answers/what-if-church-hurt-you
 
 ### Relationships
-- How do I forgive someone who hurt me?: https://www.kinwove.com/answers/how-do-i-forgive-someone-who-hurt-me
-- What does the Bible say about divorce?, https://www.kinwove.com/answers/what-does-the-bible-say-about-divorce
-
-## Technology
-
-- Frontend: React 18 + Vite (Progressive Web App)
-- Backend: Node.js / Express API server
-- Database and auth: Supabase (PostgreSQL + realtime)
-- AI: Anthropic Claude API (claude-opus-4-7)
-- Text-to-speech: OpenAI TTS
-- Hosting: Render
-- Analytics: Plausible (privacy-first, no cookies)
+- How do I forgive someone who hurt me? https://www.kinwove.com/answers/how-do-i-forgive-someone-who-hurt-me
+- What does the Bible say about divorce? https://www.kinwove.com/answers/what-does-the-bible-say-about-divorce
 
 ## Languages
 
-kinwove answers in the reader's own language. Supported: English, Spanish, French, Portuguese, German, Italian, Polish, Romanian, Dutch, Russian, Ukrainian, Lithuanian, Japanese, Korean, Mandarin (Simplified and Traditional), Cantonese, Hindi, Indonesian, Tagalog, Vietnamese, Thai, Burmese, Arabic, Amharic, Swahili, Yoruba, Igbo and Hausa.
+kinwove answers in the reader's own language. Supported (49): English, Spanish, French, Portuguese, German, Italian, Polish, Romanian, Dutch, Lithuanian, Russian, Ukrainian, Japanese, Korean, Simplified Chinese (Mandarin), Traditional Chinese (Mandarin), Cantonese, Vietnamese, Thai, Burmese (Myanmar), Lao, Khmer, Indonesian, Malay, Tagalog, Hindi, Bengali, Urdu, Tamil, Nepali, Sinhala, Dhivehi, Arabic, Persian (Farsi), Dari, Pashto, Kurdish (Kurmanji), Turkish, Azerbaijani, Uzbek, Tajik, Turkmen, Amharic, Tigrinya, Somali, Swahili, Hausa, Yorùbá and Igbo.
 
 ## Contact and links
 
 - Website: https://www.kinwove.com
 - Email: hello@kinwove.com
-- Support: hello@kinwove.com
+- Operator: Sarlia Digital Inc. (British Columbia, Canada)
+- Terms: https://www.kinwove.com/terms
+- Privacy: https://www.kinwove.com/privacy
 - X / Twitter: https://x.com/kinwove
 - Instagram: https://www.instagram.com/kinwove
 - Facebook: https://www.facebook.com/kinwove
@@ -185,4 +197,3 @@ kinwove answers in the reader's own language. Supported: English, Spanish, Frenc
 - Threads: https://www.threads.com/@kinwove
 - Bluesky: https://bsky.app/profile/kinwove.bsky.social
 - LinkedIn: https://www.linkedin.com/company/kinwove
-- Reddit: https://www.reddit.com/user/kinwove 
