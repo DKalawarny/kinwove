@@ -3824,7 +3824,7 @@ app.post('/api/church/scrape-emails', requireAuth, limitAuthed({ capacity: 5, re
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 8000);
     // redirect: 'manual' so a public URL can't 302 us to an internal host.
-    const r = await fetch(url.toString(), { signal: ctrl.signal, redirect: 'manual', headers: { 'User-Agent': 'TheWayVerification/1.0' } });
+    const r = await fetch(url.toString(), { signal: ctrl.signal, redirect: 'manual', headers: { 'User-Agent': 'KinwoveVerification/1.0' } });
     clearTimeout(t);
     const html = await r.text();
     const junk = /example\.com|sentry|jquery|schema|\.png|\.gif|\.jpg|\.svg|\.js$|\.css$/i;
