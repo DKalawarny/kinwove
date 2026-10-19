@@ -6185,7 +6185,7 @@ ${entries.join('\n')}
   // from it is a page they never learn exists. Everything between the
   // "### " group headings and the next "## " section is rebuilt on each
   // request, so adding a page to content/answers.js is all anyone ever has to
-  // do. The rest of the file is still edited by hand in public/llms.txt.
+  // do. The rest of the file is written by scripts/build-llms.mjs (prebuild).
   app.get('/llms.txt', async (_req, res) => {
     try {
       // NOTE: fs here is node:fs/promises (see the import at the top) — the

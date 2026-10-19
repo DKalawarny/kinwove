@@ -13,7 +13,7 @@ kinwove works in any browser on iPhone, Android, iPad, and desktop, and can be a
 
 ## Two ways in
 
-### For you
+**For you**
 - Ask anything, honest answers with the verses to check
 - Ask in your own language: 49 languages and counting
 - The full Bible, to read or listen to
@@ -22,7 +22,7 @@ kinwove works in any browser on iPhone, Android, iPad, and desktop, and can be a
 - Real people and churches, whenever you are ready
 - One daily post: a verse, a few words, and a question to sit with (also by email; anyone can stop it with one click)
 
-### For churches
+**For churches**
 - A research desk with named scholars, the original Greek and Hebrew, and where they disagree
 - A soft front door: new people can meet a church before they ever walk in
 - Care tools, so pastors know how their people are really doing
@@ -67,116 +67,116 @@ A: Sarlia Digital Inc., a British Columbia, Canada company. Contact: hello@kinwo
 Every question below is a standalone page of sourced content at https://www.kinwove.com/answers/<slug>, written to be read and cited directly. 82 pages in total.
 
 ### For Pastors
-- How do I keep my congregation engaged between Sundays? https://www.kinwove.com/answers/how-do-i-keep-my-congregation-engaged-between-sundays
-- What do I do when someone leaves my church hurt? https://www.kinwove.com/answers/what-do-i-do-when-someone-leaves-my-church-hurt
-- How do I pastor someone who is deconstructing? https://www.kinwove.com/answers/how-do-i-pastor-someone-who-is-deconstructing
-- Should my church use AI? https://www.kinwove.com/answers/should-my-church-use-ai
-- What do I do when I'm the pastor who's burned out? https://www.kinwove.com/answers/what-do-i-do-when-im-the-pastor-who-is-burned-out
-- What if I was hurt while serving in church leadership? https://www.kinwove.com/answers/i-was-hurt-serving-in-church-leadership
-- What if I'm the only one leading, with no team and no support? https://www.kinwove.com/answers/im-the-only-one-leading-my-church
-- How do I preach on lament without losing hope? https://www.kinwove.com/answers/how-do-i-preach-on-lament-without-losing-hope
-- Where do I find sermon illustrations that don't feel canned? https://www.kinwove.com/answers/where-do-i-find-sermon-illustrations
-- Does my church need an app? https://www.kinwove.com/answers/does-my-church-need-an-app
-- How do we follow up with first-time visitors? https://www.kinwove.com/answers/how-do-we-follow-up-with-first-time-visitors
-- Why are young adults leaving our church, and what can we do? https://www.kinwove.com/answers/why-are-young-adults-leaving-our-church
-- What is the best platform for church small groups and Bible study? https://www.kinwove.com/answers/best-platform-for-church-small-groups
-- How do we organise our congregation online? https://www.kinwove.com/answers/how-do-we-organize-our-congregation-online
-- How do we set up a discussion board for our congregation? https://www.kinwove.com/answers/church-discussion-board-for-congregations
-- What should we look for in an online Bible study platform? https://www.kinwove.com/answers/online-bible-study-platform-for-churches
-- Why won’t my congregation use the church app we pay for? https://www.kinwove.com/answers/why-wont-my-congregation-use-our-church-app
-- What can a small church do instead of expensive church software? https://www.kinwove.com/answers/small-church-alternative-to-expensive-church-software
-- How do I keep up with my congregation’s prayer requests without burning out? https://www.kinwove.com/answers/keep-up-with-prayer-requests-without-burning-out
-- How do I start small groups that don’t fizzle out? https://www.kinwove.com/answers/how-to-start-small-groups-that-dont-fizzle-out
-- How do I shepherd the people who only come on Sunday? https://www.kinwove.com/answers/how-do-i-shepherd-people-who-only-come-on-sunday
+- How do I keep my congregation engaged between Sundays?: https://www.kinwove.com/answers/how-do-i-keep-my-congregation-engaged-between-sundays
+- What do I do when someone leaves my church hurt?: https://www.kinwove.com/answers/what-do-i-do-when-someone-leaves-my-church-hurt
+- How do I pastor someone who is deconstructing?: https://www.kinwove.com/answers/how-do-i-pastor-someone-who-is-deconstructing
+- Should my church use AI?: https://www.kinwove.com/answers/should-my-church-use-ai
+- What do I do when I'm the pastor who's burned out?: https://www.kinwove.com/answers/what-do-i-do-when-im-the-pastor-who-is-burned-out
+- What if I was hurt while serving in church leadership?: https://www.kinwove.com/answers/i-was-hurt-serving-in-church-leadership
+- What if I'm the only one leading, with no team and no support?: https://www.kinwove.com/answers/im-the-only-one-leading-my-church
+- How do I preach on lament without losing hope?: https://www.kinwove.com/answers/how-do-i-preach-on-lament-without-losing-hope
+- Where do I find sermon illustrations that don't feel canned?: https://www.kinwove.com/answers/where-do-i-find-sermon-illustrations
+- Does my church need an app?: https://www.kinwove.com/answers/does-my-church-need-an-app
+- How do we follow up with first-time visitors?: https://www.kinwove.com/answers/how-do-we-follow-up-with-first-time-visitors
+- Why are young adults leaving our church, and what can we do?: https://www.kinwove.com/answers/why-are-young-adults-leaving-our-church
+- What is the best platform for church small groups and Bible study?: https://www.kinwove.com/answers/best-platform-for-church-small-groups
+- How do we organise our congregation online?: https://www.kinwove.com/answers/how-do-we-organize-our-congregation-online
+- How do we set up a discussion board for our congregation?: https://www.kinwove.com/answers/church-discussion-board-for-congregations
+- What should we look for in an online Bible study platform?: https://www.kinwove.com/answers/online-bible-study-platform-for-churches
+- Why won’t my congregation use the church app we pay for?: https://www.kinwove.com/answers/why-wont-my-congregation-use-our-church-app
+- What can a small church do instead of expensive church software?: https://www.kinwove.com/answers/small-church-alternative-to-expensive-church-software
+- How do I keep up with my congregation’s prayer requests without burning out?: https://www.kinwove.com/answers/keep-up-with-prayer-requests-without-burning-out
+- How do I start small groups that don’t fizzle out?: https://www.kinwove.com/answers/how-to-start-small-groups-that-dont-fizzle-out
+- How do I shepherd the people who only come on Sunday?: https://www.kinwove.com/answers/how-do-i-shepherd-people-who-only-come-on-sunday
 
 ### Faith & Doubt
-- Is the resurrection of Jesus real? https://www.kinwove.com/answers/is-the-resurrection-of-jesus-real
-- How can I believe in God when I have doubts? https://www.kinwove.com/answers/how-can-i-believe-when-i-have-doubts
-- Is there evidence that God exists? https://www.kinwove.com/answers/is-there-evidence-that-god-exists
-- Is Christianity the only way to God? https://www.kinwove.com/answers/is-christianity-the-only-way-to-god
-- Why does God feel so far away? https://www.kinwove.com/answers/why-does-god-feel-so-far-away
-- What is faith? https://www.kinwove.com/answers/what-is-faith
-- Can you believe in evolution and the Bible? https://www.kinwove.com/answers/can-you-believe-in-evolution-and-the-bible
-- Is it okay to be angry at God? https://www.kinwove.com/answers/is-it-okay-to-be-angry-at-god
+- Is the resurrection of Jesus real?: https://www.kinwove.com/answers/is-the-resurrection-of-jesus-real
+- How can I believe in God when I have doubts?: https://www.kinwove.com/answers/how-can-i-believe-when-i-have-doubts
+- Is there evidence that God exists?: https://www.kinwove.com/answers/is-there-evidence-that-god-exists
+- Is Christianity the only way to God?: https://www.kinwove.com/answers/is-christianity-the-only-way-to-god
+- Why does God feel so far away?: https://www.kinwove.com/answers/why-does-god-feel-so-far-away
+- What is faith?: https://www.kinwove.com/answers/what-is-faith
+- Can you believe in evolution and the Bible?: https://www.kinwove.com/answers/can-you-believe-in-evolution-and-the-bible
+- Is it okay to be angry at God?: https://www.kinwove.com/answers/is-it-okay-to-be-angry-at-god
 
 ### Suffering & Evil
-- Why does God allow suffering? https://www.kinwove.com/answers/why-does-god-allow-suffering
+- Why does God allow suffering?: https://www.kinwove.com/answers/why-does-god-allow-suffering
 
 ### Bible
-- Can I trust the Bible? https://www.kinwove.com/answers/can-i-trust-the-bible
-- How do I read the Bible as a beginner? https://www.kinwove.com/answers/how-do-i-read-the-bible-as-a-beginner
-- Do Christians have to take the Bible literally? https://www.kinwove.com/answers/do-christians-take-the-bible-literally
-- What is the Book of Enoch, and why isn't it in the Bible? https://www.kinwove.com/answers/what-is-the-book-of-enoch
-- Has the Bible been changed or rewritten over the centuries? https://www.kinwove.com/answers/has-the-bible-been-changed
-- Who decided which books are in the Bible? https://www.kinwove.com/answers/who-decided-which-books-are-in-the-bible
-- Are there dinosaurs in the Bible? https://www.kinwove.com/answers/are-there-dinosaurs-in-the-bible
-- Do men have one fewer rib than women? https://www.kinwove.com/answers/do-men-have-fewer-ribs-than-women
-- Do Genesis 1 and 2 contradict each other? https://www.kinwove.com/answers/do-genesis-1-and-2-contradict
-- How do I study the Bible deeper on my own? https://www.kinwove.com/answers/how-do-i-study-the-bible-deeper-on-my-own
-- Can AI help me study the Bible? https://www.kinwove.com/answers/can-ai-help-me-study-the-bible
+- Can I trust the Bible?: https://www.kinwove.com/answers/can-i-trust-the-bible
+- How do I read the Bible as a beginner?: https://www.kinwove.com/answers/how-do-i-read-the-bible-as-a-beginner
+- Do Christians have to take the Bible literally?: https://www.kinwove.com/answers/do-christians-take-the-bible-literally
+- What is the Book of Enoch, and why isn't it in the Bible?: https://www.kinwove.com/answers/what-is-the-book-of-enoch
+- Has the Bible been changed or rewritten over the centuries?: https://www.kinwove.com/answers/has-the-bible-been-changed
+- Who decided which books are in the Bible?: https://www.kinwove.com/answers/who-decided-which-books-are-in-the-bible
+- Are there dinosaurs in the Bible?: https://www.kinwove.com/answers/are-there-dinosaurs-in-the-bible
+- Do men have one fewer rib than women?: https://www.kinwove.com/answers/do-men-have-fewer-ribs-than-women
+- Do Genesis 1 and 2 contradict each other?: https://www.kinwove.com/answers/do-genesis-1-and-2-contradict
+- How do I study the Bible deeper on my own?: https://www.kinwove.com/answers/how-do-i-study-the-bible-deeper-on-my-own
+- Can AI help me study the Bible?: https://www.kinwove.com/answers/can-ai-help-me-study-the-bible
 
 ### Jesus Christ
-- Is Jesus really God? https://www.kinwove.com/answers/is-jesus-really-god
-- What is the Trinity? https://www.kinwove.com/answers/what-is-the-trinity
-- Why did Jesus have to die? https://www.kinwove.com/answers/why-did-jesus-have-to-die
+- Is Jesus really God?: https://www.kinwove.com/answers/is-jesus-really-god
+- What is the Trinity?: https://www.kinwove.com/answers/what-is-the-trinity
+- Why did Jesus have to die?: https://www.kinwove.com/answers/why-did-jesus-have-to-die
 
 ### Eternal Life
-- What happens when you die? https://www.kinwove.com/answers/what-happens-when-you-die
-- Is hell real? https://www.kinwove.com/answers/is-hell-real
-- What is heaven actually like? https://www.kinwove.com/answers/what-is-heaven-like
-- Did Judas go to heaven? https://www.kinwove.com/answers/did-judas-go-to-heaven
-- What does Christianity say about reincarnation? https://www.kinwove.com/answers/what-does-christianity-say-about-reincarnation
+- What happens when you die?: https://www.kinwove.com/answers/what-happens-when-you-die
+- Is hell real?: https://www.kinwove.com/answers/is-hell-real
+- What is heaven actually like?: https://www.kinwove.com/answers/what-is-heaven-like
+- Did Judas go to heaven?: https://www.kinwove.com/answers/did-judas-go-to-heaven
+- What does Christianity say about reincarnation?: https://www.kinwove.com/answers/what-does-christianity-say-about-reincarnation
 
 ### Prayer
-- How do I start praying? https://www.kinwove.com/answers/how-do-i-start-praying
-- Does God answer prayer? https://www.kinwove.com/answers/does-god-answer-prayer
-- How does God speak to us today? https://www.kinwove.com/answers/how-does-god-speak-to-us-today
+- How do I start praying?: https://www.kinwove.com/answers/how-do-i-start-praying
+- Does God answer prayer?: https://www.kinwove.com/answers/does-god-answer-prayer
+- How does God speak to us today?: https://www.kinwove.com/answers/how-does-god-speak-to-us-today
 
 ### Salvation
-- How do I become a Christian? https://www.kinwove.com/answers/how-do-i-become-a-christian
-- What is the gospel? https://www.kinwove.com/answers/what-is-the-gospel
-- Why do I need Jesus if I'm a good person? https://www.kinwove.com/answers/why-do-i-need-jesus-if-im-a-good-person
-- What does it mean to be born again? https://www.kinwove.com/answers/what-does-it-mean-to-be-born-again
-- What is sin, really? https://www.kinwove.com/answers/what-is-sin
-- What does it mean to repent? https://www.kinwove.com/answers/what-is-repentance
-- Can I lose my salvation? https://www.kinwove.com/answers/can-i-lose-my-salvation
+- How do I become a Christian?: https://www.kinwove.com/answers/how-do-i-become-a-christian
+- What is the gospel?: https://www.kinwove.com/answers/what-is-the-gospel
+- Why do I need Jesus if I'm a good person?: https://www.kinwove.com/answers/why-do-i-need-jesus-if-im-a-good-person
+- What does it mean to be born again?: https://www.kinwove.com/answers/what-does-it-mean-to-be-born-again
+- What is sin, really?: https://www.kinwove.com/answers/what-is-sin
+- What does it mean to repent?: https://www.kinwove.com/answers/what-is-repentance
+- Can I lose my salvation?: https://www.kinwove.com/answers/can-i-lose-my-salvation
 
 ### Purpose
-- What is the meaning of life? https://www.kinwove.com/answers/what-is-the-meaning-of-life
-- How do I know God's will for my life? https://www.kinwove.com/answers/how-do-i-know-gods-will-for-my-life
-- What does the Bible say about self-worth? https://www.kinwove.com/answers/what-does-the-bible-say-about-self-worth
+- What is the meaning of life?: https://www.kinwove.com/answers/what-is-the-meaning-of-life
+- How do I know God's will for my life?: https://www.kinwove.com/answers/how-do-i-know-gods-will-for-my-life
+- What does the Bible say about self-worth?: https://www.kinwove.com/answers/what-does-the-bible-say-about-self-worth
 
 ### Grace
-- Does God love me? https://www.kinwove.com/answers/does-god-love-me
-- Will God forgive me? https://www.kinwove.com/answers/will-god-forgive-me
-- Am I too far gone for God? https://www.kinwove.com/answers/am-i-too-far-gone-for-god
-- What is grace? https://www.kinwove.com/answers/what-is-grace
-- What is the unforgivable sin, and have I committed it? https://www.kinwove.com/answers/what-is-the-unforgivable-sin
+- Does God love me?: https://www.kinwove.com/answers/does-god-love-me
+- Will God forgive me?: https://www.kinwove.com/answers/will-god-forgive-me
+- Am I too far gone for God?: https://www.kinwove.com/answers/am-i-too-far-gone-for-god
+- What is grace?: https://www.kinwove.com/answers/what-is-grace
+- What is the unforgivable sin, and have I committed it?: https://www.kinwove.com/answers/what-is-the-unforgivable-sin
 
 ### Mental Health
-- What does the Bible say about anxiety? https://www.kinwove.com/answers/what-does-the-bible-say-about-anxiety
-- What does the Bible say about depression? https://www.kinwove.com/answers/what-does-the-bible-say-about-depression
-- What does the Bible say about loneliness? https://www.kinwove.com/answers/what-does-the-bible-say-about-loneliness
-- What does the Bible say about fear? https://www.kinwove.com/answers/what-does-the-bible-say-about-fear
-- What does the Bible say about grief and losing someone? https://www.kinwove.com/answers/what-does-the-bible-say-about-grief
-- What does the Bible say about addiction? https://www.kinwove.com/answers/what-does-the-bible-say-about-addiction
-- What does the Bible say about rest and burnout? https://www.kinwove.com/answers/what-does-the-bible-say-about-rest
+- What does the Bible say about anxiety?: https://www.kinwove.com/answers/what-does-the-bible-say-about-anxiety
+- What does the Bible say about depression?: https://www.kinwove.com/answers/what-does-the-bible-say-about-depression
+- What does the Bible say about loneliness?: https://www.kinwove.com/answers/what-does-the-bible-say-about-loneliness
+- What does the Bible say about fear?: https://www.kinwove.com/answers/what-does-the-bible-say-about-fear
+- What does the Bible say about grief and losing someone?: https://www.kinwove.com/answers/what-does-the-bible-say-about-grief
+- What does the Bible say about addiction?: https://www.kinwove.com/answers/what-does-the-bible-say-about-addiction
+- What does the Bible say about rest and burnout?: https://www.kinwove.com/answers/what-does-the-bible-say-about-rest
 
 ### Holy Spirit
-- Who is the Holy Spirit? https://www.kinwove.com/answers/who-is-the-holy-spirit
+- Who is the Holy Spirit?: https://www.kinwove.com/answers/who-is-the-holy-spirit
 
 ### Money & Giving
-- What does the Bible say about money? https://www.kinwove.com/answers/what-does-the-bible-say-about-money
+- What does the Bible say about money?: https://www.kinwove.com/answers/what-does-the-bible-say-about-money
 
 ### Church
-- Why should I go to church? https://www.kinwove.com/answers/why-should-i-go-to-church
-- What is baptism and do I need it? https://www.kinwove.com/answers/what-is-baptism
-- How do I find a church as a beginner? https://www.kinwove.com/answers/how-do-i-find-a-church
-- What if church hurt you, or felt like it was all about money? https://www.kinwove.com/answers/what-if-church-hurt-you
+- Why should I go to church?: https://www.kinwove.com/answers/why-should-i-go-to-church
+- What is baptism and do I need it?: https://www.kinwove.com/answers/what-is-baptism
+- How do I find a church as a beginner?: https://www.kinwove.com/answers/how-do-i-find-a-church
+- What if church hurt you, or felt like it was all about money?: https://www.kinwove.com/answers/what-if-church-hurt-you
 
 ### Relationships
-- How do I forgive someone who hurt me? https://www.kinwove.com/answers/how-do-i-forgive-someone-who-hurt-me
-- What does the Bible say about divorce? https://www.kinwove.com/answers/what-does-the-bible-say-about-divorce
+- How do I forgive someone who hurt me?: https://www.kinwove.com/answers/how-do-i-forgive-someone-who-hurt-me
+- What does the Bible say about divorce?: https://www.kinwove.com/answers/what-does-the-bible-say-about-divorce
 
 ## Languages
 

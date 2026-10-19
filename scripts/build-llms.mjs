@@ -1,7 +1,9 @@
 // Writes public/llms.txt, the product summary AI assistants read.
 // The answers list and the languages come from the same files the site uses,
 // so a new answer page or language shows up here on the next build.
-// Runs before every build (npm "prebuild").
+// Runs before every build (npm "prebuild"). server.js /llms.txt rebuilds the
+// answers list again from the first "### " heading on each request, so no other
+// section may use "### " headings.
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ANSWERS } from '../content/answers.js';
@@ -16,7 +18,7 @@ for (const a of ANSWERS) {
   byCategory.get(a.category).push(a);
 }
 const answersSection = [...byCategory]
-  .map(([cat, list]) => `### ${cat}\n` + list.map((a) => `- ${a.question} ${host}/answers/${a.slug}`).join('\n'))
+  .map(([cat, list]) => `### ${cat}\n` + list.map((a) => `- ${a.question}: ${host}/answers/${a.slug}`).join('\n'))
   .join('\n\n');
 
 const names = LANGUAGES.map((l) => l.label);
@@ -37,7 +39,7 @@ kinwove works in any browser on iPhone, Android, iPad, and desktop, and can be a
 
 ## Two ways in
 
-### For you
+**For you**
 - Ask anything, honest answers with the verses to check
 - Ask in your own language: ${LANGUAGES.length} languages and counting
 - The full Bible, to read or listen to
@@ -46,7 +48,7 @@ kinwove works in any browser on iPhone, Android, iPad, and desktop, and can be a
 - Real people and churches, whenever you are ready
 - One daily post: a verse, a few words, and a question to sit with (also by email; anyone can stop it with one click)
 
-### For churches
+**For churches**
 - A research desk with named scholars, the original Greek and Hebrew, and where they disagree
 - A soft front door: new people can meet a church before they ever walk in
 - Care tools, so pastors know how their people are really doing
