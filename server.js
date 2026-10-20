@@ -313,7 +313,10 @@ app.post('/api/client-error', async (req, res) => {
     logOpsAlert('client-error', msg.slice(0, 200), `${kind ? `[${kind}] ` : ''}${msg.slice(0, 120)}`,
       `${msg}${url ? `\nURL: ${url}` : ''}`);
 
-    const alertTo = process.env.ERROR_ALERT_EMAIL;
+    // push-stage is the iOS push breadcrumb trail: a diagnostic, not an error.
+    // Push was closed as-is (1 Sep), so every trail says the same thing; it stays
+    // in the logs and on the profile but no longer emails (Daniel, 20 Oct).
+    const alertTo = kind === 'push-stage' ? null : process.env.ERROR_ALERT_EMAIL;
     if (alertTo && process.env.RESEND_API_KEY) {
       const key = msg.slice(0, 200);
       const now = Date.now();
