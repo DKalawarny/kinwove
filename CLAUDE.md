@@ -22,6 +22,14 @@ This means:
 
 If you are editing a file for one reason and you notice something unrelated that looks wrong, mention it in text — do not fix it silently.
 
+### Except: something BROKEN gets fixed (Daniel, 19 Oct 2026)
+
+The rule protects how kinwove looks, reads and is built. It does not protect bugs. If something is actually broken (an error, a crash, a job that fails, data that does not save, a security hole), fix it, prove the fix works, and tell Daniel what was broken and what you changed. Fix only the broken thing: everything around it stays surgical.
+
+If you are not sure whether it is broken or just looks odd to you, treat it as looking odd: mention it, do not change it.
+
+Example: the nightly backup made hundreds of requests with no retry and ended in failure on most days from August to October 2026. That is broken, so it was fixed (`scripts/fetch-retry.mjs`).
+
 ---
 
 ## ⚠️ LOCKED — DO NOT CHANGE WITHOUT EXPLICIT INSTRUCTION
@@ -453,7 +461,7 @@ Read `src/prompts.js` for the full canonical AI tone.
 ## 12. Quick start for the next session
 
 ```bash
-cd /Users/danielkalawarny/Desktop/kinwove
+cd /Users/danielkalawarny/kinwove   # moved off the Desktop 19 Oct 2026 (macOS kept blocking it)
 git log --oneline -5        # see recent commits
 npm run dev                 # server: localhost:8787, web: localhost:5173
 ```

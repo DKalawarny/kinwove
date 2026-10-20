@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 config();
+import { fetchRetry } from './fetch-retry.mjs';
 
 const URL_ = process.env.VITE_SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -17,9 +18,9 @@ const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
 // fallback if that request fails — it went 24 tables stale once already.
 async function discoverTables() {
   try {
-    const r = await fetch(`${URL_}/rest/v1/`, { headers: H });
+    const r = await fetchRetry(`${URL_}/rest/v1/`, { headers: H });
     if (!r.ok) throw new Error(`spec HTTP ${r.status}`);
-    const spec = await r.json();
+    const spec = r.body;
     const names = Object.keys(spec.definitions || spec.components?.schemas || {});
     if (!names.length) throw new Error('spec listed no tables');
     return names.sort();
@@ -55,9 +56,13 @@ for (const t of TABLES) {
   let rows = [], from = 0;
   const page = 1000;
   while (true) {
-    const r = await fetch(`${URL_}/rest/v1/${t}?select=*`, { headers: { ...H, Range: `${from}-${from + page - 1}` } });
+    // A table that still fails after the retries is skipped and NAMED, never
+    // allowed to end the run: before, one blip cost every table after it.
+    let r;
+    try { r = await fetchRetry(`${URL_}/rest/v1/${t}?select=*`, { headers: { ...H, Range: `${from}-${from + page - 1}` } }); }
+    catch (e) { console.warn(`  ⚠ ${t}: ${e.message}`); r = { ok: false }; }
     if (!r.ok) { skipped.push(t); rows = null; break; }
-    const batch = await r.json();
+    const batch = r.body;
     rows.push(...batch);
     if (batch.length < page) break;
     from += page;
@@ -84,4 +89,4 @@ fs.writeFileSync(path.join(dir, '_manifest.json'), JSON.stringify({
 
 console.log(`\n✓ backup complete → ${dir}`);
 console.log(`  ${total} rows across ${TABLES.length - skipped.length} tables`);
-if (skipped.length) console.log(`  skipped (unreadable): ${skipped.join(', ')}`);
+if (skipped.length) { console.log(`  skipped (unreadable): ${skipped.join(', ')}`); process.exitCode = 1; }

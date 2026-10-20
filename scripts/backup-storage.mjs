@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 config();
+import { fetchRetry } from './fetch-retry.mjs';
 
 const URL_ = process.env.VITE_SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -29,13 +30,13 @@ async function walk(bucket, prefix = '', depth = 0) {
   const out = [];
   let offset = 0;
   while (true) {
-    const r = await fetch(`${URL_}/storage/v1/object/list/${bucket}`, {
+    const r = await fetchRetry(`${URL_}/storage/v1/object/list/${bucket}`, {
       method: 'POST',
       headers: JSON_H,
       body: JSON.stringify({ prefix, limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } }),
     });
     if (!r.ok) { console.warn(`  ⚠ list failed ${bucket}/${prefix} → HTTP ${r.status}`); break; }
-    const items = await r.json();
+    const items = r.body;
     for (const it of items) {
       const full = prefix ? `${prefix}/${it.name}` : it.name;
       if (it.id === null) {
@@ -50,7 +51,7 @@ async function walk(bucket, prefix = '', depth = 0) {
   return out;
 }
 
-const buckets = await (await fetch(`${URL_}/storage/v1/bucket`, { headers: H })).json();
+const buckets = (await fetchRetry(`${URL_}/storage/v1/bucket`, { headers: H })).body;
 if (!Array.isArray(buckets)) { console.error('could not list buckets:', buckets); process.exit(1); }
 
 let got = 0, skip = 0, fail = 0, bytes = 0;
@@ -66,10 +67,12 @@ for (const b of buckets) {
     // Same size on disk = already have it. Cheap and good enough for immutable
     // uploads; these files are written once and never edited in place.
     if (fs.existsSync(dest) && fs.statSync(dest).size === f.size && f.size > 0) { skip++; continue; }
-    const r = await fetch(`${URL_}/storage/v1/object/${b.name}/${f.path}`, { headers: H });
+    let r;
+    try { r = await fetchRetry(`${URL_}/storage/v1/object/${b.name}/${f.path}`, { headers: H }, 'buffer'); }
+    catch (e) { console.warn(`  ⚠ ${b.name}/${f.path} → ${e.message}`); fail++; continue; }
     if (!r.ok) { console.warn(`  ⚠ ${b.name}/${f.path} → HTTP ${r.status}`); fail++; continue; }
     fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, Buffer.from(await r.arrayBuffer()));
+    fs.writeFileSync(dest, r.body);
     got++; bytes += f.size;
   }
 }
