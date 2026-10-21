@@ -307,7 +307,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          system: 'You suggest what the USER might want to ask next — not what the AI would ask the user. Output ONLY a JSON array of exactly 3 short questions written from the user\'s perspective, as if they are typing their next message. Each must be under 10 words, feel natural and curious, and make sense as something a person seeking faith answers would genuinely type. No explanation, no markdown — just the raw JSON array. Example: ["Why did God allow this?","How does this connect to Jesus?","What does the original Hebrew say?"]',
+          system: 'You suggest what the USER might want to ask next — not what the AI would ask the user. Output ONLY a JSON array of exactly 3 short questions written from the user\'s perspective, as if they are typing their next message. Each must be under 10 words, feel natural and curious, and make sense as something a person seeking faith answers would genuinely type. No explanation, no markdown — just the raw JSON array. Example: ["Why did God allow this?","How does this connect to Jesus?","What does the original Hebrew say?"]' + languageInstruction(viewLang),
           messages: [{ role: 'user', content: `Q: ${String(q).slice(0, 300)}\nA: ${String(a).slice(0, 300)}\n\nSuggest 3 questions the user might type next.` }],
           personType: 'curious',
           internal: true,
