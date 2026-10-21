@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, lazy, Suspense, Component } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, lazy, Suspense, Component } from 'react';
 import { PROFILE_COLUMNS } from './profileColumns.js';
 import { T, globalCss } from './theme.js';
 import { PERSON_TYPES } from './constants.js';
@@ -169,6 +169,10 @@ import DailyVerseCard, { shouldShowDailyVerse, markVerseAsSeen } from './DailyVe
 import { GlobalTooltip } from './Tooltip.jsx';
 import { SpellcheckEnabler } from './spellcheck.jsx';
 import { AutoGrowTextareas, CmdEnterSubmit, OfflineBanner, CopyToast } from './uiComfort.jsx';
+import { RTL_LANGS } from './languages.js';
+import { useStrings, useViewLang, setViewLang, getViewLang } from './i18n/viewLanguage.js';
+import { rich } from './i18n/rich.jsx';
+import LanguageMenu from './i18n/LanguageMenu.jsx';
 
 // ── Role label map (client-side mirror of server ROLE_LABELS) ────────────────
 const ROLE_LABELS_CLIENT = {
@@ -370,7 +374,7 @@ function CommunityPreview({ onBegin }) {
   );
 }
 
-function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorIntent, pastorChurchId, referralRef }) {
+function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorIntent, pastorChurchId, referralRef, onPickLanguage }) {
   const initialQuestion = useMemo(() => {
     // URLSearchParams.get already decodes — a second decodeURIComponent throws on
     // any question containing a literal % and silently drops it. Use it directly.
@@ -384,19 +388,45 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
   const reduceMotion = useMemo(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches, []);
   const narrow = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 600, []);
   const HERO_BG = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/site-video/hero-hills`;
+  const { s, lang, translated } = useStrings();
+  const emAccent = { color: '#E08A5A', fontStyle: 'italic', fontWeight: 500 };
+  // Some languages' "Sign in" + "Get started" are too wide for a small phone
+  // next to the language button. Measured, not guessed: if the header overflows,
+  // its Sign in link steps out (Sign in is still in the closing section).
+  const headerRef = useRef(null);
+  const [tightHeader, setTightHeader] = useState(false);
+  useLayoutEffect(() => {
+    setTightHeader(false);
+    const fit = () => {
+      const h = headerRef.current;
+      if (!h) return;
+      // Content can spill into the side padding without the header ever
+      // scrolling, so compare against the space inside the padding, keeping at
+      // least 12px between the wordmark and the buttons.
+      const cs = getComputedStyle(h);
+      const inner = h.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const used = [...h.children].reduce((sum, c) => sum + c.scrollWidth, 0) + 12;
+      setTightHeader(used > inner);
+    };
+    const id = requestAnimationFrame(fit);
+    return () => cancelAnimationFrame(id);
+  }, [s.signIn, s.getStarted]);
+  // A translated landing tells the browser its real language, so Chrome/Safari
+  // stop offering to translate a page that already is. Back to 'en' on the way
+  // out, because the rest of the app is English.
+  useEffect(() => {
+    document.documentElement.lang = translated ? lang : 'en';
+    return () => { document.documentElement.lang = 'en'; };
+  }, [lang, translated]);
 
   // These are enforced server-side (truthfulness rules on every AI surface,
   // commentary grounding, live scripture-reference verification) — keep the
   // copy in step with what the system actually guarantees.
-  const trustPoints = [
-    'Never invents quotes, statistics, or scripture. "I don\'t know" is built in',
-    'Every scripture reference is checked against the actual Bible text',
-    'Honest when faithful Christians genuinely disagree. It tells you that',
-  ];
+  const trustPoints = [s.trust1, s.trust2, s.trust3];
 
 
   return (
-    <div style={{ minHeight: '100vh', background: '#1A110A', display: 'flex', flexDirection: 'column', fontFamily: T.sans }}>
+    <div dir={RTL_LANGS.has(lang) && translated ? 'rtl' : undefined} style={{ minHeight: '100vh', background: '#1A110A', display: 'flex', flexDirection: 'column', fontFamily: T.sans }}>
 
       {/* ── Hero: dawn over the hills moves slowly behind the headline ── */}
       <div style={{ position: 'relative', minHeight: '100svh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -408,21 +438,25 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(26,17,10,0) 72%, #1A110A 100%), radial-gradient(ellipse 70% 60% at 50% 52%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.58) 60%, rgba(0,0,0,0.74) 100%), linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%)' }} />
 
       {/* ── Nav ── */}
-      <header style={{ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 32px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+      <header ref={headerRef} style={{ padding: `calc(18px + env(safe-area-inset-top, 0px)) ${narrow ? 16 : 32}px 18px`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 3 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0 }}>
           <KinwoveWordmark size={26} textColor={T.cream} starColor={T.honey} />
         </div>
         {session ? (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <LanguageMenu value={lang} onChange={onPickLanguage} tone="dark" compact={narrow} />
           <button onClick={onEditProfile} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}>
             <Avatar name={profile?.display_name} avatarConfig={profile?.avatar_config} photoUrl={profile?.avatar_url} size={32} />
           </button>
+          </div>
         ) : (
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: 'rgba(253,248,240,0.85)', fontSize: 14, cursor: 'pointer', padding: '8px 4px', textShadow: '0 1px 8px rgba(0,0,0,0.5)' }}>Sign in</button>
-            <button onClick={onBegin} style={{ background: T.gold, color: T.cream, border: 'none', padding: '9px 20px', borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(184,115,58,0.35)' }}
+            <LanguageMenu value={lang} onChange={onPickLanguage} tone="dark" compact={narrow} />
+            {!tightHeader && <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: 'rgba(253,248,240,0.85)', fontSize: 14, cursor: 'pointer', padding: '8px 4px', textShadow: '0 1px 8px rgba(0,0,0,0.5)', whiteSpace: 'nowrap' }}>{s.signIn}</button>}
+            <button onClick={onBegin} style={{ background: T.gold, color: T.cream, border: 'none', padding: '9px 20px', borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(184,115,58,0.35)', whiteSpace: 'nowrap' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = T.goldLight)}
               onMouseLeave={(e) => (e.currentTarget.style.background = T.gold)}
-            >Get started</button>
+            >{s.getStarted}</button>
           </div>
         )}
       </header>
@@ -431,16 +465,16 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
         {referralRef && (
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(184,115,58,0.12)', border: '1px solid rgba(184,115,58,0.25)', borderRadius: 999, padding: '7px 16px', marginBottom: 28, fontSize: 13, color: DIM, animation: 'fadeIn 0.5s ease both' }}>
             <KinwoveStar size={11} color={T.gold} />
-            Someone who knows you thought you'd find this worthwhile.
+            {s.referral}
           </div>
         )}
 
         <h1 style={{ fontFamily: T.serif, fontSize: 'clamp(38px, 6.4vw, 76px)', lineHeight: 1.04, margin: '0 0 20px', fontWeight: 600, letterSpacing: '-0.028em', color: T.cream, maxWidth: 900, textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
-          You don't have to have it{narrow ? ' ' : <br />}figured out to <em style={{ color: '#E08A5A', fontStyle: 'italic', fontWeight: 500 }}>belong here.</em>
+          {rich(s.heroTitle, { narrow, emStyle: emAccent })}
         </h1>
 
         <p style={{ fontFamily: T.serif, fontSize: 'clamp(16px, 1.8vw, 19px)', lineHeight: 1.6, color: 'rgba(245,237,216,0.78)', maxWidth: 560, margin: '0 0 34px', textShadow: '0 1px 16px rgba(0,0,0,0.5)' }}>
-          AI that stays in scripture. Real people at every stage. Tools for your church between Sundays.
+          {s.heroSub}
         </p>
 
         <div style={{ width: '100%', maxWidth: 680, margin: '0 auto', position: 'relative' }}>
@@ -453,28 +487,21 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
              Each box is a complete pitch; nobody has to read the other one.
              Same card twice, colours flipped: cream for you, dark for churches. ── */}
       <section style={{ padding: '10px 24px 72px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
-        <div style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>Two ways in</div>
+        <div style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>{s.twoWaysIn}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center' }}>
           {/* Door 1 — For you */}
           <div style={{ flex: '1 1 320px', maxWidth: 420, background: T.cream, border: '1px solid rgba(26,17,10,0.12)', borderTop: `3px solid ${T.honey}`, borderRadius: 20, padding: '16px 16px 26px', display: 'flex', flexDirection: 'column' }}>
-            <DoorVideoCover name="you" onOpen={() => setDoorVideo('you')} />
+            <DoorVideoCover name="you" onOpen={() => setDoorVideo('you')} label={s.watch} />
             <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: '#1A110A', margin: '0 0 10px', letterSpacing: '-0.018em' }}>🕊️ For you</h3>
+            <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: '#1A110A', margin: '0 0 10px', letterSpacing: '-0.018em' }}>🕊️ {s.forYou}</h3>
             <p style={{ fontFamily: T.serif, fontSize: 15.5, color: 'rgba(26,17,10,0.68)', lineHeight: 1.7, margin: '0 0 18px' }}>
-              Honest answers to the questions you actually have, doubt included. An AI that stays in scripture and says "I don't know" when it doesn't, a Bible you can ask anything, and people at every stage of the same road.
+              {s.forYouBody}
             </p>
             <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 13.5, color: T.gold, lineHeight: 1.7, margin: '0 0 10px' }}>
-              For the curious · the skeptic · the searching · the believer
+              {s.forYouWho}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 22px' }}>
-              {[
-                'Ask anything, honest answers with the verses to check',
-                'Ask in your own language, 49 and counting',
-                'The full Bible, to read or listen to',
-                'Notes, highlights, and reading plans',
-                'No real name needed, so you can ask what you\'d never ask out loud',
-                'Real people and churches, whenever you\'re ready',
-              ].map((b) => (
+              {[s.forYou1, s.forYou2, s.forYou3, s.forYou4, s.forYou5, s.forYou6].map((b) => (
                 <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: 'rgba(26,17,10,0.68)', lineHeight: 1.55, textAlign: 'left' }}>
                   <KinwoveStar size={9} color={T.gold} style={{ flexShrink: 0, marginTop: 4 }} />
                   {b}
@@ -483,27 +510,22 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
             </div>
             <div style={{ marginTop: 'auto' }}>
               <button onClick={onBegin} style={{ background: '#1A110A', color: T.cream, border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
-              >Start asking →</button>
+              >{s.startAsking}</button>
             </div>
             </div>
           </div>
           {/* Door 2 — For your church */}
           <div style={{ flex: '1 1 320px', maxWidth: 420, background: '#120B05', border: '1px solid rgba(245,237,216,0.16)', borderTop: `3px solid ${T.honey}`, borderRadius: 20, padding: '16px 16px 26px', display: 'flex', flexDirection: 'column' }}>
-            <DoorVideoCover name="church" onOpen={() => setDoorVideo('church')} />
+            <DoorVideoCover name="church" onOpen={() => setDoorVideo('church')} label={s.watch} />
             <div style={{ padding: '0 12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
             <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 600, color: T.cream, margin: '0 0 10px', letterSpacing: '-0.018em' }}>
-              ⛪ For your church
+              ⛪ {s.forChurch}
             </h3>
             <p style={{ fontFamily: T.serif, fontSize: 15.5, color: 'rgba(245,237,216,0.62)', lineHeight: 1.7, margin: '0 0 18px' }}>
-              Sunday's sermon becomes a week of engagement. A research desk for sermon prep, daily questions your congregation actually answers, and a prayer wall that tells you how your people are really doing.
+              {s.forChurchBody}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, margin: '0 0 12px' }}>
-              {[
-                'A research desk with named scholars, the original Greek and Hebrew, and where they disagree',
-                'Sunday\'s outline becomes a week of daily questions',
-                'A soft front door. New people can meet your church before they ever walk in',
-                'Care tools, so you know how your people are really doing',
-              ].map((b) => (
+              {[s.forChurch1, s.forChurch2, s.forChurch3, s.forChurch4].map((b) => (
                 <div key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13.5, color: 'rgba(245,237,216,0.62)', lineHeight: 1.55, textAlign: 'left' }}>
                   <KinwoveStar size={9} color={T.honey} style={{ flexShrink: 0, marginTop: 4 }} />
                   {b}
@@ -511,35 +533,33 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
               ))}
             </div>
             <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(212,162,74,0.75)', lineHeight: 1.7, margin: '0 0 22px' }}>
-              Free for churches while we're in beta · no card
+              {s.freeForChurches}
             </div>
             <div style={{ marginTop: 'auto' }}>
               <button onClick={onPastorIntent} style={{ background: T.cream, color: '#1A110A', border: 'none', padding: '12px 26px', borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
-              >Set up your church →</button>
+              >{s.setUpChurch}</button>
             </div>
             </div>
           </div>
         </div>
       </section>
       {doorVideo === 'you' && (
-        <DoorVideoPlayer name="you" endTitle="Bring your questions." endLabel="Start asking →" onEndAction={onBegin} onClose={() => setDoorVideo(null)} />
+        <DoorVideoPlayer name="you" endTitle={s.videoEndYou} endLabel={s.startAsking} closeLabel={s.close} againLabel={s.watchAgain} onEndAction={onBegin} onClose={() => setDoorVideo(null)} />
       )}
       {doorVideo === 'church' && (
-        <DoorVideoPlayer name="church" endTitle="From your study to their whole week." endLabel="Set up your church →" onEndAction={onPastorIntent} onClose={() => setDoorVideo(null)} />
+        <DoorVideoPlayer name="church" endTitle={s.videoEndChurch} endLabel={s.setUpChurch} closeLabel={s.close} againLabel={s.watchAgain} onEndAction={onPastorIntent} onClose={() => setDoorVideo(null)} />
       )}
 
       {/* ── AI trust: a cream band breaks up the dark ── */}
       <div style={{ background: T.cream, width: '100%' }}>
       <section style={{ padding: '80px 24px 84px', maxWidth: 900, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.gold, marginBottom: 18 }}>Why not just ask ChatGPT?</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.gold, marginBottom: 18 }}>{s.trustKicker}</div>
           <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(26px, 3.6vw, 40px)', color: '#1A110A', fontWeight: 600, margin: '0 0 20px', letterSpacing: '-0.022em', lineHeight: 1.12, maxWidth: 640 }}>
-            We know you might not trust AI{narrow ? ' ' : <br />}with something this important.
+            {rich(s.trustTitle, { narrow })}
           </h2>
           <p style={{ fontFamily: T.serif, fontSize: 17, color: 'rgba(26,17,10,0.68)', maxWidth: 540, lineHeight: 1.75, margin: 0 }}>
-            Most AI will invent a Bible verse before it will admit it doesn't know.
-            For a question about God, that's not acceptable. kinwove was built with one
-            rule at its core: <em style={{ color: '#1A110A', fontStyle: 'italic' }}>if it's not in the text, we don't say it.</em>
+            {rich(s.trustBody, { emStyle: { color: '#1A110A', fontStyle: 'italic' } })}
           </p>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12, maxWidth: 820, margin: '0 auto' }}>
@@ -557,18 +577,18 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
       {/* The hills come back here, faded in, so the page ends where it began */}
       <section style={{ padding: '110px 24px 120px', textAlign: 'center', position: 'relative', overflow: 'hidden', background: `linear-gradient(180deg, #1A110A 0%, rgba(26,17,10,0.72) 38%, rgba(26,17,10,0.8) 100%), url("${HERO_BG}.jpg") center 70% / cover no-repeat, #1A110A` }}>
         <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>Begin</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase', color: T.honey, opacity: 0.85, marginBottom: 22 }}>{s.begin}</div>
           <h2 style={{ fontFamily: T.serif, fontSize: 'clamp(30px, 5vw, 58px)', fontWeight: 600, color: T.cream, lineHeight: 1.05, marginBottom: 20, letterSpacing: '-0.026em', textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
-            Start asking.<br />We'll meet you there.
+            {rich(s.closingTitle)}
           </h2>
           <p style={{ fontFamily: T.serif, fontSize: 17, color: 'rgba(245,237,216,0.8)', lineHeight: 1.72, maxWidth: 400, margin: '0 auto 40px', textShadow: '0 1px 16px rgba(0,0,0,0.5)' }}>
-            No right beliefs required. No background check. Free to explore wherever you are.
+            {s.closingBody}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
             <button onClick={onBegin}
               style={{ background: T.cream, color: '#1A110A', border: 'none', borderRadius: 999, padding: '16px 40px', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: '0 14px 50px rgba(0,0,0,0.45)', letterSpacing: '-0.01em', fontFamily: T.sans }}
             >
-              Get started free →
+              {s.getStartedFree}
             </button>
             {onPastorIntent && (
               <button onClick={onPastorIntent}
@@ -576,15 +596,15 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.85)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(245,237,216,0.5)'; }}
               >
-                Set up your church →
+                {s.setUpChurch}
               </button>
             )}
           </div>
-          <div style={{ marginTop: 18, fontSize: 12.5, color: 'rgba(245,237,216,0.7)' }}>No credit card · Takes 30 seconds</div>
+          <div style={{ marginTop: 18, fontSize: 12.5, color: 'rgba(245,237,216,0.7)' }}>{s.noCard}</div>
           {!session && (
             <div style={{ marginTop: 20, fontSize: 13, color: 'rgba(245,237,216,0.65)' }}>
-              Already here?{' '}
-              <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: T.cream, fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Sign in</button>
+              {s.alreadyHere}{' '}
+              <button onClick={onSignIn} style={{ background: 'none', border: 'none', color: T.cream, fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>{s.signIn}</button>
             </div>
           )}
         </div>
@@ -593,14 +613,17 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
       <footer style={{ padding: '20px 40px', textAlign: 'center', fontSize: 12, color: 'rgba(253,248,240,0.2)', borderTop: `1px solid ${RULE}`, letterSpacing: '0.04em' }}>
         <KinwoveWordmark size={13} textColor="rgba(253,248,240,0.3)" starColor="rgba(212,162,74,0.35)" /> &nbsp;·&nbsp; {new Date().getFullYear()}
         <div style={{ fontFamily: T.serif, fontStyle: 'italic', fontSize: 12.5, color: 'rgba(253,248,240,0.35)', margin: '6px 0 4px', letterSpacing: '0.01em' }}>
-          Real answers to hard faith questions.
+          {s.tagline}
         </div>
         <span style={{ fontSize: 11.5 }}>
-          <a href="/answers" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Answers</a> &nbsp;·&nbsp;
-          <a href="/privacy" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Privacy</a> &nbsp;·&nbsp;
-          <a href="/terms" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Terms</a> &nbsp;·&nbsp;
-          <a href="mailto:hello@kinwove.com" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>Contact</a>
+          <a href="/answers" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerAnswers}</a> &nbsp;·&nbsp;
+          <a href="/privacy" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerPrivacy}</a> &nbsp;·&nbsp;
+          <a href="/terms" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerTerms}</a> &nbsp;·&nbsp;
+          <a href="mailto:hello@kinwove.com" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerContact}</a>
         </span>
+        {translated && (
+          <div style={{ marginTop: 10, fontSize: 11.5, color: 'rgba(253,248,240,0.4)', letterSpacing: 0 }}>{s.machineNotice}</div>
+        )}
       </footer>
     </div>
   );
@@ -1583,7 +1606,7 @@ function StreakChip({ streak, onClick, compact = false }) {
   );
 }
 
-function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0 }) {
+function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, language, onPickLanguage }) {
   const verse = getDailyVerse();
   return (
     <div style={{
@@ -1626,6 +1649,7 @@ function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0 }) {
           textShadow: '0 1px 0 rgba(0,0,0,0.4)',
         }}>{verse.ref} ↗</span>
       </button>
+      <LanguageMenu value={language} onChange={onPickLanguage} tone="dark" />
       <StreakChip streak={streak} onClick={onVerseClick} />
       {/* Reserved right gutter for the 3 FABs (3×44 + 2×8 gaps + 12px edge = 160px + 4px buffer).
           The FABs shift left by rightOffset when the chat panel is docked — the
@@ -1638,7 +1662,7 @@ function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0 }) {
 // ── Mobile global top header ────────────────────────────────────────────────
 // Mirrors AppHeader but for mobile — same dark walnut bar, ✦ kinwove, daily
 // verse. Shown on every page when logged in so the brand is always anchored.
-function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0 }) {
+function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, language, onPickLanguage }) {
   const verse = getDailyVerse();
   // The header also hosts 3 overlaid FABs (164px reserved right padding), so on
   // phone widths there's no room for the verse chip — it was clipping mid-word
@@ -1705,6 +1729,7 @@ function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0 }) {
       ) : (
         <div style={{ flex: 1 }} />
       )}
+      <LanguageMenu value={language} onChange={onPickLanguage} tone="dark" compact />
       <StreakChip streak={streak} onClick={onVerseClick} compact />
     </div>
   );
@@ -2116,6 +2141,29 @@ export default function App() {
         .then(() => setProfile((p) => p ? { ...p, preferred_language: detected } : p));
     }
   }, [profile?.id]);
+
+  // The language menu (landing + top bar) and the profile's Ask language are one
+  // setting. Signed in, the profile is the source: whatever Settings says is what
+  // the menu shows. A non-English pick made before signing in carries over onto
+  // a profile still on the default English.
+  const viewLang = useViewLang();
+  useEffect(() => {
+    const pl = profile?.preferred_language;
+    if (!pl || !session?.user?.id) return;
+    if (pl === 'en' && getViewLang() !== 'en') {
+      const code = getViewLang();
+      supabase.from('profiles').update({ preferred_language: code }).eq('id', session.user.id)
+        .then(() => setProfile((p) => p ? { ...p, preferred_language: code } : p), () => {});
+      return;
+    }
+    setViewLang(pl);
+  }, [profile?.preferred_language, session?.user?.id]);
+  const pickLanguage = (code) => {
+    setViewLang(code);
+    if (!session?.user?.id) return;
+    setProfile((p) => p ? { ...p, preferred_language: code } : p);
+    supabase.from('profiles').update({ preferred_language: code }).eq('id', session.user.id).then(null, () => {});
+  };
   const [authStage, setAuthStage] = useState('idle'); // idle | auth | profile-setup | profile-view
   const [authInitialMode, setAuthInitialMode] = useState('signin');
   const [profileEditOrigin, setProfileEditOrigin] = useState('idle'); // where edit profile was opened from
@@ -3067,8 +3115,8 @@ export default function App() {
       {/* ── Global dark header (all devices when logged in) ─────────── */}
       {showNav && !inChurchMode && (
         isDesktop
-          ? <AppHeader onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }} onVerseClick={() => setShowVerseCard(true)} streak={currentStreak(profile)} rightOffset={isDocked ? chatPanelWidth : 0} />
-          : <MobileHeader onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }} onVerseClick={() => setShowVerseCard(true)} streak={currentStreak(profile)} rightOffset={isDocked ? chatPanelWidth : 0} />
+          ? <AppHeader onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }} onVerseClick={() => setShowVerseCard(true)} streak={currentStreak(profile)} rightOffset={isDocked ? chatPanelWidth : 0} language={viewLang} onPickLanguage={pickLanguage} />
+          : <MobileHeader onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }} onVerseClick={() => setShowVerseCard(true)} streak={currentStreak(profile)} rightOffset={isDocked ? chatPanelWidth : 0} language={viewLang} onPickLanguage={pickLanguage} />
       )}
 
       {/* ── Main stage ─────────────────────────────────────────────── */}
@@ -3099,6 +3147,7 @@ export default function App() {
           onEditProfile={() => setAuthStage('profile-view')}
           pastorChurchId={pastorChurchId}
           referralRef={referralRef}
+          onPickLanguage={pickLanguage}
           onPastorIntent={() => {
             if (session && profile) { setStage('pastor-apply'); }
             else { setPendingPastorApply(true); setAuthInitialMode('signup'); setAuthStage('auth'); }

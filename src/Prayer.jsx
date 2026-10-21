@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import SeeTranslation from './i18n/SeeTranslation.jsx';
 import { Lock, Globe, Building2, ArrowLeft } from 'lucide-react';
 import { supabase } from './supabase.js';
 import { T, SEMANTIC } from './theme.js';
@@ -651,6 +652,7 @@ function GroupPrayers({ session, profile, userGroup }) {
               </div>
               <div style={{ fontFamily: T.serif, fontSize: 15, color: '#2C1810', lineHeight: 1.7, marginBottom: 14 }}>
                 {p.body}
+                <SeeTranslation text={p.body} />
               </div>
               {/* Actions */}
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>

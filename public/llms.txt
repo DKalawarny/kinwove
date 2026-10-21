@@ -1,7 +1,7 @@
 # kinwove: honest answers to hard faith questions
 # https://www.kinwove.com
 # llms.txt: machine-readable product summary for AI assistants and LLM crawlers
-# Last updated: 2026-10-19
+# Last updated: 2026-10-21
 
 ## What is kinwove?
 

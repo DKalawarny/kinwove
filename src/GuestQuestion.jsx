@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { T } from './theme.js';
 import { authedFetch } from './supabase.js';
 import ShareSheet from './ShareSheet.jsx';
+import { languageInstruction } from './languages.js';
+import { useStrings } from './i18n/viewLanguage.js';
 
 // Keep in sync with server.js anon /api/chat limit (3/day) and Chat.jsx
 // GuestWall — the audit found three different numbers promised (5/2/2).
@@ -208,6 +210,7 @@ function LeadCapture({ firstQuestion }) {
 }
 
 export default function GuestQuestion({ onSignUp, initialQuestion, landingMode = false }) {
+  const { s: str, lang: viewLang } = useStrings();
   const [messages, setMessages] = useState([]); // { role: 'user'|'assistant', content: string, streaming?: bool }
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -321,7 +324,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          system: getSystem(),
+          system: getSystem() + languageInstruction(viewLang),
           messages: apiMessages,
           personType: level,
         }),
@@ -403,16 +406,16 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); ask(); } }}
-                  placeholder="Ask anything about faith…"
+                  placeholder={str.askPlaceholder}
                   aria-label="Ask a question"
                   style={{ flex: 1, minWidth: 0, border: 0, outline: 0, background: 'none', fontFamily: T.serif, fontSize: 18, color: '#1A110A' }}
                 />
                 <button onClick={() => ask()} disabled={!input.trim()}
                   style={{ background: '#1A110A', color: T.cream, border: 0, borderRadius: 999, padding: '13px 24px', fontWeight: 600, fontSize: 15, cursor: input.trim() ? 'pointer' : 'default', whiteSpace: 'nowrap', opacity: input.trim() ? 1 : 0.85 }}
-                >Ask →</button>
+                >{str.askButton}</button>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 18 }}>
-                {EXAMPLE_QUESTIONS.map((q) => (
+                {[str.example1, str.example2, str.example3, str.example4].map((q) => (
                   <button
                     key={q}
                     onClick={() => ask(q)}

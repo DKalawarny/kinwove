@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, lazy, Suspense, Fragment } from 'react';
+import SeeTranslation from './i18n/SeeTranslation.jsx';
 import { createPortal } from 'react-dom';
 import { Smile, Bookmark } from 'lucide-react';
 import { supabase } from './supabase.js';
@@ -621,6 +622,7 @@ function PostCard({ post, index = 0, session, currentUserId, userProfile, userGr
               {(() => { const t = stripFirstUrl(post.body); return bodyExpanded ? t : t.slice(0, 280) + (t.length > 280 ? '…' : ''); })()}
             </div>
           )}
+          {!post.body_data?.repost_of && <SeeTranslation text={post.body} style={{ margin: '-8px 0 14px' }} />}
 
           {!post.body_data?.repost_of && stripFirstUrl(post.body).length > 280 && (
             <button onClick={() => setBodyExpanded(v => !v)}

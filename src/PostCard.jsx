@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import SeeTranslation from './i18n/SeeTranslation.jsx';
 import { Bookmark, Smile } from 'lucide-react';
 import { track } from './analytics.js';
 import { supabase } from './supabase.js';
@@ -438,6 +439,7 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
           }}>
             {renderWithMentions(stripFirstUrl(b.text), mentions, onViewProfile, onViewChurch)}
           </div>
+          <SeeTranslation text={b.text} />
           <LinkPreview text={b.text} />
         </>
       );

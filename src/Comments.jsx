@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import SeeTranslation from './i18n/SeeTranslation.jsx';
 import { Smile } from 'lucide-react';
 import { supabase, authedFetch } from './supabase.js';
 import { track } from './analytics.js';
@@ -180,6 +181,7 @@ export default function Comments({ item, sessionUserId, authorMap, rolesByUser, 
                     <div style={{ background: T.parchment, borderRadius: 16, padding: '9px 13px' }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: T.ink, marginBottom: 2 }}>{name}</div>
                       <div style={{ fontFamily: T.serif, fontSize: 14, color: T.inkSoft, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{c.body}</div>
+                      <SeeTranslation text={c.body} style={{ marginTop: 4 }} />
                     </div>
                     <div style={{ fontSize: 12, color: T.inkMuted, marginTop: 4, paddingLeft: 10, display: 'flex', gap: 10 }}>
                       <span>{relativeTime(c.created_at)}</span>
@@ -245,6 +247,7 @@ export default function Comments({ item, sessionUserId, authorMap, rolesByUser, 
                     <div style={{ fontFamily: T.serif, fontSize: 14, color: T.inkSoft, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
                       {c.body}
                     </div>
+                    <SeeTranslation text={c.body} style={{ marginTop: 4 }} />
                   </div>
                   {/* Timestamp + delete/report */}
                   <div style={{ fontSize: 12, color: T.inkMuted, marginTop: 4, paddingLeft: 10, display: 'flex', alignItems: 'center', gap: 10 }}>

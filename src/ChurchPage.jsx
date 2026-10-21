@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
+import SeeTranslation from './i18n/SeeTranslation.jsx';
 import { ArrowLeft, Share2, Check, ExternalLink, Globe } from 'lucide-react';
 import { supabase } from './supabase.js';
 import { T, SHADOW, RADIUS, SEMANTIC, SPACE } from './theme.js';
@@ -1365,6 +1366,7 @@ export default function ChurchPage({
                       <div style={{ fontSize: 15, color: T.ink, lineHeight: 1.65, fontFamily: T.serif, fontVariationSettings: '"opsz" 18' }}>
                         {p.body}
                       </div>
+                      <SeeTranslation text={p.body} />
                     </div>
                     <button
                       onClick={async () => {
@@ -1701,6 +1703,7 @@ export default function ChurchPage({
                 <div style={{ fontFamily: T.serif, fontSize: 15, color: T.ink, lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>
                   {church.about}
                 </div>
+                <SeeTranslation text={church.about} />
               </div>
             )}
 
