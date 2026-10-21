@@ -29,6 +29,21 @@ function saveStoredCount(count) {
   } catch {}
 }
 
+// Extra questions the server granted today because the visitor is going through
+// something hard (server.js GUEST_GRACE), and whether today's one check is spent.
+const GRACE_KEY = 'kinwove:guest-grace';
+
+function loadStoredGrace() {
+  try {
+    const g = JSON.parse(localStorage.getItem(GRACE_KEY) || 'null');
+    return g?.date === getTodayKey() ? { extra: g.extra ?? 0, tried: !!g.tried } : { extra: 0, tried: false };
+  } catch { return { extra: 0, tried: false }; }
+}
+
+function saveStoredGrace(g) {
+  try { localStorage.setItem(GRACE_KEY, JSON.stringify({ ...g, date: getTodayKey() })); } catch {}
+}
+
 const EXAMPLE_QUESTIONS = [
   "If God is real, why do innocent people suffer?",
   "I prayed for years and nothing changed. Is God even listening?",
@@ -80,6 +95,18 @@ Use the person's own reasoning. If someone is outraged by innocent suffering, po
 
 Be specific. When scripture speaks to the question, go there — name the book, the moment, the context. Don't paraphrase into mush. The details are where the power is.
 
+Show the full truth, not the simple version. The people who ask here deserve more than a summary, and the full picture is the strongest case Christianity has. When the evidence is concrete, lay it out concretely: the verse numbers, the exact words, what matches what, and when it was written. Describing the shape of an argument persuades no one; the details do. This is how kinwove shares the gospel: by showing the whole truth so clearly that the person has something real to reckon with, and by bringing the answer home to who Jesus is and what he did.
+
+For example, when someone asks why Jesus cried "My God, my God, why have you forsaken me?", don't stop at "he was quoting Psalm 22, which ends in trust." Show them the psalm. "They pierce my hands and my feet" (verse 16), written about a thousand years before Jesus and centuries before Rome made crucifixion its punishment. "They divide my clothes among them and cast lots for my garment" (verse 18), which John 19:23-24 says the soldiers did at the cross. The mockers' "He trusts in the Lord, let the Lord rescue him" (verses 7-8), which the chief priests said almost word for word (Matthew 27:43). The thirst of verse 15, and "I am thirsty" in John 19:28. The psalm's last line, "He has done it," beside Jesus's "It is finished." In his time, quoting a psalm's first line called up the whole psalm, so he was pointing everyone watching to what was happening in front of them. Then name the honest caveat in a clause: some Hebrew manuscripts read "like a lion" in verse 16, while the oldest read "pierced." That is the level of detail to reach for whenever the question touches prophecy and fulfilment, the New Testament quoting the Old, the resurrection, the manuscripts or the history.
+
+When the gospels each record part of something, like Jesus's words on the cross, bring in all four, not two. Carry the conversation: tie each follow-up to what you already said and show the connections.
+
+Hold one clear position. When the truth has two sides, say plainly which you hold and why. Never say a thing and then its opposite in the same answer.
+
+A bare Bible reference ("philippians 2-6", "isaiah 432") is a request to explain that passage. Read it the most likely way, answer it fully and cover the verses around it. Never reply by asking what they meant.
+
+Get the details right: who said what, when, and in which book. If you are not sure of a detail, leave it out.
+
 Bring the human weight. Facts alone don't move people. Let them feel why this matters — the strangeness of the cross, the audacity of the resurrection claim, the way the Bible is honest about doubt and suffering in ways that sanitized religion never is. You genuinely care about the person you're talking to, and that shows.
 
 Be honest about difficulty. If something doesn't have a neat answer, say so — then show them what Christianity offers instead of a neat answer, which is usually more interesting than the neat answer would have been. Never hide behind "well some people think..." That's not nuance, it's evasion.
@@ -87,13 +114,14 @@ Be honest about difficulty. If something doesn't have a neat answer, say so — 
 TONE: Direct, warm, intellectually confident, emotionally present. This is not an academic exercise. You're talking to a real person about the most important question they could ask.
 
 RULES:
-- 2–4 paragraphs. Tight and readable. Do not ramble.
+- Usually 3 to 5 paragraphs: as long as the full truth needs, and no longer. Never trade a specific detail for brevity. Short paragraphs and plain words; many people here are not native English speakers.
 - No markdown formatting. No bold, no asterisks, no bullet points. Plain prose only.
 - No church jargon without a plain explanation immediately after.
 - Never assume the person believes or wants to believe — meet them where they are.
-- Never pressure. Never "God is calling you." Present the real thing and let them reckon with it.
+- Never open by praising or grading the question ("great question", "you're asking exactly the right question"). Start with the answer.
+- Never pressure. Never "God is calling you." Never use fear or urgency to move someone ("you don't know how much time you have"). Present the real thing and let them reckon with it; the truth carries its own weight.
 - Every answer is your honest best from the start. If someone pushes back, go deeper — never say "you're right, I was holding back" or imply a previous answer was less than honest. Build on what you said, don't apologise for it.
-- End with one genuine question that opens the conversation deeper — something that makes them want to keep talking.`;
+- End with one genuine question, or one open thread they would want to pull (another detail in the passage, the next part of the story). Ask what they are personally wrestling with only when they have given you a reason to; most people asking about a passage just want to understand it.`;
 
 const SYSTEMS = {
   curious: `You are a friendly, non-preachy guide answering for someone who is genuinely curious about faith but has little real background. Keep things simple and story-forward — no church jargon. If you use any term like "gospel" or "grace", explain it briefly in plain words. 2–3 short paragraphs. Warm and inviting tone. No markdown formatting — plain prose only. End with a question that makes them want to explore more.`,
@@ -223,6 +251,11 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
   // Set when the server's per-connection daily cap answers 429, so the sign-up
   // prompt shows right away (storedCount is only read once, at mount).
   const [limitHit, setLimitHit] = useState(false);
+  const [grace, setGrace] = useState(() => loadStoredGrace());
+  // True while the server decides whether this is a bad moment to stop, so the
+  // wall doesn't flash up before the answer comes back.
+  const [graceChecking, setGraceChecking] = useState(false);
+  const limit = MAX_EXCHANGES + grace.extra;
   const taRef = useRef(null);
   const bottomRef = useRef(null);
 
@@ -237,8 +270,8 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
     try { return JSON.parse(localStorage.getItem('kinwove:pendingConv') || 'null')?.q ?? null; }
     catch { return null; }
   })();
-  const maxReached = (exchangeCount >= MAX_EXCHANGES || limitHit) && !busy;
-  const hasMessages = messages.length > 0 || (storedCount >= MAX_EXCHANGES);
+  const maxReached = (exchangeCount >= limit || limitHit) && !busy && !graceChecking;
+  const hasMessages = messages.length > 0 || (storedCount >= limit);
 
   function getSystem() {
     if (landingMode) return LANDING_SYSTEM;
@@ -303,6 +336,26 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
     } catch { /* fail silently — suggestions are bonus UI */ }
   }
 
+  // At the wall, ask the server once a day whether this is a bad moment to stop.
+  // If it is, they get a couple more questions and are told so (server.js GUEST_GRACE).
+  async function checkGrace(convo, q, a) {
+    setGraceChecking(true);
+    let added = 0;
+    try {
+      const r = await fetch('/api/guest-grace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: convo }),
+      });
+      if (r.ok) added = (await r.json())?.added ?? 0;
+    } catch {}
+    const next = { extra: added, tried: true };
+    saveStoredGrace(next);
+    setGrace(next);
+    setGraceChecking(false);
+    if (added) fetchGuestSuggestions(q, a);
+  }
+
   async function ask(question) {
     const q = (question ?? input).trim();
     if (!q || busy || maxReached) return;
@@ -326,12 +379,15 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         body: JSON.stringify({
           system: getSystem() + languageInstruction(viewLang),
           messages: apiMessages,
-          personType: level,
+          // The landing voice is its own prompt, so its saved answers are kept
+          // apart from the signed-in Curious ones (and its questions show up as
+          // their own group in qa_events).
+          personType: landingMode ? 'landing' : level,
         }),
       });
       if (res.status === 429) {
         // Hit the server-side daily IP cap — treat as max reached
-        saveStoredCount(MAX_EXCHANGES);
+        saveStoredCount(limit);
         setMessages((prev) => prev.filter((_, i) => i !== assistantIdx));
         setLimitHit(true);
         setBusy(false);
@@ -372,12 +428,16 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
 
       if (accumulated) {
         setShareContent({ q, a: accumulated });
-        try { localStorage.setItem('kinwove:pendingConv', JSON.stringify({ q, a: accumulated, ts: Date.now() })); } catch {}
+        // The whole thread, so signing up keeps all of it (App.jsx restores it),
+        // not just the last answer the wall promises is saved.
+        const thread = [...nextMessages, { role: 'assistant', content: accumulated }].map(({ role, content }) => ({ role, content }));
+        try { localStorage.setItem('kinwove:pendingConv', JSON.stringify({ q, a: accumulated, messages: thread, ts: Date.now() })); } catch {}
         const asked = nextMessages.filter((m) => m.role === 'user').length;
         saveStoredCount(asked);
         // Only worth suggesting while they still have a question left — at the
         // cap the signup gate takes over and a chip would be a dead end.
-        if (asked < MAX_EXCHANGES) fetchGuestSuggestions(q, accumulated);
+        if (asked < limit) fetchGuestSuggestions(q, accumulated);
+        else if (!grace.tried) checkGrace(nextMessages, q, accumulated);
       }
     } catch {
       setMessages((prev) => prev.map((m, i) =>
@@ -395,7 +455,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
     <div style={{ width: '100%' }}>
 
       {/* ── Starter chips + input (no messages yet) ── */}
-      {showStarters && storedCount < MAX_EXCHANGES && (
+      {showStarters && storedCount < limit && (
         <>
           {landingMode ? (
             <>
@@ -523,7 +583,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
              Keyed on messages.length, NOT hasMessages — hasMessages is forced
              true by the stored cap itself, which made this gate unreachable
              and left capped visitors staring at an empty hero. ── */}
-      {messages.length === 0 && storedCount >= MAX_EXCHANGES && (
+      {messages.length === 0 && storedCount >= limit && (
         <div style={{
           animation: 'fadeUp 0.4s ease both',
           background: 'rgba(184,115,58,0.08)',
@@ -635,6 +695,15 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
             </div>
           )}
 
+          {/* ── Told in the moment, and only then, that we kept going ── */}
+          {showInput && grace.extra > 0 && exchangeCount >= MAX_EXCHANGES && (
+            <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.7)', lineHeight: 1.65, textAlign: 'center', margin: '0 8px 12px' }} className="fade-up">
+              It sounds like you're carrying something heavy, so let's keep talking.
+              {' '}You have {limit - exchangeCount === 1 ? 'one more question' : `${limit - exchangeCount} more questions`} here.
+              {' '}After that, a free account lets you keep going.
+            </div>
+          )}
+
           {/* ── Input for follow-up ── */}
           {showInput && (
             <div style={{ animation: 'fadeUp 0.3s ease both', marginBottom: 12 }}>
@@ -661,14 +730,21 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
               marginBottom: 12,
             }}>
               <div style={{ fontFamily: T.serif, fontSize: 22, color: T.cream, fontWeight: 600, letterSpacing: '-0.015em', lineHeight: 1.2, marginBottom: 10 }}>
-                You're asking the right questions.
+                {grace.extra > 0 ? "I'm glad you kept talking." : "You're asking the right questions."}
               </div>
               <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.65, marginBottom: 6 }}>
-                Join free to keep this conversation going, go deeper in scripture,<br />and connect with people on the same road.
+                {grace.extra > 0
+                  ? <>Create a free account to keep going.<br />Your whole conversation comes with you.</>
+                  : <>Join free to keep this conversation going, go deeper in scripture,<br />and connect with people on the same road.</>}
               </div>
-              <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.3)', marginBottom: 22 }}>
+              <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.3)', marginBottom: grace.extra > 0 ? 10 : 22 }}>
                 No credit card. Takes 30 seconds.
               </div>
+              {grace.extra > 0 && (
+                <div style={{ fontSize: 12.5, color: 'rgba(253,248,240,0.55)', lineHeight: 1.6, marginBottom: 22 }}>
+                  If you ever feel unsafe, call or text 988 (US and Canada), or find a line near you at findahelpline.com.
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button
                   onClick={onSignUp}

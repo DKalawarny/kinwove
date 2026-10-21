@@ -2467,13 +2467,15 @@ export default function App() {
           try {
             const raw = localStorage.getItem('kinwove:pendingConv');
             if (raw) {
-              const { q, a } = JSON.parse(raw);
+              const { q, a, messages } = JSON.parse(raw);
               if (q && a) {
                 const conv = createConv('curious');
-                updateConv(conv.id, [
-                  { role: 'user', content: q },
-                  { role: 'assistant', content: a },
-                ]);
+                updateConv(conv.id, Array.isArray(messages) && messages.length
+                  ? messages.filter((m) => (m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string')
+                  : [
+                    { role: 'user', content: q },
+                    { role: 'assistant', content: a },
+                  ]);
                 setCurrentConvId(conv.id);
                 // Don't open panel — user can open it from history when ready
               }

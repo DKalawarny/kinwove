@@ -215,6 +215,9 @@ function limitEither(authedCfg, anonCfg) {
     const cfg = req.userId ? authedCfg : anonCfg;
     const key = req.userId ? `u:${req.userId}` : `ip:${clientIp(req)}`;
     if (!rateLimit({ key, ...cfg })) {
+      // A signed-out visitor the grace check found mid-something-heavy gets a
+      // few more chat requests today (see GUEST_GRACE). Chat only.
+      if (!req.userId && req.path === '/api/chat' && takeGuestGrace(clientIp(req))) return next();
       return res.status(429).json({ error: 'slow down — try again in a moment' });
     }
     next();
@@ -1270,6 +1273,42 @@ async function tryGraceGrant(userId, period, messages) {
   }
 }
 
+// ── Grace for signed-out visitors ────────────────────────────────────────────
+// The grace above needs an account, and the landing page stops a signed-out
+// visitor after three questions before the server is asked anything. So the
+// strangers it was built for never reached it: on 10 Oct a visitor carrying
+// something heavy got "You're asking the right questions. Join free" in the
+// middle of it. Now the page asks here at the wall. If what they've written
+// reads as real distress, they get GUEST_GRACE more questions today and are told
+// so; after that the wall stands (Daniel, 20 Oct). One check per IP per day, so
+// it can't be retried until it says yes.
+const GUEST_GRACE = 2;
+const guestGrace = new Map(); // ip → { day, left } — left counts chat requests, chips included
+
+function takeGuestGrace(ip) {
+  const g = guestGrace.get(ip);
+  if (!g || g.day !== new Date().toISOString().slice(0, 10) || g.left < 1) return false;
+  g.left -= 1;
+  return true;
+}
+
+app.post('/api/guest-grace', limitAnon({ capacity: 3, refillPerSec: 3 / 86400 }), async (req, res) => {
+  const ip = clientIp(req);
+  const day = new Date().toISOString().slice(0, 10);
+  if (guestGrace.get(ip)?.day === day) return res.json({ added: 0 });
+  const messages = (Array.isArray(req.body?.messages) ? req.body.messages : [])
+    .filter((m) => m?.role === 'user' && typeof m.content === 'string')
+    .slice(-3)
+    .map((m) => ({ role: 'user', content: m.content.slice(0, 2000) }));
+  if (!messages.length) return res.json({ added: 0 });
+  const yes = await looksLikeRealDistress(messages);
+  if (guestGrace.size > 20000) guestGrace.clear();
+  // Each grace question can be followed by a suggestion-chip call, so two per question.
+  guestGrace.set(ip, { day, left: yes ? GUEST_GRACE * 2 : 0 });
+  if (yes) console.log('[grace] guest granted', GUEST_GRACE);
+  res.json({ added: yes ? GUEST_GRACE : 0 });
+});
+
 // Appended server-side to EVERY conversational system prompt (the client supplies
 // its own system text, so safety rules must be enforced here or a stale/modified
 // client could ship without them). Kept inside the cached block — near-zero cost.
@@ -1613,6 +1652,13 @@ app.post('/api/chat', optionalAuth, limitEither(
     // model, even to free users. It's answered live only once (then cached), so the
     // cost is bounded. Deep first questions already route to Sonnet/Opus above.
     if (isFirstTurn && model === 'claude-haiku-4-5-20251001') {
+      model = 'claude-sonnet-4-6';
+    }
+    // A signed-out visitor gets at most a handful of answers before the wall, and
+    // every one of them is the whole impression. On Haiku the follow-ups were the
+    // thin ones: the Psalm 22 answer that contradicted itself, the hell answer that
+    // reached for urgency, both replies to a visitor in real distress (Oct 2026).
+    if (!req.userId && !internal && model === 'claude-haiku-4-5-20251001') {
       model = 'claude-sonnet-4-6';
     }
     // Crisis is the highest-stakes message in the app, on any plan or turn.
