@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, X, Search } from 'lucide-react';
 import { T } from './theme.js';
 import { markEngaged } from './streak.js';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import { ChapterStudyNote, BookIntroSheet, useBookIntro } from './StudyNotes.jsx';
 import PageTour, { isPageTourDone } from './PageTour.jsx';
 import { useUiFlagState } from './uiFlags.js';
 import { useKeyboardViewport } from './useKeyboardViewport.js';
@@ -1219,6 +1220,7 @@ export default function BibleReader({ session, profile, homeKey = 0, onClose, on
   const [rdSavedIdx,   setRdSavedIdx]   = useState({});
   const [showVersions, setShowVersions] = useState(false);
   const [versePickerOpen, setVersePickerOpen] = useState(false);
+  const [introOpen, setIntroOpen] = useState(false);
   const [highlightVerse, setHighlightVerse] = useState(null);
   const [tileVersePickerFor, setTileVersePickerFor] = useState(null); // chapter number whose tile picker is open
   const [pendingVerseScroll, setPendingVerseScroll] = useState(null);
@@ -1500,6 +1502,7 @@ export default function BibleReader({ session, profile, homeKey = 0, onClose, on
   const CC = chatDark ? DARK : LIGHT;
   const book  = ALL_BOOKS.find((b) => b.id === bookId) ?? ALL_BOOKS[0];
   const isDone = completed.has(`${bookId}:${chNum}`);
+  const bookIntro = useBookIntro(bookId);
 
   // Selection range (single verse or passage). All verse actions use these.
   const selLo = selectedVerse ? Math.min(selectedVerse.number, selEnd ?? selectedVerse.number) : null;
@@ -3432,6 +3435,19 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
                   >
                     Go to verse <span style={{ fontSize: 10 }}>{versePickerOpen ? '▴' : '▾'}</span>
                   </button>
+                  {bookIntro && (
+                    <button
+                      onClick={() => setIntroOpen(true)}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6, marginLeft: 8,
+                        background: C.section, border: `1px solid ${C.border}`,
+                        borderRadius: 999, padding: '6px 14px', fontSize: 12.5, fontWeight: 600,
+                        color: C.verse, cursor: 'pointer',
+                      }}
+                    >
+                      About {book.name}
+                    </button>
+                  )}
                   {versePickerOpen && (
                     <div style={{
                       marginTop: 8, padding: 10, borderRadius: 12,
@@ -3632,6 +3648,15 @@ Answer questions about this passage clearly and honestly. Offer plain-language e
               </div>
               </>
             )}
+
+            {!loading && !error && verses.length > 0 && (
+              <ChapterStudyNote
+                bookId={bookId} chapter={chNum} bookName={book.name} verses={verses} C={C}
+                onAsk={() => { setChatOpen(true); setTimeout(() => chatInputRef.current?.focus(), 50); }}
+                onOpenIntro={bookIntro ? () => setIntroOpen(true) : null}
+              />
+            )}
+            {introOpen && <BookIntroSheet intro={bookIntro} bookName={book.name} C={C} onClose={() => setIntroOpen(false)} />}
 
             {!loading && !error && verses.length > 0 && (
               <div style={{ marginTop: 48, paddingTop: 32, borderTop: `1px solid ${C.border}`, textAlign: 'center' }}>
