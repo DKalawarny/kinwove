@@ -159,7 +159,7 @@ function WizardDots({ step, total }) {
   );
 }
 
-function ProfileWizard({ user, existing, onSave }) {
+function ProfileWizard({ user, existing, onSave, quick = false }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     first_name:         '',
@@ -196,7 +196,9 @@ function ProfileWizard({ user, existing, onSave }) {
   async function advance() {
     if (!canAdvance() && !current.optional) return;
     if (isLast) return finish();
-    if (current.key === 'person_type' && FAST_TRACK_TYPES.has(form.person_type)) return finish();
+    // From the landing wall everyone is fast-tracked: they came to finish a
+    // conversation, and the rest lives in Edit Profile.
+    if (current.key === 'person_type' && (quick || FAST_TRACK_TYPES.has(form.person_type))) return finish();
     setAnimDir(1);
     setStep((s) => s + 1);
   }
@@ -216,7 +218,9 @@ function ProfileWizard({ user, existing, onSave }) {
       display_name:    displayName,
       person_type:     form.person_type,
       tradition:       form.tradition,
-      exploring_since: form.exploring_since,
+      // Unanswered is NULL, never '': the column only accepts its four answers,
+      // and '' failed the save for every fast-tracked (Curious/Skeptic) sign-up.
+      exploring_since: form.exploring_since || null,
       what_brought:    form.what_brought,
       tts_voice:       existing?.tts_voice ?? 'onyx',
       flags:           form.country ? [form.country] : (existing?.flags ?? []),
@@ -253,7 +257,7 @@ function ProfileWizard({ user, existing, onSave }) {
       {/* Scrollable content */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '24px 24px 0' }}>
         <div style={{ maxWidth: 480, margin: '0 auto' }}>
-          <WizardDots step={step} total={FAST_TRACK_TYPES.has(form.person_type) ? 2 : WIZARD_STEPS.length} />
+          <WizardDots step={step} total={(quick || FAST_TRACK_TYPES.has(form.person_type)) ? 3 : WIZARD_STEPS.length} />
 
         {/* Question */}
         <h1 style={{
@@ -473,12 +477,12 @@ function ProfileWizard({ user, existing, onSave }) {
   );
 }
 
-export default function ProfileSetup({ user, existing, onSave, onCancel }) {
+export default function ProfileSetup({ user, existing, onSave, onCancel, quick }) {
   // New users (no name) OR accounts whose display_name is a reserved word
   // (e.g. 'kinwove') get the wizard so they can set a proper name.
   // Exception: system account bypasses wizard — its name is intentionally 'kinwove'.
   if (!existing?.is_system_account && (!existing?.display_name || isReservedName(existing.display_name))) {
-    return <ProfileWizard user={user} existing={existing} onSave={onSave} />;
+    return <ProfileWizard user={user} existing={existing} onSave={onSave} quick={quick} />;
   }
   const nameParts = (existing?.display_name ?? '').split(' ');
   const [form, setForm] = useState({

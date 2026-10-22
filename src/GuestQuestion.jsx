@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { T } from './theme.js';
-import { authedFetch } from './supabase.js';
+import { authedFetch, supabase } from './supabase.js';
+import { isNativeApp } from './native.js';
+import { markTermsPending } from './termsConsent.js';
+import { getStoredUtm } from './utm.js';
 import ShareSheet from './ShareSheet.jsx';
 import { languageInstruction } from './languages.js';
 import { useStrings } from './i18n/viewLanguage.js';
@@ -159,6 +162,106 @@ function TypingDots() {
 // The quieter option under the signup button. Plenty of people who won't make
 // an account ninety seconds after arriving from ChatGPT will still leave an
 // address — and without one there's no way back to them at all.
+// The question a visitor typed at the wall. Answered by Ask the moment their
+// account exists (App.jsx reads it once they're signed in). A day old and it's
+// dropped, so a question from last month never fires into a new account.
+const PENDING_ASK_KEY = 'kinwove:pendingAsk';
+// Set when sign-up starts from the wall: the setup screen stops after "where are
+// you at" and no tour opens over the conversation they came to continue.
+const FROM_WALL_KEY = 'kinwove:fromWall';
+
+function markFromWall() {
+  try { localStorage.setItem(FROM_WALL_KEY, String(Date.now())); } catch {}
+}
+
+// Google first: one tap instead of email, password and captcha. The 13+ and
+// Terms box is the same one the sign-up form has, and it gates Google the same way.
+function WallSignup({ onSignUp, firstQuestion }) {
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function google() {
+    if (!ageConfirmed) return;
+    setError(null);
+    markFromWall();
+    markTermsPending();
+    const utm = getStoredUtm();
+    const { error: err } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: { ...(utm?.utm_source && { utm_source: utm.utm_source }) },
+      },
+    });
+    if (err) setError(err.message);
+  }
+
+  const linkStyle = { background: 'none', border: 'none', color: 'rgba(253,248,240,0.5)', fontSize: 13, textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', padding: 0 };
+
+  if (isNativeApp || !supabase) {
+    return (
+      <>
+        <button
+          onClick={() => { markFromWall(); onSignUp(); }}
+          style={{
+            background: `linear-gradient(135deg, ${T.gold} 0%, #c47020 100%)`,
+            color: T.cream, border: 'none', borderRadius: 999,
+            padding: '13px 32px', fontSize: 14, fontWeight: 600,
+            cursor: 'pointer', boxShadow: '0 4px 20px rgba(184,115,58,0.4)',
+          }}
+        >
+          Join free. Keep going →
+        </button>
+        <LeadCapture firstQuestion={firstQuestion} />
+      </>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: 340, margin: '0 auto' }}>
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 14, cursor: 'pointer', textAlign: 'left' }}>
+        <input
+          type="checkbox"
+          checked={ageConfirmed}
+          onChange={(e) => setAgeConfirmed(e.target.checked)}
+          style={{ marginTop: 3, accentColor: T.gold, width: 16, height: 16, flexShrink: 0 }}
+        />
+        <span style={{ fontSize: 12.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.5 }}>
+          I am 13 or older and I agree to the{' '}
+          <a href="/terms" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>Terms</a> and{' '}
+          <a href="/privacy" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>Privacy Policy</a>.
+        </span>
+      </label>
+      <button
+        type="button"
+        onClick={google}
+        disabled={!ageConfirmed}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+          background: T.white, color: T.ink, border: 'none',
+          borderRadius: 999, padding: '13px 20px', fontSize: 15, fontWeight: 600,
+          cursor: ageConfirmed ? 'pointer' : 'not-allowed', opacity: ageConfirmed ? 1 : 0.55,
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/>
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+        </svg>
+        Continue with Google
+      </button>
+      {error && <div style={{ fontSize: 12.5, color: '#E8A08A', marginTop: 10 }}>{error}</div>}
+      <div style={{ marginTop: 14 }}>
+        <button onClick={() => { markFromWall(); onSignUp(); }} style={linkStyle}>
+          or sign up with email
+        </button>
+      </div>
+      <LeadCapture firstQuestion={firstQuestion} />
+    </div>
+  );
+}
+
 function LeadCapture({ firstQuestion }) {
   const [email, setEmail]   = useState('');
   const [state, setState]   = useState('idle'); // idle | open | sending | done | error
@@ -255,6 +358,8 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
   // True while the server decides whether this is a bad moment to stop, so the
   // wall doesn't flash up before the answer comes back.
   const [graceChecking, setGraceChecking] = useState(false);
+  // The question they typed at the wall, held for Ask to answer once they join.
+  const [pendingAsk, setPendingAsk] = useState(null);
   const limit = MAX_EXCHANGES + grace.extra;
   const taRef = useRef(null);
   const bottomRef = useRef(null);
@@ -354,6 +459,17 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
     setGrace(next);
     setGraceChecking(false);
     if (added) fetchGuestSuggestions(q, a);
+  }
+
+  // At the wall the box stays: what they type is held, shown in the thread, and
+  // answered by Ask the moment their account exists.
+  function holdQuestion() {
+    const q = input.trim();
+    if (!q) return;
+    setInput('');
+    setPendingAsk(q);
+    setMessages((prev) => [...prev, { role: 'user', content: q }]);
+    try { localStorage.setItem(PENDING_ASK_KEY, JSON.stringify({ q, ts: Date.now() })); } catch {}
   }
 
   async function ask(question) {
@@ -603,18 +719,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
           <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.3)', marginBottom: 22 }}>
             No credit card. Takes 30 seconds.
           </div>
-          <button
-            onClick={onSignUp}
-            style={{
-              background: `linear-gradient(135deg, ${T.gold} 0%, #c47020 100%)`,
-              color: T.cream, border: 'none', borderRadius: 999,
-              padding: '13px 32px', fontSize: 14, fontWeight: 600,
-              cursor: 'pointer', boxShadow: '0 4px 20px rgba(184,115,58,0.4)',
-            }}
-          >
-            Join free. Keep going →
-          </button>
-          <LeadCapture firstQuestion={firstQuestion} />
+          <WallSignup onSignUp={onSignUp} firstQuestion={firstQuestion} />
         </div>
       )}
 
@@ -718,6 +823,19 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
             </div>
           )}
 
+          {/* ── At the wall: one more question, held for after they join ── */}
+          {maxReached && !pendingAsk && !limitHit && (
+            <div style={{ animation: 'fadeUp 0.3s ease both', marginBottom: 12 }}>
+              <InputRow
+                value={input}
+                onChange={setInput}
+                onSend={holdQuestion}
+                taRef={taRef}
+                placeholder="Type your next question…"
+              />
+            </div>
+          )}
+
           {/* ── Sign-up gate after max exchanges ── */}
           {maxReached && (
             <div style={{
@@ -730,10 +848,12 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
               marginBottom: 12,
             }}>
               <div style={{ fontFamily: T.serif, fontSize: 22, color: T.cream, fontWeight: 600, letterSpacing: '-0.015em', lineHeight: 1.2, marginBottom: 10 }}>
-                {grace.extra > 0 ? "I'm glad you kept talking." : "You're asking the right questions."}
+                {pendingAsk ? 'Your question is ready for Ask.' : grace.extra > 0 ? "I'm glad you kept talking." : "You're asking the right questions."}
               </div>
               <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.65, marginBottom: 6 }}>
-                {grace.extra > 0
+                {pendingAsk
+                  ? <>Create a free account and Ask will answer it right away.<br />Your whole conversation comes with you.</>
+                  : grace.extra > 0
                   ? <>Create a free account to keep going.<br />Your whole conversation comes with you.</>
                   : <>Join free to keep this conversation going, go deeper in scripture,<br />and connect with people on the same road.</>}
               </div>
@@ -745,18 +865,8 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                   If you ever feel unsafe, call or text 988 (US and Canada), or find a line near you at findahelpline.com.
                 </div>
               )}
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button
-                  onClick={onSignUp}
-                  style={{
-                    background: `linear-gradient(135deg, ${T.gold} 0%, #c47020 100%)`,
-                    color: T.cream, border: 'none', borderRadius: 999,
-                    padding: '13px 32px', fontSize: 14, fontWeight: 600,
-                    cursor: 'pointer', boxShadow: '0 4px 20px rgba(184,115,58,0.4)',
-                  }}
-                >
-                  Join free. Keep going →
-                </button>
+              <WallSignup onSignUp={onSignUp} firstQuestion={firstQuestion} />
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 18 }}>
                 <button
                   onClick={() => setShowShare(true)}
                   style={{

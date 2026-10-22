@@ -890,6 +890,7 @@ export default function Chat({
   onConsumePrefill,
   autoSendPrompt,
   onConsumeAutoSend,
+  autoSendIntoThread,
   onUpgrade,
   profile,
   session,
@@ -1050,12 +1051,16 @@ export default function Chat({
     }
   }, [prefilledInput, onConsumePrefill]);
 
+  const autoSentRef = useRef(null); // the same prompt never goes out twice
   useEffect(() => {
-    if (autoSendPrompt && messages.length === 0) {
+    if (autoSendPrompt && autoSentRef.current !== autoSendPrompt && (messages.length === 0 || autoSendIntoThread)) {
+      autoSentRef.current = autoSendPrompt;
       onConsumeAutoSend?.();
       send(autoSendPrompt);
     }
-  }, []);
+    // Keyed on the prompt, not mount-only: a held question from the landing wall
+    // can arrive after this conversation is already open.
+  }, [autoSendPrompt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const totalMessages = useMemo(
     () => (conversations ?? []).reduce((sum, c) => sum + (c.messages?.length ?? 0), 0),

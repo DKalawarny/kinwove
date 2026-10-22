@@ -374,6 +374,14 @@ function CommunityPreview({ onBegin }) {
   );
 }
 
+// Sign-up started from the landing wall in the last day (GuestQuestion sets it).
+function cameFromWall() {
+  try {
+    const t = Number(localStorage.getItem('kinwove:fromWall'));
+    return t > 0 && Date.now() - t < 86400000;
+  } catch { return false; }
+}
+
 function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorIntent, pastorChurchId, referralRef, onPickLanguage }) {
   const initialQuestion = useMemo(() => {
     // URLSearchParams.get already decodes — a second decodeURIComponent throws on
@@ -2004,6 +2012,9 @@ export default function App() {
   const [journeysOpen, setJourneysOpen] = useState(false);
   const [journeyProgress, setJourneyProgress] = useState({});
   const [autoSendPrompt, setAutoSendPrompt] = useState(null);
+  // The landing wall's held question goes INTO the restored guest conversation;
+  // every other auto-send only ever starts an empty one.
+  const [autoSendIntoThread, setAutoSendIntoThread] = useState(false);
   const [installTrigger, setInstallTrigger] = useState(false);
   const [userGroups, setUserGroups] = useState([]);   // [{ group, role }, ...]
   const [viewingGroupEntry, setViewingGroupEntry] = useState(null); // { group, role } | null
@@ -2169,6 +2180,54 @@ export default function App() {
   const [profileEditOrigin, setProfileEditOrigin] = useState('idle'); // where edit profile was opened from
   const [pendingPastorApply, setPendingPastorApply] = useState(false);
   const [showPastorPrompt, setShowPastorPrompt] = useState(false);
+
+  // Import the guest conversation saved before sign-up (silently: it waits in
+  // history, or opens below if they left a question at the wall). An effect, so
+  // it runs after useConversations has loaded this user's list: done inside the
+  // auth callback, it was created first and then wiped when the list loaded,
+  // so no guest conversation ever survived sign-up.
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    try {
+      const raw = localStorage.getItem('kinwove:pendingConv');
+      if (!raw) return;
+      localStorage.removeItem('kinwove:pendingConv');
+      const { q, a, messages, ts } = JSON.parse(raw);
+      if (!q || !a || (ts && Date.now() - ts > 86400000)) return;
+      const conv = createConv('curious');
+      updateConv(conv.id, Array.isArray(messages) && messages.length
+        ? messages.filter((m) => (m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string')
+        : [
+          { role: 'user', content: q },
+          { role: 'assistant', content: a },
+        ]);
+      setCurrentConvId(conv.id);
+    } catch {}
+  }, [session?.user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A visitor who typed a question at the landing wall and then joined: once
+  // they're signed in and through setup, open their restored conversation and
+  // have Ask answer it. Waiting for person_type keeps it from firing in the
+  // moment between a Google sign-in and the setup screen.
+  // Chat only reads autoSendPrompt when it mounts, so the question has to be
+  // handed over in the same update that opens the panel: here for a returning
+  // member, and in the setup screen's onSave for a new account.
+  function takePendingAsk() {
+    try {
+      const raw = localStorage.getItem('kinwove:pendingAsk');
+      if (!raw) return false;
+      localStorage.removeItem('kinwove:pendingAsk');
+      const p = JSON.parse(raw);
+      if (!p?.q || Date.now() - (p.ts ?? 0) > 86400000) return false;
+      setAutoSendIntoThread(true);
+      setAutoSendPrompt(p.q);
+      return true;
+    } catch { return false; }
+  }
+  useEffect(() => {
+    if (!session || authStage !== 'idle' || !currentConvId || !profile?.person_type) return;
+    if (takePendingAsk()) setChatPanelOpen(true);
+  }, [session, authStage, currentConvId, profile?.person_type]); // eslint-disable-line react-hooks/exhaustive-deps
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [composerSermonId, setComposerSermonId] = useState(null);
   const [viewingSermonId, setViewingSermonId] = useState(null);
@@ -2385,7 +2444,7 @@ export default function App() {
             });
           }
         }
-        if (shouldShowDailyVerse()) setShowVerseCard(true);
+        if (shouldShowDailyVerse() && !cameFromWall()) setShowVerseCard(true);
       } else if (deepLinkInviteId) {
         // No session — store invite ID so we can open it after sign-in
         sessionStorage.setItem('kw:pendingInvite', deepLinkInviteId);
@@ -2459,32 +2518,8 @@ export default function App() {
           // TOKEN_REFRESHED, USER_UPDATED, etc. — refresh profile silently, don't touch stage.
           loadProfile(s.user.id);
         }
-        // Import guest Q+A saved before sign-up — restore silently, don't
-        // auto-open the panel. The conversation is saved in history so the
-        // user can open it when they're ready; forcing it open on a brand-new
-        // account makes the app look pre-populated / confusing.
-        if (event === 'SIGNED_IN') {
-          try {
-            const raw = localStorage.getItem('kinwove:pendingConv');
-            if (raw) {
-              const { q, a, messages } = JSON.parse(raw);
-              if (q && a) {
-                const conv = createConv('curious');
-                updateConv(conv.id, Array.isArray(messages) && messages.length
-                  ? messages.filter((m) => (m?.role === 'user' || m?.role === 'assistant') && typeof m.content === 'string')
-                  : [
-                    { role: 'user', content: q },
-                    { role: 'assistant', content: a },
-                  ]);
-                setCurrentConvId(conv.id);
-                // Don't open panel — user can open it from history when ready
-              }
-              localStorage.removeItem('kinwove:pendingConv');
-            }
-          } catch {}
-        }
         // Show daily verse card once per day
-        if (shouldShowDailyVerse()) setShowVerseCard(true);
+        if (shouldShowDailyVerse() && !cameFromWall()) setShowVerseCard(true);
       }
       else {
         setProfile(null);
@@ -2700,7 +2735,16 @@ export default function App() {
   }
 
   async function loadProfile(userId) {
-    let { data } = await supabase.from('profiles').select(PROFILE_COLUMNS).eq('id', userId).single();
+    let { data, error: profileError } = await supabase.from('profiles').select(PROFILE_COLUMNS).eq('id', userId).single();
+    // Every sign-in path ends here, so this is where a missing profile is caught.
+    // The auth listener only routed to setup on one of its branches, and every
+    // Google sign-up from July to October landed on the feed with no profile row
+    // at all: no name, no person type. No row (PGRST116) or no person_type means
+    // setup never finished; a network error is not that, so it routes nowhere.
+    const noProfileRow = profileError?.code === 'PGRST116';
+    if ((noProfileRow || (data && !data.person_type && !data.is_system_account)) && authStageRef.current === 'idle') {
+      setAuthStage('profile-setup');
+    }
     // Auto-age-out: youth account turns 17 → lift restriction
     if (data?.is_youth_sponsored && data?.birthday) {
       const ageMs = Date.now() - new Date(data.birthday).getTime();
@@ -2719,7 +2763,7 @@ export default function App() {
     // Account-synced tour flags: apply before deciding to show the welcome
     // tour so a new device/browser doesn't replay onboarding (uiFlags.js).
     applyUiFlags(data?.notif_prefs?.ui);
-    if (!isTourDone()) setShowTour(true);
+    if (!isTourDone() && !cameFromWall()) setShowTour(true);
     await Promise.all([loadGroup(userId), loadChurchRoles(userId)]);
     return data ?? null;
   }
@@ -3014,6 +3058,7 @@ export default function App() {
         <ProfileSetup
           user={session.user}
           existing={profile}
+          quick={cameFromWall()}
           onSave={(p) => {
             const isFirstTime = profileEditOrigin === 'idle' && !pendingPastorApply && !profile?.is_pastor;
             // Merge: the form only carries the fields it edits, so replacing the
@@ -3028,7 +3073,8 @@ export default function App() {
                 // and land them in their conversation — no "are you a pastor?" prompt
                 // (off-putting to a seeker; pastors have the menu) and no verse card
                 // on top of the chat. Both remain discoverable elsewhere.
-                setShowTour(true);
+                // Not over the conversation they signed up to continue.
+                if (!cameFromWall()) setShowTour(true);
                 // Fire-and-forget: send welcome DM from "kinwove" system account
                 authedFetch('/api/welcome-dm', { method: 'POST' }).catch(() => {});
                 // Open AI chat immediately for new users — they should see Ask first.
@@ -3042,6 +3088,7 @@ export default function App() {
                   setCurrentConvId(conv.id);
                 }
                 setPersonType(pt);
+                takePendingAsk();
                 setChatPanelOpen(true);
               }
             }
@@ -3707,7 +3754,8 @@ export default function App() {
               prefilledInput={prefilledInput}
               onConsumePrefill={() => setPrefilledInput('')}
               autoSendPrompt={autoSendPrompt}
-              onConsumeAutoSend={() => setAutoSendPrompt(null)}
+              onConsumeAutoSend={() => { setAutoSendPrompt(null); setAutoSendIntoThread(false); }}
+              autoSendIntoThread={autoSendIntoThread}
               profile={profile}
               session={session}
               userGroup={userGroups[0] ?? null}
