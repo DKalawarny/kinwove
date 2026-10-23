@@ -1,0 +1,41 @@
+{
+  "oneLine": "Philippians is a warm, personal letter that Paul wrote from prison to a church he loved, thanking them for their help and encouraging them toward joy, humility and unity.",
+  "writtenBy": "Paul, an early Jewish follower of Jesus who travelled starting churches, wrote it, and he names his co-worker Timothy alongside him in the opening line. Almost all scholars agree Paul wrote this letter. Some think it may be two or three of Paul's shorter letters later joined into one, because the tone shifts suddenly at the start of chapter 3, but many others read it as a single letter.",
+  "when": "Paul was in prison, probably awaiting a trial that could end in his death. The traditional view is that he was in Rome in the early 60s AD. Many scholars instead suggest an earlier imprisonment in Ephesus in the mid 50s, and a few suggest Caesarea. No one knows for certain.",
+  "writtenTo": "The community of Jesus followers in Philippi, a Roman colony in northern Greece. According to the book of Acts, Paul started this church on his travels, and it was one of the first he founded in Europe. They had supported him with money more than once and had sent a man named Epaphroditus to bring him a gift and care for him.",
+  "why": "Paul writes to thank the Philippians for their gift, to tell them how he is doing, and to ease their worry about him and about Epaphroditus, who had nearly died. He also urges them to stay united, gently names two women in the church who are at odds, and warns them about teachers he strongly disagrees with. The letter matters in the Bible's bigger story partly because of a short poem about Jesus in chapter 2, which many scholars think may be one of the earliest Christian hymns, describing Jesus as giving up his status, serving, dying and then being raised up.",
+  "themes": [
+    "Joy even in hard circumstances",
+    "Humility, with Jesus as the example",
+    "Friendship and partnership in a shared work",
+    "Knowing Christ as worth more than anything else"
+  ],
+  "outline": [
+    {
+      "label": "Greeting, thanks and prayer",
+      "chapters": "1:1-11"
+    },
+    {
+      "label": "Paul's news from prison",
+      "chapters": "1:12-26"
+    },
+    {
+      "label": "A call to unity and the poem about Jesus",
+      "chapters": "1:27-2:18"
+    },
+    {
+      "label": "Plans for Timothy and Epaphroditus",
+      "chapters": "2:19-30"
+    },
+    {
+      "label": "A sharp warning and Paul's own story",
+      "chapters": "3:1-4:1"
+    },
+    {
+      "label": "Peace, contentment and thanks for the gift",
+      "chapters": "4:2-23"
+    }
+  ],
+  "readingTip": "Read it in one sitting, as you would a letter from a friend, and notice how often the words joy and rejoice appear from someone in chains. At 3:2 the tone turns harsh as Paul warns against teachers who insisted that non-Jewish believers be circumcised (the Jewish rite of removing the foreskin, a sign of belonging to God's people). He then lists his own Jewish credentials, only to say he now counts them as loss compared with knowing Christ. This is a dispute among early Jesus followers, not an attack on Jewish people, and Paul was himself Jewish.",
+  "book": "Philippians"
+}

@@ -1,0 +1,41 @@
+{
+  "oneLine": "2 Chronicles retells the history of the kings of Judah, from King Solomon building the temple in Jerusalem to the city's fall and the first hope of return, to show a struggling community who they are and how to stay faithful.",
+  "writtenBy": "The book does not name its author. An old Jewish tradition says Ezra, a priest and scribe, wrote it. Most modern scholars instead speak of an unnamed writer they call \"the Chronicler,\" probably someone closely connected to the temple in Jerusalem, possibly a Levite (a member of the tribe that served at the temple). Scholars still debate whether this writer also had a hand in the books of Ezra and Nehemiah.",
+  "when": "It tells events from about 970 BC to the late 500s BC, but it was written later, after the Jewish people came home from exile in Babylon. Most scholars place the writing somewhere in the 400s or 300s BC, when Judah was a small province under the Persian Empire with a rebuilt but modest temple.",
+  "writtenTo": "It was first for the Jewish community living in and around Jerusalem after the exile: a small, often discouraged people trying to rebuild their life, their worship and their sense of identity.",
+  "why": "1 and 2 Chronicles were originally one book. They retell much of the story found in Samuel and Kings, but from a new angle, focusing on Judah, the temple and worship, and largely leaving out the northern kingdom of Israel. The writer seems to want a weary community to see that their past still matters, that the temple and its worship tie them to God, and that turning back to God is always possible. In many Jewish Bibles it is the very last book, ending with permission to go home and rebuild.",
+  "themes": [
+    "Worship and the temple at the center of life",
+    "Seeking God or turning away, and what follows",
+    "Humbling yourself and being restored",
+    "One people, kept going through failure and loss"
+  ],
+  "outline": [
+    {
+      "label": "Solomon's reign and the building of the temple",
+      "chapters": "1-9"
+    },
+    {
+      "label": "The kingdom splits; Rehoboam to Jehoshaphat",
+      "chapters": "10-20"
+    },
+    {
+      "label": "Troubled kings, from Jehoram to Ahaz",
+      "chapters": "21-28"
+    },
+    {
+      "label": "Hezekiah restores the temple and its worship",
+      "chapters": "29-32"
+    },
+    {
+      "label": "Manasseh, Amon and Josiah's reforms",
+      "chapters": "33-35"
+    },
+    {
+      "label": "The last kings, the fall of Jerusalem and a decree to return",
+      "chapters": "36"
+    }
+  ],
+  "readingTip": "Read it as a retelling with its own purpose, not a repeat of Kings. Watch for the pattern where each king either seeks God or turns away, and notice stories found only here, such as Manasseh's change of heart in chapter 33. The book includes brutal battles and huge army numbers (scholars debate whether these figures are meant literally), and it ends abruptly in chapter 36 with a Persian king's decree letting the exiles go home, the same words that open the book of Ezra.",
+  "book": "2 Chronicles"
+}

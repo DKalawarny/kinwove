@@ -1,0 +1,41 @@
+{
+  "oneLine": "Hebrews is a long, carefully argued sermon, sent with a short letter ending, urging followers of Jesus who are worn down not to give up, because in Jesus God has spoken and acted in a way that is final.",
+  "writtenBy": "We do not know. The book never names its author. Some in the early church credited it to Paul, and many later Bibles printed it under his name, but even in the third century the scholar Origen said that only God knows who wrote it. Most modern scholars agree it is not by Paul, because its style and way of arguing are quite different from his letters. Other guesses include Barnabas, Apollos and Priscilla, all companions of Paul, but none can be proven. The author was clearly a skilled writer who knew the Jewish scriptures deeply and knew Timothy (13:23).",
+  "when": "Probably sometime between about 60 and 95 CE, though scholars are unsure. A letter written in Rome around the mid 90s seems to quote it, so it was likely written before then. Many think it came before the Jerusalem temple was destroyed in 70 CE, since it never mentions that event, but this is debated. The readers had come through an earlier hard time: they had been publicly insulted, had their property taken, and had stood by others who were in prison (10:32 to 34). They had not yet faced death for their faith (12:4), but some seem to have been drifting away or tempted to quit.",
+  "writtenTo": "A particular community of Jesus followers that the author knew personally, though we do not know where they lived. The title 'To the Hebrews' was added later and suggests Jewish believers, which fits the book's deep focus on Jewish scripture, priests and worship. Some scholars think the group may have included non Jewish believers too. A greeting from 'those from Italy' (13:24) has led some to think the readers were in or connected to Rome, but this is uncertain.",
+  "why": "The author calls the book a 'word of encouragement' (13:22), written to strengthen tired believers so they hold on to their faith. Its main argument is that Jesus is the high point of everything God did before: greater than angels and Moses, and both the perfect priest (someone who stands between people and God) and the final sacrifice (an offering made to restore a broken relationship with God). It matters in the Bible's bigger story because it explains, more fully than any other New Testament book, how early Christians understood Jesus' death in light of the worship laws of the Old Testament.",
+  "themes": [
+    "Jesus as greater than everything that came before",
+    "Jesus as the true high priest and the final sacrifice",
+    "A new covenant, meaning a renewed promise and relationship between God and people",
+    "Faith that keeps going through hardship"
+  ],
+  "outline": [
+    {
+      "label": "God has spoken through his Son, who is greater than the angels",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Jesus compared with Moses, and the promise of rest",
+      "chapters": "3-4"
+    },
+    {
+      "label": "Jesus as high priest in the line of Melchizedek",
+      "chapters": "5-7"
+    },
+    {
+      "label": "A new covenant and a once for all sacrifice",
+      "chapters": "8-10"
+    },
+    {
+      "label": "A long list of people who lived by faith",
+      "chapters": "11"
+    },
+    {
+      "label": "Run the race, live well together, and final greetings",
+      "chapters": "12-13"
+    }
+  ],
+  "readingTip": "Hebrews switches back and forth between detailed teaching and urgent warnings or encouragement, so it helps to notice which mode you are in. It leans heavily on Old Testament priests, sacrifices and figures like Melchizedek (a priest and king who blessed Abraham in Genesis 14), so if a passage feels confusing, follow its main point rather than every detail. The stern warnings in chapters 6 and 10 trouble many readers, and Christians have long disagreed about what they mean. Chapter 11, about people of faith, is a good place to start if you want a feel for the book.",
+  "book": "Hebrews"
+}

@@ -1,0 +1,37 @@
+{
+  "oneLine": "Second Peter is a short farewell letter that urges followers of Jesus to keep growing in their faith, warns them sharply about false teachers, and explains why Jesus' promised return seems delayed.",
+  "writtenBy": "The letter names Simon Peter, one of Jesus' first followers, as its author and presents itself as his last words before his death. Many modern scholars think it was written after Peter died by someone in his circle who wrote in his name, a known practice at the time. They point to its very different style from 1 Peter, its heavy borrowing from the letter of Jude, and its mention of Paul's letters as an existing collection. Others still hold that Peter wrote it, perhaps with a helper. Scholars have not settled the question.",
+  "when": "If Peter wrote it, it dates to the mid 60s AD, shortly before his traditional death in Rome under the emperor Nero. Scholars who see it as written later usually place it somewhere between about 80 and 120 AD. By then Jesus' first followers were dying and some people were asking why he had not come back as promised.",
+  "writtenTo": "It is addressed broadly to people who share the same faith as the apostles. Because it calls itself a second letter (3:1), many think it was meant for the same readers as 1 Peter, small groups of Jesus followers in what is now Turkey, though this is not certain.",
+  "why": "The letter was written to help believers hold on to what they had been taught when teachers in their own communities were mocking the idea that Jesus would return and were treating faith as permission to live however they liked. It reminds readers that their faith rests on eyewitness testimony and on the words of the prophets, not on clever stories. In the Bible's bigger story it speaks to the long wait between Jesus' first coming and the hope of a renewed world, and it says the delay comes from God's patience, giving people time to turn back.",
+  "themes": [
+    "Growing in goodness and in knowing Jesus",
+    "Remembering what is true",
+    "Warnings about false teachers",
+    "Waiting for the day of the Lord"
+  ],
+  "outline": [
+    {
+      "label": "Keep growing in faith",
+      "chapters": "1:1-11"
+    },
+    {
+      "label": "A farewell reminder from an eyewitness",
+      "chapters": "1:12-21"
+    },
+    {
+      "label": "Warning about false teachers",
+      "chapters": "2"
+    },
+    {
+      "label": "Why the Lord has not come yet",
+      "chapters": "3:1-13"
+    },
+    {
+      "label": "Final encouragement",
+      "chapters": "3:14-18"
+    }
+  ],
+  "readingTip": "Chapter 2 uses fierce language and quick references to old stories, such as rebellious angels, Noah's flood, Sodom and Gomorrah, and Balaam's talking donkey. Much of it closely matches the short letter of Jude, so reading the two side by side can help. It also helps to read the whole letter as a farewell, written by someone who knows his time is short and wants to leave his friends with what matters most.",
+  "book": "2 Peter"
+}

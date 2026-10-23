@@ -1,0 +1,37 @@
+{
+  "oneLine": "Nehemiah is the story of a Jewish official in the Persian court who returns to ruined Jerusalem, leads the rebuilding of its walls, and tries to reshape the life of the community living there.",
+  "writtenBy": "Much of the book is written in the first person (\"I\") and is widely thought to come from Nehemiah's own memoir. Other parts, such as long lists of names and the scenes of public worship, are told in the third person and were added from other records. In the Hebrew tradition Ezra and Nehemiah were one book, and Jewish tradition credits Ezra with compiling it. Most modern scholars think a later editor brought the pieces together, and they disagree about who that was and exactly when it happened.",
+  "when": "The events begin around 445 BC, in the twentieth year of the Persian king Artaxerxes I. The Persian Empire then ruled a huge area, including the small province of Judah. Decades earlier, groups of Jews had been allowed to return home after the exile, the period when many were taken away to Babylon. But Jerusalem was still thinly populated and its walls lay in ruins. Nehemiah serves as the king's cupbearer, the trusted official who served the king his wine, and is sent to Jerusalem as governor. The book probably reached its final form some time later, likely in the 300s BC, though the date is debated.",
+  "writtenTo": "The Jewish community in and around Jerusalem after the exile, and later generations who wanted to understand how their people rebuilt their life, their city and their shared commitment to God's law.",
+  "why": "The book shows a small, struggling community trying to rebuild after disaster, both in stone and in how they live together. It sits near the end of the Old Testament's historical story and records how Jewish life was reorganized around the city, the temple and the reading of God's law, the shape of life many Jews were living by the time of Jesus.",
+  "themes": [
+    "Rebuilding after loss",
+    "Prayer joined with practical action",
+    "Facing opposition and fear",
+    "Recommitting to God's law as a community"
+  ],
+  "outline": [
+    {
+      "label": "Bad news, prayer and a request to the king",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Rebuilding the wall despite threats and hardship",
+      "chapters": "3-7"
+    },
+    {
+      "label": "The law read aloud, confession and a public promise",
+      "chapters": "8-10"
+    },
+    {
+      "label": "Resettling Jerusalem and celebrating the finished wall",
+      "chapters": "11-12"
+    },
+    {
+      "label": "Nehemiah's return and his strict reforms",
+      "chapters": "13"
+    }
+  ],
+  "readingTip": "The long lists of names and families in chapters 3, 7 and 10 to 12 mattered to the first readers as records of who belonged and who helped, so it is fine to skim them. Notice Nehemiah's short prayers asking God to \"remember\" him. Be ready for how harsh chapter 13 is: he angrily rebukes men who married women from neighboring peoples, curses them, beats some, pulls out their hair, and makes them swear not to arrange such marriages in future. The book records this without comment, and readers have long debated how to judge it. A similar crisis in the book of Ezra, chapter 10, ends with men sending away their foreign wives.",
+  "book": "Nehemiah"
+}

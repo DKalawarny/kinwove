@@ -1,0 +1,41 @@
+{
+  "oneLine": "Judges is a collection of rough, often violent stories about Israel's tribes in the years after they settled in the land and before they had a king, told as a spiral of things going from bad to worse.",
+  "writtenBy": "The book does not name its author. An old Jewish tradition says the prophet Samuel wrote it. Most modern scholars think it was put together over a long time from older stories and poems, then shaped by later editors, possibly as part of a larger history that runs from Deuteronomy through Kings. The Song of Deborah in chapter 5 is often counted among the oldest pieces of writing in the Bible.",
+  "when": "The stories are set in the period after Joshua and before Israel's first king, often dated very roughly to about 1200 to 1050 BC, though exact dates are uncertain. The tribes lived as a loose group of clans in the hill country of Canaan, with no capital and no central government. The book itself was probably finished centuries later. Scholars often suggest the time of the kings or the period when many Israelites were taken into exile in Babylon, but they do not agree.",
+  "writtenTo": "The book was first for the people of Israel, most likely later generations looking back on their early history and asking what went wrong and what kind of leadership they needed.",
+  "why": "Judges shows a repeating pattern. The people turn away from the LORD, an enemy oppresses them, they cry out, and God raises up a leader, called a judge, to rescue them. Then the leader dies and things get worse than before. It bridges the story of Joshua and the books of Samuel. Its closing refrain, that there was no king and everyone did what seemed right to them, sets up the Bible's next big question of whether a king would fix things.",
+  "themes": [
+    "A cycle of turning away and being rescued",
+    "God responding to people's cries for help",
+    "Flawed and surprising leaders",
+    "A society coming apart without shared direction"
+  ],
+  "outline": [
+    {
+      "label": "Settling the land, but not fully, and the pattern explained",
+      "chapters": "1:1-3:6"
+    },
+    {
+      "label": "Othniel, Ehud, and Deborah with Barak",
+      "chapters": "3:7-5:31"
+    },
+    {
+      "label": "Gideon and his son Abimelech",
+      "chapters": "6-9"
+    },
+    {
+      "label": "Jephthah and several shorter accounts",
+      "chapters": "10-12"
+    },
+    {
+      "label": "Samson",
+      "chapters": "13-16"
+    },
+    {
+      "label": "Things fall apart: idols, violence, and civil war",
+      "chapters": "17-21"
+    }
+  ],
+  "readingTip": "A judge here is mostly a local rescuer or military leader, not a courtroom figure, and the heroes are often deeply flawed. The book includes brutal scenes, including an assassination, a father's vow that costs his daughter her life, and in the final chapters the rape and killing of a woman followed by war and the abduction of women. The narrator often reports these without comment. Many readers take the refrain about there being no king, and the steady decline across the book, as the writer's way of judging them. It also helps to know that the judges probably led different regions and may have overlapped, so the years given do not add up to a simple timeline.",
+  "book": "Judges"
+}

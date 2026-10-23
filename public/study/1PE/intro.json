@@ -1,0 +1,37 @@
+{
+  "oneLine": "1 Peter is a short letter of encouragement to groups of Christians who were being mocked, distrusted and mistreated by their neighbors because of their faith.",
+  "writtenBy": "The letter names Peter, one of Jesus' closest followers, as its author, and that is the traditional view. It also mentions a man named Silvanus (5:12), who may have helped write it or carried it to its readers. Many modern scholars think a follower of Peter wrote it in his name after his death, pointing to its polished Greek and other clues. Others defend Peter as the author, and the question remains open.",
+  "when": "If Peter wrote it, it dates to the early 60s AD, before his death in Rome under the emperor Nero. Scholars who think it came later usually place it between about 70 and 95 AD. The letter sends greetings from 'Babylon' (5:13), which most scholars take as a code name for Rome.",
+  "writtenTo": "Christian communities scattered across five regions of Asia Minor, in what is now Turkey: Pontus, Galatia, Cappadocia, Asia and Bithynia (1:1). Clues in the letter (1:14, 1:18, 4:3) suggest most of them came from non-Jewish backgrounds.",
+  "why": "These believers had become outsiders in their own towns. They faced slander and suspicion, most likely from neighbors and family rather than an official government campaign. The letter tells them their hope is secure, their suffering echoes what Jesus went through, and they should keep doing good even when treated unfairly. It uses language from the Hebrew Bible, once spoken to Israel, to give these mostly non-Jewish believers a sense that they now belong to God's people.",
+  "themes": [
+    "Hope that holds up under suffering",
+    "Living as strangers and exiles in this world",
+    "Following Jesus' example when treated unjustly",
+    "Doing good in a hostile world"
+  ],
+  "outline": [
+    {
+      "label": "A new birth and a living hope",
+      "chapters": "1"
+    },
+    {
+      "label": "A new people belonging to God",
+      "chapters": "2:1-10"
+    },
+    {
+      "label": "Living well among neighbors, masters and family",
+      "chapters": "2:11-3:12"
+    },
+    {
+      "label": "Suffering for doing good",
+      "chapters": "3:13-4:19"
+    },
+    {
+      "label": "Advice to leaders and final greetings",
+      "chapters": "5"
+    }
+  ],
+  "readingTip": "It is short enough to read in one sitting, and the repeated thread of suffering and hope ties it together. The instructions telling slaves to obey even harsh masters and wives to submit to husbands (2:18-3:6) follow household rules common in the Roman world and are hard to read today, and the passage about Jesus preaching to 'spirits in prison' (3:18-22) is one of the most debated in the New Testament, so it is fine to notice the difficulty and keep reading.",
+  "book": "1 Peter"
+}

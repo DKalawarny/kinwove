@@ -1,0 +1,45 @@
+{
+  "oneLine": "Job is a long poem framed by a short story, about a good man who loses almost everything and argues with God and his friends about why.",
+  "writtenBy": "No one knows. One old Jewish tradition says Moses wrote it, but the book never names its author. Most modern scholars think an unknown Israelite poet wrote it, possibly using an older folk tale about a righteous man named Job. Many also think the speeches of Elihu (chapters 32 to 37) were added by a later writer, though this is debated.",
+  "when": "The story is set long ago, in the age of family herds and tribal elders, in a land called Uz that seems to lie outside Israel. Job himself is not presented as an Israelite. Most scholars think the book was written much later, perhaps somewhere between about 600 and 300 years before Jesus, but there is no firm agreement and estimates vary widely.",
+  "writtenTo": "Probably Israelite readers, though no audience is named. Many scholars think it spoke to people who had suffered great loss, perhaps after the destruction of Jerusalem, and who were asking whether God was just. That setting is a likely guess, not a certainty.",
+  "why": "Job takes on a common belief, that good people are rewarded and suffering must be punishment for wrongdoing, and tests it against a man who did nothing to deserve his pain. The book lets Job protest loudly, and in the end God says Job spoke rightly and his friends did not, though God never fully explains the suffering. It sits with Proverbs and Ecclesiastes among the Bible's wisdom books, and many readers see it as a deliberate counterweight to the neater patterns in Proverbs.",
+  "themes": [
+    "Why innocent people suffer",
+    "Honest protest and complaint to God",
+    "The limits of human understanding",
+    "Comfort that fails and words that wound"
+  ],
+  "outline": [
+    {
+      "label": "Disaster falls on Job",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Job wishes he had never been born",
+      "chapters": "3"
+    },
+    {
+      "label": "Job and his three friends argue",
+      "chapters": "4-27"
+    },
+    {
+      "label": "A poem on wisdom and Job's final defense",
+      "chapters": "28-31"
+    },
+    {
+      "label": "A younger man named Elihu speaks",
+      "chapters": "32-37"
+    },
+    {
+      "label": "God answers from the storm",
+      "chapters": "38-41"
+    },
+    {
+      "label": "Job responds and his life is restored",
+      "chapters": "42"
+    }
+  ],
+  "readingTip": "Not every speech in Job is meant as good advice: the friends often sound wise and religious, yet God says at the end that they were wrong, so read them as one side of an argument. The opening scene in heaven is hard. God allows an accuser (in Hebrew, 'the satan,' which may be a title meaning 'the accuser' rather than the devil of later belief) to strike Job, and Job's children and servants die. The book does not soften this, and it helps to remember that you, the reader, know about that scene while Job never does.",
+  "book": "Job"
+}

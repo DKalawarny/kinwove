@@ -1,0 +1,41 @@
+{
+  "oneLine": "Acts is the story of Jesus' first followers in the decades after his death, following how their message spread from Jerusalem across the Roman world.",
+  "writtenBy": "The book does not name its author. It is clearly written by the same person who wrote the Gospel of Luke, and tradition since the second century says this was Luke, a doctor and travel companion of Paul. Some passages switch to 'we', which may suggest the writer was there for parts of the journey. Many scholars accept Luke. Others think the author was a later Christian using earlier sources, and that the 'we' sections may be a source or a style choice.",
+  "when": "The events run from about AD 30 to the early 60s. Jerusalem is under Roman rule, and the story moves through cities around the eastern Mediterranean and ends in Rome. When it was written is debated. Some date it to the early 60s, because it ends with Paul still waiting for trial. Many scholars prefer around AD 80 to 90, and a few suggest the early second century.",
+  "writtenTo": "It opens by addressing a man named Theophilus, just as Luke's Gospel does. No one knows for sure who he was. The wider audience seems to be early Christian communities, many of them non-Jewish, who wanted to understand where their faith came from.",
+  "why": "Acts picks up where Luke's Gospel ends and shows how a small group of Jewish followers of Jesus in Jerusalem became a movement that welcomed non-Jews across the Roman world. In the Bible it forms the bridge between the four accounts of Jesus' life and the letters that follow. Many of those letters were written by Paul, and Acts gives much of the background to them.",
+  "themes": [
+    "The Holy Spirit, described as God's own presence and power, at work in ordinary people",
+    "The message moving outward from Jerusalem to the wider world",
+    "Jewish and non-Jewish believers learning to belong together",
+    "Speaking openly in the face of opposition, prison and danger"
+  ],
+  "outline": [
+    {
+      "label": "Jesus leaves, the Spirit comes, and the Jerusalem community grows",
+      "chapters": "1-7"
+    },
+    {
+      "label": "The message spreads beyond Jerusalem, and Saul becomes a follower",
+      "chapters": "8-12"
+    },
+    {
+      "label": "Paul's first journey and the debate over welcoming non-Jews",
+      "chapters": "13-15"
+    },
+    {
+      "label": "Paul travels through Greece and Asia Minor",
+      "chapters": "16-20"
+    },
+    {
+      "label": "Paul is arrested in Jerusalem and put on trial",
+      "chapters": "21-26"
+    },
+    {
+      "label": "Shipwreck and the journey to Rome",
+      "chapters": "27-28"
+    }
+  ],
+  "readingTip": "Acts is part two of a single work with Luke's Gospel, and its long speeches are best read as summaries in the author's own style. Scholars debate how closely it matches events: some see careful history and others a story shaped to make a point. Notice also that the arguments with other Jews are disputes within one community, since nearly all the early believers were Jewish too. It includes some hard scenes, such as sudden deaths in chapters 5 and 12 and a stoning in chapter 7.",
+  "book": "Acts"
+}

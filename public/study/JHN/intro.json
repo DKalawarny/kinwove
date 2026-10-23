@@ -1,0 +1,37 @@
+{
+  "oneLine": "John is one of the four Gospels, accounts of the life of Jesus (gospel means good news), and it tells his story in a reflective, poetic way all its own.",
+  "writtenBy": "The book itself names no author, but near the end it says its witness is an unnamed follower called \"the disciple whom Jesus loved.\" Early church tradition identified this disciple as John, one of the twelve closest followers of Jesus. Many modern scholars think the book grew out of that disciple's memories and teaching, and was shaped and finished by a circle of his followers. Who exactly wrote it is still debated.",
+  "when": "Most scholars date it toward the end of the first century, roughly AD 90 to 100, making it likely the last of the four Gospels to be written. An old tradition places it in Ephesus, a large city in what is now Turkey, but this is not certain.",
+  "writtenTo": "It does not name its readers. It seems written for communities of Jesus followers, probably a mix of Jewish and non-Jewish people, since it often explains Jewish words and customs for readers who might not know them.",
+  "why": "John states its own purpose near the end: it was written so that readers would believe Jesus is the Messiah (the promised king Israel hoped for) and the Son of God, and through believing would have life. Where the other Gospels mostly show what Jesus did, John lingers on who he is, presenting him as God's own Word who became a human being. It has shaped Christian belief about Jesus more deeply than almost any other book.",
+  "themes": [
+    "God made known in a human life",
+    "Believing and finding life",
+    "Light shining in darkness",
+    "Love between God, Jesus and his friends"
+  ],
+  "outline": [
+    {
+      "label": "The Word comes, and the first followers",
+      "chapters": "1"
+    },
+    {
+      "label": "Signs, conversations and growing opposition",
+      "chapters": "2-12"
+    },
+    {
+      "label": "The last evening with his friends",
+      "chapters": "13-17"
+    },
+    {
+      "label": "Arrest, death and the empty tomb",
+      "chapters": "18-20"
+    },
+    {
+      "label": "Breakfast by the lake",
+      "chapters": "21"
+    }
+  ],
+  "readingTip": "If you have read Matthew, Mark or Luke, expect John to feel different: there are fewer short stories and parables, more long speeches, and some events come in a different order. Jesus and his first followers were all Jewish, and when John writes \"the Jews\" he often means the religious leaders who opposed Jesus, not the Jewish people as a whole. These verses have sadly been misused to justify hatred of Jewish people, and reading them in their setting helps avoid that mistake.",
+  "book": "John"
+}

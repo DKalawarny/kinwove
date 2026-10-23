@@ -1,0 +1,37 @@
+{
+  "oneLine": "Esther is a dramatic story about a young Jewish woman who becomes queen of Persia and risks her life to stop a royal order to wipe out her people.",
+  "writtenBy": "No one knows. The book does not name its author. An old Jewish tradition credits a group of leaders known as the Men of the Great Assembly, and some have guessed Mordecai, a main character. Most modern scholars see the writer as an unknown Jewish author living in the Persian or early Greek period.",
+  "when": "The story is set in Susa, a capital city of the Persian Empire, during the reign of King Ahasuerus, usually identified with Xerxes I, who ruled from about 486 to 465 BC. This was after Babylon had conquered Jerusalem and taken many Jews away, and Persia had later taken over Babylon's empire. Scholars suggest the book was written sometime between about 400 and 200 BC, and they debate how closely it reflects actual events. Some read it as history; many read it as a story set in real history rather than a precise record.",
+  "writtenTo": "Jewish communities living scattered across foreign lands, far from Jerusalem, especially to explain the origin of Purim, a yearly festival of celebration.",
+  "why": "The book explains why Jews celebrate Purim, a festival named after the pur, a kind of lot or dice that the villain Haman casts to choose the day of the attack. It shows a people with no army or homeland surviving a deadly threat through the courage and cleverness of ordinary people inside a foreign empire. Unusually, the Hebrew text never mentions God, and many readers see this as a deliberate way of hinting at a God who works quietly behind ordinary events, though that is an interpretation.",
+  "themes": [
+    "Courage when speaking up is dangerous",
+    "A people's survival in a foreign land",
+    "Dramatic reversals of fortune",
+    "God's possible hidden hand in ordinary events"
+  ],
+  "outline": [
+    {
+      "label": "Esther becomes queen",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Haman's plot against the Jews",
+      "chapters": "3-4"
+    },
+    {
+      "label": "Esther's banquets and Haman's downfall",
+      "chapters": "5-7"
+    },
+    {
+      "label": "The tables turn and Purim begins",
+      "chapters": "8-9"
+    },
+    {
+      "label": "Mordecai's honor",
+      "chapters": "10"
+    }
+  ],
+  "readingTip": "Read it like a well-crafted story, and watch for irony and reversals, such as the scene in chapter 6 where Haman ends up honoring the very man he wants to kill. Be ready for chapter 9, where the Jews, permitted by a new royal decree to defend themselves, kill tens of thousands of their enemies along with Haman's ten sons; the book reports this plainly without explaining it. Some Bibles also include extra Greek chapters that add prayers and mention God, which are not part of the Hebrew text.",
+  "book": "Esther"
+}

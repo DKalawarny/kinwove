@@ -1,0 +1,37 @@
+{
+  "oneLine": "Psalms is a collection of 150 songs and prayers from ancient Israel, covering everything from joy and thanks to grief, anger and doubt.",
+  "writtenBy": "Many different people wrote the psalms. About half have a heading linking them to King David, and others name Asaph, the sons of Korah (a family of temple singers), Solomon, Moses and a few more, while some name no one. Scholars disagree about how far the headings tell us the author, since the Hebrew phrase \"of David\" can mean by David, for David, or in his style, and the headings may have been added later.",
+  "when": "The psalms were written over many centuries. Some may go back to the time of Israel's early kings, roughly 1000 BC, and others clearly come from much later, such as Psalm 137, which remembers the Jewish people being taken away to Babylon in the 500s BC. Most scholars think the collection reached its final form some time after the return from Babylon, though exactly when is debated.",
+  "writtenTo": "They were first used by the people of Israel, sung in worship at the temple in Jerusalem (Israel's central place of worship) and prayed by ordinary people at home. Jewish and Christian communities have kept using them as their own prayers ever since.",
+  "why": "The psalms give people words to bring their whole lives to God, including the parts that do not feel holy. Many deal with real trouble: illness, enemies, guilt, injustice and the feeling that God has gone silent. They are also among the books the New Testament quotes most, and its writers read some psalms about Israel's king as pointing ahead to Jesus, an interpretation Christians hold and Jewish readers understand differently.",
+  "themes": [
+    "Honest prayer, including complaint and lament",
+    "Praise and thanks for what God has done",
+    "The LORD as king, shelter and protector",
+    "Longing for justice when the world is unfair"
+  ],
+  "outline": [
+    {
+      "label": "Book One: mostly David's prayers in trouble",
+      "chapters": "1-41"
+    },
+    {
+      "label": "Book Two: longing for God and calls for help",
+      "chapters": "42-72"
+    },
+    {
+      "label": "Book Three: hard questions and national disaster",
+      "chapters": "73-89"
+    },
+    {
+      "label": "Book Four: God as king through every age",
+      "chapters": "90-106"
+    },
+    {
+      "label": "Book Five: thanks, pilgrim songs and a final burst of praise",
+      "chapters": "107-150"
+    }
+  ],
+  "readingTip": "Psalms is not a story to read straight through. Each psalm stands on its own, so read one slowly, and notice how Hebrew poetry often says something twice in slightly different words. Some psalms ask God to harm enemies in shocking ways (Psalm 137 ends with a blessing on whoever dashes Babylon's babies against rocks), and many readers understand these as raw cries of people who had suffered terribly, poured out to God, rather than examples to follow. The word \"Selah\" that appears in some psalms was probably a musical or reading note, but no one knows its exact meaning.",
+  "book": "Psalms"
+}

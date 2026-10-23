@@ -1,0 +1,37 @@
+{
+  "oneLine": "2 Samuel tells the story of David's forty years as king of Israel, from his rise to power to his old age, with his triumphs and his serious failures told side by side.",
+  "writtenBy": "The author is unknown. 1 and 2 Samuel were originally one book, named after the prophet Samuel, but Samuel dies before this part of the story begins. Old Jewish tradition says Samuel wrote the early part and the prophets Nathan and Gad finished it. Most modern scholars think it was put together over a long time from older sources, such as the 'Book of Jashar' it mentions in chapter 1, as part of a larger history running from Joshua to 2 Kings. They disagree about when that work was finished.",
+  "when": "The events take place around 1000 BC. The text says David ruled for seven and a half years from Hebron in the south and then thirty three years from Jerusalem. When the book reached its final form is debated. Many scholars think it was during or after the time many Israelites were forced into exile in Babylon, in the 500s BC, but parts may be much older.",
+  "writtenTo": "The people of Israel. Many scholars think its final readers were Israelites looking back after their kingdom had fallen, trying to understand their history and what had become of God's promises to David's family.",
+  "why": "The book shows how Israel became a united kingdom under David and how God promised that David's family line would last forever (chapter 7). That promise becomes one of the most important threads in the rest of the Bible. Later Jewish hope looked for a coming king from David's line, and Christians understand Jesus, called 'son of David' in the New Testament, as the fulfilment of that promise. The book is also unusually honest about its hero, showing that the man God chose could still do great harm.",
+  "themes": [
+    "God's lasting promise to David's family",
+    "Power and how it can be abused",
+    "Wrongdoing, forgiveness and consequences that remain",
+    "Family conflict and grief"
+  ],
+  "outline": [
+    {
+      "label": "David becomes king after Saul's death",
+      "chapters": "1-4"
+    },
+    {
+      "label": "David unites Israel and God makes a promise",
+      "chapters": "5-10"
+    },
+    {
+      "label": "David, Bathsheba and Uriah",
+      "chapters": "11-12"
+    },
+    {
+      "label": "Violence and rebellion in David's own family",
+      "chapters": "13-20"
+    },
+    {
+      "label": "Extra stories, songs and David's last words",
+      "chapters": "21-24"
+    }
+  ],
+  "readingTip": "The narrator often reports shocking events without stopping to judge them, including the rape of Tamar in chapter 13, the killing of Saul's descendants in chapter 21 and deadly plagues and punishments, so pay attention to how people respond and what the story quietly shows. Chapters 21 to 24 are a collection of extra material rather than the next events in order, so don't expect them to continue the timeline.",
+  "book": "2 Samuel"
+}

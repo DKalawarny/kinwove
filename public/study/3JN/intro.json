@@ -1,0 +1,37 @@
+{
+  "oneLine": "Third John is a short personal letter from a church leader to a friend named Gaius, thanking him for his kindness to traveling Christian teachers and warning about a local leader who was shutting them out.",
+  "writtenBy": "The writer calls himself only \"the elder,\" meaning an older, respected leader. Church tradition says this was John, one of Jesus' twelve close followers, the same person traditionally linked with the Gospel of John and the letters 1 and 2 John. Many scholars are not sure. Some think the elder was a different early leader named John, and others think he was an unnamed leader from the same circle of churches. The letter itself does not settle it.",
+  "when": "Probably late in the first century, roughly AD 90 to 110, though no one knows the exact date. By then small groups of Christians met in homes across the Roman world, and traveling teachers moved between them, relying on local believers for food and a place to stay. Tradition links the elder with the city of Ephesus in what is now Turkey, but this is not certain.",
+  "writtenTo": "A man named Gaius, a member of one of the churches the elder cared about. Gaius was a common name, and we know nothing else for sure about him.",
+  "why": "The elder wrote to praise Gaius for welcoming and supporting traveling teachers, to ask him to keep doing it, and to deal with a leader named Diotrephes who refused to welcome them and pushed out anyone who did. It is the shortest book in the Bible, and it gives a rare, unpolished look at everyday church life: friendships, hospitality, and conflict over who is in charge.",
+  "themes": [
+    "Welcoming and supporting strangers who serve",
+    "Living in line with the truth",
+    "A leader who wants control",
+    "Choosing to copy what is good"
+  ],
+  "outline": [
+    {
+      "label": "Greeting and joy over Gaius",
+      "chapters": "1:1-4"
+    },
+    {
+      "label": "Thanks for welcoming traveling teachers",
+      "chapters": "1:5-8"
+    },
+    {
+      "label": "The problem with Diotrephes",
+      "chapters": "1:9-11"
+    },
+    {
+      "label": "A good word for Demetrius",
+      "chapters": "1:12"
+    },
+    {
+      "label": "Closing and greetings",
+      "chapters": "1:13-15"
+    }
+  ],
+  "readingTip": "Read it the way you would read a real note between friends. It takes about two minutes, and it helps to read 2 John next to it, since the two letters are very similar in style. Some Bibles number the verses so the letter ends at verse 14 instead of 15, but no words are missing.",
+  "book": "3 John"
+}

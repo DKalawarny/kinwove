@@ -1,0 +1,41 @@
+{
+  "oneLine": "Hosea is a collection of a prophet's messages to ancient Israel that pictures God as a betrayed husband and a loving parent who will not give up on his people.",
+  "writtenBy": "The book names its prophet as Hosea son of Beeri, and tradition holds that the messages are his. Many scholars think his words were gathered and edited by others after his time, probably in the southern kingdom of Judah, which may explain some lines that speak about Judah. How much comes from Hosea himself is debated.",
+  "when": "Hosea spoke in the eighth century BC, roughly 750 to 725 BC, in the northern kingdom of Israel. It was a time of wealth that gave way to chaos, with kings murdered in quick succession and the rising Assyrian empire threatening. The northern kingdom fell to Assyria in 722 BC, and the book was likely put into its final form some time after that.",
+  "writtenTo": "First the people of the northern kingdom of Israel, often called Ephraim in the book. Later it was kept and read by people in Judah, who saw in it a warning and a hope for themselves.",
+  "why": "Hosea accuses Israel of breaking its covenant, the binding agreement between God and the people, by worshipping other gods, especially Baal, a local god of storm and harvest, and by trusting in foreign powers. He uses his own troubled marriage to show how God feels about this, moving between anger, grief and a love that keeps calling the people back. The idea of God's covenant love as a marriage became important in later prophets and in the New Testament, which quotes Hosea several times.",
+  "themes": [
+    "Faithfulness and betrayal",
+    "God's steady, stubborn love",
+    "True worship versus empty religion",
+    "Judgment followed by the hope of healing"
+  ],
+  "outline": [
+    {
+      "label": "Hosea's marriage as a picture of God and Israel",
+      "chapters": "1-3"
+    },
+    {
+      "label": "Charges against priests, people and kings",
+      "chapters": "4-7"
+    },
+    {
+      "label": "The harvest of wrong choices",
+      "chapters": "8-10"
+    },
+    {
+      "label": "God as a parent who cannot let go",
+      "chapters": "11"
+    },
+    {
+      "label": "Israel's past and coming collapse",
+      "chapters": "12-13"
+    },
+    {
+      "label": "A call to return and a promise of healing",
+      "chapters": "14"
+    }
+  ],
+  "readingTip": "Chapters 1 to 3 describe Hosea marrying a woman named Gomer, with the children given symbolic names, and scholars debate whether this is a real story, a symbolic one, or both. The book also contains harsh images, such as a wife stripped and shamed in chapter 2 and children killed in war in chapter 13, which many readers today find disturbing. The Hebrew is unusually hard to translate in places, so it helps to know that different Bibles may read quite differently.",
+  "book": "Hosea"
+}

@@ -1,0 +1,33 @@
+{
+  "oneLine": "Jonah is a short, vivid story about a prophet (someone who carries a message from God) who runs the other way when God sends him to an enemy city, and who is then upset when God shows that city mercy.",
+  "writtenBy": "The book does not name its author. It tells the story about Jonah rather than in his own voice. Old Jewish and Christian tradition linked it to Jonah himself, a prophet mentioned briefly in 2 Kings 14:25. Most modern scholars think someone else wrote it much later, and they debate whether it is meant as straight history or as a teaching story, something like a parable.",
+  "when": "The story is set in the 700s BC, when Assyria was the most feared empire in the region and Nineveh was one of its great cities. Assyria later conquered the northern kingdom of Israel. When the book was written is debated. Many scholars place it after the Jewish exile in Babylon, perhaps in the 400s or 300s BC, based on its language and the way it looks back on Nineveh as a city of the past. Others hold to an earlier date.",
+  "writtenTo": "It was first for the people of Israel, readers who knew Assyria as a cruel enemy and who would have felt the sting of a story in which that enemy is spared.",
+  "why": "The book asks a pointed question: how far does God's mercy reach, and what if it reaches people we think do not deserve it? It is unusual among the prophets because it is mostly a story about the prophet rather than a collection of his messages. In the Bible's bigger story it shows God caring about people far outside Israel, even its enemies, a theme the Bible returns to again and again.",
+  "themes": [
+    "Running from God and being pursued anyway",
+    "Mercy for outsiders and enemies",
+    "Repentance, meaning a real change of heart and direction",
+    "God's care for every person and even animals"
+  ],
+  "outline": [
+    {
+      "label": "Jonah runs and a storm hits",
+      "chapters": "1"
+    },
+    {
+      "label": "A prayer from inside the great fish",
+      "chapters": "2"
+    },
+    {
+      "label": "Nineveh hears the warning and turns",
+      "chapters": "3"
+    },
+    {
+      "label": "Jonah's anger and God's question",
+      "chapters": "4"
+    }
+  ],
+  "readingTip": "Read it in one sitting, and watch for the irony and dry humor: the pagan sailors and the people of Nineveh often respond to God better than the prophet does. The Hebrew says 'a great fish', not a whale, and the book ends with an unanswered question. That question is left open on purpose, so try not to rush past it.",
+  "book": "Jonah"
+}

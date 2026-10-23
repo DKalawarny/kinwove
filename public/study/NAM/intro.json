@@ -1,0 +1,33 @@
+{
+  "oneLine": "Nahum is a short book of fierce poetry announcing the fall of Nineveh, the capital of the Assyrian empire that had crushed and terrorized the small nations around it, including Israel and Judah.",
+  "writtenBy": "The book names its source as Nahum of Elkosh. Nothing else is known about him, and no one is sure where Elkosh was. His name means \"comfort.\" Many scholars think his poems were later gathered and arranged by others, and some think parts, such as the opening poem, were added or reshaped in that process. There is no firm agreement on how much.",
+  "when": "Probably between 663 BC and 612 BC. The book mentions the fall of Thebes, a great Egyptian city captured by Assyria in 663 BC, as a past event (3:8). Nineveh itself fell to an alliance of Babylonians and Medes in 612 BC. Scholars disagree on whether Nahum spoke closer to the start or the end of that window. At the time, Assyria had already destroyed the northern kingdom of Israel and had forced Judah, the southern kingdom, to pay heavy tribute.",
+  "writtenTo": "The people of Judah, a small kingdom that had lived for generations under Assyria's threats and demands. Some lines speak to Nineveh directly, but the book's real audience is the people who had suffered under its power.",
+  "why": "Nahum declares that the LORD, the God of Israel, will bring down an empire known for its cruelty, and that its victims will be free of it. For Judah this was news of relief. In the Bible's larger story it is one strong voice on a question that runs throughout, whether God sees the abuse of power and holds the powerful to account. It pairs in a striking way with the book of Jonah, where Nineveh is spared after it turns from its ways.",
+  "themes": [
+    "God as judge of violent empires",
+    "Relief and good news for the oppressed",
+    "God as a refuge for those who trust him",
+    "The end of a city built on bloodshed"
+  ],
+  "outline": [
+    {
+      "label": "A poem about God's power and justice",
+      "chapters": "1:1-8"
+    },
+    {
+      "label": "Words to Judah and to Nineveh",
+      "chapters": "1:9-15"
+    },
+    {
+      "label": "The attack on Nineveh",
+      "chapters": "2"
+    },
+    {
+      "label": "Woe to the city of blood",
+      "chapters": "3"
+    }
+  ],
+  "readingTip": "Read Nahum as war poetry from a people who had been brutalized, voicing their hope that their oppressor would fall, not as a calm lesson in ethics. It is harsh throughout, and some images, such as the city pictured as a woman publicly stripped and shamed (3:5-6), disturb many modern readers, who wrestle with them openly. Reading Jonah alongside it shows two very different pictures of how God deals with the same city.",
+  "book": "Nahum"
+}

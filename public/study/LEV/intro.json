@@ -1,0 +1,41 @@
+{
+  "oneLine": "Leviticus is a book of instructions for ancient Israel about worship, sacrifice, the work of priests, and how to live as a people set apart for God.",
+  "writtenBy": "Tradition holds that Moses wrote it, and the book presents its laws as words the LORD spoke to Moses. Most modern scholars think it was shaped over a long time by priestly writers, with a distinct section in chapters 17 to 26 often called the Holiness Code, and that it reached its final form many centuries after Moses. There is no agreement on the exact details.",
+  "when": "The story is set at Mount Sinai in the wilderness, soon after Israel escaped slavery in Egypt and had just built the tabernacle, a portable tent used as the place of worship. Scholars who see a long writing process often date its final form to roughly the 500s or 400s BC, around or after the time many Israelites were exiled to Babylon, though this is debated.",
+  "writtenTo": "It was first for the people of Israel, especially their priests, who needed to know how worship worked and how ordinary life connected to it.",
+  "why": "Leviticus answers a question raised at the end of Exodus: if God has come to live among the people in the tabernacle, how can they live near a holy God? Its answer covers offerings, purity, a yearly day for cleansing the people from wrongdoing, and everyday ethics such as caring for the poor and loving your neighbor as yourself. It remains a foundation for Jewish practice and thought, and the New Testament quotes it and uses its sacrifices to explain the death of Jesus.",
+  "themes": [
+    "Holiness, being set apart for God",
+    "Sacrifice and forgiveness",
+    "Clean and unclean",
+    "Love of neighbor and justice in daily life"
+  ],
+  "outline": [
+    {
+      "label": "Kinds of offerings",
+      "chapters": "1-7"
+    },
+    {
+      "label": "Priests begin their work",
+      "chapters": "8-10"
+    },
+    {
+      "label": "Clean and unclean",
+      "chapters": "11-15"
+    },
+    {
+      "label": "The Day of Atonement",
+      "chapters": "16"
+    },
+    {
+      "label": "Living as a holy people",
+      "chapters": "17-26"
+    },
+    {
+      "label": "Vows and gifts to God",
+      "chapters": "27"
+    }
+  ],
+  "readingTip": "Being unclean in Leviticus is usually not about being dirty or sinful. It is a temporary state, often caused by normal things like childbirth or touching a dead body, that kept a person away from the place of worship for a time. The book also contains harsh parts, including death penalties and the sudden death of two priests in chapter 10. If the detailed rules feel slow, chapters 16 and 19 are a good place to see what the book cares about most.",
+  "book": "Leviticus"
+}

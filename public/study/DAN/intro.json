@@ -1,0 +1,41 @@
+{
+  "oneLine": "Daniel is a book of stories and visions about Jewish exiles living under foreign empires, who stay faithful to God when it is dangerous, and who trust that God will one day set the world right.",
+  "writtenBy": "The book is named after Daniel, a young Jewish man taken to Babylon, and tradition holds that he wrote it. Chapters 1 to 6 speak about Daniel, while chapters 7 to 12 are mostly in his own voice. Many modern scholars think the stories were handed down over time and the book was completed by unnamed Jewish writers around 165 BC. Others hold to the traditional view. The book is also unusual because it is written in two languages: parts are in Hebrew, and a long middle section (2:4 to 7:28) is in Aramaic, the common language of the region at the time.",
+  "when": "The stories are set in the 500s BC, after the Babylonian empire conquered Judah and carried many of its people away to Babylon. They run from that exile into the time when Persia took over. Many scholars date the finished book much later, to around 167 to 164 BC. In those years the Greek king Antiochus IV ruled the land. He banned Jewish religious practice and defiled the temple in Jerusalem. Others keep the traditional date in the 500s BC.",
+  "writtenTo": "Jewish people living under foreign rule who were pressured to give up their faith. If the later date is right, the first readers were Jews in Judea facing violent persecution under Antiochus IV.",
+  "why": "Daniel shows how to stay true to God while living inside a powerful empire that does not share your faith. Its message is that kingdoms rise and fall, but God's rule outlasts them all. The book's visions of a coming kingdom and of the dead rising to new life shaped later Jewish hope. Jesus often called himself the Son of Man, a phrase that echoes Daniel 7.",
+  "themes": [
+    "Staying faithful under pressure",
+    "God is in charge of history and empires",
+    "Pride brought low",
+    "Hope beyond suffering and death"
+  ],
+  "outline": [
+    {
+      "label": "Young exiles hold on to who they are",
+      "chapters": "1"
+    },
+    {
+      "label": "A king's dream, a fiery furnace and a humbled ruler",
+      "chapters": "2-4"
+    },
+    {
+      "label": "Writing on the wall and the lions' den",
+      "chapters": "5-6"
+    },
+    {
+      "label": "Four beasts and one like a son of man",
+      "chapters": "7"
+    },
+    {
+      "label": "A ram, a goat and Daniel's prayer",
+      "chapters": "8-9"
+    },
+    {
+      "label": "A final vision of struggle and rising again",
+      "chapters": "10-12"
+    }
+  ],
+  "readingTip": "The book has two very different halves. Chapters 1 to 6 are stories that read easily. Chapters 7 to 12 are 'apocalyptic' visions, a style of writing that uses strange beasts and coded numbers to talk about empires and the end of oppression. You do not need to decode every detail. Readers disagree about whether the visions point to events up to Antiochus IV or further into the future. Be aware that some stories end harshly: in 6:24 the men who accused Daniel are thrown to the lions along with their wives and children. Catholic and Orthodox Bibles also include extra Greek stories, such as Susanna and Bel and the Dragon, which most Protestant Bibles leave out.",
+  "book": "Daniel"
+}

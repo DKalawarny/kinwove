@@ -1,0 +1,37 @@
+{
+  "oneLine": "1 Samuel is a story about how Israel moved from being a loose group of tribes to being a kingdom, told through three people: the prophet Samuel, the first king Saul, and the young David who would replace him.",
+  "writtenBy": "The book does not name its author. An old Jewish tradition says Samuel wrote the early part, with the prophets Nathan and Gad finishing it, but Samuel dies before the book ends. Most modern scholars think it was put together over time from older stories and records, with the final form shaped by later editors, possibly during or after the Babylonian exile (when many Israelites were taken away to Babylon in the 500s BC). Scholars still debate the details.",
+  "when": "The events take place roughly in the 1000s BC, though exact dates are uncertain. Israel's tribes lived mostly in the hill country and were under constant pressure from the Philistines, a powerful neighboring people living along the coast. When the book reached its final written form is debated, with many scholars placing it centuries after the events.",
+  "writtenTo": "It was written for the people of Israel, and especially for later generations trying to understand where their kings came from, what had gone wrong, and what kind of leader the LORD wanted.",
+  "why": "The book explains how Israel got its first kings and asks hard questions about power: what happens when people want a strong ruler, and what makes a leader faithful or unfaithful to God. It introduces David, whose family line became central to later hopes for a coming king. Christians believe that hope points to Jesus, whom the New Testament calls the son of David.",
+  "themes": [
+    "The promise and danger of having a king",
+    "God looks at the heart, not appearances",
+    "The proud brought low and the humble lifted up",
+    "Loyalty, friendship and jealousy"
+  ],
+  "outline": [
+    {
+      "label": "Hannah, Samuel and the end of the old order",
+      "chapters": "1-7"
+    },
+    {
+      "label": "Israel asks for a king: Saul rises and is rejected",
+      "chapters": "8-15"
+    },
+    {
+      "label": "David arrives: Goliath, Jonathan and Saul's jealousy",
+      "chapters": "16-20"
+    },
+    {
+      "label": "David on the run from Saul",
+      "chapters": "21-27"
+    },
+    {
+      "label": "Saul's last days and death in battle",
+      "chapters": "28-31"
+    }
+  ],
+  "readingTip": "The narrator rarely tells you who is right, so watch what characters do and say, and expect even the heroes to be flawed. The book includes violent and troubling scenes, such as a command to wipe out the Amalekites, women and children included, and the killing of a town of priests. It does not explain these away, and readers have wrestled with them for centuries. Some events seem told twice or from different angles, likely because older sources were combined. The story continues straight into 2 Samuel.",
+  "book": "1 Samuel"
+}

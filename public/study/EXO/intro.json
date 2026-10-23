@@ -1,0 +1,45 @@
+{
+  "oneLine": "Exodus is the story of how the Israelites were freed from slavery in Egypt, met their God at Mount Sinai, and became a people bound to him by a covenant, a solemn agreement between God and a people.",
+  "writtenBy": "Jewish and Christian tradition says Moses wrote it, and the book is often called the second of the five books of Moses. Most modern scholars think it grew over several centuries, weaving together older stories and laws from different sources, and reached its final form long after Moses' time. The book itself does not name an author.",
+  "when": "The story is set in Egypt and the desert of the Sinai region, traditionally placed somewhere between about 1450 and 1250 BC. Scholars debate how much of it can be checked as history, since Egyptian records say nothing directly about these events. Many think the book took its final shape around the 500s BC, during or after the time Israel's leaders were taken into exile in Babylon.",
+  "writtenTo": "The people of ancient Israel, to tell them where they came from, who their God was, and how they were meant to live together. If the book was finished around the time of the exile, it would have spoken strongly to a people far from home and hoping to be freed again.",
+  "why": "Exodus tells the founding story of Israel: a God who hears the cries of slaves, rescues them, and then asks them to live by his ways. It became the central memory of the Jewish faith, still retold every year at the Passover meal, and the New Testament draws on it again and again to describe Jesus and the idea of being set free.",
+  "themes": [
+    "God hears the oppressed and acts",
+    "Freedom from slavery",
+    "A covenant with laws for living",
+    "God choosing to live among his people"
+  ],
+  "outline": [
+    {
+      "label": "Slavery in Egypt and Moses is called",
+      "chapters": "1-6"
+    },
+    {
+      "label": "The plagues and the first Passover",
+      "chapters": "7-13"
+    },
+    {
+      "label": "Escape through the sea and into the desert",
+      "chapters": "14-18"
+    },
+    {
+      "label": "The covenant and laws at Mount Sinai",
+      "chapters": "19-24"
+    },
+    {
+      "label": "Plans for a holy tent where God will dwell",
+      "chapters": "25-31"
+    },
+    {
+      "label": "The golden calf and a second chance",
+      "chapters": "32-34"
+    },
+    {
+      "label": "Building the holy tent",
+      "chapters": "35-40"
+    }
+  ],
+  "readingTip": "Expect hard moments: the plagues end with the death of Egypt's firstborn sons, the Egyptian army drowns, and after the golden calf thousands of Israelites are killed. Readers have long wrestled with these, and with lines saying God hardened Pharaoh's heart. The long, repeated building details in chapters 25 to 31 and 35 to 40 can be skimmed at first; their point is that the God of the story wants to live in the middle of his people.",
+  "book": "Exodus"
+}

@@ -1,0 +1,37 @@
+{
+  "oneLine": "Genesis is the Bible's book of beginnings, telling how the world and humanity began and how God chose one family through whom he promised to bless every nation on earth.",
+  "writtenBy": "The book does not name its author. Jewish and Christian tradition has long credited Moses. Most modern scholars think it was gathered and shaped over many centuries from several older sources, oral stories and written traditions, by writers and editors whose names we do not know. This question is still debated.",
+  "when": "The stories are set in the distant past, from the creation of the world through several generations of one family living in the ancient Middle East, in lands that are now Iraq, Israel and Egypt. If Moses wrote it, it would date from roughly 1400 to 1200 BC (before Christ). Many scholars think it reached its final form much later, around the 500s BC, when many Israelites had been forced from their homeland into exile in Babylon or had recently returned. Dating the events themselves is very uncertain.",
+  "writtenTo": "The ancient people of Israel, to tell them where the world came from, who their ancestors were, and how their relationship with God began.",
+  "why": "Genesis explains how a good world came to be full of violence and broken relationships, and how God responded not by giving up but by making a promise to Abraham and his descendants. That promise of land, family and blessing for all peoples drives the rest of the Bible. Genesis ends with Abraham's family living in Egypt, which sets up the story of the next book, Exodus.",
+  "themes": [
+    "God creating a good and ordered world",
+    "Human wrongdoing and how it spreads",
+    "God's promise and blessing to Abraham's family",
+    "Family conflict, deception and forgiveness"
+  ],
+  "outline": [
+    {
+      "label": "Creation of the world and the first humans",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Things go wrong: the first disobedience, the flood and the tower of Babel",
+      "chapters": "3-11"
+    },
+    {
+      "label": "Abraham and Sarah receive God's promise",
+      "chapters": "12-25:18"
+    },
+    {
+      "label": "Isaac, Jacob and Esau",
+      "chapters": "25:19-36"
+    },
+    {
+      "label": "Joseph and his brothers",
+      "chapters": "37-50"
+    }
+  ],
+  "readingTip": "The early chapters are ancient storytelling, and believers and scholars differ on how literally to read them, so it helps to ask what each story is saying about God and people rather than getting stuck on science or dates. The main characters lie, play favourites and sometimes do cruel or violent things, and some stories are disturbing, such as Hagar's mistreatment and the attack on Dinah. Genesis often reports these things without stopping to judge them, so do not assume that whatever a character does is being held up as an example.",
+  "book": "Genesis"
+}

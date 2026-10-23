@@ -1,0 +1,41 @@
+{
+  "oneLine": "1 John is a short, warm and urgent message to early Christians shaken by a split in their community, reassuring them about who Jesus is and calling them to love one another.",
+  "writtenBy": "The writer never gives his name. From the second century on, Christian tradition said it was John, one of Jesus' twelve closest followers, and the book does open by claiming to speak from those who saw and touched Jesus. Many modern scholars think it came instead from a leader within a circle of churches shaped by John's teaching, possibly someone close to whoever wrote the Gospel of John. The style and ideas are clearly very similar to that Gospel, but whether the same person wrote both is debated.",
+  "when": "Probably around AD 90 to 110, decades after Jesus' death. Early tradition links it to the city of Ephesus in what is now western Turkey, though the book itself does not say where it was written.",
+  "writtenTo": "A group of Christians the writer knew well and calls his \"dear children.\" Some members had recently walked away from the group (2:19), apparently teaching ideas about Jesus that the writer believed were false, and those who stayed seem to have been left unsettled and unsure.",
+  "why": "The writer says plainly that he wrote so his readers could be confident they have eternal life, meaning a lasting, living relationship with God that begins now (5:13). He insists that Jesus was a real flesh and blood human being, not just a spiritual appearance, and that knowing God shows up in how people actually treat each other. It contains some of the Bible's best known lines about love, including the short statement \"God is love\" (4:8, 4:16).",
+  "themes": [
+    "God is light and God is love",
+    "Jesus truly came as a human being",
+    "Love for one another as the sign of knowing God",
+    "Confidence and assurance for believers"
+  ],
+  "outline": [
+    {
+      "label": "What we saw and touched",
+      "chapters": "1:1-4"
+    },
+    {
+      "label": "Living in the light and facing wrongdoing honestly",
+      "chapters": "1:5-2:17"
+    },
+    {
+      "label": "Those who left and staying with the truth",
+      "chapters": "2:18-2:29"
+    },
+    {
+      "label": "Children of God who love one another",
+      "chapters": "3"
+    },
+    {
+      "label": "Testing what people teach and the love of God",
+      "chapters": "4"
+    },
+    {
+      "label": "Faith in Jesus and confidence before God",
+      "chapters": "5"
+    }
+  ],
+  "readingTip": "This does not read like an ordinary letter. It has no greeting or sign off, and it circles back to the same few ideas again and again, so read it slowly and let the repetition build rather than looking for a step by step argument. When it mentions \"antichrists\" (2:18, 2:22, 4:3), it means people opposing the truth about Jesus, especially those who had left the group, and you may notice that some older translations add extra words about three witnesses in heaven at 5:7 to 8 that are missing from the earliest manuscripts, which is why modern Bibles usually put them in a footnote.",
+  "book": "1 John"
+}

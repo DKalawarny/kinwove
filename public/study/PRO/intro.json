@@ -1,0 +1,41 @@
+{
+  "oneLine": "Proverbs is a collection of short sayings and longer poems from ancient Israel about how to live wisely in everyday life.",
+  "writtenBy": "Tradition links the book to King Solomon, and his name appears at the start. The book itself also names other sources: unnamed 'wise' teachers, a man called Agur, and the mother of a King Lemuel. Most scholars see it as a collection gathered and edited over several centuries. One section (22:17 to 24:22) closely resembles an older Egyptian teaching text, which suggests Israel's wise teachers knew and drew on wisdom from neighbouring cultures.",
+  "when": "Some sayings may go back to the time of Israel's kings, perhaps around 950 BC. The book says one section was copied by the officials of King Hezekiah, around 700 BC. Many scholars think the book reached its final form much later, perhaps in the 500s to 300s BC, though exact dates are uncertain.",
+  "writtenTo": "Much of it is spoken by a parent or teacher to a young man, addressed as 'my son.' It may have been used to train young people in families or at the royal court. Scholars are unsure whether formal schools existed. Over time it became teaching for the whole community.",
+  "why": "Proverbs gathers practical advice on work, money, speech, friendship, family and justice, all rooted in the idea that 'the fear of the LORD,' meaning deep respect for God, is where wisdom begins. It presents God as caring about daily life, not only about worship and ritual. It is a key example of the Bible's wisdom writing, which Job and Ecclesiastes question and deepen.",
+  "themes": [
+    "Respect for God as the starting point of wisdom",
+    "The wise path and the foolish path",
+    "The power of words for good or harm",
+    "Honest work, fair dealing and care for the poor"
+  ],
+  "outline": [
+    {
+      "label": "A parent's call to choose wisdom",
+      "chapters": "1-9"
+    },
+    {
+      "label": "Short sayings of Solomon",
+      "chapters": "10:1-22:16"
+    },
+    {
+      "label": "Sayings of the wise",
+      "chapters": "22:17-24:34"
+    },
+    {
+      "label": "More sayings of Solomon, copied in Hezekiah's time",
+      "chapters": "25-29"
+    },
+    {
+      "label": "The words of Agur",
+      "chapters": "30"
+    },
+    {
+      "label": "Advice to King Lemuel and a poem about a capable woman",
+      "chapters": "31"
+    }
+  ],
+  "readingTip": "Proverbs describe how life usually works. They are not promises or guarantees, and some even seem to contradict each other on purpose (see 26:4 and 26:5), so read them as wisdom to weigh rather than rules to apply. Some sayings, such as those approving physical punishment of children, reflect the customs of their time, and readers today weigh them differently. Many people read one chapter a day, which fits neatly into a month.",
+  "book": "Proverbs"
+}

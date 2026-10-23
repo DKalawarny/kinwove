@@ -1,0 +1,33 @@
+{
+  "oneLine": "Ruth is a short, carefully told story about a grieving widow named Naomi, her foreign daughter in law Ruth, and how loyalty and kindness bring them from emptiness to a new family and a future.",
+  "writtenBy": "The book does not name its author. An old Jewish tradition credits the prophet Samuel, but most modern scholars think the author is unknown and simply call them a skilled storyteller.",
+  "when": "The story is set in the time of the judges, the rough and unsettled centuries before Israel had kings, mostly in and around the small town of Bethlehem. When it was written down is debated. Some scholars place it in the time of the kings, perhaps around the 900s to 700s BC, because it ends by leading to King David. Others place it after the Babylonian exile, around the 500s to 400s BC.",
+  "writtenTo": "The people of ancient Israel. Exactly which generation first heard it depends on when it was written, which scholars do not agree on.",
+  "why": "On the surface it is a family story about famine, death, hunger and marriage, but it shows ordinary people choosing loyal, generous love when the law only required the minimum. Ruth comes from Moab, a neighboring nation Israel often distrusted, yet she becomes the great grandmother of King David, Israel's most famous king. Many scholars read the book as a quiet challenge to suspicion of foreigners, though that reading is an interpretation and the book itself never states a lesson.",
+  "themes": [
+    "Loyal kindness that goes beyond duty",
+    "An outsider welcomed into the family",
+    "Emptiness turned to fullness",
+    "God at work through ordinary people"
+  ],
+  "outline": [
+    {
+      "label": "Loss in Moab and the road back to Bethlehem",
+      "chapters": "1"
+    },
+    {
+      "label": "Ruth gathers grain in Boaz's field",
+      "chapters": "2"
+    },
+    {
+      "label": "A risky night at the threshing floor",
+      "chapters": "3"
+    },
+    {
+      "label": "Boaz steps in, a son is born, and the line to David",
+      "chapters": "4"
+    }
+  ],
+  "readingTip": "Some ancient customs matter here. Poor people were allowed to pick up leftover grain behind the harvesters, and a close relative called a family redeemer was expected to help a struggling relative by buying back land or keeping the family line alive. The night scene in chapter 3 is deliberately subtle and scholars disagree about how much it suggests, so it is best to notice the risk and trust involved without reading in more than the text says. Also notice how rarely God acts openly, and how honestly Naomi voices her bitterness at God.",
+  "book": "Ruth"
+}

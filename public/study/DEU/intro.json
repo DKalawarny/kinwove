@@ -1,0 +1,37 @@
+{
+  "oneLine": "Deuteronomy is a collection of farewell speeches by Moses, given to the people of Israel just before they enter the land they had been promised, and it retells and expands the laws they were to live by there.",
+  "writtenBy": "Tradition holds that Moses wrote it, though the final chapter, which describes his death, is usually said to have been added by someone else, often thought to be Joshua. Many modern scholars think the book grew over a long time. A common view links its core to a scroll of law found in the Jerusalem temple during the reign of King Josiah in the late 600s BC (described in 2 Kings 22), with later additions and editing. Scholars disagree about the details, and the question remains open.",
+  "when": "The story is set around forty years after Israel left Egypt, on the plains of Moab, east of the Jordan River, just before the people cross into Canaan. The traditional date places it in Moses' lifetime. Many scholars date the writing much later, roughly between the 600s and 500s BC, in the time of the kings of Judah and the exile that followed.",
+  "writtenTo": "Within the story, Moses speaks to a new generation of Israelites, the children of those who left Egypt, as they prepare to settle in the land. Many scholars think the book was also shaped for later readers in Israel and Judah, possibly including people living in exile far from home.",
+  "why": "Deuteronomy calls the people to remember what God has done for them and to stay loyal to the LORD alone, living out a covenant, which means a binding agreement between God and the people. It sets out the choice between faithfulness and its blessings and unfaithfulness and its consequences, a choice that shapes how the history books after it tell Israel's story. Its words echo through the rest of the Bible, and Jesus quotes it more than almost any other book, including the call to love God with all your heart, soul and strength.",
+  "themes": [
+    "Remembering what God has done",
+    "Loyalty to one God",
+    "Care for the poor, the stranger, the widow and the orphan",
+    "Choosing life or death, blessing or curse"
+  ],
+  "outline": [
+    {
+      "label": "Moses looks back on the journey",
+      "chapters": "1-4"
+    },
+    {
+      "label": "The heart of the covenant and the Ten Commandments",
+      "chapters": "5-11"
+    },
+    {
+      "label": "Laws for life in the land",
+      "chapters": "12-26"
+    },
+    {
+      "label": "Blessings, curses and a call to choose",
+      "chapters": "27-30"
+    },
+    {
+      "label": "Moses' last song, blessing and death",
+      "chapters": "31-34"
+    }
+  ],
+  "readingTip": "Read it as speeches from an old leader to people he will not go with, which gives it an urgent, personal tone and explains why it repeats itself. Some passages are hard, especially the commands to destroy the nations living in Canaan completely (chapters 7 and 20) and harsh punishments in the laws. Readers and scholars have long wrestled with these, so it is fine to notice them, sit with the difficulty, and read them alongside the book's strong concern for justice and for people with no one to protect them.",
+  "book": "Deuteronomy"
+}

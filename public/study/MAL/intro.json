@@ -1,0 +1,41 @@
+{
+  "oneLine": "Malachi is a short book of prophecy, set up as a series of arguments between God and the people of Judah, about worship, faithfulness and justice after their return from exile.",
+  "writtenBy": "The book is credited to Malachi, but we know nothing else about him. The name means \"my messenger\" in Hebrew, so many scholars think it may be a title rather than a personal name. The book itself does not settle the question.",
+  "when": "Most scholars place it around 500 to 450 BC. Judah was then a small province of the Persian Empire. Its people had come back from exile in Babylon and rebuilt the temple, the central place of worship in Jerusalem, which was finished around 515 BC. The book says nothing about the rebuilding as still in progress, so it likely comes some decades later, close to the time of Ezra and Nehemiah, who dealt with many of the same problems.",
+  "writtenTo": "The people of Judah living in and around Jerusalem, and especially their priests, the men in charge of the temple and its offerings.",
+  "why": "The exiles had come home with big hopes, but life stayed hard and God seemed distant. Many people grew tired and careless about worship, marriage and fair treatment of others. Malachi answers their doubts and challenges them. In Christian Bibles it is the last book of the Old Testament, so its closing promise of a coming messenger and the return of the prophet Elijah leads straight into the New Testament, which links that messenger to John the Baptist. In Jewish Bibles it closes the collection of twelve shorter prophets.",
+  "themes": [
+    "God's steady love when it is hard to see",
+    "Honest worship rather than going through the motions",
+    "Faithfulness in marriage and toward one another",
+    "Justice and a coming day of reckoning"
+  ],
+  "outline": [
+    {
+      "label": "God says \"I have loved you\"",
+      "chapters": "1:1-5"
+    },
+    {
+      "label": "Priests who offer second best",
+      "chapters": "1:6-2:9"
+    },
+    {
+      "label": "Broken faith in marriage",
+      "chapters": "2:10-16"
+    },
+    {
+      "label": "Where is the God of justice?",
+      "chapters": "2:17-3:5"
+    },
+    {
+      "label": "Coming back to God, and giving",
+      "chapters": "3:6-12"
+    },
+    {
+      "label": "The day that is coming, and Elijah",
+      "chapters": "3:13-4:6"
+    }
+  ],
+  "readingTip": "Watch for the repeated pattern: God makes a statement, the people push back with \"How have you...?\" or \"How have we...?\", and God answers. Some lines are hard. \"I have loved Jacob, but Esau I have hated\" (1:2-3) speaks of the nation of Edom, and many scholars read it as a Hebrew way of saying one was chosen and the other was not, though it still announces harsh judgment on Edom. The passage on divorce in 2:16 is difficult to translate, so versions differ. Also note that Hebrew Bibles include chapter 4 within chapter 3, so verse numbers may not match between editions.",
+  "book": "Malachi"
+}

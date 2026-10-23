@@ -1,0 +1,41 @@
+{
+  "oneLine": "Song of Solomon, also called the Song of Songs, is a collection of love poems in which a woman and a man speak of their desire for each other, with a group of friends joining in.",
+  "writtenBy": "The first line links the book to King Solomon, and tradition long treated him as the author. But the Hebrew wording of that line can mean 'by,' 'for,' or 'about' Solomon, and many scholars think the poems were written by unknown poets, perhaps over a long time, and gathered under his name. There is no agreement on this.",
+  "when": "If Solomon wrote it, it would date to about 950 years before Jesus, in ancient Israel at the height of its kingdom. Many scholars place the final form much later, partly because of the style of its Hebrew and a few words borrowed from other languages, but they disagree on how much later. The poems are set in a world of vineyards, gardens, shepherds, city streets, and the royal city of Jerusalem.",
+  "writtenTo": "We do not know for certain. The poems were first for ancient Israelites, and some scholars think they may have been sung or recited at weddings or celebrations, but this is a guess.",
+  "why": "The book celebrates romantic and physical love between a woman and a man as something good, powerful, and worth honoring. God is hardly mentioned, if at all, yet the book's place in the Bible suggests that human love and desire belong within a life of faith. For centuries Jewish readers have read it as a picture of God's love for Israel and Christian readers as a picture of Christ's love for his people, while many modern readers take it first as love poetry; these are different ways of reading the same text.",
+  "themes": [
+    "Desire and longing",
+    "Delight in the body and in nature",
+    "Waiting for the right time for love",
+    "Love as strong as death"
+  ],
+  "outline": [
+    {
+      "label": "Longing and first delight",
+      "chapters": "1-2"
+    },
+    {
+      "label": "A night search and a royal procession",
+      "chapters": "3"
+    },
+    {
+      "label": "Praise of the beloved and the garden",
+      "chapters": "4"
+    },
+    {
+      "label": "Losing and finding each other",
+      "chapters": "5-6"
+    },
+    {
+      "label": "Delight in each other again",
+      "chapters": "7"
+    },
+    {
+      "label": "Love that cannot be bought or quenched",
+      "chapters": "8"
+    }
+  ],
+  "readingTip": "The original Hebrew shows who is speaking only through grammar, so the speaker headings in many Bibles are the translators' best guess. It helps to notice that the woman speaks more than anyone else. Read it as poetry, not a story: scenes shift like a dream, the imagery is lush and sometimes startling to modern ears, and there are painful moments too, such as when city watchmen beat the woman as she searches at night in chapter 5. Scholars also disagree on how to divide it, so the sections above are only one way to see its shape.",
+  "book": "Song of Solomon"
+}

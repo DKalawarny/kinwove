@@ -1,0 +1,41 @@
+{
+  "oneLine": "Ecclesiastes is a short, searching book in which a wise teacher looks honestly at work, pleasure, injustice and death, and asks whether anything in life truly lasts.",
+  "writtenBy": "The main speaker calls himself Qohelet, a Hebrew word usually translated \"the Teacher\" or \"the Preacher\", and he is described as a son of David and king in Jerusalem. Jewish and Christian tradition long took this to mean King Solomon. Most modern scholars think the book was written much later by an unnamed wise teacher who used a royal voice for effect, partly because its Hebrew looks like the language of a later period. A few closing verses speak about the Teacher rather than as him, which suggests that an editor added them.",
+  "when": "The book presents itself as the reflections of a king in Jerusalem around 950 years before Jesus. Many scholars place its actual writing somewhere between about 450 and 200 years before Jesus, when the Jewish people lived under Persian and then Greek rule. Scholars are not certain of the exact date.",
+  "writtenTo": "It seems meant for Jewish readers who were familiar with the wisdom tradition, a kind of teaching about how to live well. That tradition is also found in Proverbs and Job. The book was probably first read by thoughtful, educated people who were wrestling with the same questions it raises.",
+  "why": "The Teacher tests the usual answers about what makes life worthwhile and finds that none of them can stop time, chance or death. His key word, hevel, literally means a breath or vapor and is often translated \"meaningless\" or \"vanity\". He keeps coming back to the same advice: enjoy your food, your work and the people you love as gifts from God while you have them. Many readers value it because it brings honest doubt and hard questions into the Bible, alongside the more confident voices of books like Proverbs.",
+  "themes": [
+    "Life as a passing breath",
+    "Death comes to everyone",
+    "The limits of human wisdom and control",
+    "Enjoying ordinary gifts while you can"
+  ],
+  "outline": [
+    {
+      "label": "Everything passes, and the Teacher tests pleasure, work and wisdom",
+      "chapters": "1-2"
+    },
+    {
+      "label": "A time for everything",
+      "chapters": "3"
+    },
+    {
+      "label": "Injustice, hard work, wealth and words before God",
+      "chapters": "4-5"
+    },
+    {
+      "label": "What wisdom can and cannot do",
+      "chapters": "6-8"
+    },
+    {
+      "label": "Death is certain, so live fully now",
+      "chapters": "9-11"
+    },
+    {
+      "label": "Growing old and the final word",
+      "chapters": "12"
+    }
+  ],
+  "readingTip": "The book does not move in a straight argument. The Teacher thinks out loud, changes direction and sometimes seems to contradict himself, so read it like an honest conversation rather than a list of rules. Some lines are bleak, such as the claim that humans and animals share the same fate. The closing verses about respecting God and keeping his commands may come from an editor, and scholars debate how they fit with the rest.",
+  "book": "Ecclesiastes"
+}

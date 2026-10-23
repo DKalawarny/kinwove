@@ -1,0 +1,45 @@
+{
+  "oneLine": "Romans is a long letter from the apostle Paul to the followers of Jesus in Rome, laying out what he believes God has done through Jesus and what it means for how people live together.",
+  "writtenBy": "The apostle Paul, an early Jewish follower of Jesus who travelled widely starting communities of believers. Almost all scholars agree Paul wrote it. He dictated it to a helper named Tertius, who adds his own greeting near the end. Some scholars debate whether chapter 16, with its long list of greetings, was originally part of this letter, but most now think it was.",
+  "when": "Around the years 55 to 58 AD, most likely written while Paul was staying in the Greek city of Corinth. He was about to carry a gift of money from non-Jewish believers to poor believers in Jerusalem, and hoped afterwards to visit Rome and then travel on to Spain.",
+  "writtenTo": "The groups of Jesus followers meeting in homes in Rome, the capital of the empire. Paul had not been there yet. The groups seem to have included both Jewish believers and non-Jewish believers (often called Gentiles), and they did not always see eye to eye.",
+  "why": "Paul wanted to introduce himself and his message to a community he had never met, and to gain their support for his plans. He explains his conviction that God makes people right with him as a gift, through trust in Jesus, for Jews and non-Jews alike, and he urges the believers in Rome to accept one another. Romans has shaped Christian thinking more than almost any other book, and many major turning points in church history began with people reading it.",
+  "themes": [
+    "God's faithfulness and fairness",
+    "Being made right with God as a gift, received through trust",
+    "New life through God's Spirit",
+    "Jews and non-Jews belonging together"
+  ],
+  "outline": [
+    {
+      "label": "Paul introduces himself and his message",
+      "chapters": "1:1-17"
+    },
+    {
+      "label": "Everyone has gone wrong",
+      "chapters": "1:18-3:20"
+    },
+    {
+      "label": "Made right with God as a gift, through trust",
+      "chapters": "3:21-5:21"
+    },
+    {
+      "label": "New life and the Spirit",
+      "chapters": "6-8"
+    },
+    {
+      "label": "What about Israel?",
+      "chapters": "9-11"
+    },
+    {
+      "label": "Living it out together",
+      "chapters": "12:1-15:13"
+    },
+    {
+      "label": "Travel plans and greetings",
+      "chapters": "15:14-16:27"
+    }
+  ],
+  "readingTip": "Romans is one connected argument, so read it in big sections rather than single verses, and watch for places where Paul raises an imagined objection (\"What shall we say, then?\") and then answers it. Some passages, such as the end of chapter 1, the meaning of \"works of the law\", and chapter 13 on obeying rulers, are read very differently by scholars, so it helps to know these are debated rather than settled.",
+  "book": "Romans"
+}

@@ -1,0 +1,41 @@
+{
+  "oneLine": "1 Kings is a history of ancient Israel's kings, from the glory of King Solomon to the split of the nation into two rival kingdoms and the clashes between kings and prophets that followed.",
+  "writtenBy": "The book does not name its author. Jewish tradition credited the prophet Jeremiah. Most modern scholars think it was compiled and edited by unnamed writers who drew on older royal records, some of which the book names, such as the Book of the Annals of the Kings of Israel. Many scholars see 1 Kings as part of one long history running from Deuteronomy through 2 Kings, but how many stages of editing it went through is still debated.",
+  "when": "The events cover roughly 970 to 850 BC, from the end of King David's life to the reigns of King Ahab and his son. The book likely reached its final form during or soon after the Babylonian exile in the 500s BC, when the people of Judah had been taken from their land, though some scholars think an earlier version existed before that. 1 and 2 Kings were originally one book.",
+  "writtenTo": "Most scholars think it was first for the people of Israel and Judah who had lost their land, their king and their temple, and who were trying to understand how it had come to that.",
+  "why": "1 Kings looks back over Israel's history and asks why a nation that began so well fell apart. The writers' answer, as most readers understand it, is that kings and people turned away from the LORD to worship other gods, and that this had real consequences. In the Bible's bigger story, it shows God staying involved with a failing people, especially through prophets like Elijah, and it raises the hope for a faithful king that later books carry forward.",
+  "themes": [
+    "Faithfulness to God and the cost of turning away",
+    "The temple as the place of worship",
+    "Prophets confronting powerful kings",
+    "A divided people"
+  ],
+  "outline": [
+    {
+      "label": "David dies and Solomon takes the throne",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Solomon's wisdom, wealth and the building of the temple",
+      "chapters": "3-10"
+    },
+    {
+      "label": "Solomon's decline",
+      "chapters": "11"
+    },
+    {
+      "label": "The kingdom splits and a string of kings follows",
+      "chapters": "12-16"
+    },
+    {
+      "label": "The prophet Elijah stands against King Ahab",
+      "chapters": "17-19"
+    },
+    {
+      "label": "Ahab's wars, Naboth's vineyard and Ahab's death",
+      "chapters": "20-22"
+    }
+  ],
+  "readingTip": "From chapter 12 on there are two kingdoms with separate kings, Israel in the north and Judah in the south, and the story jumps between them. Some kings share similar or identical names, so it helps to note which kingdom each king rules. The writers judge kings mostly by their faithfulness to the LORD rather than by political success. Expect violent scenes that are told plainly, such as Solomon having rivals killed and Elijah ordering the prophets of Baal (a Canaanite storm god) to be put to death.",
+  "book": "1 Kings"
+}

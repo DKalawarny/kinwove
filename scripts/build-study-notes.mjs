@@ -8,6 +8,7 @@
 //   node scripts/build-study-notes.mjs               # everything still missing
 //   node scripts/build-study-notes.mjs LEV MAT       # just these books
 //   node scripts/build-study-notes.mjs --redo LEV.16 # rewrite one chapter
+//   node scripts/build-study-notes.mjs --deep         # rewrite SENSITIVE + held chapters in deep mode
 //
 // Resumable: a file that already exists is skipped, so a run that dies halfway
 // is finished by running it again.
@@ -20,7 +21,7 @@
 // public/study/_held.json for a person to look at, and the reader shows nothing
 // for that chapter rather than something unchecked.
 import { config as loadEnv } from 'dotenv';
-import { writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { writeFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -33,6 +34,29 @@ const ASV = '06125adad2d5898a-01';
 const ROOT = fileURLToPath(new URL('../public/study/', import.meta.url));
 const HELD = ROOT + '_held.json';
 const DASH = /[–—]/;
+
+// Chapters people have argued over for centuries, or that are painful to read.
+// --deep rewrites these (and anything held) with the full commentaries, the
+// most careful reasoning, and extra rules for presenting contested readings.
+const SENSITIVE = [
+  'GEN.1', 'GEN.2', 'GEN.3', 'GEN.6', 'GEN.9', 'GEN.19', 'GEN.22', 'EXO.21', 'LEV.18', 'LEV.20',
+  'NUM.31', 'DEU.20', 'DEU.22', 'JOS.6', 'JOS.10', 'JDG.11', 'JDG.19', 'JDG.20', 'JDG.21', '1SA.15',
+  '2SA.11', 'JOB.1', 'PSA.22', 'PSA.109', 'PSA.137', 'ISA.7', 'ISA.9', 'ISA.53', 'EZK.16', 'EZK.23',
+  'DAN.7', 'DAN.9', 'HOS.1', 'MAT.5', 'MAT.16', 'MAT.19', 'MAT.24', 'MAT.25', 'MAT.27', 'MRK.13',
+  'LUK.16', 'JHN.6', 'JHN.8', 'JHN.14', 'ACT.2', 'ROM.1', 'ROM.3', 'ROM.5', 'ROM.9', 'ROM.11',
+  'ROM.13', '1CO.6', '1CO.7', '1CO.11', '1CO.14', 'GAL.3', 'EPH.2', 'EPH.5', 'COL.3', '1TH.4',
+  '1TI.2', 'HEB.6', 'HEB.10', 'JAS.2', '1PE.3', '2PE.3', 'REV.12', 'REV.13', 'REV.17', 'REV.20',
+  // Added 22 Oct after Daniel's review list: doctrine, prophecy, abuse, slavery,
+  // Jewish people, creation, and chapters someone in a dark place may read.
+  'ROM.7', 'ROM.8', '1CO.15', 'PHP.2', 'JHN.1', 'MAT.12', '1TI.3', '2TI.3', 'DAN.11', 'DAN.12', 'EZK.28', 'ISA.14', 'EZK.38', 'EZK.39', 'ZEC.14', 'EXO.12', 'JOS.7', '2KI.2', 'GEN.34', 'GEN.38', '2SA.13', 'DEU.21', 'GEN.16', 'PRO.31', 'LEV.25', 'PHM.1', 'EPH.6', '1TH.2', 'ACT.7', 'GEN.4', 'GEN.5', 'GEN.11', 'JOB.3', 'PSA.88', 'ECC.1', 'LAM.3', 'JON.4', '1KI.19', 'REV.1', 'REV.2', 'REV.3', 'REV.4', 'REV.5', 'REV.6', 'REV.7', 'REV.8', 'REV.9', 'REV.10', 'REV.11', 'REV.14', 'REV.15', 'REV.16', 'REV.18', 'REV.19', 'REV.21', 'REV.22', 'SNG.1', 'SNG.2', 'SNG.3', 'SNG.4', 'SNG.5', 'SNG.6', 'SNG.7', 'SNG.8',
+];
+const DEEP_RULES = `
+
+This chapter is contested or painful, so take extra care:
+- Where a passage has more than one serious reading, give each fairly in plain words and, where it helps, say who holds it (for example Catholic, Orthodox and Protestant Christians, or Jewish readers). Never quietly choose one.
+- Tie each claim to the verse it rests on. If something depends on how one translation renders a verse, say that the translations differ.
+- Do not repeat a commentator's own theory as if it were the text.
+- For painful passages, be honest and humane: name what happens plainly, without gore and without excuses.`;
 
 // ── Sources ─────────────────────────────────────────────────────────────────
 async function retry(fn, tries = 4) {
@@ -75,10 +99,15 @@ async function commentary(code, ch, cap = 9000) {
   return out.join('\n\n');
 }
 
+let DEEP = false;
 async function ask(system, user, effort = 'high') {
+  if (DEEP) effort = 'xhigh';
   return retry(async () => {
-    const r = await client.messages.create({ model: MODEL, max_tokens: 8000, output_config: { effort }, system, messages: [{ role: 'user', content: user }] });
+    // Streamed, with room to think: at the highest efforts the reasoning alone
+    // can use most of a small budget and leave no room for the note itself.
+    const r = await client.messages.stream({ model: MODEL, max_tokens: DEEP ? 48000 : 16000, output_config: { effort }, system, messages: [{ role: 'user', content: user }] }).finalMessage();
     if (r.stop_reason === 'refusal') throw new Error('refused');
+    if (r.stop_reason === 'max_tokens') throw new Error('ran out of room before finishing');
     const t = r.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
     return JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
   }, 3);
@@ -153,7 +182,7 @@ function mechanical(note, text) {
   if (!new RegExp(`\\[${note?.keyVerse}\\]`).test(text)) p.push(`key verse ${note?.keyVerse} is not in this chapter`);
   const all = JSON.stringify(note ?? {});
   if (DASH.test(all)) p.push('uses a dash as punctuation');
-  if (/jehovah/i.test(all)) p.push('uses "Jehovah"');
+  if (/jehovah(?!'s Witnesses)/i.test(all)) p.push('uses "Jehovah"');
   for (const part of note?.parts ?? []) {
     if ((part.note.match(/[.!?](?=\s+[A-Z"'(]|\s*$)/g) ?? []).length > 2) p.push(`part "${part.label}" is longer than two sentences`);
   }
@@ -163,19 +192,20 @@ function mechanical(note, text) {
 // ── One chapter ─────────────────────────────────────────────────────────────
 async function doChapter(book, n) {
   const id = `${book.code}.${n}`;
-  const [asv, niv, notes] = await Promise.all([chapterText(ASV, id), chapterText(NIV, id), commentary(book.code, n)]);
+  const [asv, niv, notes] = await Promise.all([chapterText(ASV, id), chapterText(NIV, id), commentary(book.code, n, DEEP ? 60000 : 9000)]);
+  const SYSTEM = DEEP ? CHAPTER_SYSTEM + DEEP_RULES : CHAPTER_SYSTEM;
   const sources = `${book.name} ${n}\n\nNew International Version:\n${niv}\n\nAmerican Standard Version:\n${asv}\n\nClassic commentary excerpts:\n${notes || '(none available for this chapter)'}`;
-  let note = await ask(CHAPTER_SYSTEM, sources);
+  let note = await ask(SYSTEM, sources);
   for (let round = 0; round < 2; round++) {
     const mech = mechanical(note, asv);
     const { problems = [] } = await ask(CHECK_SYSTEM, `${sources}\n\nThe study note to check:\n${JSON.stringify(note, null, 2)}`, 'medium');
     const all = [...mech, ...problems.map((p) => p.issue ?? String(p))];
-    // Mechanical problems (missing key verse, dashes, "Jehovah", length) and
-    // serious ones block; minor wording issues only earn a rewrite.
-    const blocking = [...mech, ...problems.filter((p) => p.serious).map((p) => p.issue)];
+    // Mechanical problems (missing key verse, dashes, "Jehovah") and serious
+    // ones block; length and minor wording issues only earn a rewrite.
+    const blocking = [...mech.filter((m) => !m.includes('longer than two sentences')), ...problems.filter((p) => p.serious).map((p) => p.issue)];
     if (!all.length || (round === 1 && !blocking.length)) return { note, held: null };
     if (round === 1) return { note: null, held: { id, problems: blocking, note } };
-    note = await ask(CHAPTER_SYSTEM, `${sources}\n\nAn earlier draft had these problems. Write it again without them:\n${all.map((x) => `- ${x}`).join('\n')}\n\nEarlier draft:\n${JSON.stringify(note, null, 2)}`);
+    note = await ask(SYSTEM, `${sources}\n\nAn earlier draft had these problems. Write it again without them:\n${all.map((x) => `- ${x}`).join('\n')}\n\nEarlier draft:\n${JSON.stringify(note, null, 2)}`);
   }
 }
 
@@ -193,7 +223,12 @@ async function doIntro(book) {
 
 // ── Run ─────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
+DEEP = args.includes('--deep');
 const redo = new Set(args.filter((a, i) => args[i - 1] === '--redo'));
+if (DEEP && !redo.size) {
+  const heldNow = existsSync(HELD) ? Object.keys(JSON.parse(readFileSync(HELD, 'utf8'))) : [];
+  for (const id of [...SENSITIVE, ...heldNow.filter((h) => !h.endsWith('.intro'))]) redo.add(id);
+}
 const onlyBooks = new Set(args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--redo'));
 const held = existsSync(HELD) ? JSON.parse(readFileSync(HELD, 'utf8')) : {};
 const all = (await books()).filter((b) => !onlyBooks.size || onlyBooks.has(b.code) || [...redo].some((r) => r.startsWith(b.code + '.')));
@@ -225,6 +260,9 @@ async function worker() {
         delete held[job.id];
       } else {
         held[job.id] = h; heldCount++;
+        // A touchy chapter that fails the stricter deep check shows nothing,
+        // even if an earlier, lighter pass had written a note for it.
+        if (DEEP && existsSync(job.file)) unlinkSync(job.file);
       }
       saveHeld();
       done++;

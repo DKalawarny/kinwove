@@ -1,0 +1,33 @@
+{
+  "oneLine": "Joshua tells how the Israelites, led by Moses' successor Joshua, crossed into the land of Canaan, fought for it, and divided it among their twelve tribes.",
+  "writtenBy": "The book does not name its author. An old Jewish tradition says Joshua wrote most of it, with others adding the account of his death. Most modern scholars think it was put together over a long time by later writers and editors who drew on older stories, lists and traditions. Many see it as part of a larger history that runs from Deuteronomy through 2 Kings.",
+  "when": "The story is set just after the death of Moses, as the Israelites end their years of wandering in the wilderness and enter Canaan, the land roughly where Israel and the Palestinian territories are today. Traditional dates place these events around 1400 BC, while others suggest the 1200s BC. Many scholars think the book reached its final form much later, around the 600s or 500s BC. Archaeology at sites like Jericho and Ai does not clearly match a single swift conquest, and historians debate how much of the account reflects actual events.",
+  "writtenTo": "It was first for the people of Israel, to tell them how they came to live in their land and what it meant to be faithful to the LORD there. If scholars are right about a later date, it may have spoken especially to people who had lost the land or feared losing it.",
+  "why": "Joshua shows God keeping a promise first made to Abraham in Genesis: that his descendants would have a land of their own. It ties that gift to loyalty, and the book ends with Joshua calling the people to choose whom they will serve. It is also a bridge in the Bible's story, closing the era of Moses and leading into the troubled years told in Judges.",
+  "themes": [
+    "God keeping his promises",
+    "The land as a gift",
+    "Courage and loyalty to the LORD",
+    "Choosing whom to serve"
+  ],
+  "outline": [
+    {
+      "label": "Joshua takes charge and the people cross the Jordan River",
+      "chapters": "1-5"
+    },
+    {
+      "label": "Jericho, Ai and the wars for the land",
+      "chapters": "6-12"
+    },
+    {
+      "label": "Dividing the land among the tribes",
+      "chapters": "13-21"
+    },
+    {
+      "label": "Closing scenes and Joshua's farewell",
+      "chapters": "22-24"
+    }
+  ],
+  "readingTip": "The battle chapters describe whole towns being destroyed on God's command, and many readers, Jewish and Christian, have long struggled with this, so it is fine to read slowly and notice your questions. The book itself holds tensions, such as outsiders like Rahab being welcomed and claims of total victory sitting beside admissions that much land was never taken. The long boundary lists in chapters 13 to 21 can be skimmed on a first reading.",
+  "book": "Joshua"
+}

@@ -1,0 +1,41 @@
+{
+  "oneLine": "Luke is an orderly account of the life, teaching, death and resurrection of Jesus, written as the first of two volumes that continue in the book of Acts.",
+  "writtenBy": "The book does not name its author. Since the second century, tradition has said it was Luke, a doctor and travelling companion of the apostle Paul who is mentioned in some of Paul's letters. Most scholars agree that the same person wrote both Luke and Acts, but many are unsure whether that person was really Paul's companion. The writer says plainly that he was not an eyewitness and that he gathered his material carefully from earlier sources. Many scholars think those sources included the Gospel of Mark.",
+  "when": "Most scholars date it to around 80 to 90 AD, some decades after Jesus' death, though some argue for the 60s. The story itself is set in Galilee and Judea, in what is now Israel and the Palestinian territories, around 4 BC to 30 AD, under Roman rule.",
+  "writtenTo": "It is addressed to a man named Theophilus, who may have been a well-placed supporter of the writer. Some think the name, which means 'friend of God', stands for any reader. More broadly, it seems written for early followers of Jesus, many of them Gentiles (people who were not Jewish), across the Roman world.",
+  "why": "The writer says he wants his reader to be sure of the things he has been taught about Jesus. He presents Jesus as the fulfilment of God's promises to Israel and as good news for the whole world, starting in Jerusalem and reaching outward. Luke then hands the story on to Acts, which follows Jesus' first followers as the movement spreads.",
+  "themes": [
+    "God's care for the poor, the sick and people pushed to the edges",
+    "Lost people being found, and the joy that follows",
+    "Prayer and the work of the Holy Spirit",
+    "Good news for Israel and for all peoples"
+  ],
+  "outline": [
+    {
+      "label": "Two births foretold: John and Jesus",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Getting ready: John's preaching, Jesus' baptism and testing",
+      "chapters": "3:1-4:13"
+    },
+    {
+      "label": "Teaching and healing in Galilee",
+      "chapters": "4:14-9:50"
+    },
+    {
+      "label": "The long road to Jerusalem",
+      "chapters": "9:51-19:27"
+    },
+    {
+      "label": "Teaching in Jerusalem",
+      "chapters": "19:28-21:38"
+    },
+    {
+      "label": "Last meal, arrest, death and resurrection",
+      "chapters": "22-24"
+    }
+  ],
+  "readingTip": "Many of the best known stories Jesus told, such as the Good Samaritan and the son who leaves home and comes back, appear only in Luke, mostly in the long journey section. Some sayings are startling and hard, such as warnings to the rich and the call to put following Jesus above family, while the account of Jesus' death is brief and restrained and includes his words of forgiveness from the cross.",
+  "book": "Luke"
+}

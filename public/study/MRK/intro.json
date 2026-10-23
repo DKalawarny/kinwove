@@ -1,0 +1,45 @@
+{
+  "oneLine": "Mark is the shortest and probably the earliest of the four accounts of Jesus' life in the Bible, a fast-moving story of what Jesus did and said and of his death in Jerusalem.",
+  "writtenBy": "The book does not name its author. From the early second century, Christian tradition credited it to John Mark, a companion of the apostle Peter, and said it preserved Peter's memories of Jesus. Many scholars accept that someone named Mark wrote it, but how close the link to Peter really was is debated, and some think the author is simply unknown.",
+  "when": "Most scholars date it to around AD 65 to 75, close to the time of a Jewish revolt against Rome and the destruction of the temple in Jerusalem in AD 70. Early tradition places it in Rome, where Christians were facing persecution under the emperor Nero. Some scholars suggest Syria or Galilee instead.",
+  "writtenTo": "It seems to have been written mainly for followers of Jesus who were not Jewish. The author explains Jewish customs and translates Aramaic words, the everyday language Jesus spoke, which a Jewish audience in Palestine would not have needed. Many think these readers were living under pressure or danger because of their faith.",
+  "why": "Mark opens by calling his book 'good news', the meaning of the word 'gospel', about Jesus as the Messiah, a title meaning the king God's people had long hoped for. His central question is who Jesus really is, and his surprising answer is a king who serves, suffers and dies. Most scholars think Matthew and Luke used Mark when writing their own accounts, so it stands near the root of how Jesus' story was told.",
+  "themes": [
+    "Who Jesus is",
+    "Power shown in healing and authority",
+    "A Messiah who suffers",
+    "Followers who struggle to understand"
+  ],
+  "outline": [
+    {
+      "label": "Jesus begins his work in Galilee",
+      "chapters": "1-3"
+    },
+    {
+      "label": "Stories, miracles and mixed reactions",
+      "chapters": "4-6"
+    },
+    {
+      "label": "Who is Jesus? The disciples begin to see",
+      "chapters": "7-8"
+    },
+    {
+      "label": "On the road to Jerusalem",
+      "chapters": "9-10"
+    },
+    {
+      "label": "Conflict and teaching in Jerusalem",
+      "chapters": "11-13"
+    },
+    {
+      "label": "Arrest, trial and death",
+      "chapters": "14-15"
+    },
+    {
+      "label": "The empty tomb",
+      "chapters": "16"
+    }
+  ],
+  "readingTip": "Mark is short enough to read in one or two sittings, which helps you feel its urgent pace and notice odd details, like Jesus often telling people to keep quiet about him, something scholars still debate. The oldest manuscripts end abruptly at 16:8 with frightened women fleeing the tomb, and most Bibles print the longer ending that follows with a note saying it was likely added later.",
+  "book": "Mark"
+}

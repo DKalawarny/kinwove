@@ -1,0 +1,37 @@
+{
+  "oneLine": "Ezekiel is a book of messages and strange, vivid visions from a priest who lived as a refugee in Babylon when his homeland of Judah was conquered and its capital, Jerusalem, was destroyed.",
+  "writtenBy": "Traditionally Ezekiel, a priest who speaks in the first person through most of the book. Most scholars agree that much of the book goes back to him, though many think his followers later gathered, arranged and added to his words. How much was added, and when, is still debated.",
+  "when": "The dates in the book run from about 593 to 571 BC. Ezekiel had been taken from Jerusalem to Babylon (in modern Iraq) in 597 BC, along with Judah's king and thousands of others. He lived among these exiles by a canal called the Kebar. Jerusalem fell to the Babylonians in 587 or 586 BC, partway through his work.",
+  "writtenTo": "First, the Jewish exiles living with Ezekiel in Babylon, who were confused and grieving and still hoped Jerusalem would be spared. Later, the wider community who had lost their land, their king and their temple and were trying to make sense of it.",
+  "why": "The book tries to explain why Jerusalem fell. It presents the disaster as God's judgment on years of injustice, violence and worship of other gods, and it insists God had not simply been defeated. After the fall it turns to hope: God will gather the scattered people, give them a new heart, and live among them again. These pictures of a new heart, a true shepherd, dry bones coming to life and a river flowing from the temple are picked up again in the New Testament, especially in John's Gospel and in Revelation.",
+  "themes": [
+    "God's presence leaving the temple and returning",
+    "Judgment for injustice and broken loyalty",
+    "Each person's responsibility for their own choices",
+    "A new heart, a new spirit and new life"
+  ],
+  "outline": [
+    {
+      "label": "Ezekiel's overwhelming vision and his calling",
+      "chapters": "1-3"
+    },
+    {
+      "label": "Warnings, sign acts and visions of Jerusalem's fall",
+      "chapters": "4-24"
+    },
+    {
+      "label": "Messages about the surrounding nations",
+      "chapters": "25-32"
+    },
+    {
+      "label": "After the fall: hope, a new heart and dry bones",
+      "chapters": "33-39"
+    },
+    {
+      "label": "A vision of a renewed temple and land",
+      "chapters": "40-48"
+    }
+  ],
+  "readingTip": "Ezekiel's visions are full of strange images, such as winged creatures and wheels covered in eyes. They read more like symbolic dream pictures than literal descriptions, so it helps to look for the main point rather than decode every detail. Be aware that chapters 16 and 23 picture Jerusalem as an unfaithful wife using graphic sexual and violent language that many readers today find disturbing. Also, God often calls Ezekiel \"son of man,\" which here simply means \"human being\" or \"mortal.\"",
+  "book": "Ezekiel"
+}

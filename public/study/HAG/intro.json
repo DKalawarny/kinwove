@@ -1,0 +1,37 @@
+{
+  "oneLine": "Haggai is a short collection of four messages from a prophet who urged a small, struggling community in Jerusalem to finish rebuilding God's temple.",
+  "writtenBy": "The messages come from Haggai, a prophet who is also mentioned in the book of Ezra alongside another prophet, Zechariah. The book describes Haggai in the third person, so many scholars think a follower or editor gathered his messages and wrote them down, probably not long after he spoke. Almost nothing is known about Haggai's life beyond this book.",
+  "when": "The messages are dated very precisely to a few months in 520 BC, during the reign of Darius, king of the Persian empire. Years earlier, around 538 BC, the Persians had allowed Jewish exiles to return home from Babylon. They had laid the foundations of a new temple in Jerusalem, but the work had stalled for years while people struggled with poor harvests, opposition and their own lives.",
+  "writtenTo": "Haggai speaks to Zerubbabel, the governor of Judah under Persian rule and a descendant of King David; to Joshua, the high priest, meaning the leading priest who oversaw worship; and to the ordinary people who had returned to the land.",
+  "why": "Haggai wanted the people to stop putting off the temple, which for them was the place that showed God living among his people, and he encouraged them when the new building looked small next to the grand temple of the past. The book helps explain how the second temple came to be built, the temple that stood in the time of Jesus. Its promises of a shaken world, a glorious future temple and a chosen descendant of David were later read by Jewish and Christian readers as hopes reaching beyond Haggai's own day, though that is a matter of interpretation.",
+  "themes": [
+    "Putting first things first",
+    "God's presence with his people",
+    "Courage when beginnings look small",
+    "Hope for the future of David's family line"
+  ],
+  "outline": [
+    {
+      "label": "A call to rebuild",
+      "chapters": "1:1-11"
+    },
+    {
+      "label": "The people listen and start work",
+      "chapters": "1:12-15"
+    },
+    {
+      "label": "Courage for discouraged builders",
+      "chapters": "2:1-9"
+    },
+    {
+      "label": "A question about clean and unclean",
+      "chapters": "2:10-19"
+    },
+    {
+      "label": "A promise to Zerubbabel",
+      "chapters": "2:20-23"
+    }
+  ],
+  "readingTip": "Watch the dates at the start of each message, which show the four messages unfolding over a few months, and try reading Ezra 1 to 6 for the wider story. The puzzling passage in 2:10-19 uses a ritual question to make a point: something unclean spreads more easily than something holy, and scholars still debate exactly who or what Haggai was applying that to.",
+  "book": "Haggai"
+}

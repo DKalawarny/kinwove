@@ -1,0 +1,37 @@
+{
+  "oneLine": "Obadiah is the shortest book in the Old Testament, a single chapter of poetry announcing judgment on the nation of Edom for turning on its neighbor Judah in a time of disaster.",
+  "writtenBy": "The book is credited to Obadiah, a name that means \"servant of the LORD.\" We know nothing else about him; the book gives no family, hometown or date. An old Jewish tradition linked him with an official named Obadiah in the time of King Ahab (1 Kings 18), but most scholars today do not accept that link, because the book seems to describe much later events.",
+  "when": "Most scholars think it was written soon after 586 BC, when the Babylonian empire destroyed Jerusalem and Edom took advantage of Judah's collapse. A minority place it earlier, around the 800s BC, when Edom rebelled against Judah. The book itself does not say, so certainty is not possible.",
+  "writtenTo": "It speaks to Edom as if addressing that nation directly, but its real audience was almost certainly the people of Judah, probably survivors grieving the loss of their city and feeling betrayed by a neighbor.",
+  "why": "Edom's people traced their ancestry to Esau, the twin brother of Jacob, the ancestor of Israel, so Obadiah treats Edom's actions as a brother's betrayal. The book insists that cruelty to the defenseless will not go unanswered and widens this into a picture of God judging all nations and finally setting things right. It gives voice to the anger and hope of people who had been wronged and had no power of their own.",
+  "themes": [
+    "Pride that leads to a fall",
+    "Betrayal between brothers",
+    "What you have done will come back on you",
+    "God as the final ruler of all nations"
+  ],
+  "outline": [
+    {
+      "label": "Edom's pride will be brought down",
+      "chapters": "1:1-4"
+    },
+    {
+      "label": "Edom stripped bare and abandoned by allies",
+      "chapters": "1:5-9"
+    },
+    {
+      "label": "The charge: turning on a brother",
+      "chapters": "1:10-14"
+    },
+    {
+      "label": "A day of reckoning for every nation",
+      "chapters": "1:15-16"
+    },
+    {
+      "label": "Rescue for Mount Zion and the LORD as king",
+      "chapters": "1:17-21"
+    }
+  ],
+  "readingTip": "It helps to know the story of Jacob and Esau in Genesis 25 to 33, and Psalm 137 shows the same raw grief over Edom's part in Jerusalem's fall. The language is fierce, including talk of Edom having no survivors. This is the voice of a wounded people speaking in poetry, and readers today still wrestle with how to hold its anger alongside its longing for justice.",
+  "book": "Obadiah"
+}

@@ -1,0 +1,37 @@
+{
+  "oneLine": "Second Timothy is a short, personal letter written as the farewell words of the early Christian leader Paul, in prison and expecting to die, to his younger coworker Timothy.",
+  "writtenBy": "The letter names Paul as its writer, and Christians traditionally accepted this. Many modern scholars think it was written after Paul's death by a follower who wanted to carry on his teaching in his name, a known practice at the time. They point to differences in vocabulary, style and church setting compared with letters almost all scholars accept as Paul's. Others argue that its warm, detailed personal notes fit Paul himself. Some scholars think this letter is more likely to come from Paul than the two letters often grouped with it, 1 Timothy and Titus. The question remains open.",
+  "when": "If Paul wrote it, probably in the mid 60s AD, while he was a prisoner in Rome near the end of his life. The letter itself says he is in chains, that most of his friends have left him, and that he expects to be executed soon. Scholars who think a follower wrote it usually date it later, somewhere between the late first century and the early second century.",
+  "writtenTo": "Timothy, a younger man who had travelled and worked with Paul for years. The letter mentions his grandmother Lois and mother Eunice, who taught him their faith, and the book of Acts says his mother was Jewish and his father Greek. The letter does not say plainly where Timothy is, though many readers think of Ephesus, a large city in what is now western Turkey, because of 1 Timothy. Like other early Christian letters, it was probably also read aloud to the wider group of believers.",
+  "why": "The letter reads like a last message to a dear friend: hold on, keep teaching what you were taught, and do not give up when things get hard. It matters in the Bible's bigger story because it shows how the first generation of Christian leaders tried to hand on their message to the next generation as they themselves were dying. It also contains the well known line, written as Paul's own, that he has fought the good fight, finished the race and kept the faith.",
+  "themes": [
+    "Holding on through suffering",
+    "Passing faith on to the next generation",
+    "Faithfulness when others leave",
+    "The value of the scriptures"
+  ],
+  "outline": [
+    {
+      "label": "Do not be ashamed; guard what you were given",
+      "chapters": "1"
+    },
+    {
+      "label": "Endure like a soldier, athlete and farmer; teach with patience",
+      "chapters": "2"
+    },
+    {
+      "label": "Hard times are coming; hold on to what you learned",
+      "chapters": "3"
+    },
+    {
+      "label": "Final charge and Paul's farewell",
+      "chapters": "4:1-8"
+    },
+    {
+      "label": "Personal news, requests and greetings",
+      "chapters": "4:9-22"
+    }
+  ],
+  "readingTip": "Read it in one sitting as a personal letter rather than a rulebook, and notice the human details at the end, such as the request for a cloak and some scrolls left behind. When the letter says all scripture is breathed out by God (3:16), it means the Jewish scriptures, what Christians now call the Old Testament, since the New Testament had not yet been gathered. Some lines reflect attitudes of the time and can jar modern readers, such as a dismissive description of certain women in 3:6, and readers are free to notice that honestly.",
+  "book": "2 Timothy"
+}

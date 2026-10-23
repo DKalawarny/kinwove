@@ -1,0 +1,33 @@
+{
+  "oneLine": "Zephaniah is a short book of poetry from a prophet, someone who spoke messages he believed came from God, warning Judah of a coming day of judgment and ending with a song of joy and renewal.",
+  "writtenBy": "The book names its prophet as Zephaniah and traces his family back four generations to someone called Hezekiah. Some readers think this was King Hezekiah of Judah, which would make Zephaniah part of the royal family, but the text does not say so and scholars are unsure. Tradition holds that the messages are Zephaniah's own. Many scholars agree that much of the book goes back to him, but think others later collected and edited his words, and possibly added parts of the hopeful ending after the exile.",
+  "when": "The book places Zephaniah in the time of Josiah, king of Judah, who reigned from about 640 to 609 BC. Judah was a small kingdom centred on Jerusalem. The great Assyrian empire, which had dominated the region, was starting to weaken, and its capital Nineveh fell in 612 BC. The book attacks the worship of other gods, including worshipping the stars from rooftops. Because of this, many scholars think Zephaniah spoke before or early in King Josiah's religious reforms, which began around 622 BC, though this is a reasonable guess rather than certain.",
+  "writtenTo": "The people of Judah and Jerusalem, especially their leaders, officials, priests and prophets, and the comfortable people who had decided that God would do nothing, good or bad.",
+  "why": "Zephaniah warns that 'the day of the LORD' is near. This was a phrase for a time when God would step in to judge wrongdoing. He spoke against worshipping other gods, against corrupt leaders, and against people who had grown complacent. The book does not stop at doom. It calls the humble to seek God and ends with a picture of a purified people and a God who rejoices over them with singing. Its description of a 'day of wrath' in chapter 1 later inspired a famous medieval Latin hymn, the Dies irae.",
+  "themes": [
+    "The coming day of the LORD",
+    "Judgment on idolatry, injustice and complacency",
+    "A humble remnant who seek God",
+    "Joy and restoration after judgment"
+  ],
+  "outline": [
+    {
+      "label": "The day of the LORD is coming",
+      "chapters": "1:1-2:3"
+    },
+    {
+      "label": "Messages against neighbouring nations",
+      "chapters": "2:4-15"
+    },
+    {
+      "label": "Jerusalem's leaders have failed",
+      "chapters": "3:1-8"
+    },
+    {
+      "label": "A purified people and a song of joy",
+      "chapters": "3:9-20"
+    }
+  ],
+  "readingTip": "The first chapter is harsh. It speaks of sweeping away people and animals and pictures bloodshed in vivid detail. It is poetry using huge images, and scholars differ on how literally it was meant, but it is not meant to be comfortable. Read all three chapters together. The sudden turn from destruction to celebration in chapter 3 is the shape of the whole book.",
+  "book": "Zephaniah"
+}

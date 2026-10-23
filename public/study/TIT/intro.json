@@ -1,0 +1,37 @@
+{
+  "oneLine": "Titus is a short letter of advice to a church leader named Titus about choosing good leaders and living well among new believers on the island of Crete.",
+  "writtenBy": "The letter says it is from Paul, the early follower of Jesus who wrote many New Testament letters, and that is the traditional view. Many modern scholars think it was written after Paul's death by someone writing in his name, because its style, vocabulary and concerns differ from Paul's other letters. Others still hold that Paul wrote it. Scholars treat Titus together with 1 and 2 Timothy, and the same debate applies to all three.",
+  "when": "If Paul wrote it, probably in the early to mid 60s AD, near the end of his life. If a later follower wrote it, perhaps toward the end of the first century or a little after. The setting is Crete, a large island in the Mediterranean Sea, where small groups of believers had recently formed. The letter suggests Paul had worked there with Titus, though no such visit appears in the book of Acts.",
+  "writtenTo": "Titus, a Greek coworker of Paul who was left in Crete to organize the young churches. It was probably also meant to be heard by those churches, since it gives instructions for whole groups of people.",
+  "why": "The letter helps Titus appoint elders, the trusted leaders who would look after each local group, and deal with teachers who were causing division. Its main point is that God's kindness changes how people live, not only what they believe. Two short passages about grace, God's undeserved goodness (2:11 to 14 and 3:4 to 7), sum up much of the New Testament's message in a few lines.",
+  "themes": [
+    "Choosing trustworthy leaders",
+    "Good teaching shown by good living",
+    "God's kindness as the reason for change",
+    "Living peacefully in a wider society"
+  ],
+  "outline": [
+    {
+      "label": "Greeting",
+      "chapters": "1:1-4"
+    },
+    {
+      "label": "Appointing leaders and facing false teachers",
+      "chapters": "1:5-16"
+    },
+    {
+      "label": "How different groups should live, and why",
+      "chapters": "2:1-15"
+    },
+    {
+      "label": "Kindness in public life and the mercy of God",
+      "chapters": "3:1-11"
+    },
+    {
+      "label": "Travel plans and farewell",
+      "chapters": "3:12-15"
+    }
+  ],
+  "readingTip": "Some lines are hard for modern readers. These include a harsh saying about Cretans quoted from one of their own poets (1:12), instructions for wives to submit to husbands, and instructions for slaves to obey masters, which reflect the household rules of the Roman world and are honestly debated today. When the letter criticizes people \"of the circumcision group\" (1:10), it refers to a dispute among early believers over whether non-Jewish followers had to keep Jewish law. It is not a judgment on Jewish people.",
+  "book": "Titus"
+}

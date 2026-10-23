@@ -1,0 +1,37 @@
+{
+  "oneLine": "Numbers is the story of Israel's long journey through the desert, from Mount Sinai to the edge of the land they had been promised, told through stories, lists and laws.",
+  "writtenBy": "Jewish and Christian tradition says Moses wrote it, as one of the first five books of the Bible. Most modern scholars think it was put together over several centuries from older sources and traditions, and reached its final form long after Moses' time. No author is named in the book itself.",
+  "when": "The story covers about forty years in the wilderness after the Israelites left Egypt, ending on the plains of Moab across the Jordan River from the land of Canaan. When the events happened is debated. Many scholars think the book was finished around the 500s or 400s BC, possibly during or after the time many Israelites were exiled to Babylon.",
+  "writtenTo": "The people of Israel, as part of the story of who they were, where they came from, and how they came to the land.",
+  "why": "Numbers explains why a journey that should have been short took a whole generation. When the people refused to enter the land out of fear, they were left to wander until a new generation grew up. In the Bible's bigger story, it shows God staying with a complaining, unfaithful people and still bringing them to the edge of the promise.",
+  "themes": [
+    "God's presence travelling with the people",
+    "Complaint, rebellion and their cost",
+    "One generation failing, the next given a chance",
+    "Getting ready to live in the promised land"
+  ],
+  "outline": [
+    {
+      "label": "Counting and organising the camp at Mount Sinai",
+      "chapters": "1-10"
+    },
+    {
+      "label": "Complaints on the road and the refusal to enter the land",
+      "chapters": "11-14"
+    },
+    {
+      "label": "Laws, challenges to leadership and years of wandering",
+      "chapters": "15-21"
+    },
+    {
+      "label": "Balaam and the trouble in Moab",
+      "chapters": "22-25"
+    },
+    {
+      "label": "A new generation prepares to enter the land",
+      "chapters": "26-36"
+    }
+  ],
+  "readingTip": "The English name comes from the two counts of the people in chapters 1 and 26, and you can skim long lists of names and numbers without losing the story. Some passages are harsh, with plagues, punishments and a brutal war against Midian in chapter 31. The book does not explain everything, so it is fine to notice what troubles you, and to look for gentler moments too, like the blessing in chapter 6 or the daughters who ask for a fair inheritance in chapter 27.",
+  "book": "Numbers"
+}

@@ -1,0 +1,41 @@
+{
+  "oneLine": "Matthew is one of four accounts of the life of Jesus in the Bible, telling his story from birth to death and resurrection with a strong focus on his teaching.",
+  "writtenBy": "The book itself never names its author. Early Christian tradition says it was Matthew, a tax collector who became one of Jesus' twelve closest followers. Many modern scholars doubt this and think it was written by an unknown Jewish follower of Jesus who drew on the Gospel of Mark and on collections of Jesus' sayings.",
+  "when": "Most scholars date it to around AD 80 to 90, some years after the Romans destroyed the temple in Jerusalem in AD 70, though some argue for an earlier date. Where it was written is uncertain. A common suggestion is a city with a large Jewish population, such as Antioch in Syria.",
+  "writtenTo": "It seems to have been written mainly for Jewish followers of Jesus who knew the Jewish scriptures well and were working out how to live after the temple was gone. Its closing words also look outward to people of every nation.",
+  "why": "Matthew wants readers to see Jesus as the one the Jewish scriptures had been pointing toward, and often says that an event happened to fulfill something written long before. It sits first in the New Testament and works like a bridge, opening with Jesus' family line going back to Abraham and King David and ending with Jesus sending his followers to all nations. It also gives us some of the most famous teaching of Jesus, including the Sermon on the Mount and the Lord's Prayer.",
+  "themes": [
+    "Jesus as the promised king, often called the Messiah, meaning God's chosen one",
+    "The kingdom of heaven, God's rule breaking into ordinary life",
+    "Living out God's teaching from the heart, not just on the surface",
+    "God with us, for Israel and for all nations"
+  ],
+  "outline": [
+    {
+      "label": "Jesus' family, birth and first steps",
+      "chapters": "1-4"
+    },
+    {
+      "label": "The Sermon on the Mount",
+      "chapters": "5-7"
+    },
+    {
+      "label": "Healings, a mission and stories about God's kingdom",
+      "chapters": "8-13"
+    },
+    {
+      "label": "Who is Jesus? The road toward Jerusalem",
+      "chapters": "14-20"
+    },
+    {
+      "label": "Final days of teaching in Jerusalem",
+      "chapters": "21-25"
+    },
+    {
+      "label": "Arrest, death and resurrection",
+      "chapters": "26-28"
+    }
+  ],
+  "readingTip": "Matthew mixes stories with five long blocks of teaching, so it helps to slow down in those sections and take them a piece at a time. Jesus' sharp words against some religious leaders reflect an argument inside the Jewish community, since Jesus and his first followers were Jewish themselves, and they should not be read as a judgment on Jewish people as a whole.",
+  "book": "Matthew"
+}

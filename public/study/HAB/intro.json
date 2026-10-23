@@ -1,0 +1,41 @@
+{
+  "oneLine": "Habakkuk is a short, honest conversation in which a prophet argues with God about injustice and suffering, then ends in a song of trust.",
+  "writtenBy": "Tradition credits the prophet Habakkuk, whose name heads the book. We know almost nothing else about him: no hometown, no family, no other story. Many scholars think the book mostly comes from him, though some suggest the closing prayer in chapter 3 was once a separate song that was later joined to chapters 1 and 2.",
+  "when": "Probably around 605 to 597 BC, in the kingdom of Judah, as the Babylonian Empire was rising to power. This was a few years before the Babylonians destroyed Jerusalem in 587 or 586 BC. The exact date is uncertain, but the book speaks of the Babylonians as a fierce new power on the move.",
+  "writtenTo": "The people of Judah. Most of the book is Habakkuk speaking to God rather than to the people, so readers are overhearing a private struggle. The musical notes in chapter 3 suggest that part was used in worship.",
+  "why": "Most prophets bring God's message to the people, but Habakkuk brings the people's hard questions to God: why does wrongdoing go unpunished, and why would God use a cruel empire to judge his own people? The book does not give a neat answer. Instead it calls for patient trust that God will set things right in time. One line in it, usually translated \"the righteous will live by faith\" or \"by faithfulness,\" is quoted three times in the New Testament and became central to later Christian thinking.",
+  "themes": [
+    "Bringing honest complaints to God",
+    "Waiting when justice seems slow",
+    "Living by trust and faithfulness",
+    "Violence and greed eventually fall"
+  ],
+  "outline": [
+    {
+      "label": "Habakkuk asks why God allows wrong",
+      "chapters": "1:1-4"
+    },
+    {
+      "label": "God's answer: the Babylonians are coming",
+      "chapters": "1:5-11"
+    },
+    {
+      "label": "Habakkuk's second, sharper question",
+      "chapters": "1:12-2:1"
+    },
+    {
+      "label": "Wait for the vision; the faithful will live",
+      "chapters": "2:2-5"
+    },
+    {
+      "label": "Five warnings against the greedy and violent",
+      "chapters": "2:6-20"
+    },
+    {
+      "label": "Habakkuk's prayer song",
+      "chapters": "3"
+    }
+  ],
+  "readingTip": "Read it as a back and forth dialogue, noticing who is speaking in each section. Chapter 3 uses old, vivid war poetry in which God shakes the earth and crushes nations, which can be unsettling. Its final verses, about choosing joy even when crops fail and the animals are gone, are often read as the place where Habakkuk's struggle comes to rest.",
+  "book": "Habakkuk"
+}

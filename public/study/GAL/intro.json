@@ -1,0 +1,37 @@
+{
+  "oneLine": "Galatians is a passionate, sometimes angry letter from the apostle Paul to a group of young churches, arguing that people who trust Jesus are fully accepted by God without first having to keep the Jewish law.",
+  "writtenBy": "The apostle Paul, an early Jewish follower of Jesus who travelled starting churches. Almost all scholars agree Paul wrote it, and near the end he says he is writing the closing lines in his own hand.",
+  "when": "Around AD 48 to 55, about twenty years after Jesus' death. Scholars disagree on the exact date. Some think it is one of Paul's very first letters, written soon after his early travels. Others place it several years later, closer in time to his letter to the Romans.",
+  "writtenTo": "Several churches in Galatia, a Roman region in what is now central Turkey. Most of these believers were not Jewish. Scholars debate whether these were the southern cities Paul visits in Acts 13 and 14 or communities further north.",
+  "why": "After Paul left, other teachers arrived and told these non-Jewish believers that to belong fully to God's people they needed to be circumcised (a ritual removal of the foreskin required of Jewish men) and keep the law of Moses. Paul writes to insist that God accepts people through trust in Jesus, and that Jews and non-Jews belong together as equals. The letter helped the early church settle that it would welcome people from every nation as they were, and centuries later it was central to the Protestant Reformation's debates about how people are made right with God.",
+  "themes": [
+    "Accepted by God through trust, not by keeping rules",
+    "Freedom, and how to use it well",
+    "Jews and non-Jews as one family",
+    "Living by God's Spirit"
+  ],
+  "outline": [
+    {
+      "label": "Opening and an urgent warning",
+      "chapters": "1:1-10"
+    },
+    {
+      "label": "Paul tells his own story",
+      "chapters": "1:11-2:21"
+    },
+    {
+      "label": "Arguments from Abraham and the Scriptures",
+      "chapters": "3-4"
+    },
+    {
+      "label": "Freedom lived out by the Spirit",
+      "chapters": "5:1-6:10"
+    },
+    {
+      "label": "Closing words in Paul's own hand",
+      "chapters": "6:11-18"
+    }
+  ],
+  "readingTip": "We only hear Paul's side of the argument, so his opponents come across through his frustration, which at one point boils over into a crude jibe (5:12). He is a Jew arguing with other Jewish followers of Jesus, not attacking Jewish people, and when he says \"law\" he usually means the law of Moses, while \"flesh\" means human nature pulling away from God rather than the body itself.",
+  "book": "Galatians"
+}

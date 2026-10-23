@@ -1,0 +1,45 @@
+{
+  "oneLine": "Isaiah is a long book of poetry and messages from a prophet (someone who spoke words he believed came from God) to the people of Jerusalem, moving between warnings of disaster and some of the Bible's most famous promises of comfort and hope.",
+  "writtenBy": "The book is named after Isaiah son of Amoz, a prophet in Jerusalem, and tradition holds that he wrote all of it. Many modern scholars think the book grew over a long time. In their view, chapters 1 to 39 come largely from Isaiah and his followers, chapters 40 to 55 come from a later prophet speaking to exiles in Babylon, and chapters 56 to 66 come from after the exiles returned home. Others still defend a single author. The question remains debated.",
+  "when": "Isaiah himself was active roughly from 740 to 700 BC, under four kings of Judah (Uzziah, Jotham, Ahaz and Hezekiah). In those years the Assyrian empire was crushing its neighbours and threatening Jerusalem. The later chapters speak to a time when many people from Judah had been taken to Babylon (after 586 BC) and to the years when the Persian king Cyrus, named in the book, let them go home (from about 539 BC). Whether those chapters were written during that time or foretold it is part of the authorship debate.",
+  "writtenTo": "First to the people of Judah and its capital Jerusalem, and especially to its kings and leaders. The later chapters speak to people living far from home in exile, and then to the small, struggling community trying to rebuild Jerusalem.",
+  "why": "Isaiah warns that a people who claim to worship God but ignore justice for the poor and trust in armies and alliances will face disaster. It also insists that disaster is not the end, and it promises comfort, return from exile and a renewed world where all nations come to God. Its poems about a coming king and a suffering servant became deeply important later. Jewish readers have often understood the servant as Israel, while the New Testament writers and Christians read these passages as pointing to Jesus.",
+  "themes": [
+    "The holiness of God, often called the Holy One of Israel",
+    "Justice for the poor and powerless",
+    "Judgment followed by comfort and hope",
+    "A coming king and a servant who suffers for others"
+  ],
+  "outline": [
+    {
+      "label": "Warnings and hope for Jerusalem",
+      "chapters": "1-12"
+    },
+    {
+      "label": "Messages about the surrounding nations",
+      "chapters": "13-23"
+    },
+    {
+      "label": "The whole world judged and renewed",
+      "chapters": "24-27"
+    },
+    {
+      "label": "Warnings about trusting Egypt, and promises of rescue",
+      "chapters": "28-35"
+    },
+    {
+      "label": "Stories of King Hezekiah and the Assyrian siege",
+      "chapters": "36-39"
+    },
+    {
+      "label": "Comfort for people in exile",
+      "chapters": "40-55"
+    },
+    {
+      "label": "Rebuilding, and a new heaven and earth",
+      "chapters": "56-66"
+    }
+  ],
+  "readingTip": "Most of Isaiah is poetry, not a story told in order, and it can jump suddenly from fierce judgment to tender comfort, so read a short section at a time and notice who is being spoken to. Some passages, especially the messages against other nations, use violent imagery of war and destruction that is hard to read, and it is fine to sit with that rather than rush past it. Starting with chapter 40 can be a good way in.",
+  "book": "Isaiah"
+}

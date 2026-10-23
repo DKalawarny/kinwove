@@ -1,0 +1,41 @@
+{
+  "oneLine": "Colossians is a short letter to a small group of Jesus followers in an ancient town, written to remind them that Jesus is enough and that they do not need extra rules or spiritual experiences to be close to God.",
+  "writtenBy": "The letter says it is from Paul, an early leader who traveled starting churches, with his companion Timothy also named at the start. Christians traditionally accepted Paul as the author. Many modern scholars think it was written after his death by a follower writing in his name, because the style and some ideas differ from letters everyone agrees are his. Others still hold that Paul wrote it, perhaps with help. Scholars remain divided.",
+  "when": "If Paul wrote it, probably around AD 60 to 62, while he was in prison, most often thought to be in Rome, though some suggest Ephesus or elsewhere. If a follower wrote it, it may be somewhat later, perhaps a decade or two after that. Colossae was a small town in what is now western Turkey, near the larger cities of Laodicea and Hierapolis.",
+  "writtenTo": "A young church in Colossae made up mostly of people who were not Jewish. Paul had never visited them. The group seems to have been started by a local man named Epaphras, who had learned about Jesus through Paul's circle.",
+  "why": "Some teachers in Colossae were urging believers to follow rules about food and holy days, to seek visions, and to show special regard for angels, though scholars disagree about exactly what this teaching was. The letter answers by describing Jesus in very high terms, as the one through whom everything was made and in whom God is fully present, so nothing more is needed. It also sketches what a changed everyday life looks like, and it is one of the clearest places in the New Testament where early Christians spell out who they believed Jesus to be.",
+  "themes": [
+    "Jesus as above all things",
+    "Freedom from extra religious rules",
+    "A new way of living together",
+    "Thankfulness and prayer"
+  ],
+  "outline": [
+    {
+      "label": "Greeting, thanks and a prayer",
+      "chapters": "1:1-14"
+    },
+    {
+      "label": "A poem about who Jesus is",
+      "chapters": "1:15-23"
+    },
+    {
+      "label": "Paul's work and a warning about other teachings",
+      "chapters": "1:24-2:23"
+    },
+    {
+      "label": "What the new life looks like",
+      "chapters": "3:1-17"
+    },
+    {
+      "label": "Instructions for households",
+      "chapters": "3:18-4:1"
+    },
+    {
+      "label": "Final requests and greetings",
+      "chapters": "4:2-18"
+    }
+  ],
+  "readingTip": "Read 1:15 to 20 slowly. Many scholars think it was an early song or poem used in worship. The household instructions in 3:18 to 4:1 tell wives to submit to husbands and enslaved people to obey their masters, which troubles many readers today. It helps to know these follow a common pattern of Roman household rules, though the letter also tells husbands to love their wives and masters to treat slaves fairly, and readers and scholars still debate how to understand these passages now. The short letter of Philemon involves some of the same people, especially Onesimus, so reading it alongside Colossians adds helpful background.",
+  "book": "Colossians"
+}

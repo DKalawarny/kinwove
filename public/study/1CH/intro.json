@@ -1,0 +1,45 @@
+{
+  "oneLine": "1 Chronicles is a retelling of Israel's history that begins with long family lists stretching back to Adam and then focuses on King David, especially his work to bring God's worship to the center of the nation's life in Jerusalem.",
+  "writtenBy": "The book does not name its author. Old Jewish tradition says Ezra, a priest and teacher of the law, wrote it. Most modern scholars think it was written by an unknown writer they call \"the Chronicler,\" probably someone closely connected to the temple in Jerusalem, perhaps a Levite (a member of the tribe that served at the temple). Scholars disagree about whether this same writer also produced the books of Ezra and Nehemiah, and many today think not.",
+  "when": "It was most likely written after some of the Jewish people had returned home from exile in Babylon, while Judah was a small province ruled by the Persian Empire. Many scholars place it around 400 to 300 BC, though exact dates are debated. By then the temple had been rebuilt, but there was no king from David's family on the throne. 1 and 2 Chronicles were originally one book and were later divided in two.",
+  "writtenTo": "It was first for the Jewish community living in and around Jerusalem after the exile. They were a small, struggling people trying to understand who they were, how they connected to their past, and whether God's old promises still applied to them.",
+  "why": "The writer retells events already found in the books of Samuel and Kings, but chooses and shapes the material to speak to a new generation. He leaves out some of David's worst moments, such as his affair with Bathsheba, and spends a great deal of time on the temple, its priests, and its music, which suggests he wanted his readers to see worship as the heart of their identity. In the Bible's bigger story, the book keeps alive God's promise that David's family would have a lasting kingdom, a promise later readers, including the writers of the New Testament, connected to hopes for a future king.",
+  "themes": [
+    "Belonging to a people with a long history",
+    "Worship and the temple at the center of life",
+    "God's promise to David and his family",
+    "All Israel united around God"
+  ],
+  "outline": [
+    {
+      "label": "Family lists from Adam to the returned exiles",
+      "chapters": "1-9"
+    },
+    {
+      "label": "The death of King Saul",
+      "chapters": "10"
+    },
+    {
+      "label": "David becomes king and his warriors gather",
+      "chapters": "11-12"
+    },
+    {
+      "label": "The ark comes to Jerusalem",
+      "chapters": "13-16"
+    },
+    {
+      "label": "God's promise to David",
+      "chapters": "17"
+    },
+    {
+      "label": "David's wars and the census that brings a plague",
+      "chapters": "18-21"
+    },
+    {
+      "label": "David prepares for the temple and hands the kingdom to Solomon",
+      "chapters": "22-29"
+    }
+  ],
+  "readingTip": "Many first-time readers stall in the long name lists of chapters 1 to 9. It is fine to skim them, noticing that they tie a small, scattered people back to their roots, and to start the story at chapter 10. The book also includes war and a deadly plague sent as judgment after David's census (chapter 21), and it says plainly that God did not let David build the temple because he had shed so much blood. Some details differ from Samuel and Kings, including some very large numbers that scholars debate, so reading the two accounts side by side shows how this writer shaped the story for his own time.",
+  "book": "1 Chronicles"
+}

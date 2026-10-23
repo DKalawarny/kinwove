@@ -1,0 +1,37 @@
+{
+  "oneLine": "Lamentations is a short collection of five sad poems, written to mourn the destruction of the city of Jerusalem and to cry out to God in the middle of that grief.",
+  "writtenBy": "The book itself never names its author. An old Jewish and Christian tradition credits the prophet Jeremiah, who lived through these events and was known for lamenting. Many modern scholars think the poems came from one or more unknown poets, possibly eyewitnesses, and note that the style differs in places from the book of Jeremiah.",
+  "when": "Most likely soon after 587 or 586 BC, when the army of Babylon (a powerful empire in what is now Iraq) besieged Jerusalem, starved its people, burned the temple (the central place of worship for the people of Israel) and took many survivors away as captives. Exact dates for each poem are not known.",
+  "writtenTo": "The survivors of Jerusalem's fall, both those left among the ruins and those taken away to Babylon. The poems seem shaped for the community to speak or sing together as they mourned.",
+  "why": "These poems give words to people whose world had collapsed. They describe the suffering without holding back, admit the nation's own wrongs, and still dare to speak directly to God, even to complain and plead. Within the Bible's bigger story, Lamentations shows that grief, anger and doubt can be brought to God openly. Jewish communities still read it every year on a day of mourning for the destroyed temple.",
+  "themes": [
+    "Grief that is spoken honestly",
+    "Suffering and its causes",
+    "God's anger and God's mercy",
+    "Hope that has not yet arrived"
+  ],
+  "outline": [
+    {
+      "label": "Jerusalem alone and weeping",
+      "chapters": "1"
+    },
+    {
+      "label": "The city's ruin and God's anger",
+      "chapters": "2"
+    },
+    {
+      "label": "One man's suffering and a turn toward hope",
+      "chapters": "3"
+    },
+    {
+      "label": "Then and now: the horror of the siege",
+      "chapters": "4"
+    },
+    {
+      "label": "A people's prayer to be restored",
+      "chapters": "5"
+    }
+  ],
+  "readingTip": "Read it slowly, as poetry for mourning rather than a story with a neat ending. Some lines are deeply disturbing, including starving mothers eating their own children (2:20 and 4:10) and God described as an enemy. The well known words of hope in chapter 3 sit in the very middle, and the book ends with an open, unanswered question. Chapters 1 to 4 are also built on the Hebrew alphabet, with each verse or group of verses starting with the next letter, a pattern lost in translation but one that gives the grief a careful shape.",
+  "book": "Lamentations"
+}

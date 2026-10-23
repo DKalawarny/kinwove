@@ -1,0 +1,41 @@
+{
+  "oneLine": "Ephesians is a short letter about what God has done through Jesus, how that brings very different people together into one community, and how that community is meant to live.",
+  "writtenBy": "The letter names Paul, an early follower of Jesus who traveled starting communities of believers, as its writer, and that has been the traditional view. Many modern scholars think a later follower of Paul wrote it in his name, pointing to its style, vocabulary and close overlap with Colossians, which some scholars argue was an accepted practice at the time while others see it as deceptive. Other scholars still hold that Paul wrote it himself. The question is genuinely unsettled.",
+  "when": "If Paul wrote it, probably around AD 60 to 62, while he was a prisoner, traditionally thought to be in Rome. If a follower wrote it, perhaps some decades later, around AD 80 to 100. The writer describes himself as being in chains.",
+  "writtenTo": "Traditionally the believers in Ephesus, a large and busy city in the Roman province of Asia, in what is now western Turkey. Some of the earliest surviving copies leave out the words \"in Ephesus,\" so many scholars think it may have been a general letter passed around several churches in the region. The readers seem to have been mostly non-Jewish people who had come to follow Jesus.",
+  "why": "The letter sets out a big picture: God's plan is to bring everything together through Jesus, and people are rescued as a free gift of grace, not by earning it. It focuses especially on Jews and non-Jews, groups long divided, now being made into one people. That idea of a single, mixed community was central to how the early church understood itself.",
+  "themes": [
+    "Rescue as a free gift (grace)",
+    "Jews and non-Jews made one people",
+    "The church as one body",
+    "A changed way of everyday life"
+  ],
+  "outline": [
+    {
+      "label": "Praise for God's gifts and a prayer",
+      "chapters": "1"
+    },
+    {
+      "label": "Rescued by grace and made one people",
+      "chapters": "2"
+    },
+    {
+      "label": "Paul's calling and a second prayer",
+      "chapters": "3"
+    },
+    {
+      "label": "Living as one body in a new way",
+      "chapters": "4:1-5:20"
+    },
+    {
+      "label": "Instructions for households",
+      "chapters": "5:21-6:9"
+    },
+    {
+      "label": "Standing firm, and a farewell",
+      "chapters": "6:10-24"
+    }
+  ],
+  "readingTip": "The first three chapters are mostly praise and prayer in very long sentences (1:3 to 14 is a single sentence in the original Greek), so it helps to read slowly and not worry about catching every phrase. The household section tells wives to submit to husbands and slaves to obey masters. It follows the common household rules of the Roman world. Readers today disagree sharply about how, or whether, to apply it, and many note that it opens with a call for everyone to submit to one another (5:21).",
+  "book": "Ephesians"
+}

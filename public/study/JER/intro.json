@@ -1,0 +1,45 @@
+{
+  "oneLine": "Jeremiah is a collection of poems, sermons and life stories from a prophet, someone who spoke messages on God's behalf, who warned his nation of coming disaster, lived through it, and still spoke of hope beyond it.",
+  "writtenBy": "The book is linked to Jeremiah, a man from a priestly family in the village of Anathoth near Jerusalem. The book itself says he dictated messages to a scribe named Baruch, who wrote them on a scroll (chapter 36). Most scholars think the book grew over time, with Jeremiah's words gathered, arranged and added to by later editors, possibly during and after the exile. An old Greek translation of Jeremiah is noticeably shorter and orders some sections differently, which suggests the book existed in more than one form early on.",
+  "when": "Jeremiah's work began around 627 BC and continued for about forty years, through the reigns of the last kings of Judah, the southern Israelite kingdom. It covers the years when the empire of Babylon, under King Nebuchadnezzar, grew powerful, besieged Jerusalem, and finally destroyed the city and its temple around 587 or 586 BC. The book was likely completed during or after the exile that followed.",
+  "writtenTo": "First, the people and leaders of Judah and Jerusalem in the years before the city fell. Later, as the book was collected, it spoke to survivors and to those taken to Babylon, who were trying to understand what had happened to them. One chapter is an actual letter Jeremiah sent to the exiles (chapter 29).",
+  "why": "The book explains the fall of Jerusalem, from the prophet's point of view, as the result of the people turning away from the LORD and allowing injustice, false worship and empty trust in the temple. It also refuses to end in despair: it promises that God will bring the people back and make a new covenant, a binding agreement, written on their hearts rather than on stone. That promise in chapter 31 is quoted in the New Testament, where Christians read it as pointing to Jesus.",
+  "themes": [
+    "Faithfulness to God and the breaking of it",
+    "Justice for the poor and vulnerable",
+    "Grief and honest complaint to God",
+    "Hope after disaster and a new covenant"
+  ],
+  "outline": [
+    {
+      "label": "Jeremiah is called to speak",
+      "chapters": "1"
+    },
+    {
+      "label": "Warnings to Judah and Jeremiah's struggles",
+      "chapters": "2-25"
+    },
+    {
+      "label": "Clashes with leaders and other prophets",
+      "chapters": "26-29"
+    },
+    {
+      "label": "Promises of return and a new covenant",
+      "chapters": "30-33"
+    },
+    {
+      "label": "Jerusalem falls and what came after",
+      "chapters": "34-45"
+    },
+    {
+      "label": "Messages about other nations",
+      "chapters": "46-51"
+    },
+    {
+      "label": "The fall of Jerusalem retold",
+      "chapters": "52"
+    }
+  ],
+  "readingTip": "Jeremiah is not arranged in time order, so it jumps between kings and years and switches between poetry and prose; it helps to read chapter 1, then chapters 26 to 29 and 36 to 45 for the story, and come back to the poems. Expect harsh language, including violent war imagery and the comparison of the nation to an unfaithful wife, alongside Jeremiah's raw prayers in which he curses the day he was born and asks God to punish his enemies.",
+  "book": "Jeremiah"
+}

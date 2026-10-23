@@ -1,0 +1,33 @@
+{
+  "oneLine": "Ezra is a history book about Jewish exiles returning home from Babylon, rebuilding their temple in Jerusalem, and trying to live again by God's teaching.",
+  "writtenBy": "The book does not name its author. Jewish tradition says Ezra wrote it, and parts of chapters 7 to 9 are written in his own voice, as if from his personal memoir. Many modern scholars think a later editor put the book together from several sources, including that memoir, official letters and lists of names. Ezra and Nehemiah were originally treated as one book in the Hebrew Bible.",
+  "when": "The events cover roughly 538 to 458 BC, after the Persian Empire conquered Babylon and allowed exiled peoples to go home. Jerusalem and its temple had been destroyed by Babylon decades earlier, in 587 or 586 BC. Scholars debate exactly when the book was finished; many suggest sometime around 400 BC or later. Some also debate whether Ezra arrived in 458 BC or later, because the Persian king named, Artaxerxes, could be one of two kings with that name.",
+  "writtenTo": "The small Jewish community living in and around Jerusalem under Persian rule, who were rebuilding their lives, their worship and their sense of who they were after the exile.",
+  "why": "Ezra shows a scattered, defeated people being given a second chance to go home and start again. It describes how they rebuilt the temple, the central place of worship, and how they tried to shape their community around the law of Moses, meaning the teaching found in the first five books of the Bible. In the Bible's bigger story, it shows God keeping promises of return made through earlier prophets, often working through foreign rulers rather than miracles.",
+  "themes": [
+    "Coming home after exile",
+    "Rebuilding the temple and worship",
+    "God at work through foreign kings",
+    "Building a community around God's teaching"
+  ],
+  "outline": [
+    {
+      "label": "The king's decree and the journey home",
+      "chapters": "1-2"
+    },
+    {
+      "label": "Rebuilding the temple in the face of opposition",
+      "chapters": "3-6"
+    },
+    {
+      "label": "Ezra arrives with God's teaching",
+      "chapters": "7-8"
+    },
+    {
+      "label": "A painful crisis over marriages",
+      "chapters": "9-10"
+    }
+  ],
+  "readingTip": "Chapter 4 jumps forward in time to describe later opposition before returning to the main story, so do not worry if the dates seem out of order, and feel free to skim the long lists of names. The book ends with men sending away their foreign wives and children, which many readers find troubling; the text presents it as faithfulness to God, but readers and scholars have long wrestled with it, and some see books like Ruth as offering a different perspective.",
+  "book": "Ezra"
+}
