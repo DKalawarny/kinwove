@@ -99,6 +99,10 @@ export function ChapterStudyNote({ bookId, chapter, bookName, verses, C, onAsk, 
           </button>
         )}
       </div>
+
+      <div style={{ marginTop: 14, fontSize: 12, lineHeight: 1.5, color: C.muted }}>
+        Written with care from classic study sources. Not yet reviewed by a pastor.
+      </div>
     </section>
   );
 }
