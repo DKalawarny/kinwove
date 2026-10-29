@@ -6372,9 +6372,19 @@ app.get('/answers', (_req, res) => {
 // After a deploy, tell Bing (and the other IndexNow engines) which pages exist.
 // Reads the LIVE sitemap so only pages that are actually deployed get announced.
 // Never throws: a failed ping must not affect the server.
-async function pingIndexNow() {
+// ⚠️ A ping Bing did not take (no answer, 429 or 5xx) tries again 5 and then
+// 15 minutes later (Daniel, 29 Oct 2026). Any other 4xx is a real problem with
+// the key or the urls, and repeating it would only repeat the answer.
+const INDEXNOW_RETRY_MIN = [5, 15];
+async function pingIndexNow(attempt = 0) {
+  const again = (why) => {
+    const wait = INDEXNOW_RETRY_MIN[attempt];
+    if (wait === undefined) return console.warn(`[indexnow] ${why}, giving up until the next deploy`);
+    console.warn(`[indexnow] ${why}, trying again in ${wait} min`);
+    setTimeout(() => pingIndexNow(attempt + 1), wait * 60 * 1000);
+  };
   try {
-    const xml = await (await fetch('https://www.kinwove.com/sitemap.xml')).text();
+    const xml = await (await fetch('https://www.kinwove.com/sitemap.xml', { signal: AbortSignal.timeout(30000) })).text();
     const urlList = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim()).slice(0, 10000);
     if (!urlList.length) return console.warn('[indexnow] sitemap had no urls');
     const r = await fetch('https://api.indexnow.org/indexnow', {
@@ -6388,8 +6398,9 @@ async function pingIndexNow() {
       }),
     });
     console.log(`[indexnow] ${urlList.length} urls → ${r.status}`);
+    if (r.status === 429 || r.status >= 500) again(`Bing answered ${r.status}`);
   } catch (e) {
-    console.warn('[indexnow] ping failed:', e?.message);
+    again(`ping failed (${e?.message})`);
   }
 }
 
