@@ -1,35 +1,35 @@
 {
-  "title": "A Prayer That Ends in Darkness",
-  "overview": "A person who has suffered for years cries out to God, feeling near death, abandoned by friends and crushed by God's anger, and unlike almost every other psalm of complaint, it ends with no word of comfort.",
-  "parts": [
-    {
-      "label": "A cry to be heard (vv. 1-2)",
-      "note": "The speaker calls on the LORD as the God of their rescue and says they have cried out day and night. Many readers notice that this opening address is the only hopeful note in the whole psalm."
-    },
-    {
-      "label": "Counted among the dead (vv. 3-5)",
-      "note": "In v. 3 the speaker says their life is close to Sheol, the shadowy place where ancient Israelites pictured all the dead going; some translations keep that Hebrew word and others simply say death. In vv. 4-5 they feel already counted among the dead, who are pictured as forgotten by God and beyond God's help."
-    },
-    {
-      "label": "Crushed and left alone (vv. 6-8)",
-      "note": "The speaker blames God directly: God has put them in the deepest pit, God's anger breaks over them like waves, and God has made their friends recoil from them, leaving them shut in with no way out. Some scholars guess at a serious illness that forced isolation, but the psalm never names the trouble."
-    },
-    {
-      "label": "Can the dead praise you? (vv. 9-12)",
-      "note": "With hands spread out, an old posture of prayer, the speaker asks questions that expect the answer no: do the dead see God's wonders or speak of God's love and faithfulness? \"Destruction\" (Hebrew Abaddon) in v. 11 and the land where all is forgotten in v. 12 are further names for the realm of the dead, so the plea seems to be: save me now, while I can still praise you."
-    },
-    {
-      "label": "Why do you turn away? (vv. 13-14)",
-      "note": "The speaker keeps praying every morning but asks why the LORD rejects them and hides his face, an old way of saying God seems turned away or absent. Christians have often read this psalm in light of Jesus' suffering and sense of abandonment before his death, as a Christian reading."
-    },
-    {
-      "label": "Ending in darkness (vv. 15-18)",
-      "note": "The speaker says they have suffered and been close to death since youth, and God's terrors now surround them like floodwater all day long. The psalm ends with no turn toward hope, and translations differ on the last line: one has darkness as the speaker's only companion, another has their acquaintances removed into darkness."
-    }
-  ],
-  "keyVerse": 14,
-  "disagreement": "Christians differ on whether the psalm holds a quiet thread of hope, since the speaker still calls on God as the God of their salvation and keeps praying, or whether it is meant to stand as an unanswered cry with no resolution at all.",
-  "think": "What, if anything, is gained by saying honestly how dark things are, even when no answer seems to come?",
-  "book": "Psalms",
-  "chapter": 88
+ "book": "PSA",
+ "chapter": 88,
+ "title": "A Prayer That Ends in Darkness",
+ "overview": "A person who has suffered for years cries out to God, feeling near death, abandoned by friends and crushed by God's anger, and unlike almost every other psalm of complaint, it ends with no word of comfort.",
+ "parts": [
+  {
+   "label": "A cry to be heard (vv. 1-2)",
+   "note": "The speaker calls on the LORD as the God of their rescue and says they have cried out day and night. Many readers notice that this opening address is the only hopeful note in the whole psalm."
+  },
+  {
+   "label": "Counted among the dead (vv. 3-5)",
+   "note": "In v. 3 the speaker says their life is close to Sheol, the shadowy place where ancient Israelites pictured all the dead going; some translations keep that Hebrew word and others simply say death. In vv. 4-5 they feel already counted among the dead, who in the speaker's despair seem forgotten by God and beyond God's help."
+  },
+  {
+   "label": "Crushed and left alone (vv. 6-8)",
+   "note": "The speaker blames God directly: God has put them in the deepest pit, God's anger breaks over them like waves, and God has made their friends recoil from them, leaving them shut in with no way out. Some scholars guess at a serious illness that forced isolation, but the psalm never names the trouble."
+  },
+  {
+   "label": "Can the dead praise you? (vv. 9-12)",
+   "note": "With hands spread out, an old posture of prayer, the speaker asks questions that expect the answer no: do the dead see God's wonders or speak of God's love and faithfulness? \"Destruction\" (Hebrew Abaddon) in v. 11 and the land where all is forgotten in v. 12 are further names for the realm of the dead, so the plea seems to be: save me now, while I can still praise you."
+  },
+  {
+   "label": "Why do you turn away? (vv. 13-14)",
+   "note": "The speaker keeps praying every morning but asks why the LORD rejects them and hides his face, an old way of saying God seems turned away or absent. Christians have often read this psalm in light of Jesus' suffering and sense of abandonment before his death, as a Christian reading."
+  },
+  {
+   "label": "Ending in darkness (vv. 15-18)",
+   "note": "The speaker says they have suffered and been close to death since youth, and God's terrors now surround them like floodwater all day long. The psalm ends with no turn toward hope, and translations differ on the last line: one has darkness as the speaker's only companion, another has their acquaintances removed into darkness."
+  }
+ ],
+ "keyVerse": 14,
+ "disagreement": "Christians differ on whether the psalm holds a quiet thread of hope, since the speaker still calls on God as the God of their salvation and keeps praying, or whether it is meant to stand as an unanswered cry with no resolution at all.",
+ "think": "What, if anything, is gained by saying honestly how dark things are, even when no answer seems to come?"
 }

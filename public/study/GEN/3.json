@@ -1,35 +1,35 @@
 {
-  "title": "Broken Trust in the Garden",
-  "overview": "After a serpent persuades the woman, she and her husband eat the one fruit God forbade, damaging their bond with God, with each other and with the earth, and they are sent out of the garden.",
-  "parts": [
-    {
-      "label": "The serpent's question (vv. 1-5)",
-      "note": "The serpent, called only the craftiest animal God made, first twists God's command, then flatly denies the warning of death and hints that God is holding back something good. The text never calls it the devil, but later Jewish and Christian tradition came to see Satan behind it."
-    },
-    {
-      "label": "Eating, hiding, blaming (vv. 6-13)",
-      "note": "Drawn by the fruit's look and its promise of food and wisdom, the woman eats and gives some to her husband, who the text says was with her, and he eats too. Their opened eyes bring shame rather than power: they cover themselves and hide, then the man blames the woman God gave him, and she blames the serpent."
-    },
-    {
-      "label": "The serpent's sentence (vv. 14-15)",
-      "note": "The serpent is cursed to crawl and eat dust, and lasting hostility is set between its offspring and the woman's, one dealing a blow to the head and the other to the heel (translations differ on the exact verbs). Christians have long read this as how Jesus would one day defeat evil, while Jewish readers and many scholars see the lasting struggle between people and snakes, or between humanity and evil."
-    },
-    {
-      "label": "Pain and strained love (v. 16)",
-      "note": "Childbirth will now bring great pain, and the woman's longing for her husband will be met by his ruling over her. Many readers take this as a picture of how wrongdoing warps the relationship rather than God's ideal, while some traditional readers see it as setting a lasting order for marriage."
-    },
-    {
-      "label": "Hard work and dust (vv. 17-19)",
-      "note": "The ground is cursed because of the man, so growing food becomes sweaty work among thorns until he returns to the dust he came from. Readers differ on how this fulfils the earlier warning of death: some see death arriving at the end of a hard life, others see it beginning at once in a broken relationship with God."
-    },
-    {
-      "label": "Sent out of Eden (vv. 20-24)",
-      "note": "The man names his wife Eve, a name that sounds like the Hebrew word for living, and God makes them clothes from animal skins, often read as an act of care even in judgment. God then sends them out so they cannot eat from the tree of life and live forever, and places cherubim, winged guardian beings, with a flaming sword to block the way back."
-    }
-  ],
-  "keyVerse": 6,
-  "disagreement": "Western Christians, Catholic and Protestant, generally read this chapter as the origin of original sin, a fallen condition passed to every person, while Orthodox Christians stress that people inherit death and its effects rather than Adam's guilt.",
-  "think": "When something goes wrong, what makes it so hard to simply say 'I did it' without pointing somewhere else?",
-  "book": "Genesis",
-  "chapter": 3
+ "book": "GEN",
+ "chapter": 3,
+ "title": "Broken Trust in the Garden",
+ "overview": "After a serpent persuades the woman, she and her husband eat the one fruit God forbade, damaging their bond with God, with each other and with the earth, and they are sent out of the garden.",
+ "parts": [
+  {
+   "label": "The serpent's question (vv. 1-5)",
+   "note": "The serpent, called only the craftiest animal God made, first twists God's command, then flatly denies the warning of death and hints that God is holding back something good. Genesis itself never calls it the devil, but the New Testament (Revelation 12:9) and later Jewish and Christian tradition link it with Satan."
+  },
+  {
+   "label": "Eating, hiding, blaming (vv. 6-13)",
+   "note": "Drawn by the fruit's look and its promise of food and wisdom, the woman eats and gives some to her husband, who the text says was with her, and he eats too. Their opened eyes bring shame rather than power: they cover themselves and hide, then the man blames the woman God gave him, and she blames the serpent."
+  },
+  {
+   "label": "The serpent's sentence (vv. 14-15)",
+   "note": "The serpent is cursed to crawl and eat dust, and lasting hostility is set between its offspring and the woman's, one dealing a blow to the head and the other to the heel (translations differ on the exact verbs). Christians have long read this as how Jesus would one day defeat evil, while Jewish readers and many scholars see the lasting struggle between people and snakes, or between humanity and evil."
+  },
+  {
+   "label": "Pain and strained love (v. 16)",
+   "note": "Childbirth will now bring great pain, and the woman's longing for her husband will be met by his ruling over her. Many readers take this as a picture of how wrongdoing warps the relationship rather than God's ideal, while some traditional readers see it as setting a lasting order for marriage."
+  },
+  {
+   "label": "Hard work and dust (vv. 17-19)",
+   "note": "The ground is cursed because of the man, so growing food becomes sweaty work among thorns until he returns to the dust he came from. Readers differ on how this fulfils the earlier warning of death: some see death arriving at the end of a hard life, others see it beginning at once in a broken relationship with God."
+  },
+  {
+   "label": "Sent out of Eden (vv. 20-24)",
+   "note": "The man names his wife Eve, a name that sounds like the Hebrew word for living, and God makes them clothes from animal skins, often read as an act of care even in judgment. God then sends them out so they cannot eat from the tree of life and live forever, and places cherubim, winged guardian beings, with a flaming sword to block the way back."
+  }
+ ],
+ "keyVerse": 6,
+ "disagreement": "Western Christians, Catholic and Protestant, generally read this chapter as the origin of original sin, a fallen condition passed to every person. Some Protestants add that Adam's guilt is counted to all, while Catholics teach it is not a personal fault in his descendants. Orthodox Christians speak of ancestral sin, stressing that people inherit death and its effects rather than Adam's guilt.",
+ "think": "When something goes wrong, what makes it so hard to simply say 'I did it' without pointing somewhere else?"
 }

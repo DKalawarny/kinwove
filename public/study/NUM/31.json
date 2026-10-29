@@ -1,35 +1,35 @@
 {
-  "title": "Israel's War Against Midian",
-  "overview": "Israel's army attacks the Midianites as punishment for the disaster at Peor, then deals with the captives, the cleansing of the soldiers and the sharing of the plunder.",
-  "parts": [
-    {
-      "label": "The order to attack (vv. 1-6)",
-      "note": "The LORD tells Moses to take vengeance on Midian for Peor (chapter 25), where Israelite men were drawn into worshipping another god and a plague followed, and says this will be his last task before he dies. A thousand men from each tribe go, with Phinehas, the priest's son who had ended the Peor affair by killing an Israelite man and a Midianite woman, bringing sacred items and the signal trumpets."
-    },
-    {
-      "label": "The battle and captives (vv. 7-12)",
-      "note": "The army kills the Midianite men, including five local kings and Balaam, the foreign seer who was hired earlier to curse Israel but blessed it instead (chapters 22 to 24). They burn the towns and bring the women, children, herds and goods back to camp, though Midian is a strong people again in Judges 6, so many readers think the killing of all the men refers only to those in this area."
-    },
-    {
-      "label": "Moses orders more killing (vv. 13-18)",
-      "note": "Moses is angry that the women were spared and blames them for leading Israel astray at Peor on Balaam's advice, a detail the earlier Balaam story never mentions. He orders the boys and every woman who had been with a man to be killed, and the girls kept alive 'for yourselves,' which most scholars take to mean as wives or servants, as was common in ancient war."
-    },
-    {
-      "label": "Cleansing after battle (vv. 19-24)",
-      "note": "Contact with death made a person ritually unclean, meaning unfit to enter the camp where God's presence was believed to dwell, so soldiers and captives stay outside for seven days and are washed with the special cleansing water described in chapter 19. Metal goods are passed through fire and everything else through water before they can come in."
-    },
-    {
-      "label": "Sharing the plunder (vv. 25-47)",
-      "note": "The animals and the 32,000 girls are counted together as plunder and split between the soldiers and the rest of the people, with a small share of each going to the priest and to the Levites, the tribe who cared for the sacred tent. The figures are huge, and many scholars think they are rounded or idealized rather than an exact count."
-    },
-    {
-      "label": "The officers' gold (vv. 48-54)",
-      "note": "The officers report that not one soldier was lost and bring the gold jewelry they took, weighing 16,750 shekels, which is placed in the sacred tent as a reminder before the LORD. They give it 'to make atonement,' meaning to set things right with God, and scholars are unsure why: it may relate to the payment Exodus 30 requires when men are counted, to the killing, or simply to thanks."
-    }
-  ],
-  "keyVerse": 2,
-  "disagreement": "Christians differ on how to understand this war: many traditional readers take it as a real, one time judgment on Midian for Peor that is not a model for later times, while others read it as ancient Israel telling a war in God's name in the terms of its own age, which they weigh against the picture of God they see in Jesus.",
-  "think": "When an old text tells of violence done in God's name, what do you think an honest reader owes to the text, and what to the people who suffered in it?",
-  "book": "Numbers",
-  "chapter": 31
+ "book": "NUM",
+ "chapter": 31,
+ "title": "Israel's War Against Midian",
+ "overview": "Israel's army attacks the Midianites as punishment for the disaster at Peor, then deals with the captives, the cleansing of the soldiers and the sharing of the plunder.",
+ "parts": [
+  {
+   "label": "The order to attack (vv. 1-6)",
+   "note": "The LORD tells Moses to take vengeance on Midian for Peor (chapter 25), where Israelite men were drawn into worshipping another god and a plague followed, and says this will be his last task before he dies. A thousand men from each tribe go, with Phinehas, the priest's son who had ended the Peor affair by killing an Israelite man and a Midianite woman, bringing sacred items and the signal trumpets."
+  },
+  {
+   "label": "The battle and captives (vv. 7-12)",
+   "note": "The army kills the Midianite men, including five local kings and Balaam, the foreign seer who was hired earlier to curse Israel but blessed it instead (chapters 22 to 24). They burn the towns and bring the women, children, herds and goods back to camp, though Midian is a strong people again in Judges 6, so many readers think the killing of all the men refers only to those in this area."
+  },
+  {
+   "label": "Moses orders more killing (vv. 13-18)",
+   "note": "Moses is angry that the women were spared and blames them for leading Israel astray at Peor on Balaam's advice, a detail the earlier Balaam story never mentions. He orders the boys and every woman who had been with a man to be killed, and the girls kept alive 'for yourselves,' which most scholars take to mean as wives or servants. Taking captive girls this way was common in ancient war, and many readers find this among the hardest verses in the Bible."
+  },
+  {
+   "label": "Cleansing after battle (vv. 19-24)",
+   "note": "Contact with death made a person ritually unclean, meaning unfit to enter the camp where God's presence was believed to dwell, so soldiers and captives stay outside for seven days and are washed with the special cleansing water described in chapter 19. Metal goods are passed through fire and everything else through water before they can come in."
+  },
+  {
+   "label": "Sharing the plunder (vv. 25-47)",
+   "note": "The animals and the 32,000 girls are counted together as plunder and split between the soldiers and the rest of the people, with a small share of each going to the priest and to the Levites, the tribe who cared for the sacred tent. The figures are huge, and many scholars think they are rounded or idealized rather than an exact count."
+  },
+  {
+   "label": "The officers' gold (vv. 48-54)",
+   "note": "The officers report that not one soldier was lost and bring the gold jewelry they took, weighing 16,750 shekels, which is placed in the sacred tent as a reminder before the LORD. They give it 'to make atonement,' meaning to set things right with God, and scholars are unsure why: it may relate to the payment Exodus 30 requires when men are counted, to the killing, or simply to thanks."
+  }
+ ],
+ "keyVerse": 2,
+ "disagreement": "Christians differ on how to understand this war. Many traditional readers take it as a real, one time judgment on Midian for Peor that is not a model for later times. Many early Christian writers also read such wars as a picture of the inner fight against sin. Others read it as ancient Israel telling a war in God's name in the terms of its own age, which they weigh against the picture of God they see in Jesus.",
+ "think": "When an old text tells of violence done in God's name, what do you think an honest reader owes to the text, and what to the people who suffered in it?"
 }
