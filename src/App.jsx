@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, lazy, Suspense, Component } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, lazy, Suspense, Component } from 'react';
 import { PROFILE_COLUMNS } from './profileColumns.js';
 import { T, globalCss } from './theme.js';
 import { PERSON_TYPES } from './constants.js';
@@ -2057,6 +2057,14 @@ export default function App() {
   const [activeCareConv, setActiveCareConv] = useState(null);
   const [activeDmConv, setActiveDmConv] = useState(null); // { id, otherProfile }
   const [openCommentPostId, setOpenCommentPostId] = useState(() => deepLinkPostId ?? null);
+  // Re-open a post's comments even when the same post is tapped again: the id
+  // has to change for the post card to see it, so clear it for one tick first.
+  // Without this, tapping the same notification a second time did nothing
+  // until a page refresh (Daniel, 3 Nov).
+  const openPostComments = useCallback((id) => {
+    setOpenCommentPostId(null);
+    setTimeout(() => setOpenCommentPostId(id), 0);
+  }, []);
   const [pendingShareUrl, setPendingShareUrl] = useState(null);
   const [pendingCareId, setPendingCareId] = useState(null);
   const [pendingDmId,   setPendingDmId]   = useState(null);
@@ -3584,7 +3592,7 @@ export default function App() {
           onBack={() => goBack('me')}
           pendingShareUrl={pendingShareUrl}
           onShareSent={() => setPendingShareUrl(null)}
-          onOpenPost={(postId) => { setOpenCommentPostId(postId); setStage('feed'); }}
+          onOpenPost={(postId) => { openPostComments(postId); setStage('feed'); }}
           onViewProfile={(uid) => setViewingUserId(uid)}
           initialCareId={pendingCareId}
           onInitialCareConsumed={() => setPendingCareId(null)}
@@ -3599,7 +3607,7 @@ export default function App() {
           conversationId={activeDmConv.id}
           otherProfile={activeDmConv.otherProfile}
           onBack={() => goBack('messages')}
-          onOpenPost={(postId) => { setOpenCommentPostId(postId); setStage('feed'); }}
+          onOpenPost={(postId) => { openPostComments(postId); setStage('feed'); }}
         />
       )}
       {stage === 'care-admin' && session && pastorChurchId && (
@@ -4003,7 +4011,7 @@ export default function App() {
             // (The profile-target branches below re-set it deliberately.)
             setViewingUserId(null);
             if (n.target_type === 'post' || n.type === 'post_comment' || n.type === 'post_comment_reply') {
-              setOpenCommentPostId(n.target_id);
+              openPostComments(n.target_id);
               setStage('feed');
             }
             else if (n.target_type === 'prayer')    { setStage('feed'); }
@@ -4177,7 +4185,7 @@ export default function App() {
             try {
               const r = await authedFetch('/api/verse/today');
               const { postId } = await r.json();
-              if (postId) { setOpenCommentPostId(postId); setStage('feed'); return; }
+              if (postId) { openPostComments(postId); setStage('feed'); return; }
             } catch { /* ignore */ }
             setStage('feed');
           }}

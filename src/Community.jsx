@@ -331,6 +331,8 @@ function SermonTeaserCard({ sermon, isMember, onOpenChurch }) {
 function PostCard({ post, index = 0, session, currentUserId, userProfile, userGroup, onReact, onReplySubmit, onRepost, onSendDM, isFollowing, onFollow, onViewProfile, tabColor = '#A85530', tabText = '#8E5528', isSaved = false, onSaveToggle, isAuthorBlocked = false, onBlockAuthor, defaultCommentsOpen = false, churchName = null }) {
   const [bodyExpanded,   setBodyExpanded]   = useState(false);
   const [commentsOpen,   setCommentsOpen]   = useState(defaultCommentsOpen);
+  // A notification tap on an already-rendered post flips this back to true.
+  useEffect(() => { if (defaultCommentsOpen) setCommentsOpen(true); }, [defaultCommentsOpen]);
   useEscape(commentsOpen, () => setCommentsOpen(false));
   // post.post_comments is the embedded select from loadPosts; it's a thin
   // shape ({id, body, created_at, profiles}) hydrated by the relationship.

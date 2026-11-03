@@ -478,6 +478,8 @@ export default function PostCard({
   const [mine, setMine]           = useState({}); // { amen: true }
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [commentsOpen, setCommentsOpen] = useState(defaultCommentsOpen);
+  // A notification tap on an already-rendered post flips this back to true.
+  useEffect(() => { if (defaultCommentsOpen) setCommentsOpen(true); }, [defaultCommentsOpen]);
   useEscape(commentsOpen, () => setCommentsOpen(false));
   const [localCommentCount, setLocalCommentCount] = useState(commentCount);
   const [menuOpen, setMenuOpen] = useState(false);
