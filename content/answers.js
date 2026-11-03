@@ -1,3 +1,4 @@
+import { chapterLinksForRefs } from './bible.js';
 // ── kinwove Answers — crawlable, GEO-optimized faith-question pages ───────────
 // These are REAL server-rendered HTML pages (not the React SPA), so Google and
 // AI engines (ChatGPT, Perplexity, Gemini) can actually read + cite them.
@@ -2532,6 +2533,8 @@ export function renderAnswerPage(a, lang = 'en') {
     },
   ];
   const related = a.related.map((s) => ANSWERS_BY_SLUG[s]).filter(Boolean);
+  // Only the English pages: translated refs are not in English book names.
+  const chapters = isTranslated ? [] : chapterLinksForRefs(a.scriptures.map((x) => x.ref));
   // Translation notice. Rendered ONLY when the translation supplies its own
   // wording — never auto-generated in English, which would be useless to the
   // reader it is meant to warn.
@@ -2549,6 +2552,7 @@ export function renderAnswerPage(a, lang = 'en') {
     <div class="answer">${esc(a.answer)}</div>
     ${a.body.map((s) => `<h2>${esc(s.h)}</h2><p>${esc(s.p)}</p>`).join('')}
     ${a.scriptures.map((s) => `<blockquote>${esc(s.text)}<span class="ref">, ${esc(s.ref)}</span></blockquote>`).join('')}
+    ${chapters.length ? `<div class="related"><div class="cat">Read the whole chapter</div>${chapters.map((c) => `<a href="${c.url}">${esc(c.label)}: ${esc(c.title)} →</a>`).join('')}</div>` : ''}
     <a class="cta" href="${esc(askUrl)}">Ask your own question →</a>
     <div class="faq">
       <div class="cat">Common questions</div>

@@ -219,3 +219,22 @@ export function renderBibleIndex() {
     canonical, jsonLd, bodyHtml,
   });
 }
+
+// Answer pages link each scripture they quote to its chapter page.
+// "Psalm 34:18" → /bible/psalms-34, "1 Corinthians 15:3–6" → /bible/1-corinthians-15.
+const NAME_ALIASES = { psalm: 'psalms', 'song of songs': 'song of solomon' };
+export function chapterLinksForRefs(refs) {
+  const seen = new Set();
+  const out = [];
+  for (const ref of refs) {
+    const m = String(ref).match(/^((?:[1-3] )?[A-Za-z]+(?: [A-Za-z]+)*) (\d{1,3})/);
+    if (!m) continue;
+    const raw = m[1].toLowerCase();
+    const slug = (NAME_ALIASES[raw] ?? raw).replace(/\s+/g, '-');
+    const hit = resolveBiblePath(`${slug}-${m[2]}`);
+    if (!hit || seen.has(`${slug}-${m[2]}`)) continue;
+    seen.add(`${slug}-${m[2]}`);
+    out.push({ url: chapterUrl(hit.book, hit.n), label: chapterName(hit.book, hit.n), title: hit.book.chapters[hit.n - 1].title });
+  }
+  return out;
+}

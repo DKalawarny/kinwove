@@ -625,6 +625,7 @@ function Landing({ onBegin, onSignIn, session, profile, onEditProfile, onPastorI
         </div>
         <span style={{ fontSize: 11.5 }}>
           <a href="/answers" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerAnswers}</a> &nbsp;·&nbsp;
+          <a href="/bible" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerBible}</a> &nbsp;·&nbsp;
           <a href="/privacy" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerPrivacy}</a> &nbsp;·&nbsp;
           <a href="/terms" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerTerms}</a> &nbsp;·&nbsp;
           <a href="mailto:hello@kinwove.com" style={{ color: 'rgba(253,248,240,0.35)', textDecoration: 'none' }}>{s.footerContact}</a>

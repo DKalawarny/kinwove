@@ -68,6 +68,7 @@ export const STRINGS_EN = {
   alreadyHere: 'Already here?',
   tagline: 'Real answers to hard faith questions.',
   footerAnswers: 'Answers',
+  footerBible: 'Bible explained',
   footerPrivacy: 'Privacy',
   footerTerms: 'Terms',
   footerContact: 'Contact',
