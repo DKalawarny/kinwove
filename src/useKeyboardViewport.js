@@ -23,10 +23,15 @@ export function useKeyboardViewport() {
     if (!vv) return;
     const onChange = () => {
       const kbOpen = document.documentElement.clientHeight - vv.height > 80;
+      // --vvtop follows the visual viewport's top: iOS scrolls the layout viewport
+      // up when the keyboard opens, so a full-screen modal pinned at top:0 slid
+      // under the status bar and stopped halfway down the screen (Daniel, 3 Nov).
       if (kbOpen) {
         document.documentElement.style.setProperty('--vvh', `${Math.round(vv.height)}px`);
+        document.documentElement.style.setProperty('--vvtop', `${Math.round(vv.offsetTop)}px`);
       } else {
         document.documentElement.style.removeProperty('--vvh');
+        document.documentElement.style.removeProperty('--vvtop');
       }
       setKbViewport((prev) => {
         const next = kbOpen ? { height: Math.round(vv.height), offsetTop: Math.round(vv.offsetTop) } : null;
