@@ -13,10 +13,12 @@ import webpush from 'web-push';
 import { getDailyVerse } from './src/dailyVerse.js';
 import { dailyPostProblem, DAILY_POST_PROMPT, DAILY_ANGLES } from './src/dailyPostRules.js';
 import { ANSWERS_FA_BY_SLUG } from './content/answers-fa.js';
+import { ANSWERS_ES_BY_SLUG, ANSWERS_PT_BY_SLUG } from './content/answers-i18n.js';
+import { BIBLE_LANGS, resolveTranslatedBiblePath, translatedBibleSitemapEntries, renderTranslatedChapterPage, renderTranslatedBookPage, renderTranslatedBibleIndex } from './content/bible-i18n.js';
 import { LANG_NAMES } from './src/languages.js';
 // Same table the /:lang/answers route serves. Declared here because the route
 // lives in the static-serving block and the sitemap builder does not.
-const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG };
+const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG, es: ANSWERS_ES_BY_SLUG, pt: ANSWERS_PT_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
 import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
@@ -6162,7 +6164,7 @@ if (process.env.NODE_ENV !== 'development') {
       // Answers library — crawlable faith-question pages (Google + AI engines)
       `<url><loc>${host}/answers</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>${today}</lastmod></url>`,
       // Bible study pages: /bible, every book intro, every chapter note.
-      ...bibleSitemapEntries().map((u) =>
+      ...[...bibleSitemapEntries(), ...translatedBibleSitemapEntries()].map((u) =>
         `<url><loc>${escapeXml(u)}</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>${BIBLE_UPDATED}</lastmod></url>`),
       ...ANSWERS.map((a) =>
         `<url><loc>${host}/answers/${escapeXml(a.slug)}</loc><changefreq>monthly</changefreq><priority>0.8</priority><lastmod>${escapeXml(a.updated)}</lastmod></url>`),
@@ -6353,6 +6355,18 @@ app.get(['/for-churches', '/for-church', '/pastors', '/sermon-prep', '/churches'
   res.type('html').send(renderForChurchesPage());
 });
 
+// Spanish and Portuguese Bible pages (see content/bible-i18n.js).
+app.get('/:lang/biblia', (req, res, next) => {
+  if (!BIBLE_LANGS.includes(req.params.lang)) return next();
+  res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderTranslatedBibleIndex(req.params.lang));
+});
+app.get('/:lang/biblia/:path', (req, res, next) => {
+  if (!BIBLE_LANGS.includes(req.params.lang)) return next();
+  const hit = resolveTranslatedBiblePath(req.params.lang, String(req.params.path).toLowerCase());
+  if (!hit) return next();
+  res.set('Cache-Control', 'public, max-age=3600').type('html')
+    .send(hit.n ? renderTranslatedChapterPage(req.params.lang, hit.book, hit.n) : renderTranslatedBookPage(req.params.lang, hit.book));
+});
 // Public Bible study pages built from public/study (see content/bible.js).
 app.get('/bible', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderBibleIndex());

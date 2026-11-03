@@ -7,6 +7,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, shell } from './answers.js';
+import { bibleAlternates } from './bible-i18n.js';
 
 const SITE = 'https://www.kinwove.com';
 const STUDY_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'study');
@@ -150,7 +151,7 @@ export function renderChapterPage(book, n) {
   return shell({
     title: `${name} Explained in Plain Words: ${c.title} | kinwove`,
     description: c.overview.slice(0, 155),
-    canonical, jsonLd, bodyHtml,
+    canonical, jsonLd, bodyHtml, alternates: bibleAlternates(book.code, n),
   });
 }
 
@@ -189,7 +190,7 @@ export function renderBookPage(book) {
   return shell({
     title: `The Book of ${book.name} Explained Simply | kinwove`,
     description: i.oneLine.slice(0, 155),
-    canonical, jsonLd, bodyHtml,
+    canonical, jsonLd, bodyHtml, alternates: bibleAlternates(book.code, null),
   });
 }
 
@@ -216,7 +217,7 @@ export function renderBibleIndex() {
   return shell({
     title: 'The Bible Explained Chapter by Chapter, in Plain Words | kinwove',
     description: 'A simple explanation of every chapter of the Bible, with book introductions, background, where Christians differ, and a question to think about.',
-    canonical, jsonLd, bodyHtml,
+    canonical, jsonLd, bodyHtml, alternates: bibleAlternates(null, null),
   });
 }
 
