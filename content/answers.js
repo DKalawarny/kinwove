@@ -2567,6 +2567,940 @@ export const ANSWERS = [
     ],
     related: ['what-does-it-mean-to-be-born-again', 'am-i-too-far-gone-for-god'],
   },
+  // ── More famous verses and topics (added 2026-11-02). Scripture fields are NIV
+  // fetched from api.bible (see ~/Library/Caches/kinwove-verse-pages/).
+  {
+    slug: 'what-does-romans-12-2-mean',
+    question: `What does Romans 12:2 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Romans 12:2 means that God changes people from the inside, by renewing how they think, instead of leaving them shaped by the habits and pressures of the world around them. Paul wrote it after eleven chapters about God's mercy, so it describes a life that responds to grace, not a program for earning it. As the mind is renewed, a person grows able to recognize what God's good will looks like.`,
+    body: [
+      { h: `Where it sits in Romans`, p: `Paul wrote Romans to the church in Rome, probably around AD 57. Chapters 1 to 11 explain what God has done in Christ for people who could never fix themselves. Chapter 12 turns to how that shapes everyday life, and verse 1 says this new life is offered to God because of his mercy. Verse 2 follows straight on from that.` },
+      { h: `Being transformed is something done to you`, p: `"Do not conform" is something you resist. "Be transformed" is something that happens to you. The verse does not hand you a self-improvement plan. It invites you to let God reshape your thinking over time, through his word, his Spirit and the company of other believers.` },
+      { h: `What "the pattern of this world" means`, p: `Paul is not telling Christians to avoid culture or everything modern. He means the default way of seeing things that most people absorb without noticing: what counts as success, who matters, what to fear. A renewed mind starts to see those things the way God does.` },
+      { h: `Knowing God's will`, p: `Many people read this verse hoping for a method to get a specific answer about a job or a relationship. Paul's point is broader. A mind that is being renewed slowly learns to recognize what is good and loving, which is the heart of God's will. The rest of the chapter shows what that looks like: humility, real love, hospitality and not repaying evil with evil.` },
+    ],
+    scriptures: [
+      { ref: `Romans 12:2`, text: `Do not conform to the pattern of this world, but be transformed by the renewing of your mind. Then you will be able to test and approve what God’s will is—his good, pleasing and perfect will.` },
+    ],
+    faqs: [
+      { q: `Who wrote Romans 12:2?`, a: `The apostle Paul, writing to the Christians in Rome, probably around AD 57.` },
+      { q: `Does Romans 12:2 mean Christians should avoid the world?`, a: `No. It is about not letting the world's assumptions shape your mind, not about withdrawing from people or culture.` },
+      { q: `How is the mind renewed?`, a: `Christians usually point to reading Scripture, prayer, worship and life with other believers, while trusting that the real change is God's work, not ours alone.` },
+    ],
+    related: ['how-do-i-know-gods-will-for-my-life', 'what-does-2-corinthians-5-17-mean'],
+  },
+
+  {
+    slug: 'what-is-the-fruit-of-the-spirit',
+    question: `What is the fruit of the Spirit?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `The fruit of the Spirit is the character the Holy Spirit grows in a person who belongs to Christ: love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control. Paul lists it in Galatians 5:22-23 as one fruit with many sides, not nine separate achievements. It grows over time from God's life in a person, not from straining to be good.`,
+    body: [
+      { h: `Why Paul wrote this`, p: `Paul wrote Galatians to churches in the region of Galatia, around the middle of the first century. Some teachers there were telling believers they needed to keep parts of the Jewish law to be fully accepted by God. Paul pushes back hard: they were set free by Christ (Galatians 5:1), and that freedom is meant to be used to love and serve each other (Galatians 5:13).` },
+      { h: `Fruit, not works`, p: `Just before this list, Paul describes the "acts of the flesh" (Galatians 5:19-21), things people do when left to themselves. Then he changes the picture. Fruit is not manufactured. It grows when a tree is healthy and connected to its source. Paul says Christians should keep in step with the Spirit (Galatians 5:25), not grit their teeth.` },
+      { h: `One fruit, many sides`, p: `The word "fruit" is singular. Love comes first and the others can be read as what love looks like in practice: patient with people, kind, faithful, gentle, in control of itself. You do not get to pick the three you are naturally good at.` },
+      { h: `Not a checklist to grade yourself`, p: `It is easy to read this list and feel like a failure. Fruit grows slowly and in seasons. The point is not that you already show all of it, but that the Spirit is at work in you and it is growing. Many Christians find it more honest to ask "is this growing?" than "have I arrived?"` },
+    ],
+    scriptures: [
+      { ref: `Galatians 5:22-23`, text: `But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control. Against such things there is no law.` },
+    ],
+    faqs: [
+      { q: `How many fruits of the Spirit are there?`, a: `Paul names nine qualities, but he calls them one fruit. They belong together as one character.` },
+      { q: `What does "against such things there is no law" mean?`, a: `No law forbids these qualities. A life shaped by the Spirit already fulfills what the law was aiming at, love for God and neighbour.` },
+      { q: `Is the fruit of the Spirit the same as spiritual gifts?`, a: `No. Gifts are abilities given for serving others and they differ from person to person. The fruit is character, and it is meant to grow in every believer.` },
+    ],
+    related: ['who-is-the-holy-spirit', 'what-is-grace'],
+  },
+
+  {
+    slug: 'what-does-love-is-patient-love-is-kind-mean',
+    question: `What does "love is patient, love is kind" mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `"Love is patient, love is kind" opens Paul's description of real love in 1 Corinthians 13:4-7, where he shows love by what it does and refuses to do. He wrote it to a church that was proud, divided and competing over spiritual gifts, to show them that without love even impressive gifts are worth nothing. It is often read at weddings, but it was first written for a whole community learning to live together.`,
+    body: [
+      { h: `A letter to a messy church`, p: `Paul wrote 1 Corinthians to the believers in Corinth, around AD 53 to 55. They were splitting into factions and treating some spiritual gifts as signs of being more important. Chapters 12 and 14 deal with those gifts. Chapter 13 sits in the middle as the point of it all: the most gifted person without love is just noise (1 Corinthians 13:1).` },
+      { h: `Love described as actions`, p: `Paul does not define love as a feeling. Patient, kind, not envious, not boastful, not easily angered: these are things you can see in how someone treats people. Read it slowly and almost every line is a quiet correction of something the Corinthians were doing.` },
+      { h: `Love is not being a doormat`, p: `"Keeps no record of wrongs" does not mean pretending harm never happened or staying in danger. The same passage says love does not delight in evil and rejoices with the truth. Real love forgives, but it also tells the truth and protects people. Christians widely agree it never requires accepting abuse.` },
+      { h: `The love behind the description`, p: `Many readers notice that this passage describes Jesus perfectly, and describes them only partly. That can be freeing. The love Paul describes is first the way God loves us, and it grows in us as we receive it.` },
+    ],
+    scriptures: [
+      { ref: `1 Corinthians 13:4-7`, text: `Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. Love does not delight in evil but rejoices with the truth. It always protects, always trusts, always hopes, always perseveres.` },
+    ],
+    faqs: [
+      { q: `Is 1 Corinthians 13 about marriage?`, a: `Not originally. Paul wrote it to a whole church, but its picture of love fits marriage very well, which is why it is read at weddings.` },
+      { q: `Does "keeps no record of wrongs" mean I have to trust someone who hurt me?`, a: `No. Forgiving is letting go of the debt. Trust is rebuilt over time, and love also protects people and stands with the truth.` },
+      { q: `What kind of love is Paul talking about?`, a: `A self-giving love that seeks the good of others, the kind of love God shows in Christ.` },
+    ],
+    related: ['how-do-i-forgive-someone-who-hurt-me', 'does-god-love-me'],
+  },
+
+  {
+    slug: 'what-does-isaiah-40-31-mean',
+    question: `What does Isaiah 40:31 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Isaiah 40:31 promises that people who put their hope in the Lord will have their strength renewed, even when their own strength runs out. It was spoken to God's people in a long season of loss and exile, when they felt forgotten. The verse is about God supplying strength to the tired, not about people who never get tired.`,
+    body: [
+      { h: `Comfort for a worn out people`, p: `Isaiah 40 begins a new section of the book with words of comfort for Israel. These chapters speak to people facing, or living through, exile in Babylon in the 500s BC, far from home and wondering if God had given up on them. Just before this verse, they say God has stopped seeing them (Isaiah 40:27).` },
+      { h: `God does not grow tired`, p: `The answer is a reminder of who God is: the Creator who never grows weary and who gives strength to the weak (Isaiah 40:28-29). Even young people at their peak stumble and fall (Isaiah 40:30). Human strength always runs out. God's does not.` },
+      { h: `Hoping, or waiting`, p: `The NIV says "hope in the Lord." Other translations say "wait for the Lord." The Hebrew idea includes both: a patient, expectant trust that keeps looking to God when nothing seems to be happening yet.` },
+      { h: `Soar, run, walk`, p: `Notice the order. Soaring sounds best, but the promise ends with walking and not fainting. Some days God's strength looks like a breakthrough. Many days it simply looks like being able to keep going. Both are the promise at work.` },
+    ],
+    scriptures: [
+      { ref: `Isaiah 40:31`, text: `but those who hope in the Lord will renew their strength. They will soar on wings like eagles; they will run and not grow weary, they will walk and not be faint.` },
+    ],
+    faqs: [
+      { q: `Who was Isaiah 40:31 written to?`, a: `To the people of Israel facing or living in exile, who felt God had forgotten them.` },
+      { q: `Does Isaiah 40:31 mean I will never feel tired if I trust God?`, a: `No. It assumes people do get tired. It promises that God renews strength, often one step at a time.` },
+      { q: `Why does the verse mention eagles?`, a: `Eagles rise high on the wind without flapping hard, a picture of being carried by strength that is not your own.` },
+    ],
+    related: ['what-does-isaiah-41-10-mean', 'what-does-the-bible-say-about-rest'],
+  },
+
+  {
+    slug: 'what-does-micah-6-8-mean',
+    question: `What does Micah 6:8 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Micah 6:8 says that what God wants from his people is not bigger religious offerings but a life of justice, mercy and humble closeness to him. Micah was answering people who thought they could keep God happy with sacrifices while treating others unfairly. It is a summary of a faithful life, not a list of steps to earn God's favor.`,
+    body: [
+      { h: `A courtroom scene`, p: `Micah was a prophet in Judah in the 700s BC, around the same time as Isaiah. In chapter 6, God brings a case against his people and reminds them of everything he did for them, including bringing them out of Egypt (Micah 6:3-5). He had already been good to them.` },
+      { h: `The wrong question`, p: `The people respond by asking what they should bring to God: burnt offerings, thousands of rams, rivers of oil, even their own child (Micah 6:6-7). The offers grow more extreme because they think God is hard to please. Verse 8 cuts through all of it. God has already shown them what is good.` },
+      { h: `Three things that belong together`, p: `To act justly is to treat people fairly, especially those with little power. To love mercy is to delight in kindness and loyal love, not just do it grudgingly. To walk humbly with God is the root of the other two, a daily, unpretentious walk with him.` },
+      { h: `Not a way to earn God`, p: `Micah 6:8 is sometimes read as "just be a good person and that is enough." In context, it describes how people who already belong to God should live in response to what he has done. Justice and mercy flow from walking with him.` },
+    ],
+    scriptures: [
+      { ref: `Micah 6:8`, text: `He has shown you, O mortal, what is good. And what does the Lord require of you? To act justly and to love mercy and to walk humbly with your God.` },
+    ],
+    faqs: [
+      { q: `Who was the prophet Micah?`, a: `A prophet from a small town in Judah who spoke God's word in the 700s BC, especially against injustice toward the poor.` },
+      { q: `Is Micah 6:8 saying sacrifices did not matter?`, a: `It is saying worship without justice and mercy misses the point. God wanted their hearts and their treatment of others, not just rituals.` },
+      { q: `What does it mean to walk humbly with God?`, a: `To live close to God day by day, depending on him and not pretending to be more than you are.` },
+    ],
+    related: ['what-is-grace', 'what-is-repentance'],
+  },
+
+  {
+    slug: 'what-does-2-timothy-1-7-mean',
+    question: `What does 2 Timothy 1:7 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `2 Timothy 1:7 means that the Spirit God gives his people does not make them timid, but gives them power, love and self-discipline. Paul wrote it to encourage Timothy, a younger leader who seems to have been hesitant, to keep using his gift and not be ashamed of the gospel. It is encouragement for the fearful, not a rebuke of anyone who feels afraid.`,
+    body: [
+      { h: `A letter near the end`, p: `Paul wrote 2 Timothy to Timothy, a younger co-worker he loved like a son. Most readers understand it as written late in Paul's life, from prison in Rome. Paul knew hard days were coming for Timothy, and the letter is full of warm, personal encouragement.` },
+      { h: `Fan the gift into flame`, p: `Right before this verse, Paul reminds Timothy to fan into flame the gift God gave him (2 Timothy 1:6). Right after, he tells him not to be ashamed of the message about Jesus or of Paul in chains (2 Timothy 1:8). Verse 7 is the reason Timothy can do both: God's Spirit in him is not a spirit of shrinking back.` },
+      { h: `Power, love and self-discipline`, p: `These three belong together. Power without love can crush people. Love without power can feel helpless. Self-discipline, sometimes translated "sound mind," keeps a person steady and clear headed instead of driven by panic.` },
+      { h: `Not a verdict on anxiety`, p: `Some people hear this verse as "if you feel fear, you lack faith." That is not Paul's point. He is reminding an anxious friend what God has already given him. Feeling afraid is human. The verse points to a strength that is there even when fear is too.` },
+    ],
+    scriptures: [
+      { ref: `2 Timothy 1:7`, text: `For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.` },
+    ],
+    faqs: [
+      { q: `Is it "Spirit" or "spirit" in 2 Timothy 1:7?`, a: `Translations differ. The NIV understands it as the Holy Spirit. Others use lowercase "spirit," meaning the attitude God gives. Either way, the source is God.` },
+      { q: `Does 2 Timothy 1:7 mean anxiety is a sin?`, a: `No. It encourages someone who struggled with fear. It does not condemn people for feeling afraid.` },
+      { q: `Who was Timothy?`, a: `A younger church leader who travelled with Paul and later led the church in Ephesus.` },
+    ],
+    related: ['what-does-the-bible-say-about-fear', 'what-does-the-bible-say-about-anxiety'],
+  },
+
+  {
+    slug: 'what-does-psalm-139-14-mean',
+    question: `What does Psalm 139:14 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Psalm 139:14 is a prayer of praise to God for making the person praying with great care and wonder. It belongs to a psalm about how completely God knows us, from before birth through every place we could go. It is first a song about God's goodness, and from that comes a deep sense of our own worth.`,
+    body: [
+      { h: `A psalm about being fully known`, p: `Psalm 139 is headed as a psalm of David. It begins with God knowing when we sit and rise and what we will say before we say it (Psalm 139:1-4). Then it says there is nowhere we could go to be beyond God's presence (Psalm 139:7-12). Being known that well could feel frightening, but the psalm treats it as comfort.` },
+      { h: `Made with care`, p: `Just before this verse, the psalmist says God knit him together in his mother's womb (Psalm 139:13). Verse 14 is his response: praise. Your existence was not an accident or an afterthought. You were made on purpose by someone who knows you completely.` },
+      { h: `What "fearfully" means`, p: `"Fearfully" here does not mean scary. It carries the sense of awe and reverence. The way we are made should make us stand back in wonder at the God who made us.` },
+      { h: `More than a self-esteem verse`, p: `This verse is often used to tell people to feel good about themselves, and it does speak to worth. But it points first to God's works, not our looks or achievements. The psalm ends by asking God to search the heart and lead in the right way (Psalm 139:23-24). Being wonderfully made and still growing go together.` },
+    ],
+    scriptures: [
+      { ref: `Psalm 139:14`, text: `I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well.` },
+    ],
+    faqs: [
+      { q: `Who wrote Psalm 139?`, a: `The psalm's heading names David, and it has traditionally been read as his prayer.` },
+      { q: `Does Psalm 139:14 apply to everyone?`, a: `It is one person's prayer, but the Bible teaches that every human being is made by God and in his image, so Christians apply it to all people.` },
+      { q: `What if I do not feel wonderfully made?`, a: `Many people do not. The psalm is a truth about God's care, and it can be prayed honestly as something you are still learning to believe.` },
+    ],
+    related: ['what-does-the-bible-say-about-self-worth', 'does-god-love-me'],
+  },
+
+  {
+    slug: 'what-does-lamentations-3-22-23-mean',
+    question: `What does Lamentations 3:22-23 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Lamentations 3:22-23 says that God's love and compassion have not run out, and that his mercies are new every morning. These words were written in the middle of grief, after Jerusalem had been destroyed, not on a good day. They show hope that holds on while the pain is still real.`,
+    body: [
+      { h: `A book of grief`, p: `Lamentations is a set of five poems mourning the fall of Jerusalem to Babylon, around 587 BC. The city was burned, the temple destroyed and many people killed or taken away. Tradition links the book to Jeremiah, though the book itself does not name its author.` },
+      { h: `Hope in the middle of the dark`, p: `Chapter 3 opens with some of the bleakest lines in the Bible, a person who feels God himself has turned against him. Then, almost in the exact middle of the whole book, the writer says he calls something to mind (Lamentations 3:21), and that gives him hope. Verses 22 and 23 are what he remembers.` },
+      { h: `New every morning`, p: `The writer does not say the suffering is over. He says God's compassion has not failed, and that each day brings a fresh supply of it. You do not need tomorrow's mercy today. There will be new mercy when tomorrow comes.` },
+      { h: `Permission to lament`, p: `This passage is a gift to anyone grieving. It shows faith can sit honestly with loss, complaint and tears, and still find something true to hold. Hope here is not denial. It is remembering who God is while everything else hurts.` },
+    ],
+    scriptures: [
+      { ref: `Lamentations 3:22-23`, text: `Because of the Lord’s great love we are not consumed, for his compassions never fail. They are new every morning; great is your faithfulness.` },
+    ],
+    faqs: [
+      { q: `Who wrote Lamentations?`, a: `The book does not say. Jewish and Christian tradition has long linked it to the prophet Jeremiah.` },
+      { q: `What does "new every morning" mean?`, a: `That God's mercy is renewed daily. Each day has its own fresh supply of his compassion.` },
+      { q: `Is it wrong to lament as a Christian?`, a: `No. Lamentations, many psalms and Jesus himself show that honest grief can be part of faith.` },
+    ],
+    related: ['what-does-the-bible-say-about-grief', 'what-does-the-bible-say-about-depression'],
+  },
+
+  {
+    slug: 'what-does-john-14-6-mean',
+    question: `What does John 14:6 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In John 14:6 Jesus says that he himself is the way to God the Father, the truth about God and the source of real life. He said it to his worried disciples on the night before he died, after Thomas asked how they could know the way. Christians have always read it as a claim that Jesus is uniquely the way to God, though they discuss what that means for people who never hear of him.`,
+    body: [
+      { h: `The night before the cross`, p: `John 14 takes place at the Last Supper. Jesus has just told his friends he is leaving, and they are shaken. He begins by telling them not to let their hearts be troubled, and promises he is going to prepare a place for them (John 14:1-3).` },
+      { h: `An answer to Thomas`, p: `Thomas honestly says they do not know where Jesus is going, so how can they know the way (John 14:5)? Jesus does not hand him a map. He points to himself. The way to God is not a set of directions but a person to follow and trust.` },
+      { h: `Way, truth and life`, p: `Jesus is the way, because through him people come to the Father. He is the truth, because he shows what God is really like (John 14:9). He is the life, because the life of God is found in him. All three are offered to people who were confused and afraid.` },
+      { h: `What about people who never hear?`, p: `Christians agree this verse means salvation comes only through Jesus. They differ on how. Some hold that a person must consciously believe in Jesus in this life. Others hold that Jesus can save some who never heard of him clearly, but still only through him. Both views take the verse seriously and leave final judgment with a God who is just and merciful.` },
+    ],
+    scriptures: [
+      { ref: `John 14:6`, text: `Jesus answered, “I am the way and the truth and the life. No one comes to the Father except through me.` },
+    ],
+    faqs: [
+      { q: `Who was Jesus talking to in John 14:6?`, a: `His disciples, especially Thomas, at the Last Supper on the night before he was crucified.` },
+      { q: `Is John 14:6 arrogant?`, a: `It is a bold claim. But Jesus said it as comfort to frightened friends, and he backed it by giving his own life for others.` },
+      { q: `Does John 14:6 mean other religions have nothing true in them?`, a: `Many Christians believe other traditions can contain real truths about God, while holding that Jesus is the one way to the Father.` },
+    ],
+    related: ['is-christianity-the-only-way-to-god', 'is-jesus-really-god'],
+  },
+
+  {
+    slug: 'what-does-matthew-6-33-mean',
+    question: `What does Matthew 6:33 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In Matthew 6:33 Jesus tells his listeners to make God's kingdom and God's way of life their first concern, and trust God to provide the everyday things they need. "All these things" means food, drink and clothing, the very things people worry about. It is an invitation out of worry, not a promise of wealth.`,
+    body: [
+      { h: `Part of a talk about worry`, p: `This verse comes from the Sermon on the Mount, in a passage where Jesus tells people not to worry about what they will eat, drink or wear (Matthew 6:25-34). He points to birds that are fed and wildflowers that are clothed, and reminds them their Father knows what they need (Matthew 6:32).` },
+      { h: `What it means to seek first`, p: `To seek God's kingdom first is to make God's rule and God's priorities the center of your life, ahead of security and possessions. "His righteousness" means living rightly in God's way, which Jesus has been describing all through the sermon.` },
+      { h: `What it does not promise`, p: `"All these things will be given to you" is about basic needs, not luxury. Jesus is not offering a deal where putting God first guarantees prosperity. Christians in every age have put God first and still known hardship. The promise is that the Father cares and provides what we truly need.` },
+      { h: `One day at a time`, p: `Jesus ends the passage by saying not to worry about tomorrow, because each day has enough trouble of its own (Matthew 6:34). Seeking first is not a single decision but a daily practice of turning back to God when worry rises.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 6:33`, text: `But seek first his kingdom and his righteousness, and all these things will be given to you as well.` },
+    ],
+    faqs: [
+      { q: `What are "all these things" in Matthew 6:33?`, a: `Food, drink and clothing, the daily needs Jesus mentions in the verses just before.` },
+      { q: `Does Matthew 6:33 mean I should not plan or work?`, a: `No. The Bible values work and wisdom. Jesus is addressing anxious worry, not responsible planning.` },
+      { q: `What is the kingdom of God?`, a: `God's rule and reign, which Jesus brought near and which shapes how his followers live now.` },
+    ],
+    related: ['what-does-the-bible-say-about-anxiety', 'what-does-the-bible-say-about-money'],
+  },
+
+  {
+    slug: 'what-does-hebrews-11-1-mean',
+    question: `What does Hebrews 11:1 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Hebrews 11:1 means that faith is a confident trust in God about things that are promised but not yet seen. It is not blind faith or believing without reasons, but trust based on who God has shown himself to be. The rest of Hebrews 11 explains it through real people who trusted God's promises over a lifetime.`,
+    body: [
+      { h: `Written to people under pressure`, p: `We do not know who wrote Hebrews. It was written to Christians, probably with a Jewish background, who were facing hardship and were tempted to drift away. Chapter 10 ends by urging them not to throw away their confidence but to keep going (Hebrews 10:35-39). Chapter 11 shows them what that kind of faith looks like.` },
+      { h: `Confidence and assurance`, p: `Faith here has two sides. It is confidence about what we hope for, like the future God has promised. It is also assurance about what we cannot see right now, like God himself and his care. It is a settled trust that shapes how we live today.` },
+      { h: `Not blind faith`, p: `Some read this verse as believing things without evidence. But the chapter that follows is full of people who trusted God because of what he had already said and done. Their faith rested on God's track record. It was trust in someone reliable, not a leap in the dark.` },
+      { h: `A long list of ordinary people`, p: `Hebrews 11 names Abel, Noah, Abraham, Sarah, Moses, Rahab and many others. Several of them doubted, failed or waited years. The chapter even says many died before seeing the promises fulfilled (Hebrews 11:13). Faith is shown in persevering, not in never struggling.` },
+    ],
+    scriptures: [
+      { ref: `Hebrews 11:1`, text: `Now faith is confidence in what we hope for and assurance about what we do not see.` },
+    ],
+    faqs: [
+      { q: `Who wrote Hebrews?`, a: `No one knows for certain. The letter does not name its author, and Christians have suggested several possibilities over the centuries.` },
+      { q: `Is faith the opposite of evidence?`, a: `Not in Hebrews. Faith is trust in God based on what he has revealed and done, extended into what we cannot yet see.` },
+      { q: `Can you have faith and still have doubts?`, a: `Yes. Many people named in Hebrews 11 struggled. Faith often means holding on to God while questions remain.` },
+    ],
+    related: ['what-is-faith', 'how-can-i-believe-when-i-have-doubts'],
+  },
+
+  {
+    slug: 'what-does-romans-6-23-mean',
+    question: `What does Romans 6:23 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Romans 6:23 means that sin pays out death, while God freely gives eternal life through Jesus Christ. Paul sets two pictures side by side: wages, which are earned, and a gift, which is not. Christians agree on that contrast, though they hold different views on exactly what the final "death" involves.`,
+    body: [
+      { h: `The question behind the verse`, p: `Paul wrote Romans to the church in Rome, probably around AD 57. In chapter 6 he answers a question his teaching about grace raised: if God forgives freely, should we keep on sinning (Romans 6:1)? His answer is no, because belonging to Christ means a new life and a new master.` },
+      { h: `Wages and a gift`, p: `All through the chapter Paul uses the picture of slavery and service (Romans 6:16-22). Sin is a master that pays its workers, and what it pays is death. God is different. He does not pay wages. He gives a gift that no one could earn: eternal life in Christ.` },
+      { h: `What "death" means here`, p: `Death in Romans includes physical death and separation from God, the life we were made for. Christians differ on the final outcome. Many hold that those who reject God face conscious separation forever. Others hold that the final death means ceasing to exist. A smaller number hope all will finally be reconciled. Each view tries to take Scripture seriously.` },
+      { h: `The good news half`, p: `People often stop at the first half. Paul does not. The weight of the verse falls on the gift. Whatever you have earned, God offers something you never could: life with him, through Jesus.` },
+    ],
+    scriptures: [
+      { ref: `Romans 6:23`, text: `For the wages of sin is death, but the gift of God is eternal life in Christ Jesus our Lord.` },
+    ],
+    faqs: [
+      { q: `Is Romans 6:23 written to non-Christians?`, a: `It was written to Christians in Rome, reminding them why sin no longer rules them. It is also often shared as a summary of the gospel.` },
+      { q: `Does Romans 6:23 mean all sins are equally bad?`, a: `It means every sin leads away from life with God. Christians still recognize that some wrongs do more harm than others.` },
+      { q: `How do you receive the gift of eternal life?`, a: `Christians understand it is received through trusting Jesus, not earned. They differ on the role of baptism and the church in that.` },
+    ],
+    related: ['what-is-sin', 'is-hell-real'],
+  },
+
+  {
+    slug: 'what-does-ephesians-2-8-9-mean',
+    question: `What does Ephesians 2:8-9 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Ephesians 2:8-9 means that people are saved by God's grace, received through faith, and not by their own good deeds, so no one can take credit for it. It comes right after a description of people as spiritually dead and made alive by God. Christians agree salvation is God's gift, while traditions differ on how faith, works and the church fit together.`,
+    body: [
+      { h: `From dead to alive`, p: `Ephesians is a letter traditionally from Paul to the church in Ephesus, though some scholars think a follower wrote in his name. Chapter 2 begins by describing people as dead in their sins (Ephesians 2:1). Then God, rich in mercy, made them alive with Christ (Ephesians 2:4-5). Dead people do not raise themselves. That is the background to verses 8 and 9.` },
+      { h: `Grace, faith and gift`, p: `Grace is God's undeserved kindness. Faith is how we receive it, like an open hand. And the whole thing is a gift. Christians debate whether "this is not from yourselves" refers to faith itself or to the whole of salvation, but either way the source is God.` },
+      { h: `Then why do good works?`, p: `The very next verse says we are God's handiwork, created in Christ for good works (Ephesians 2:10). Works are not the root of salvation. They are the fruit. Everyone agrees on that much, but Catholic, Orthodox and Protestant Christians describe the connection differently, especially on justification and how faith works itself out in love.` },
+      { h: `No one can boast`, p: `This verse levels everyone. The most religious person and the most broken person come to God the same way, with empty hands. That is humbling, and for many it is a relief: you do not have to earn your place.` },
+    ],
+    scriptures: [
+      { ref: `Ephesians 2:8-9`, text: `For it is by grace you have been saved, through faith—and this is not from yourselves, it is the gift of God— not by works, so that no one can boast.` },
+    ],
+    faqs: [
+      { q: `Does Ephesians 2:8-9 mean works do not matter?`, a: `No. Verse 10 says we were created for good works. They do not earn salvation, but they matter as the life that grows from it.` },
+      { q: `Do Catholics and Protestants disagree about Ephesians 2:8-9?`, a: `Both affirm salvation is by grace. They differ on how justification works and how faith and works relate, a debate that goes back to the Reformation.` },
+      { q: `What does "through faith" mean?`, a: `Faith is trusting God and receiving what he gives. It is not a work that earns, but the way the gift is received.` },
+    ],
+    related: ['what-is-grace', 'can-i-lose-my-salvation'],
+  },
+  {
+    slug: 'what-does-philippians-4-6-7-mean',
+    question: `What does Philippians 4:6-7 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Philippians 4:6-7 invites you to bring every worry to God in prayer, with thanks, and promises that God's peace will guard your heart and mind even when it does not make sense. It is an invitation, not a scolding for feeling anxious. Paul wrote it from custody, so he knew real pressure.`,
+    body: [
+      { h: `Who wrote it and where`, p: `Paul wrote Philippians to a church he loved in the city of Philippi, probably around AD 60, while he was under arrest and unsure whether he would live or die (Philippians 1:20-23). These are not words from someone with an easy life. Just before this, he says the Lord is near (Philippians 4:5), and that nearness is the ground for everything that follows.` },
+      { h: `What "do not be anxious" really asks`, p: `Paul is not telling people to switch off a feeling by willpower. He gives them somewhere to take it: "in every situation," big or small, bring it to God. Prayer, honest asking, and thanks all go together. Thanks does not mean pretending things are fine. It means remembering what God has already done while you ask for help with what you are facing now.` },
+      { h: `A peace that stands guard`, p: `The promise is not that every problem disappears. It is that God's peace will "guard" your heart and mind. Philippi was a Roman colony used to soldiers, and the picture is of a sentry keeping watch. The peace "transcends all understanding," which means it can show up before the situation is solved.` },
+      { h: `Anxiety, faith, and getting help`, p: `Feeling anxious is not proof that your faith is weak. Many faithful people live with anxiety, and some live with an anxiety disorder that needs real treatment. Prayer and getting help go together: talking to a doctor or a counsellor is not a failure to trust God, it can be one of the ways God answers. If anxiety is overwhelming you, please reach out to someone today.` },
+    ],
+    scriptures: [
+      { ref: `Philippians 4:6-7`, text: `Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus.` },
+    ],
+    faqs: [
+      { q: `Is it a sin to feel anxious?`, a: `No. Feelings come uninvited. Paul is offering a place to take your anxiety, not condemning you for having it. Jesus himself was deeply distressed in Gethsemane (Mark 14:33-34).` },
+      { q: `Does Philippians 4:6-7 mean I should not see a doctor for anxiety?`, a: `No. Prayer and medical or counselling care work together. Paul travelled with Luke, whom he calls a doctor (Colossians 4:14). Getting help is wise, not faithless.` },
+      { q: `What comes right after Philippians 4:6-7?`, a: `Paul encourages readers to fill their minds with what is true, noble, right, and lovely (Philippians 4:8). Prayer and what you dwell on are meant to go together.` },
+    ],
+    related: ['what-does-the-bible-say-about-anxiety', 'how-do-i-start-praying'],
+  },
+
+  {
+    slug: 'what-does-1-peter-5-7-mean',
+    question: `What does 1 Peter 5:7 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `1 Peter 5:7 means you can hand all your worries over to God, because he genuinely cares about you. The reason given is not that you are strong enough, but that God is kind. Peter wrote it to Christians who were going through real hardship.`,
+    body: [
+      { h: `Written to people under pressure`, p: `Peter wrote this letter to scattered Christians in what is now Turkey (1 Peter 1:1). They were being mistreated and misunderstood for their faith. The letter talks openly about suffering, so this verse lands among people with real reasons to worry.` },
+      { h: `Connected to humility`, p: `The verse just before says to humble yourselves under God's mighty hand, trusting him to lift you up in time (1 Peter 5:6). Handing over your anxiety is part of that humility. It admits you were never meant to carry everything alone.` },
+      { h: `The reason is God's care`, p: `"Because he cares for you" is the heart of it. God is not irritated by your worries or tired of hearing them. "All" your anxiety includes the small things and the ones you feel embarrassed about. You may need to hand the same worry over many times, and that is fine.` },
+      { h: `Care for your mind and body too`, p: `Casting your anxiety on God is not a replacement for help. Prayer and getting help go together: a doctor, a counsellor, or a trusted friend can be part of how God carries you. Struggling with anxiety is not a sign that you lack faith. It is a sign that you are human, and the verse is written for exactly that.` },
+    ],
+    scriptures: [
+      { ref: `1 Peter 5:7`, text: `Cast all your anxiety on him because he cares for you.` },
+    ],
+    faqs: [
+      { q: `What does "cast" mean in 1 Peter 5:7?`, a: `To throw something off yourself and onto someone else. It is a picture of deliberately handing over a weight you were carrying.` },
+      { q: `If I still feel anxious after praying, did I do it wrong?`, a: `No. Feelings often take time to settle, and many people hand the same worry to God again and again. Keep praying and consider talking to a doctor or counsellor too.` },
+      { q: `What comes after 1 Peter 5:7?`, a: `Peter tells readers to stay alert, and a few verses later promises that after they have suffered a little while, God himself will restore and strengthen them (1 Peter 5:8-10).` },
+    ],
+    related: ['what-does-the-bible-say-about-anxiety', 'does-god-love-me'],
+  },
+
+  {
+    slug: 'what-does-romans-3-23-mean',
+    question: `What does Romans 3:23 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Romans 3:23 means every person, without exception, has done wrong and falls short of the goodness God made us for. It puts everyone on level ground. In context it is not the end of a sentence: the very next verse says all can be made right with God freely, by his grace.`,
+    body: [
+      { h: `Who Paul is writing to`, p: `Paul wrote Romans around AD 57 to a church in Rome made up of both Jewish and non Jewish believers. Part of his aim was to show that no group stands above another before God. In the chapters before this, he builds the case that everyone needs God's mercy.` },
+      { h: `"All" means everyone`, p: `The point is not that some people are worse than others. It is that no one, religious or not, can claim to have lived up to what God intended. "Fall short of the glory of God" pictures missing the mark of who we were made to be.` },
+      { h: `Read the sentence to the end`, p: `In the NIV, verse 23 ends with a comma, because Paul's sentence keeps going. Verse 24 says all are justified freely by God's grace through what Christ Jesus did. The same "all" who have sinned are the "all" who can be made right as a gift. Romans 3:23 is the diagnosis, and the cure follows straight away.` },
+      { h: `Why this is good news`, p: `If everyone falls short, then no one has to pretend. You do not need to prove you are better than others to come to God. Grace is offered on the same terms to everyone, which means it is offered to you.` },
+    ],
+    scriptures: [
+      { ref: `Romans 3:23`, text: `for all have sinned and fall short of the glory of God,` },
+    ],
+    faqs: [
+      { q: `Does Romans 3:23 mean I am a bad person?`, a: `It means you are a person who needs grace, like everyone else. The verse levels the ground. It does not single you out.` },
+      { q: `What is "the glory of God" in Romans 3:23?`, a: `God's own goodness and beauty, and the likeness of it he made people to reflect. Sin means we do not reflect it as we were meant to.` },
+      { q: `What verse comes after Romans 3:23?`, a: `Romans 3:24, which says all are justified freely by God's grace through the redemption that came by Christ Jesus.` },
+    ],
+    related: ['what-is-sin', 'what-is-grace'],
+  },
+
+  {
+    slug: 'what-is-the-great-commission',
+    question: `What is the Great Commission?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `The Great Commission is Jesus's instruction to his followers in Matthew 28:19-20 to make disciples of all nations, baptizing them and teaching them to follow what he commanded. It ends with a promise that he will be with them always. It is the closing scene of Matthew's Gospel.`,
+    body: [
+      { h: `The setting`, p: `After his resurrection, Jesus met his eleven remaining disciples on a mountain in Galilee. Matthew is honest that some of them still doubted (Matthew 28:16-17). Jesus did not wait for perfect faith before sending them. He began by saying all authority in heaven and on earth had been given to him (Matthew 28:18), and the commission rests on that.` },
+      { h: `The main task is making disciples`, p: `"Go" matters, but the central command is to "make disciples": people who learn from Jesus and follow him over a lifetime. "All nations" means all peoples, not only Israel. Baptizing and teaching describe how that happens: welcoming people in, and helping them live what Jesus taught.` },
+      { h: `Where Christians differ on baptism`, p: `Christians agree that baptism matters here, but faithful traditions understand it differently. Some baptize infants of believing families, seeing baptism as a sign of God's promise to the household. Others baptize only those old enough to profess faith themselves. There are also different views on whether to immerse, pour, or sprinkle, and on what baptism itself accomplishes. These differences are held sincerely on all sides.` },
+      { h: `The promise at the end`, p: `The last words are not a command but a comfort: "I am with you always, to the very end of the age." The task is big, and the people sent were ordinary and unsure. The commission was never meant to be carried out alone.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 28:19-20`, text: `Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit, and teaching them to obey everything I have commanded you. And surely I am with you always, to the very end of the age.”` },
+    ],
+    faqs: [
+      { q: `Is the Great Commission only for pastors and missionaries?`, a: `Most Christians understand it as given to the whole church. For most people it looks like living and sharing their faith where they already are.` },
+      { q: `Why is it called the Great Commission?`, a: `The name is a later label, not a phrase from the Bible. A commission is a task someone is sent to do, and this one is the final charge Jesus gives in Matthew.` },
+      { q: `Does the Great Commission appear in other Gospels?`, a: `Similar sendings appear elsewhere, for example Luke 24:46-49, John 20:21, and Acts 1:8, each with its own emphasis.` },
+    ],
+    related: ['what-is-baptism', 'what-is-the-gospel'],
+  },
+
+  {
+    slug: 'what-does-john-16-33-mean',
+    question: `What does John 16:33 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In John 16:33 Jesus tells his followers plainly that they will have trouble in this world, but they can have peace in him because he has overcome the world. He does not promise an easy life. He promises his presence and his victory in the middle of a hard one.`,
+    body: [
+      { h: `Said the night before the cross`, p: `Jesus spoke these words at his last meal with his disciples, in a long farewell talk that runs through John 13 to 16. Within hours he would be arrested. Just before this verse, he warns that they will scatter and leave him alone, yet he says he is not alone, because the Father is with him (John 16:32).` },
+      { h: `Honest about trouble`, p: `"In this world you will have trouble" is one of the most honest lines in the Bible. Following Jesus does not exempt anyone from grief, illness, or loss. If you are struggling, it does not mean you have done something wrong or that God has left.` },
+      { h: `Peace in a person`, p: `The peace Jesus offers is "in me." It is not found in circumstances going well, but in being connected to him. That is why it can sit alongside real trouble.` },
+      { h: `Why "take heart"`, p: `Jesus speaks of overcoming the world in the past tense, though the cross and resurrection were still ahead. He was that sure of the outcome. Taking heart is not denying the trouble. It is remembering who has the final word.` },
+    ],
+    scriptures: [
+      { ref: `John 16:33`, text: `“I have told you these things, so that in me you may have peace. In this world you will have trouble. But take heart! I have overcome the world.”` },
+    ],
+    faqs: [
+      { q: `Does John 16:33 mean Christians should expect suffering?`, a: `It means trouble is part of life for everyone, Christians included. Jesus says it up front so it does not shake people's faith when it comes.` },
+      { q: `What does "overcome the world" mean?`, a: `That the forces opposed to God, including sin and death, do not get the last word. Christians see this victory in Jesus's death and resurrection.` },
+      { q: `What happens after John 16:33?`, a: `Jesus prays for himself, his disciples, and all future believers in John 17, then is arrested in John 18.` },
+    ],
+    related: ['why-does-god-allow-suffering', 'what-does-the-bible-say-about-fear'],
+  },
+
+  {
+    slug: 'what-does-psalm-37-4-mean',
+    question: `What does Psalm 37:4 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Psalm 37:4 means that when God himself becomes your joy, your deepest desires find their answer in him. It is not a promise that you will get whatever you want if you are religious enough. The psalm is about trusting God when it looks like the wrong people are winning.`,
+    body: [
+      { h: `The setting of the psalm`, p: `Psalm 37 is credited to David and reads like wisdom from an older man (Psalm 37:25). It opens by telling readers not to fret over people who do evil and seem to prosper (Psalm 37:1). The whole psalm is about patience: wicked success does not last, and God can be trusted with the outcome.` },
+      { h: `Not a blank cheque`, p: `A common misreading treats this verse as a deal: delight in God, then collect what you want. But the delight comes first, and it is delight in the Lord himself, not in what he can give. People who find their joy in God tend to find their desires changing too.` },
+      { h: `Two faithful ways to read it`, p: `Some Christians read it as God fulfilling the desires of people whose hearts are set on him. Others emphasise that God shapes and gives the desires themselves. The two readings overlap more than they compete: both put God, not the wish list, at the centre.` },
+      { h: `Read it with the verses around it`, p: `The next verses say to commit your way to the Lord, trust him, be still, and wait patiently (Psalm 37:5-7). That is the tone of the verse: quiet trust over time, not quick results.` },
+    ],
+    scriptures: [
+      { ref: `Psalm 37:4`, text: `Take delight in the Lord, and he will give you the desires of your heart.` },
+    ],
+    faqs: [
+      { q: `If I pray and do not get what I want, did Psalm 37:4 fail?`, a: `No. The verse is not a guarantee about specific requests. It describes what happens when God himself becomes your delight.` },
+      { q: `What does it mean to delight in the Lord?`, a: `To enjoy God, not only obey him: to find him good, beautiful, and worth your attention, in prayer, worship, and everyday life.` },
+      { q: `Who wrote Psalm 37?`, a: `Its heading credits David. It is a wisdom psalm about trusting God when evil seems to be winning.` },
+    ],
+    related: ['how-do-i-know-gods-will-for-my-life', 'does-god-answer-prayer'],
+  },
+
+  {
+    slug: 'what-does-hebrews-13-5-mean',
+    question: `What does Hebrews 13:5 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Hebrews 13:5 means you can loosen your grip on money and be content, because God has promised he will never leave you or forsake you. Your security rests on his presence, not your bank balance. The promise is the reason for the contentment.`,
+    body: [
+      { h: `Written to people who had lost things`, p: `We do not know for sure who wrote Hebrews. It was written to Christians, many likely from a Jewish background, who had faced pressure for their faith, including having their property taken (Hebrews 10:34). Talk of money and contentment came to people who knew what loss felt like.` },
+      { h: `The love of money, not money`, p: `The verse warns against the love of money, not against having or using it. The problem is when money becomes what you trust to keep you safe. Contentment means being at peace with what you have, not refusing to plan or work.` },
+      { h: `An old promise repeated`, p: `"Never will I leave you; never will I forsake you" echoes promises God made long before, to Israel through Moses (Deuteronomy 31:6) and to Joshua (Joshua 1:5). The writer applies them to ordinary believers. The next verse draws on Psalm 118:6 to say the Lord is our helper, so we need not be afraid.` },
+      { h: `What this means for you`, p: `If money worries keep you up at night, this verse does not shame you. It offers a steadier place to stand: whatever you have or lose, you will not lose God.` },
+    ],
+    scriptures: [
+      { ref: `Hebrews 13:5`, text: `Keep your lives free from the love of money and be content with what you have, because God has said, “Never will I leave you; never will I forsake you.”` },
+    ],
+    faqs: [
+      { q: `Does Hebrews 13:5 say money is evil?`, a: `No. It warns against loving money and letting it become your security. Money itself is a tool.` },
+      { q: `Where does "never will I leave you" come from?`, a: `It echoes God's promises in Deuteronomy 31:6 and Joshua 1:5, applied here to all who trust him.` },
+      { q: `Is it wrong to want more money?`, a: `Wanting to provide for yourself and others is not wrong. The verse is about what your heart rests on, and about learning contentment.` },
+    ],
+    related: ['what-does-the-bible-say-about-money', 'what-does-the-bible-say-about-loneliness'],
+  },
+
+  {
+    slug: 'what-does-james-1-2-4-mean',
+    question: `What does James 1:2-4 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `James 1:2-4 means that hard times can be faced with a deep kind of joy, because God can use them to grow endurance and maturity in you. It does not mean you must feel happy about pain. It is about what trials can produce, not about pretending they do not hurt.`,
+    body: [
+      { h: `Who wrote it and to whom`, p: `The letter is traditionally credited to James, the brother of Jesus, who led the church in Jerusalem. He writes to believers "scattered among the nations" (James 1:1), likely Jewish Christians who were poor and facing hardship. He is writing to people already in trouble, not lecturing from comfort.` },
+      { h: `"Consider" is a choice, not a feeling`, p: `"Consider it pure joy" asks you to weigh things up, not to fake a smile. You can grieve and still believe that God is at work. The joy is in what the trial can produce, not in the trial itself.` },
+      { h: `Growth takes time`, p: `James describes a process: testing produces perseverance, and perseverance, given time, leads to maturity. "Let perseverance finish its work" admits this is slow. Being in the middle of it does not mean you are failing.` },
+      { h: `God is not the author of evil`, p: `This passage does not mean God sends harm to teach you a lesson. Later in the same chapter James says God tempts no one and that every good gift comes from him (James 1:13, 17). Right after this passage, he invites anyone who lacks wisdom to ask God, who gives generously without finding fault (James 1:5).` },
+    ],
+    scriptures: [
+      { ref: `James 1:2-4`, text: `Consider it pure joy, my brothers and sisters, whenever you face trials of many kinds, because you know that the testing of your faith produces perseverance. Let perseverance finish its work so that you may be mature and complete, not lacking anything.` },
+    ],
+    faqs: [
+      { q: `Does James 1:2-4 mean I should not be sad when things go wrong?`, a: `No. Sadness and lament are all through the Bible. James is talking about a settled hope underneath the pain, not a cheerful face over it.` },
+      { q: `Does God send trials to test me?`, a: `Christians understand this in different ways, but James is clear that God does not tempt anyone to do evil (James 1:13). The focus here is on what God can grow in you through hardship.` },
+      { q: `What does "mature and complete" mean?`, a: `Grown up in faith and whole, not perfect. It is the steady, rooted character that endurance builds over time.` },
+    ],
+    related: ['why-does-god-allow-suffering', 'how-can-i-believe-when-i-have-doubts'],
+  },
+
+  {
+    slug: 'what-does-1-john-1-9-mean',
+    question: `What does 1 John 1:9 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `1 John 1:9 means that when we honestly admit our sins to God, he forgives us and makes us clean, because he is faithful to his promises and just. Forgiveness rests on God's character, not on how well you confess. It is an invitation to honesty, not a test.`,
+    body: [
+      { h: `Who wrote it and why`, p: `This letter is traditionally credited to the apostle John, written to churches he cared for, probably late in the first century. He wanted them to be sure of their relationship with God and to walk honestly in the light (1 John 1:7).` },
+      { h: `Honesty instead of pretending`, p: `The verse sits between two warnings: claiming to be without sin is self deception (1 John 1:8), and claiming we have not sinned makes God out to be a liar (1 John 1:10). Confession simply means agreeing with God about what is true. It is the opposite of hiding.` },
+      { h: `Why "faithful and just"`, p: `It may seem surprising that justice is the reason God forgives. John explains a few verses later that Jesus is our advocate and the atoning sacrifice for our sins (1 John 2:1-2). Because the debt has been dealt with, forgiving those who come to him is right, not a bending of the rules.` },
+      { h: `A common worry`, p: `Some people fear they are only forgiven for sins they remember to list. The verse does not say that. It says God will purify us from "all" unrighteousness. Christians differ on how confession relates to first coming to faith versus ongoing life with God, but they agree that forgiveness is a gift, not a payment you earn by confessing perfectly.` },
+    ],
+    scriptures: [
+      { ref: `1 John 1:9`, text: `If we confess our sins, he is faithful and just and will forgive us our sins and purify us from all unrighteousness.` },
+    ],
+    faqs: [
+      { q: `Do I need to confess every single sin to be forgiven?`, a: `No. God forgives and cleanses from "all" unrighteousness. Confession is about honesty with God, not perfect record keeping.` },
+      { q: `Do I have to confess to a priest or pastor?`, a: `Traditions differ. Some, such as Catholic and Orthodox churches, practise confession with a priest, while many Protestants confess directly to God and sometimes to a trusted believer (James 5:16).` },
+      { q: `What if I still feel guilty after confessing?`, a: `Feelings can lag behind what is true. The verse rests on God's faithfulness, not on how forgiven you feel today.` },
+    ],
+    related: ['will-god-forgive-me', 'what-is-repentance'],
+  },
+
+  {
+    slug: 'what-does-psalm-34-18-mean',
+    question: `What does Psalm 34:18 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Psalm 34:18 means that God draws especially near to people who are heartbroken and crushed, and he rescues them. Your pain does not push God away. It is where he promises to be close.`,
+    body: [
+      { h: `Written from a low place`, p: `The heading of Psalm 34 links it to a time when David was on the run for his life and pretended to be insane to escape a foreign king (1 Samuel 21:10-15). This is not a psalm written from a throne. It comes from someone frightened and humiliated who found God faithful.` },
+      { h: `Close, not distant`, p: `The verse does not tell the brokenhearted to cheer up or try harder. It says the Lord is close to them. Grief, despair, and feeling crushed are not signs that God has stepped back. They are where this promise applies most.` },
+      { h: `Saved does not mean spared`, p: `The next verse admits that the righteous may have many troubles, and says the Lord delivers them (Psalm 34:19). The psalm does not pretend hard things will not happen. Rescue may come slowly, and closeness comes first.` },
+      { h: `You do not have to carry it alone`, p: `If you are crushed in spirit right now, God's nearness can come through people too: a friend, a pastor, a counsellor, or a doctor. Reaching out is not a lack of faith. If you are in danger or thinking of ending your life, please contact local emergency services or a crisis line now.` },
+    ],
+    scriptures: [
+      { ref: `Psalm 34:18`, text: `The Lord is close to the brokenhearted and saves those who are crushed in spirit.` },
+    ],
+    faqs: [
+      { q: `Does Psalm 34:18 mean God is not close to me when I feel fine?`, a: `No. God is near to all his people. The verse simply assures those in pain that their brokenness does not keep him away.` },
+      { q: `Why do I not feel God close when I am heartbroken?`, a: `Many people in the Bible felt that too, and said so in prayer (Psalm 22:1). The promise does not depend on feeling it in the moment.` },
+      { q: `Who wrote Psalm 34?`, a: `Its heading credits David, linking it to his escape described in 1 Samuel 21.` },
+    ],
+    related: ['what-does-the-bible-say-about-grief', 'what-does-the-bible-say-about-depression'],
+  },
+
+  {
+    slug: 'what-does-romans-10-9-mean',
+    question: `What does Romans 10:9 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Romans 10:9 says that anyone who openly declares that Jesus is Lord and truly believes God raised him from the dead will be saved. Salvation is received by trusting Jesus, not earned by keeping rules. Christians agree on that core, though they explain what saving faith involves in somewhat different ways.`,
+    body: [
+      { h: `The context in Romans`, p: `Paul wrote to the church in Rome around AD 57. In this chapter he contrasts trying to be right with God by keeping the law with receiving it through faith. Just before, he says the message is not far away but near, in your mouth and heart (Romans 10:8). Right after, he stresses it is open to everyone, Jew or Gentile (Romans 10:12-13).` },
+      { h: `What "Jesus is Lord" meant`, p: `In the Roman world, calling someone "lord" was a claim of loyalty, and Caesar expected that title. Declaring "Jesus is Lord" was more than words. It meant Jesus, not anyone else, had the final claim on your life.` },
+      { h: `Heart and mouth together`, p: `Paul pairs believing in the heart with declaring with the mouth (Romans 10:10). The point is not a magic formula, but real trust that shows itself openly. Belief in the resurrection matters because it is God's own confirmation of who Jesus is.` },
+      { h: `Where Christians differ`, p: `Faithful Christians agree salvation is by God's grace through faith, but describe it differently. Some stress that true faith includes turning from sin and following Jesus as Lord. Others stress that faith is simply trusting the promise, with growth following. Some traditions, including Catholic, Orthodox, and Lutheran churches, see baptism as closely tied to this confession, while many evangelicals see it as a response that follows. These are long standing conversations among sincere believers.` },
+    ],
+    scriptures: [
+      { ref: `Romans 10:9`, text: `If you declare with your mouth, “Jesus is Lord,” and believe in your heart that God raised him from the dead, you will be saved.` },
+    ],
+    faqs: [
+      { q: `Is saying "Jesus is Lord" enough to be saved?`, a: `Paul links the words to real belief in the heart. It is trust in Jesus, expressed openly, not the words alone.` },
+      { q: `Do I need to say it out loud in front of people?`, a: `Paul's point is that faith is not hidden. How and when that happens varies, and many churches connect public confession with baptism.` },
+      { q: `Why does believing in the resurrection matter so much?`, a: `Because the resurrection shows God accepted Jesus's death for us and confirmed who he is (Romans 4:25). Without it, Paul says faith would be futile (1 Corinthians 15:17).` },
+    ],
+    related: ['how-do-i-become-a-christian', 'what-is-faith'],
+  },
+
+  {
+    slug: 'what-does-2-corinthians-12-9-mean',
+    question: `What does 2 Corinthians 12:9 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In 2 Corinthians 12:9 God tells Paul that his grace is enough, and that his power shows most clearly in human weakness. Paul had begged God to remove a painful problem, and the answer was not removal but grace to carry it. Weakness, in God's hands, is not the end of the story.`,
+    body: [
+      { h: `The situation behind it`, p: `Paul wrote 2 Corinthians to a church being swayed by impressive teachers he sarcastically calls "super apostles" (2 Corinthians 11:5). Instead of boasting about his strengths, Paul boasts about his weaknesses. He mentions a remarkable vision, then something humbling that followed it.` },
+      { h: `The thorn in the flesh`, p: `Paul describes "a thorn in my flesh" that tormented him, and says he pleaded with the Lord three times to take it away (2 Corinthians 12:7-8). Nobody knows exactly what it was. Suggestions include an illness, poor eyesight, persistent opponents, or an ongoing struggle. Not knowing may help: many people can see their own situation in it.` },
+      { h: `A no that was also a yes`, p: `God did not remove the thorn. He gave Paul something else: grace that was sufficient and power that worked through weakness. Honest prayer can receive a different answer than the one asked for, and that is not a sign God has stopped caring.` },
+      { h: `Not a call to pretend`, p: `This verse does not mean you should hide pain or refuse help. Paul was open about his struggle. It means weakness does not disqualify you. Paul goes on to say that when he is weak, then he is strong (2 Corinthians 12:10), because Christ's strength rests on him.` },
+    ],
+    scriptures: [
+      { ref: `2 Corinthians 12:9`, text: `But he said to me, “My grace is sufficient for you, for my power is made perfect in weakness.” Therefore I will boast all the more gladly about my weaknesses, so that Christ’s power may rest on me.` },
+    ],
+    faqs: [
+      { q: `What was Paul's thorn in the flesh?`, a: `We do not know. Christians have suggested illness, an eye problem, opponents, or temptation, but Paul never says.` },
+      { q: `Does 2 Corinthians 12:9 mean God will not heal me?`, a: `No. It describes Paul's experience, not a rule for everyone. God sometimes heals and sometimes gives strength to endure. Keep praying, and keep getting good care.` },
+      { q: `What does "my power is made perfect in weakness" mean?`, a: `That God's strength is seen most clearly when it is obviously not our own. "Made perfect" carries the idea of being brought to full effect.` },
+    ],
+    related: ['what-is-grace', 'why-does-god-allow-suffering'],
+  },
+  {
+    slug: 'what-does-the-bible-say-about-anger',
+    question: `What does the Bible say about anger?`,
+    category: 'Mental Health',
+    updated: '2026-11-02',
+    answer: `The Bible does not call anger itself a sin, but it warns that anger handled badly quickly turns into harm. "In your anger do not sin" assumes you will feel angry sometimes. The invitation is to be slow to anger, deal with it honestly, and not let it settle in and take over.`,
+    body: [
+      { h: `Feeling angry is not the problem`, p: `God is described as angry at injustice, and Jesus was angry when people were being exploited in the temple. Anger can be a sign that you care about something that matters. Scripture does not ask you to pretend you are fine.` },
+      { h: `What you do with it matters`, p: `The warning is about what anger can grow into: harsh words, revenge, a grudge that lasts for years. "Do not let the sun go down while you are still angry" is practical wisdom. Deal with it before it hardens.` },
+      { h: `Slow is the goal, not never`, p: `James says to be "quick to listen, slow to speak and slow to become angry." Slow means there is room to pause, breathe, and ask what is really going on underneath, often hurt, fear, or exhaustion.` },
+      { h: `Grace when you get it wrong`, p: `Everyone has said things in anger they regret. The gospel is not only a warning; it is a way back. You can own what you did, apologise, and receive forgiveness, from God and often from the people you hurt.` },
+    ],
+    scriptures: [
+      { ref: `Ephesians 4:26-27`, text: `“In your anger do not sin”: Do not let the sun go down while you are still angry, and do not give the devil a foothold.` },
+      { ref: `James 1:19-20`, text: `My dear brothers and sisters, take note of this: Everyone should be quick to listen, slow to speak and slow to become angry, because human anger does not produce the righteousness that God desires.` },
+    ],
+    faqs: [
+      { q: `Is it a sin to be angry?`, a: `Not in itself. Scripture says "in your anger do not sin", which separates the feeling from what you do with it.` },
+      { q: `Did Jesus get angry?`, a: `Yes. He was angry at hard hearts and at people being cheated in the temple. His anger was aimed at wrongs, not at protecting his pride.` },
+      { q: `What if my anger feels out of control?`, a: `That is worth taking seriously and getting help with, from a counsellor, a doctor, or a trusted pastor. Asking for help is a strong step, not a failure. If you or anyone else is in danger, contact local emergency services.` },
+    ],
+    related: ['is-it-okay-to-be-angry-at-god', 'how-do-i-forgive-someone-who-hurt-me'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-pride',
+    question: `What does the Bible say about pride?`,
+    category: 'Grace',
+    updated: '2026-11-02',
+    answer: `The Bible treats pride as one of the most dangerous attitudes a person can have, because it puts self at the centre and shuts out God and others. "Pride goes before destruction." The answer it offers is not self hatred but humility: seeing yourself honestly, as someone loved and dependent on grace.`,
+    body: [
+      { h: `What the Bible means by pride`, p: `Biblical pride is not being glad about good work or caring for yourself. It is the attitude that says "I do not need God, and I am above other people." It shows up as arrogance, but also as refusing help or being unable to admit fault.` },
+      { h: `Why it is so dangerous`, p: `Pride blinds. It makes it hard to see your own mistakes, hard to listen, and hard to receive anything as a gift. Proverbs puts it bluntly: pride comes before a fall.` },
+      { h: `Humility is not thinking less of yourself`, p: `Humility in Scripture is honesty. You are not the centre of the universe, and you are also deeply valued. Both are true. A humble person can receive love and give it freely because they are not busy defending themselves.` },
+      { h: `More grace for the proud too`, p: `James says "he gives us more grace." God's opposition to pride is not a door slammed shut. The moment you lower your guard and admit you need him, grace is already there.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 16:18`, text: `Pride goes before destruction, a haughty spirit before a fall.` },
+      { ref: `James 4:6`, text: `But he gives us more grace. That is why Scripture says: “God opposes the proud but shows favor to the humble.”` },
+    ],
+    faqs: [
+      { q: `Is it wrong to feel proud of my kids or my work?`, a: `No. Being glad about something good is different from the self exalting pride Scripture warns about. Gratitude and joy are not arrogance.` },
+      { q: `How do I know if I struggle with pride?`, a: `Notice how you handle correction, other people's success, and admitting you were wrong. Those are often where pride hides.` },
+      { q: `Is low self worth the opposite of pride?`, a: `Not really. Both keep the focus on yourself. Humility rests in being loved by God, which frees you from needing to be either above or below others.` },
+    ],
+    related: ['what-does-the-bible-say-about-self-worth', 'what-is-grace'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-patience',
+    question: `What does the Bible say about patience?`,
+    category: 'Faith & Doubt',
+    updated: '2026-11-02',
+    answer: `The Bible describes patience as a fruit of the Holy Spirit, something God grows in you over time rather than something you have to manufacture alone. It covers patience with people, patience in hard seasons, and patience with God's timing. Scripture is honest that waiting is hard, and it pairs patience with hope and prayer.`,
+    body: [
+      { h: `Patience is grown, not forced`, p: `Paul lists forbearance, an old word for patience, among the fruit of the Spirit. Fruit grows slowly and naturally. If you feel impatient, that is not proof you have failed; it is a place where God is still at work.` },
+      { h: `Patience with people`, p: `Much of the Bible's talk about patience is about how we treat each other: bearing with people's flaws, giving them time to change, not snapping at the first frustration. "Love is patient" comes first in the famous list for a reason.` },
+      { h: `Patience in hard seasons`, p: `Romans says "patient in affliction." That is not passive endurance. It sits next to joy in hope and faithfulness in prayer. You hold on, you keep talking to God, and you trust the season is not the end.` },
+      { h: `Waiting on God's timing`, p: `Many people in Scripture waited years for promises to come true, and they were honest about how hard it was. Patience does not mean you stop asking. It means you keep trusting while you ask.` },
+    ],
+    scriptures: [
+      { ref: `Romans 12:12`, text: `Be joyful in hope, patient in affliction, faithful in prayer.` },
+      { ref: `Galatians 5:22-23`, text: `But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control. Against such things there is no law.` },
+    ],
+    faqs: [
+      { q: `Should I pray for patience?`, a: `Yes, many Christians do. Patience is described as something the Spirit grows in you, so asking for it is exactly the right place to start.` },
+      { q: `Is it wrong to feel impatient with God?`, a: `No. The Psalms are full of people asking "how long?" Honest impatience brought to God is still faith.` },
+      { q: `Does patience mean putting up with mistreatment?`, a: `No. Patience with people's flaws is not the same as accepting abuse or harm. Your safety matters, and getting help is not impatience.` },
+    ],
+    related: ['does-god-answer-prayer', 'how-do-i-know-gods-will-for-my-life'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-hope',
+    question: `What does the Bible say about hope?`,
+    category: 'Faith & Doubt',
+    updated: '2026-11-02',
+    answer: `In the Bible, hope is not wishful thinking; it is confident trust that God is good and will keep his promises. It rests on who God is and on the resurrection of Jesus, not on how things look today. That is why Christians can have hope even in grief and hard seasons.`,
+    body: [
+      { h: `Hope is anchored, not vague`, p: `Everyday hope says "I hope it works out." Biblical hope says "God will be faithful." It is grounded in God's character and in what he has already done, especially in raising Jesus from the dead.` },
+      { h: `Hope does not deny the pain`, p: `Lamentations was written after a city was destroyed. Right in the middle of that grief come the words "his compassions never fail. They are new every morning." Hope does not skip the sorrow; it speaks inside it.` },
+      { h: `Hope is a gift, not a performance`, p: `Paul prays that "the God of hope" would fill people with joy and peace. Hope is something God gives through the Holy Spirit. You do not have to generate it by trying harder.` },
+      { h: `Hope looks forward`, p: `Christian hope points to a future where God makes all things new, wipes away tears, and puts right what is broken. That future gives meaning to today, even when today is hard.` },
+    ],
+    scriptures: [
+      { ref: `Romans 15:13`, text: `May the God of hope fill you with all joy and peace as you trust in him, so that you may overflow with hope by the power of the Holy Spirit.` },
+      { ref: `Lamentations 3:22-23`, text: `Because of the Lord’s great love we are not consumed, for his compassions never fail. They are new every morning; great is your faithfulness.` },
+    ],
+    faqs: [
+      { q: `What is the difference between hope and optimism?`, a: `Optimism expects circumstances to improve. Biblical hope trusts God's faithfulness whether circumstances improve or not.` },
+      { q: `What if I feel hopeless right now?`, a: `You are not alone, and feeling hopeless is not a failure of faith. Please talk to someone you trust or a counsellor. If you are thinking about ending your life, call or text 988 in the US or Canada, or your local emergency number.` },
+      { q: `What is the Christian hope for the future?`, a: `That God will raise the dead, make all things new, and live with his people, with no more death, mourning, or pain.` },
+    ],
+    related: ['what-does-the-bible-say-about-depression', 'what-is-heaven-like'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-marriage',
+    question: `What does the Bible say about marriage?`,
+    category: 'Relationships',
+    updated: '2026-11-02',
+    answer: `The Bible describes marriage as a covenant: a lifelong promise of faithful love in which two people "become one flesh." It pictures marriage as companionship, mutual care, and a reflection of God's own faithful love. Scripture is also honest that marriages can be hard, and grace meets people in every kind of marriage story.`,
+    body: [
+      { h: `A covenant, not just a contract`, p: `From Genesis on, marriage is described as two people leaving their old homes and being united. A covenant is a promise of loyalty that holds through good and bad seasons, not a deal that ends when one side underperforms.` },
+      { h: `Companionship and care`, p: `"Two are better than one." Marriage in Scripture is about not being alone: helping each other up, carrying each other's burdens, and growing together over years. The New Testament calls spouses to love, honour, and serve each other.` },
+      { h: `A picture of God's faithful love`, p: `The Bible often uses marriage to describe how God loves his people: patiently, faithfully, and with forgiveness. Faithfulness in marriage is a small, daily echo of that bigger love.` },
+      { h: `When marriage is hard or has ended`, p: `Many marriages go through seasons of distance and pain, and some end in divorce. Scripture holds marriage in high regard, but it never says people who have walked through divorce are beyond God's love. If there is abuse in a marriage, safety comes first. Abuse is never God's will, and seeking protection is right.` },
+    ],
+    scriptures: [
+      { ref: `Genesis 2:24`, text: `That is why a man leaves his father and mother and is united to his wife, and they become one flesh.` },
+      { ref: `Ecclesiastes 4:9-10`, text: `Two are better than one, because they have a good return for their labor: If either of them falls down, one can help the other up. But pity anyone who falls and has no one to help them up.` },
+    ],
+    faqs: [
+      { q: `What is the purpose of marriage in the Bible?`, a: `Companionship, faithful love, mutual care, and a reflection of God's covenant love for his people.` },
+      { q: `What if my marriage is struggling?`, a: `You are not the first. Many couples find help through a counsellor, a trusted pastor, or other couples who have been through hard seasons. Asking for help early is wise.` },
+      { q: `Does God still love me if I am divorced?`, a: `Yes. Divorce is painful, but it does not put anyone outside God's love or grace.` },
+    ],
+    related: ['what-does-the-bible-say-about-divorce', 'how-do-i-forgive-someone-who-hurt-me'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-friendship',
+    question: `What does the Bible say about friendship?`,
+    category: 'Relationships',
+    updated: '2026-11-02',
+    answer: `The Bible values friendship highly, describing a true friend as someone who "loves at all times" and stays close in hard seasons. It shows deep friendships, like David and Jonathan or Ruth and Naomi. Jesus himself called his disciples friends and said the greatest love is laying down your life for them.`,
+    body: [
+      { h: `Friends who stay`, p: `Proverbs says "a friend loves at all times." A real friend is not only there for the good times. They show up when life falls apart, and that loyalty is something Scripture treats as precious.` },
+      { h: `Friendship in the Bible's stories`, p: `David and Jonathan's friendship was so close it survived danger and family conflict. Ruth refused to leave Naomi after loss. These stories show friendship as loyal, costly, and deeply human.` },
+      { h: `Jesus calls us friends`, p: `Jesus told his followers, "I have called you friends." He also said "greater love has no one than this: to lay down one's life for one's friends," and then did exactly that. Friendship with God is at the heart of the gospel.` },
+      { h: `Choosing friends wisely`, p: `The Bible also notes that the people around us shape us. Good friends tell you the truth kindly, encourage you, and help you grow. It is wise to invest in friendships like that and to be that kind of friend.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 17:17`, text: `A friend loves at all times, and a brother is born for a time of adversity.` },
+      { ref: `John 15:13`, text: `Greater love has no one than this: to lay down one’s life for one’s friends.` },
+    ],
+    faqs: [
+      { q: `What makes a good friend, according to the Bible?`, a: `Loyalty, honesty, kindness, and staying close in hard times.` },
+      { q: `Can Christians be friends with people who do not share their faith?`, a: `Yes. Jesus was known as a friend of people others avoided. Many Christians have close friends of different beliefs.` },
+      { q: `What if I do not have close friends right now?`, a: `That is painful and more common than people admit. God sees you in it, and small steps like joining a group or reaching out to one person can open doors over time.` },
+    ],
+    related: ['what-does-the-bible-say-about-loneliness', 'how-do-i-find-a-church'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-work',
+    question: `What does the Bible say about work?`,
+    category: 'Purpose',
+    updated: '2026-11-02',
+    answer: `The Bible sees work as good and meaningful, part of how people were made to care for the world, not just a way to pay bills. Whatever you do can be done "as working for the Lord." Scripture also sets limits: work is not your whole identity, and rest matters too.`,
+    body: [
+      { h: `Work was part of the good design`, p: `Before anything went wrong in Genesis, people were given the task of tending the garden. Work is not a punishment. Making, building, caring, and serving are ways of reflecting a creative God.` },
+      { h: `Any honest work can matter`, p: `"Whatever you do, work at it with all your heart, as working for the Lord." This applies to cleaning, coding, parenting, driving, or leading. No honest work is too ordinary to be done for God.` },
+      { h: `Work is not your worth`, p: `The Bible also guards against work becoming an idol. Your value does not come from your job title or productivity. That frees you to work well without being crushed by it.` },
+      { h: `Rest is part of the plan`, p: `God built a rhythm of rest into the week. Overworking is not more faithful. Taking real rest is a way of trusting that the world does not depend on you alone.` },
+    ],
+    scriptures: [
+      { ref: `Colossians 3:23-24`, text: `Whatever you do, work at it with all your heart, as working for the Lord, not for human masters, since you know that you will receive an inheritance from the Lord as a reward. It is the Lord Christ you are serving.` },
+      { ref: `Proverbs 16:3`, text: `Commit to the Lord whatever you do, and he will establish your plans.` },
+    ],
+    faqs: [
+      { q: `Does God care about my job?`, a: `Yes. Scripture treats everyday work as something that can be offered to God, not as separate from your faith.` },
+      { q: `What if I hate my job?`, a: `That is a real struggle. You can bring it honestly to God, look for meaning where you can, and also feel free to pursue a change. Staying is not automatically more spiritual.` },
+      { q: `What if I am out of work right now?`, a: `Your worth to God does not depend on having a job. It is a hard season, and it is okay to ask for help, practical and emotional.` },
+    ],
+    related: ['what-does-the-bible-say-about-rest', 'what-is-the-meaning-of-life'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-drinking-alcohol',
+    question: `What does the Bible say about drinking alcohol?`,
+    category: 'Bible',
+    updated: '2026-11-02',
+    answer: `The Bible clearly warns against drunkenness, but it does not forbid drinking alcohol altogether. Wine appears in Scripture both as a gift and as a danger. Faithful Christians differ: some traditions drink in moderation, others choose to abstain completely.`,
+    body: [
+      { h: `Drunkenness is clearly warned against`, p: `Across both Testaments, getting drunk is treated as harmful. "Wine is a mocker and beer a brawler." Paul says "do not get drunk on wine" and instead be filled with the Spirit. Losing control and harming yourself or others is the concern.` },
+      { h: `Wine also appears as a gift`, p: `The Psalms speak of "wine that gladdens human hearts," and Jesus' first miracle in John's Gospel was turning water into wine at a wedding. Many Christians read these passages as showing that moderate drinking is not sinful in itself.` },
+      { h: `Why some Christians abstain`, p: `Other Christians and whole traditions choose not to drink at all. Reasons include the harm alcohol does in many families, love for people who struggle with it, and Paul's teaching about not causing others to stumble. This is a sincere conviction, not legalism.` },
+      { h: `If drinking has become a struggle`, p: `If alcohol feels hard to control, you are not alone and you are not beyond help. Addiction is real, and recovery often needs support: a doctor, a counsellor, a recovery group, or a trusted friend. Grace meets you there, not at the finish line.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 20:1`, text: `Wine is a mocker and beer a brawler; whoever is led astray by them is not wise.` },
+      { ref: `Psalm 104:15`, text: `wine that gladdens human hearts, oil to make their faces shine, and bread that sustains their hearts.` },
+    ],
+    faqs: [
+      { q: `Is drinking alcohol a sin?`, a: `Scripture clearly calls drunkenness wrong. Christians differ on moderate drinking: some see it as permitted, others choose to abstain. Both views are held by faithful believers.` },
+      { q: `Did Jesus drink wine?`, a: `The Gospels describe Jesus sharing meals where wine was served, and he turned water into wine at a wedding. Christians draw different conclusions from this.` },
+      { q: `What if I think I have a drinking problem?`, a: `Please reach out to someone: a doctor, a recovery group such as Alcoholics Anonymous, or a trusted pastor or friend. Asking for help is a brave and good step.` },
+    ],
+    related: ['what-does-the-bible-say-about-addiction', 'will-god-forgive-me'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-tattoos',
+    question: `What does the Bible say about tattoos?`,
+    category: 'Bible',
+    updated: '2026-11-02',
+    answer: `The only verse that directly mentions tattoos is Leviticus 19:28, part of the law given to ancient Israel. Christians differ on whether that command applies today. Many conclude tattoos are a matter of personal conscience, while others choose to avoid them out of caution.`,
+    body: [
+      { h: `What Leviticus 19:28 says`, p: `The verse reads "do not cut your bodies for the dead or put tattoo marks on yourselves." It sits in the law of Moses, alongside many commands for ancient Israel, and is connected in the same verse to mourning practices for the dead.` },
+      { h: `Why Christians read it differently`, p: `Some Christians see the command as tied to its original setting and to the parts of the law Christians are no longer bound by, like food laws. Others see a lasting principle about honouring the body and choose to avoid tattoos. Both are sincere readings.` },
+      { h: `Questions worth asking`, p: `Whatever view you hold, Christians often ask: what does this mean to me, would it honour God and others, and am I doing this freely or under pressure? Those questions tend to matter more than the ink itself.` },
+      { h: `God looks at the heart`, p: `If you already have tattoos, you are not less loved. Scripture says "the Lord looks at the heart." Your worth to God is not written on your skin.` },
+    ],
+    scriptures: [
+      { ref: `Leviticus 19:28`, text: `“ ‘Do not cut your bodies for the dead or put tattoo marks on yourselves. I am the Lord.` },
+      { ref: `1 Samuel 16:7`, text: `But the Lord said to Samuel, “Do not consider his appearance or his height, for I have rejected him. The Lord does not look at the things people look at. People look at the outward appearance, but the Lord looks at the heart.”` },
+    ],
+    faqs: [
+      { q: `Is getting a tattoo a sin?`, a: `Christians disagree. Some see Leviticus 19:28 as part of the law of Moses that does not bind Christians today; others see a principle worth keeping. Many treat it as a matter of conscience.` },
+      { q: `Can I still be a Christian with tattoos?`, a: `Yes. Tattoos do not decide whether someone belongs to God. Faith in Jesus does.` },
+      { q: `Why do Christians follow some Old Testament laws and not others?`, a: `Most Christian traditions see parts of the law of Moses as fulfilled in Jesus, while its moral heart continues. Traditions draw those lines in slightly different places.` },
+    ],
+    related: ['do-christians-take-the-bible-literally', 'what-does-the-bible-say-about-self-worth'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-gossip',
+    question: `What does the Bible say about gossip?`,
+    category: 'Relationships',
+    updated: '2026-11-02',
+    answer: `The Bible warns against gossip because it damages trust and "separates close friends." Scripture calls us to use our words to build people up rather than tear them down behind their backs. It also offers grace, since almost everyone has said things they wish they had not.`,
+    body: [
+      { h: `Why gossip does so much harm`, p: `Gossip spreads stories about people who are not there to speak for themselves. Proverbs says "a gossip separates close friends." Even when the details are true, passing them around can wound people and break trust.` },
+      { h: `Words that build up`, p: `Paul says to let only "what is helpful for building others up" come out of our mouths. A simple test: would I say this if they were in the room, and does it help them?` },
+      { h: `Gossip versus honest concern`, p: `Not every conversation about someone is gossip. Asking for advice, protecting someone from harm, or reporting wrongdoing to the right person can be wise and necessary. The difference is usually the motive and who needs to know.` },
+      { h: `Grace when you have gossiped`, p: `If you have hurt someone with your words, you can stop, own it, and where it is safe and wise, make it right. God's forgiveness covers this too, and changing the habit is possible.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 16:28`, text: `A perverse person stirs up conflict, and a gossip separates close friends.` },
+      { ref: `Ephesians 4:29`, text: `Do not let any unwholesome talk come out of your mouths, but only what is helpful for building others up according to their needs, that it may benefit those who listen.` },
+    ],
+    faqs: [
+      { q: `Is it gossip if it is true?`, a: `It can be. Gossip is less about whether something is true and more about whether sharing it helps or harms.` },
+      { q: `How do I stop a conversation that turns into gossip?`, a: `Gently change the subject, or say something kind about the person being discussed. Often that is enough.` },
+      { q: `What if people are gossiping about me?`, a: `That hurts. You can bring the pain to God, talk to someone you trust, and where it is safe, address it directly with the person.` },
+    ],
+    related: ['how-do-i-forgive-someone-who-hurt-me', 'what-if-church-hurt-you'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-jealousy',
+    question: `What does the Bible say about jealousy?`,
+    category: 'Mental Health',
+    updated: '2026-11-02',
+    answer: `The Bible treats envy, wanting what someone else has and resenting them for it, as something that quietly eats away at a person and their relationships. "Envy rots the bones." Scripture's answer is contentment and gratitude, rooted in being secure in God's love.`,
+    body: [
+      { h: `Envy hurts the one who carries it`, p: `Proverbs says "a heart at peace gives life to the body, but envy rots the bones." Envy rarely harms the person envied as much as it harms the one holding it. It steals joy and peace.` },
+      { h: `It damages relationships`, p: `James links envy and selfish ambition to "disorder and every evil practice." When we compare and resent, we start seeing people as rivals instead of neighbours, and community breaks down.` },
+      { h: `Not all jealousy is the same`, p: `The Bible also speaks of God as "jealous" for his people, meaning a protective love that does not want to lose them. That is different from envy, which wants what belongs to someone else.` },
+      { h: `The way out is contentment`, p: `Paul wrote that he had "learned" contentment, which means it took practice. Gratitude, celebrating others' good things, and remembering you are already loved by God all loosen envy's grip over time.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 14:30`, text: `A heart at peace gives life to the body, but envy rots the bones.` },
+      { ref: `James 3:16`, text: `For where you have envy and selfish ambition, there you find disorder and every evil practice.` },
+    ],
+    faqs: [
+      { q: `Is feeling jealous a sin?`, a: `A passing feeling is human. Scripture's concern is when envy is fed and allowed to turn into resentment or harm.` },
+      { q: `Why does the Bible call God jealous?`, a: `It describes God's protective, committed love for his people, not envy of what belongs to others.` },
+      { q: `How do I stop comparing myself to others?`, a: `Practise gratitude, limit what feeds comparison where you can, and remind yourself that your worth comes from God's love, not your ranking.` },
+    ],
+    related: ['what-does-the-bible-say-about-self-worth', 'what-does-the-bible-say-about-money'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-love',
+    question: `What does the Bible say about love?`,
+    category: 'Grace',
+    updated: '2026-11-02',
+    answer: `The Bible says love is at the very heart of who God is and what he asks of us. "We love because he first loved us": our love for God and others flows from his love for us. Scripture describes love as patient, kind, and committed, more about action than feeling.`,
+    body: [
+      { h: `God's love comes first`, p: `The Bible does not start with "try harder to love." It starts with God loving people first, before they have earned it. "We love because he first loved us." Love begins as something received.` },
+      { h: `What love looks like`, p: `1 Corinthians 13 gives the most famous description: patient, kind, not envious, not proud, keeping no record of wrongs. It is a picture of love as everyday behaviour, not just a warm feeling.` },
+      { h: `Love God, love your neighbour`, p: `Jesus summed up all of God's commands in two: love God with everything you are, and love your neighbour as yourself. Everything else hangs on those.` },
+      { h: `Love is costly, and so is grace`, p: `The clearest picture of love in the Bible is Jesus giving his life for people who did not deserve it. That is the love we are invited to receive, and, slowly, to share.` },
+    ],
+    scriptures: [
+      { ref: `1 Corinthians 13:4-7`, text: `Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. Love does not delight in evil but rejoices with the truth. It always protects, always trusts, always hopes, always perseveres.` },
+      { ref: `1 John 4:19`, text: `We love because he first loved us.` },
+    ],
+    faqs: [
+      { q: `What does "God is love" mean?`, a: `That love is not just something God does; it is who he is. Everything he does flows from love.` },
+      { q: `Is love a feeling or a choice?`, a: `In the Bible it is mostly a choice expressed in action, though feelings often come along with it.` },
+      { q: `Does loving someone mean I have to accept harmful behaviour?`, a: `No. Love "does not delight in evil." Loving someone can include setting boundaries and protecting yourself from harm.` },
+    ],
+    related: ['does-god-love-me', 'what-does-john-3-16-mean'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-lying',
+    question: `What does the Bible say about lying?`,
+    category: 'Relationships',
+    updated: '2026-11-02',
+    answer: `The Bible calls us to speak truthfully, because lies break trust and damage relationships. Not giving false testimony is one of the Ten Commandments, and Paul says to "put off falsehood and speak truthfully." Scripture is also honest that people lie, and it offers forgiveness and a way to start again.`,
+    body: [
+      { h: `Truth holds people together`, p: `Paul's reason for honesty is relational: "we are all members of one body." Trust is what lets families, friendships, and communities work. Lies, even small ones, wear that trust down.` },
+      { h: `God delights in trustworthy people`, p: `Proverbs says the Lord "delights in people who are trustworthy." Honesty is not just a rule; it reflects a God who is faithful and true.` },
+      { h: `Truth with kindness`, p: `Being honest does not mean being harsh. Scripture calls for "speaking the truth in love." You can be truthful and gentle at the same time.` },
+      { h: `When you have lied`, p: `Most people have lied, sometimes out of fear or shame. The way forward is the same as with any wrong: admit it, make it right where you can, and receive God's forgiveness. You are not defined by your worst moment.` },
+    ],
+    scriptures: [
+      { ref: `Ephesians 4:25`, text: `Therefore each of you must put off falsehood and speak truthfully to your neighbor, for we are all members of one body.` },
+      { ref: `Proverbs 12:22`, text: `The Lord detests lying lips, but he delights in people who are trustworthy.` },
+    ],
+    faqs: [
+      { q: `Are white lies okay?`, a: `Scripture consistently values truthfulness. Many Christians look for ways to be kind and honest at the same time rather than relying on small lies.` },
+      { q: `Is it ever right to lie?`, a: `Christians have discussed hard cases, such as hiding people from those who want to harm them, and come to different conclusions. These are rare situations, not everyday ones.` },
+      { q: `Will God forgive me for lying?`, a: `Yes. Lying is a real wrong, but no wrong is beyond God's forgiveness when you turn back to him.` },
+    ],
+    related: ['will-god-forgive-me', 'what-is-repentance'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-kindness',
+    question: `What does the Bible say about kindness?`,
+    category: 'Relationships',
+    updated: '2026-11-02',
+    answer: `The Bible calls kindness a fruit of the Holy Spirit and asks Christians to "be kind and compassionate to one another." Our kindness is meant to reflect God's kindness to us. It is not a soft extra; Scripture places it near the centre of what God asks.`,
+    body: [
+      { h: `Kindness starts with God`, p: `The New Testament describes God's kindness as what leads people to change. Paul says to be kind and forgiving "just as in Christ God forgave you." We show kindness because we have received it.` },
+      { h: `What God asks is simple`, p: `Micah sums it up: "act justly and to love mercy and to walk humbly with your God." Mercy and kindness are not optional add ons to faith; they are close to its heart.` },
+      { h: `Kindness in ordinary life`, p: `Kindness in Scripture is practical: feeding the hungry, welcoming strangers, being patient with difficult people, speaking gently. Small acts count.` },
+      { h: `Kindness is not weakness`, p: `Being kind does not mean having no boundaries or accepting mistreatment. Jesus was kind and also honest and firm. Real kindness wants what is truly good for people, including you.` },
+    ],
+    scriptures: [
+      { ref: `Ephesians 4:32`, text: `Be kind and compassionate to one another, forgiving each other, just as in Christ God forgave you.` },
+      { ref: `Micah 6:8`, text: `He has shown you, O mortal, what is good. And what does the Lord require of you? To act justly and to love mercy and to walk humbly with your God.` },
+    ],
+    faqs: [
+      { q: `Why is kindness so important in the Bible?`, a: `Because it reflects God's own kindness to us, and it is one of the clearest signs of the Holy Spirit at work.` },
+      { q: `How can I be kind to people who are unkind to me?`, a: `It is hard, and it often starts small: not repaying harm with harm, praying for them, and keeping healthy boundaries.` },
+      { q: `Is kindness the same as being nice?`, a: `Not quite. Niceness avoids discomfort; kindness seeks someone's real good, which sometimes includes honest words.` },
+    ],
+    related: ['what-is-grace', 'how-do-i-forgive-someone-who-hurt-me'],
+  },
+
+  {
+    slug: 'what-does-the-bible-say-about-worrying-about-the-future',
+    question: `What does the Bible say about worrying about the future?`,
+    category: 'Mental Health',
+    updated: '2026-11-02',
+    answer: `The Bible invites you to bring your worries about the future to God instead of carrying them alone. Jesus said "do not worry about tomorrow," not because tomorrow does not matter, but because God holds it. Scripture offers prayer and God's peace as the way through, not a demand to simply stop feeling anxious.`,
+    body: [
+      { h: `Jesus understood worry`, p: `When Jesus spoke about worry, he pointed to birds and flowers that God cares for. His point was gentle: if God looks after them, he will look after you. Worry is met with reassurance, not scolding.` },
+      { h: `One day at a time`, p: `"Each day has enough trouble of its own." Jesus does not pretend there will be no trouble. He invites you to face today's portion with God, rather than carrying every possible tomorrow at once.` },
+      { h: `Turn worry into prayer`, p: `Paul's advice is practical: in every situation, bring your requests to God with thanksgiving. The promise is that "the peace of God" will guard your heart and mind, even when the situation has not changed yet.` },
+      { h: `Planning is not the same as worrying`, p: `The Bible encourages wise planning. The difference is whether you plan while trusting God, or spin in fear trying to control what you cannot. If worry has become constant or overwhelming, talking to a counsellor or doctor is a wise step too.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 6:34`, text: `Therefore do not worry about tomorrow, for tomorrow will worry about itself. Each day has enough trouble of its own.` },
+      { ref: `Philippians 4:6-7`, text: `Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus.` },
+    ],
+    faqs: [
+      { q: `Is worrying a sin?`, a: `Scripture treats worry as a burden to hand over, not a crime to be punished. Jesus meets worried people with comfort.` },
+      { q: `How do I stop worrying about the future?`, a: `Start small: name the worry to God in prayer, focus on what you can do today, and talk with someone you trust. Peace often grows slowly.` },
+      { q: `What if my anxiety will not go away?`, a: `Ongoing anxiety is common and treatable. Seeing a doctor or counsellor is not a lack of faith; it is a good way to care for yourself.` },
+    ],
+    related: ['what-does-the-bible-say-about-anxiety', 'what-does-the-bible-say-about-fear'],
+  },
 ];
 
 export const ANSWERS_BY_SLUG = Object.fromEntries(ANSWERS.map((a) => [a.slug, a]));
