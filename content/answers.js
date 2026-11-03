@@ -2346,7 +2346,7 @@ export const ANSWERS_BY_SLUG = Object.fromEntries(ANSWERS.map((a) => [a.slug, a]
 
 // ── Rendering ────────────────────────────────────────────────────────────────
 
-function esc(s) {
+export function esc(s) {
   return String(s ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -2355,7 +2355,7 @@ function esc(s) {
 const SITE = 'https://www.kinwove.com';
 const HEAD_FONT = "Georgia,'Times New Roman',serif";
 
-function shell({ title, description, canonical, jsonLd, bodyHtml, lang = 'en', dir = 'ltr', alternates = [] }) {
+export function shell({ title, description, canonical, jsonLd, bodyHtml, lang = 'en', dir = 'ltr', alternates = [] }) {
   // hreflang pairs must be RECIPROCAL — each page has to point at the other and
   // at itself — or Google treats them as unrelated duplicates rather than
   // translations of one another. Callers pass the full set, their own URL

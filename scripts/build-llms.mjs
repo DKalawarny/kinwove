@@ -8,6 +8,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ANSWERS } from '../content/answers.js';
 import { LANGUAGES } from '../src/languages.js';
+import { BOOKS } from '../content/bible.js';
 
 const host = 'https://www.kinwove.com';
 const today = new Date().toISOString().slice(0, 10);
@@ -93,6 +94,12 @@ A: Sarlia Digital Inc., a British Columbia, Canada company. Contact: hello@kinwo
 Every question below is a standalone page of sourced content at ${host}/answers/<slug>, written to be read and cited directly. ${ANSWERS.length} pages in total.
 
 ${answersSection}
+
+## The Bible, explained chapter by chapter
+
+A plain-words study note for every chapter of the Bible (${BOOKS.reduce((n, b) => n + b.chapters.length, 0)} chapters) and an introduction to each of the ${BOOKS.length} books, written like a study Bible anyone can follow: what happens, the background, where Christians read it differently, and a question to think about. Not yet reviewed by a pastor. Index: ${host}/bible. Book pages are ${host}/bible/<book> and chapter pages are ${host}/bible/<book>-<chapter>, for example ${host}/bible/romans-8 or ${host}/bible/psalms-23.
+
+${BOOKS.map((b) => `- ${b.name}: ${host}/bible/${b.slug}`).join('\n')}
 
 ## Languages
 

@@ -18,6 +18,7 @@ import { LANG_NAMES } from './src/languages.js';
 // lives in the static-serving block and the sitemap builder does not.
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
+import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
@@ -6160,6 +6161,9 @@ if (process.env.NODE_ENV !== 'development') {
       `<url><loc>${host}/for-churches</loc><changefreq>monthly</changefreq><priority>0.9</priority><lastmod>${today}</lastmod></url>`,
       // Answers library — crawlable faith-question pages (Google + AI engines)
       `<url><loc>${host}/answers</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>${today}</lastmod></url>`,
+      // Bible study pages: /bible, every book intro, every chapter note.
+      ...bibleSitemapEntries().map((u) =>
+        `<url><loc>${escapeXml(u)}</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>${BIBLE_UPDATED}</lastmod></url>`),
       ...ANSWERS.map((a) =>
         `<url><loc>${host}/answers/${escapeXml(a.slug)}</loc><changefreq>monthly</changefreq><priority>0.8</priority><lastmod>${escapeXml(a.updated)}</lastmod></url>`),
       // Translated pages are distinct URLs with their own canonical, so they
@@ -6347,6 +6351,17 @@ app.get('/.well-known/apple-app-site-association', (req, res) => {
 // fallback until now.
 app.get(['/for-churches', '/for-church', '/pastors', '/sermon-prep', '/churches'], (_req, res) => {
   res.type('html').send(renderForChurchesPage());
+});
+
+// Public Bible study pages built from public/study (see content/bible.js).
+app.get('/bible', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderBibleIndex());
+});
+app.get('/bible/:path', (req, res, next) => {
+  const hit = resolveBiblePath(String(req.params.path).toLowerCase());
+  if (!hit) return next();
+  res.set('Cache-Control', 'public, max-age=3600').type('html')
+    .send(hit.n ? renderChapterPage(hit.book, hit.n) : renderBookPage(hit.book));
 });
 
 app.get('/answers', (_req, res) => {
