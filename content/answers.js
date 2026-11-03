@@ -2593,6 +2593,8 @@ export function shell({ title, description, canonical, jsonLd, bodyHtml, lang = 
   return `<!doctype html><html lang="${esc(lang)}" dir="${esc(dir)}"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&display=swap" rel="stylesheet">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
@@ -2609,8 +2611,11 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
 <style>
   :root{--ink:#1A1108;--soft:#5A4733;--muted:#9C7B5E;--gold:#B8733A;--parch:#FAF3E2;--cream:#F5EDD8;--line:rgba(26,17,8,0.12)}
   *{box-sizing:border-box}body{margin:0;background:var(--parch);color:var(--ink);font-family:Newsreader,Georgia,serif;line-height:1.65;font-size:18px}
-  .bar{background:#1A1108;padding:16px 20px}.bar a{color:#FDF8F0;font-family:${HEAD_FONT};font-size:22px;font-weight:600;text-decoration:none}
-  .star{color:#D4A24A;margin-right:2px}
+  .bar{background:#1A1108;padding:24px 20px 14px}.bar a{color:#FDF8F0;font-family:${HEAD_FONT};font-size:22px;font-weight:600;text-decoration:none}
+  /* Same wordmark as the app header (KinwoveWordmark): Fraunces, dotless i, star as its dot. */
+  .bar a.wm{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:28px;line-height:1;letter-spacing:-0.022em;font-variation-settings:"opsz" 70;display:inline-block}
+  .wm-i{position:relative;display:inline-block}
+  .wm-i svg{position:absolute;top:-0.72em;left:50%;transform:translateX(-50%);width:0.28em;height:0.28em;display:block}
   main{max-width:720px;margin:0 auto;padding:28px 20px 64px}
   .cat{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
   h1{font-family:${HEAD_FONT};font-size:30px;line-height:1.2;margin:0 0 18px;letter-spacing:-0.01em}
@@ -2640,7 +2645,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
     color:#fff;background:var(--ink);border:none;border-radius:999px}
   .askbox .note{font-size:12.5px;color:var(--muted);margin-top:9px}
 </style></head><body>
-<div class="bar"><a href="${SITE}"><span class="star">✦</span>kinwove</a></div>
+<div class="bar"><a class="wm" href="${SITE}" aria-label="kinwove">k<span class="wm-i">ı<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 L13.4 9.6 L22 11 L13.4 12.4 L12 23 L10.6 12.4 L2 11 L10.6 9.6 Z" fill="#D4A24A"/></svg></span>nwove</a></div>
 <main>${bodyHtml}</main>
 </body></html>`;
 }
