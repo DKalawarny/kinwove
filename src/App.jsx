@@ -2045,6 +2045,14 @@ export default function App() {
   // Which tab ChurchAdmin should land on when entered. Set by ChurchPage's
   // "Edit in Pastor settings" deep-link, consumed by the ChurchAdmin mount.
   const [pastorAdminInitialTab, setPastorAdminInitialTab] = useState(null); // null → ChurchAdmin restores the remembered tab
+  // Same one-tick reset as openPostComments: the dashboard is often already open,
+  // and asking for the tab it was last sent to (e.g. two "joined" notifications
+  // in a row) would otherwise not change anything.
+  const openChurchAdminTab = useCallback((tab) => {
+    setPastorAdminInitialTab(null);
+    setTimeout(() => setPastorAdminInitialTab(tab), 0);
+    setStage('church-admin');
+  }, []);
   // Which tab ChurchPage should open on. Set when returning from sermon-view
   // so the user lands back on Sermons, not Feed. Cleared one tick after mount.
   const [churchReturnTab, setChurchReturnTab] = useState(null);
@@ -3258,7 +3266,7 @@ export default function App() {
             <ChurchModeShell
               church={pastorChurch}
               tab={null}
-              onTabChange={(t) => { setPastorAdminInitialTab(t); setStage('church-admin'); }}
+              onTabChange={(t) => openChurchAdminTab(t)}
               onBack={() => goBack('me')}
               onOpenChurchPage={() => { setChurchReturnTab('sermons'); setViewingChurchId(pastorChurchId); setStage('church'); }}
             >
@@ -3492,10 +3500,10 @@ export default function App() {
             onViewProfile={(uid) => setViewingUserId(uid)}
             onOpenSermon={(id) => { setViewingSermonId(id); setStage('sermon-view'); }}
             onOpenAdmin={pastorChurchId
-              ? (tab) => { setPastorAdminInitialTab(tab ?? 'overview'); setStage('church-admin'); }
+              ? (tab) => openChurchAdminTab(tab ?? 'overview')
               : undefined}
             onNewSermon={isOwnChurch
-              ? () => { setPastorAdminInitialTab('sermons'); setStage('church-admin'); }
+              ? () => openChurchAdminTab('sermons')
               : undefined}
             onOpenFeed={() => setStage('feed')}
             onOpenPrayer={() => setStage('prayer')}
@@ -3516,7 +3524,7 @@ export default function App() {
               church={pastorChurch}
               tab={null}
               currentSubpage="public"
-              onTabChange={(t) => { setPastorAdminInitialTab(t); setStage('church-admin'); }}
+              onTabChange={(t) => openChurchAdminTab(t)}
               onBack={() => setStage('me')}
               onOpenChurchHub={() => setStage('church-admin')}
             >
@@ -4042,8 +4050,7 @@ export default function App() {
               setStage('groups');
             }
             else if (n.kind === 'church_member_joined') {
-              setPastorAdminInitialTab('people');
-              setStage('church-admin');
+              openChurchAdminTab('people');
             }
             else if (n.kind === 'group_post' || n.kind === 'group_reply' || n.kind === 'group_joined' || n.kind === 'group_chat') {
               const gId = n.data?.group_id;

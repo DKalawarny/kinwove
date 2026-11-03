@@ -2412,6 +2412,11 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
     setTabState(t);
     try { localStorage.setItem('kw:church-tab', t); } catch { /* ignore */ }
   }
+  // Deep-links that arrive while the dashboard is already open (notification
+  // taps, the church page's tab buttons) switch the tab instead of being ignored.
+  useEffect(() => {
+    if (initialTab && VALID_TABS.includes(initialTab)) setTab(initialTab);
+  }, [initialTab]); // eslint-disable-line react-hooks/exhaustive-deps
   const [church, setChurch] = useState(null);
   const [showPastorTour, setShowPastorTour] = useState(false);
   // Re-decide once the account's synced flags land (uiFlags.js) — church data
