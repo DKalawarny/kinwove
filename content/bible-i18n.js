@@ -22,9 +22,10 @@ function load() {
     const books = [];
     for (const b of BOOKS) {
       const p = (f) => join(TR_DIR, lang, 'study', b.code, f);
-      if (!existsSync(p('intro.json'))) continue;
-      const intro = JSON.parse(readFileSync(p('intro.json'), 'utf8'));
+      // A book whose intro did not pass the check still lists its translated chapters.
+      const intro = existsSync(p('intro.json')) ? JSON.parse(readFileSync(p('intro.json'), 'utf8')) : null;
       const chapters = b.chapters.map((_, i) => (existsSync(p(`${i + 1}.json`)) ? JSON.parse(readFileSync(p(`${i + 1}.json`), 'utf8')) : null));
+      if (!intro && !chapters.some(Boolean)) continue;
       const name = BOOK_NAMES[lang][b.code];
       books.push({ en: b, code: b.code, name, slug: slugify(name), intro, chapters, testament: b.testament });
     }
@@ -163,17 +164,18 @@ export function renderTranslatedChapterPage(lang, book, n) {
 
 export function renderTranslatedBookPage(lang, book) {
   const l = L(lang);
-  const i = book.intro;
+  const i = book.intro ?? {};
   const canonical = bookUrl(lang, book);
+  const desc = i.oneLine ?? l.everyChapter(book.name);
   const jsonLd = [
-    article(l.bookTitle(book.name), i.oneLine, canonical, lang),
+    article(l.bookTitle(book.name), desc, canonical, lang),
     crumbs([[l.bible, indexUrl(lang)], [book.name, canonical]]),
   ];
   const section = (h, p) => (p ? `<h2>${esc(h)}</h2><p>${esc(p)}</p>` : '');
   const bodyHtml = `
     <div class="cat"><a href="${indexUrl(lang)}" style="color:inherit;text-decoration:none">${esc(l.bible)}</a> · ${esc(book.testament === 'Old Testament' ? l.ot : l.nt)}</div>
     <h1>${esc(l.bookH1(book.name))}</h1>
-    <div class="answer">${esc(i.oneLine)}</div>
+    ${i.oneLine ? `<div class="answer">${esc(i.oneLine)}</div>` : ''}
     ${section(l.writtenBy, i.writtenBy)}
     ${section(l.when, i.when)}
     ${section(l.writtenTo, i.writtenTo)}
@@ -189,7 +191,7 @@ export function renderTranslatedBookPage(lang, book) {
     ${foot(lang, `${SITE}/bible/${book.en.slug}`)}`;
   return shell({
     title: `${l.bookTitle(book.name)} | kinwove`,
-    description: i.oneLine.slice(0, 155),
+    description: desc.slice(0, 155),
     canonical, jsonLd, bodyHtml, lang, alternates: bibleAlternates(book.code, null),
   });
 }
