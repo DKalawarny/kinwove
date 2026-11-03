@@ -2341,6 +2341,232 @@ export const ANSWERS = [
     ],
     related: ['how-do-i-study-the-bible-deeper-on-my-own', 'should-my-church-use-ai'],
   },
+
+  // ── Famous verses explained (added 2026-11-02). Verse text is the NIV, fetched
+  // from api.bible, not typed from memory.
+  {
+    slug: 'what-does-john-3-16-mean',
+    question: `What does John 3:16 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `John 3:16 says that God loved the whole world so much that he gave his only Son, Jesus, so that anyone who trusts him will not be lost but will have life that lasts forever. It is often called the Bible in one sentence: God's love comes first, the gift is Jesus, and the way in is trust, open to anyone.`,
+    body: [
+      { h: `Where it comes from`, p: `Jesus is talking at night with Nicodemus, a respected religious teacher who has come with honest questions (John 3:1-21). Jesus has just told him he must be "born again", and verse 16 explains why that new start is possible: it begins with God's love, not with anything Nicodemus does.` },
+      { h: `"The world" means everyone`, p: `In John's Gospel "the world" usually means humanity turned away from God. The surprise is that God loves exactly that world, not just good people or one nation. Nobody is outside the reach of this verse.` },
+      { h: `"Believes" means trust, not just agreement`, p: `To believe in Jesus here is to rely on him, the way you trust a bridge by walking onto it. And "eternal life" in John is not only life after death; it is a new quality of life with God that starts now (John 17:3).` },
+      { h: `Read the next verse too`, p: `John 3:17 adds that God did not send his Son to condemn the world but to save it. The heart of the passage is rescue, not threat.` },
+    ],
+    scriptures: [
+      { ref: `John 3:16`, text: `For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.` },
+    ],
+    faqs: [
+      { q: `Who is speaking in John 3:16?`, a: `Most readers take it as Jesus speaking to Nicodemus, though some scholars think the Gospel writer begins commenting around verse 16. The meaning is the same either way.` },
+      { q: `What does "perish" mean in John 3:16?`, a: `To be lost, cut off from the life God gives. The verse sets it against eternal life, so it is about two directions a life can go.` },
+      { q: `Why is John 3:16 so famous?`, a: `Because it says the whole Christian message in one sentence: God's love, the gift of Jesus, trust as the response, and life as the result.` },
+    ],
+    related: ['what-is-the-gospel', 'does-god-love-me'],
+  },
+
+  {
+    slug: 'what-does-jeremiah-29-11-mean',
+    question: `What does Jeremiah 29:11 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Jeremiah 29:11 is God's promise to Jewish exiles in Babylon that he had not abandoned them and still had a good future planned, even though it would come after seventy years, not right away. It is a real promise of hope, but it was given to a whole people in a long hardship, not a guarantee that any one plan of ours will work out quickly.`,
+    body: [
+      { h: `The setting matters`, p: `Jeremiah wrote this as a letter to people who had been forced from their homes to Babylon. False prophets were telling them they would be home in two years. Jeremiah told them the opposite: settle in, build houses, plant gardens, pray for the city you are in, because this will take seventy years (Jeremiah 29:4-10).` },
+      { h: `So what is the promise?`, p: `That God's plans for them were for peace and not disaster, and that the hard years were not the end of the story. Many of those who first heard it would not live to see the return. The hope was bigger than their own lifetimes.` },
+      { h: `Can Christians apply it to themselves?`, p: `Many do, and the character of God it shows is the same today: he does not forget people in hard places. The honest way to hold it is as a promise that God is good and present in a long wait, rather than a promise that things will go our way soon.` },
+    ],
+    scriptures: [
+      { ref: `Jeremiah 29:11`, text: `“For I know the plans I have for you,” declares the Lord, “plans to prosper you and not to harm you, plans to give you hope and a future.` },
+      { ref: `Jeremiah 29:10`, text: `This is what the Lord says: “When seventy years are completed for Babylon, I will come to you and fulfill my good promise to bring you back to this place.` },
+    ],
+    faqs: [
+      { q: `Who was Jeremiah 29:11 written to?`, a: `To the Jewish people taken into exile in Babylon around 597 BC, in a letter Jeremiah sent from Jerusalem.` },
+      { q: `Is Jeremiah 29:11 taken out of context?`, a: `It often is, when it is read as a promise of quick success. In context it is a promise of hope that holds through a long, hard season.` },
+      { q: `What does "prosper" mean here?`, a: `The Hebrew word is shalom: peace, wholeness and wellbeing, not mainly money.` },
+    ],
+    related: ['how-do-i-know-gods-will-for-my-life', 'why-does-god-feel-so-far-away'],
+  },
+
+  {
+    slug: 'what-does-philippians-4-13-mean',
+    question: `What does Philippians 4:13 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In Philippians 4:13 Paul says he can face anything, having plenty or going hungry, because Christ gives him strength. It is about contentment in every situation, not a promise that we can achieve any goal we set. Paul wrote it from prison.`,
+    body: [
+      { h: `Read the two verses before it`, p: `Paul has just said he has learned to be content whether well fed or hungry, living in plenty or in want (Philippians 4:11-12). "All this" in verse 13 points back to those situations. The strength is for enduring both good and hard times well.` },
+      { h: `Written in chains`, p: `Paul was in custody when he wrote Philippians, not sure whether he would live (Philippians 1:20-21). The verse comes from someone who had lost a great deal and found that Christ was enough anyway.` },
+      { h: `What it means for us`, p: `It is a deep comfort for someone in a hard season: you are not left to carry it on your own strength. It is less a promise of winning and more a promise of not being alone in whatever comes.` },
+    ],
+    scriptures: [
+      { ref: `Philippians 4:13`, text: `I can do all this through him who gives me strength.` },
+      { ref: `Philippians 4:11-12`, text: `I am not saying this because I am in need, for I have learned to be content whatever the circumstances. I know what it is to be in need, and I know what it is to have plenty. I have learned the secret of being content in any and every situation, whether well fed or hungry, whether living in plenty or in want.` },
+    ],
+    faqs: [
+      { q: `Does Philippians 4:13 mean I can do anything?`, a: `Not in the sense of achieving any goal. In context it means Christ gives strength to stay content and faithful in every circumstance, good or bad.` },
+      { q: `Why do some Bibles say "all things" and others "all this"?`, a: `The Greek simply says "all things". Some translations, like the NIV, write "all this" to show it refers to the situations Paul has just listed.` },
+      { q: `Where was Paul when he wrote it?`, a: `In custody, most likely in Rome, waiting to hear whether he would be released or executed.` },
+    ],
+    related: ['what-does-the-bible-say-about-money', 'what-does-the-bible-say-about-fear'],
+  },
+
+  {
+    slug: 'what-does-romans-8-28-mean',
+    question: `What does Romans 8:28 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Romans 8:28 says that God works in all things for the good of those who love him. It does not say everything that happens is good. It says God can bring good even out of what is painful, and the "good" the next verses describe is becoming like Jesus, not an easy life.`,
+    body: [
+      { h: `Not "everything is good"`, p: `Paul has just written about creation groaning, believers groaning, and the Spirit praying with groans too deep for words (Romans 8:22-26). He is not pretending suffering is good. He is saying God is at work inside it.` },
+      { h: `Translations read it slightly differently`, p: `Some Bibles say "God works for the good", others "all things work together for good". The Greek can be read either way. Most scholars think Paul means God himself is the one working, which fits the verses around it.` },
+      { h: `What "good" means here`, p: `The next verse says God's purpose is for his people "to be conformed to the image of his Son" (Romans 8:29). The good is becoming like Jesus and belonging to God, a good that suffering cannot take away. The chapter ends by saying nothing can separate us from God's love (Romans 8:38-39).` },
+      { h: `A word of care`, p: `This verse is meant for comfort, but it can hurt when quoted too quickly to someone in fresh grief. It is often better held quietly, alongside someone, than offered as an answer.` },
+    ],
+    scriptures: [
+      { ref: `Romans 8:28`, text: `And we know that in all things God works for the good of those who love him, who have been called according to his purpose.` },
+    ],
+    faqs: [
+      { q: `Does Romans 8:28 mean bad things happen for a reason?`, a: `It says God works in all things for good, not that every bad thing was good or sent on purpose. Christians differ on how much God directly causes, but agree he can redeem what is broken.` },
+      { q: `Who is Romans 8:28 for?`, a: `Paul addresses "those who love him, who have been called according to his purpose", that is, followers of Jesus.` },
+      { q: `What is the context of Romans 8:28?`, a: `A chapter about the Spirit's help in suffering, ending with the promise that nothing can separate us from God's love.` },
+    ],
+    related: ['why-does-god-allow-suffering', 'what-does-the-bible-say-about-grief'],
+  },
+
+  {
+    slug: 'what-does-proverbs-3-5-6-mean',
+    question: `What does Proverbs 3:5-6 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Proverbs 3:5-6 says to trust God with your whole heart instead of relying only on your own understanding, and to acknowledge him in everything you do, and he will make your paths straight. It is not anti-thinking; it is about not making yourself the final judge of what is wise.`,
+    body: [
+      { h: `"With all your heart"`, p: `In Hebrew thinking the heart is not just feelings; it is the centre of thinking, choosing and wanting. Trusting with all your heart means bringing your whole self, decisions included, to God.` },
+      { h: `"Lean not on your own understanding"`, p: `Proverbs is a book that loves wisdom and careful thought. So this does not mean switching your mind off. It means not resting your full weight on what you can see and figure out, because your view is limited.` },
+      { h: `"He will make your paths straight"`, p: `A straight path is one that leads where it should without needless detours. Proverbs presents this as the general pattern of a life lived with God, not a promise that every road will be easy.` },
+    ],
+    scriptures: [
+      { ref: `Proverbs 3:5-6`, text: `Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.` },
+    ],
+    faqs: [
+      { q: `What does "submit to him" mean in Proverbs 3:6?`, a: `Older translations say "acknowledge him". It means recognising God in every part of life, not just the religious parts.` },
+      { q: `Does Proverbs 3:5 mean I should not think things through?`, a: `No. Proverbs constantly praises wisdom and good counsel. It warns against trusting only yourself.` },
+      { q: `Who wrote Proverbs 3?`, a: `Proverbs is traditionally linked with King Solomon, written as a parent's advice to a child.` },
+    ],
+    related: ['how-do-i-know-gods-will-for-my-life', 'what-is-faith'],
+  },
+
+  {
+    slug: 'what-does-isaiah-41-10-mean',
+    question: `What does Isaiah 41:10 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Isaiah 41:10 is God telling his people not to be afraid, because he is with them, he is their God, and he will strengthen, help and hold them up. It was first spoken to a frightened people facing exile and powerful empires, and it is one of the Bible's most direct answers to fear.`,
+    body: [
+      { h: `Who first heard it`, p: `These words speak to Israel at a time when great empires were rising and the nation felt small and exposed. God calls them "my servant" and reminds them he chose them and has not rejected them (Isaiah 41:8-9).` },
+      { h: `The reason not to fear`, p: `The verse does not say "nothing bad will happen". It gives a different reason not to fear: "I am with you". The comfort is God's presence, not the absence of trouble.` },
+      { h: `"My righteous right hand"`, p: `The right hand stood for strength and action. God promises to hold his people up with the same hand that acts with power and faithfulness.` },
+    ],
+    scriptures: [
+      { ref: `Isaiah 41:10`, text: `So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.` },
+    ],
+    faqs: [
+      { q: `Who was Isaiah 41:10 written to?`, a: `To the people of Israel, facing the threat of powerful empires and, in this part of Isaiah, the experience of exile.` },
+      { q: `What does "dismayed" mean?`, a: `Anxiously looking around, losing heart. The Hebrew pictures someone glancing about in alarm.` },
+      { q: `Is Isaiah 41:10 a promise for Christians today?`, a: `Christians read it as showing who God is: present with his people in fear. Jesus makes a similar promise in Matthew 28:20.` },
+    ],
+    related: ['what-does-the-bible-say-about-fear', 'what-does-the-bible-say-about-anxiety'],
+  },
+
+  {
+    slug: 'what-does-joshua-1-9-mean',
+    question: `What does Joshua 1:9 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `Joshua 1:9 is God telling Joshua to be strong and courageous and not afraid, because God will be with him wherever he goes. Joshua had just lost his mentor Moses and was about to lead a whole nation into an unknown land. The courage comes from God's presence, not from Joshua's own confidence.`,
+    body: [
+      { h: `A command given to someone scared`, p: `God says "be strong and courageous" three times in this chapter (Joshua 1:6, 7, 9). You do not repeat that to someone who already feels brave. Joshua was stepping into a role far bigger than him.` },
+      { h: `The reason is the second half`, p: `The command rests on the promise: "the Lord your God will be with you wherever you go." Courage here is not pretending to be fearless. It is moving forward because you are not going alone.` },
+      { h: `Strength tied to God's word`, p: `Just before this, God tells Joshua to keep his law close and think on it day and night (Joshua 1:8). Courage and trust in what God has said go together.` },
+    ],
+    scriptures: [
+      { ref: `Joshua 1:9`, text: `Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.` },
+    ],
+    faqs: [
+      { q: `Who is God speaking to in Joshua 1:9?`, a: `Joshua, who had just taken over leadership of Israel after Moses died.` },
+      { q: `Why does God say "be strong and courageous" so many times?`, a: `Because Joshua faced a huge task and real fear. The repetition is encouragement, not a scolding.` },
+      { q: `Can Christians apply Joshua 1:9 today?`, a: `The specific mission was Joshua's, but the promise of God's presence fits the whole Bible's message, so Christians take courage from it.` },
+    ],
+    related: ['what-does-the-bible-say-about-fear', 'what-is-faith'],
+  },
+
+  {
+    slug: 'what-does-matthew-11-28-mean',
+    question: `What does Matthew 11:28 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `In Matthew 11:28 Jesus invites everyone who is worn out and weighed down to come to him for rest. He goes on to describe himself as gentle and humble, and his way of life as an easy yoke and a light burden. It is one of the warmest invitations in the Bible.`,
+    body: [
+      { h: `Who he is talking to`, p: `"All you who are weary and burdened" fits people exhausted by life, but in Jesus's day it also fit people crushed by religious rules heaped on them by teachers who did not help carry them (Matthew 23:4).` },
+      { h: `What a yoke is`, p: `A yoke was the wooden frame that joined two animals to pull together. Teachers spoke of taking on the "yoke" of their teaching. Jesus offers his own, and says it fits well and is light, because he pulls alongside you.` },
+      { h: `Rest is a gift, and also a way of life`, p: `"I will give you rest" is pure gift. "Learn from me" is an invitation to an ongoing relationship. The rest Jesus offers runs deeper than a day off; it is rest for the soul.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 11:28-30`, text: `“Come to me, all you who are weary and burdened, and I will give you rest. Take my yoke upon you and learn from me, for I am gentle and humble in heart, and you will find rest for your souls. For my yoke is easy and my burden is light.”` },
+    ],
+    faqs: [
+      { q: `What does "my yoke is easy" mean?`, a: `That following Jesus fits well and is not crushing, because he shares the load. "Easy" here means well fitting, not effortless.` },
+      { q: `Who does Jesus invite in Matthew 11:28?`, a: `Everyone who is tired and weighed down. There is no qualification except needing rest.` },
+      { q: `What kind of rest is Jesus talking about?`, a: `Rest for the soul: being loved and accepted rather than having to earn your place, along with real relief from carrying life alone.` },
+    ],
+    related: ['what-does-the-bible-say-about-rest', 'what-is-grace'],
+  },
+
+  {
+    slug: 'what-does-psalm-46-10-mean',
+    question: `What does "Be still, and know that I am God" mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `"Be still, and know that I am God" (Psalm 46:10) is God speaking in the middle of chaos, telling people to stop striving and recognise that he is in control. In context it sounds less like "relax quietly" and more like "stop fighting, enough", spoken over wars and upheaval.`,
+    body: [
+      { h: `The psalm is loud`, p: `Psalm 46 pictures mountains falling into the sea, nations in uproar and kingdoms falling (Psalm 46:2-6). It opens with "God is our refuge and strength, an ever-present help in trouble." Verse 10 lands in the middle of that noise.` },
+      { h: `"Be still" means "stop"`, p: `The Hebrew word means to let go, to cease, to drop your hands. It is addressed to the warring nations as much as to God's people: lay down your weapons and see who is God.` },
+      { h: `What it offers us`, p: `For anxious people it still works as an invitation to quiet trust, and many Christians pray it that way. The deeper point is that you can stop trying to hold everything together, because God is the one who does.` },
+    ],
+    scriptures: [
+      { ref: `Psalm 46:10`, text: `He says, “Be still, and know that I am God; I will be exalted among the nations, I will be exalted in the earth.”` },
+    ],
+    faqs: [
+      { q: `Where is "Be still and know that I am God" in the Bible?`, a: `Psalm 46:10.` },
+      { q: `Who is speaking in Psalm 46:10?`, a: `God himself, speaking to the nations and to his people in the middle of turmoil.` },
+      { q: `Does "be still" mean to meditate?`, a: `Not originally. It means to stop striving or fighting. Quiet prayer is a fitting way to live it out, but the word itself is about ceasing.` },
+    ],
+    related: ['what-does-the-bible-say-about-anxiety', 'how-do-i-start-praying'],
+  },
+
+  {
+    slug: 'what-does-2-corinthians-5-17-mean',
+    question: `What does 2 Corinthians 5:17 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-02',
+    answer: `2 Corinthians 5:17 says that anyone who is joined to Christ is part of God's new creation: the old has gone and the new has come. It means your past does not get the final word on who you are. It does not mean every old habit disappears overnight.`,
+    body: [
+      { h: `"In Christ"`, p: `This is Paul's favourite way to describe a follower of Jesus: someone whose life is now bound up with his. What is true of Jesus, risen and alive, starts to become true of them.` },
+      { h: `New creation is bigger than one person`, p: `Some translations say "he is a new creation", others "there is a new creation". Paul's point includes both: God has begun remaking the whole world through Jesus, and each believer is part of that.` },
+      { h: `Old and new, honestly`, p: `Paul's own letters show believers still struggling. The verse is about a new identity and direction that is real from day one, with change that keeps growing over a lifetime.` },
+    ],
+    scriptures: [
+      { ref: `2 Corinthians 5:17`, text: `Therefore, if anyone is in Christ, the new creation has come: The old has gone, the new is here!` },
+    ],
+    faqs: [
+      { q: `Does 2 Corinthians 5:17 mean I will not struggle anymore?`, a: `No. It means you have a new identity and a new beginning. Growth and struggle continue, as Paul's own letters show.` },
+      { q: `What is "the old" in 2 Corinthians 5:17?`, a: `The life defined by sin, shame and separation from God. It no longer gets to define a person who is in Christ.` },
+      { q: `What comes right after 2 Corinthians 5:17?`, a: `Paul says God reconciled us to himself through Christ and gave us the message of reconciliation (2 Corinthians 5:18-19).` },
+    ],
+    related: ['what-does-it-mean-to-be-born-again', 'am-i-too-far-gone-for-god'],
+  },
 ];
 
 export const ANSWERS_BY_SLUG = Object.fromEntries(ANSWERS.map((a) => [a.slug, a]));
