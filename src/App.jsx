@@ -3080,7 +3080,11 @@ export default function App() {
             const isFirstTime = profileEditOrigin === 'idle' && !pendingPastorApply && !profile?.is_pastor;
             // Merge: the form only carries the fields it edits, so replacing the
             // profile dropped plan, church and the rest until the next reload.
-            setProfile((prev) => ({ ...(prev ?? {}), ...p }));
+            // sync_conversations defaults to true in the database, but a new
+            // account has no prior profile here, so without it syncing stayed off
+            // until a reload and the first session's conversations never left
+            // the browser (Jazzie, 3 Nov). An existing false in prev still wins.
+            setProfile((prev) => ({ sync_conversations: true, ...(prev ?? {}), ...p }));
             setAuthStage('idle');
             if (pendingPastorApply) { setPendingPastorApply(false); setStage('pastor-apply'); }
             else {

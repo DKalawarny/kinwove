@@ -11,6 +11,18 @@ import { useStrings } from './i18n/viewLanguage.js';
 // Keep in sync with server.js anon /api/chat limit (3/day) and Chat.jsx
 // GuestWall — the audit found three different numbers promised (5/2/2).
 const MAX_EXCHANGES = 3;
+
+// A bare greeting ("Hi", "hello there", "good morning") isn't a question, so it
+// doesn't use up one of the three. A visitor on 3 Nov opened with "Hi" and so
+// had only two real questions before the wall.
+const GREETING = /^(hi+|hello|hey+|hiya|howdy|yo|greetings|hola|bonjour|good (morning|afternoon|evening|day))( there| ask| kinwove| everyone)?$/;
+function isGreeting(text) {
+  const t = String(text ?? '').toLowerCase().replace(/[^a-z\s]/g, '').replace(/\s+/g, ' ').trim();
+  return GREETING.test(t);
+}
+function countQuestions(msgs) {
+  return msgs.filter((m) => m.role === 'user' && !isGreeting(m.content)).length;
+}
 const STORAGE_KEY = 'kinwove:guest-exchanges';
 
 function getTodayKey() {
@@ -364,7 +376,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
   const taRef = useRef(null);
   const bottomRef = useRef(null);
 
-  const liveExchanges = messages.filter((m) => m.role === 'user').length;
+  const liveExchanges = countQuestions(messages);
   const exchangeCount = Math.max(liveExchanges, storedCount);
   // The question to follow up on. Live messages when they're still on the page;
   // otherwise the one stashed at line ~230, so a returning visitor who only sees
@@ -548,7 +560,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         // not just the last answer the wall promises is saved.
         const thread = [...nextMessages, { role: 'assistant', content: accumulated }].map(({ role, content }) => ({ role, content }));
         try { localStorage.setItem('kinwove:pendingConv', JSON.stringify({ q, a: accumulated, messages: thread, ts: Date.now() })); } catch {}
-        const asked = nextMessages.filter((m) => m.role === 'user').length;
+        const asked = countQuestions(nextMessages);
         saveStoredCount(asked);
         // Only worth suggesting while they still have a question left — at the
         // cap the signup gate takes over and a chip would be a dead end.
