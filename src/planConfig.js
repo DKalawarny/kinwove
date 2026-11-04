@@ -13,7 +13,7 @@ export const TRIAL_DAYS = 35;
 // Monthly AI question caps by plan (church chat / Bible AI).
 // 'expired' = trial ended + unpaid → AI off, rest of dashboard still usable.
 export const PLAN_LIMITS = {
-  free:              { period: 'weekly',        limit: 5   },  // 5 free questions/week
+  free:              { period: 'weekly',        limit: 50  },  // 50 free questions/week during beta (was 5; Daniel, 3 Nov)
   trial:             { period: 'church-trial',  limit: 200 },  // church 5-week trial taste
   premium:           { period: 'monthly',       limit: 200 },  // Individual
   premium_plus:      { period: 'monthly',       limit: 270 },  // Individual Pro

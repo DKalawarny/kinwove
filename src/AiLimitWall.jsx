@@ -242,7 +242,7 @@ export default function AiLimitWall({ plan, panelMode, onTopupSuccess }) {
               fontFamily: T.display, fontSize: 18, fontWeight: 600,
               color: T.ink, marginBottom: 6, letterSpacing: '-0.01em',
             }}>
-              That's your 5 free questions this week
+              That's your {PLAN_LIMITS.free.limit} free questions this week
             </div>
             <div style={{ fontSize: 13.5, color: T.inkSoft, lineHeight: 1.6, maxWidth: 300 }}>
               Your free questions reset every Monday.

@@ -1199,7 +1199,7 @@ async function getServerPlan(userId) {
       const trialEnd = church.trial_started_at ? new Date(church.trial_started_at).getTime() + TRIAL_DAYS * 86400000 : 0;
       const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
       // While payments are off there is nothing a pastor could buy, so letting a
-      // trial lapse would cap them at the personal free plan — 5 questions a week
+      // trial lapse would cap them at the personal free plan's weekly cap
       // inside their own dashboard — with no way out. usePlan.js already keeps
       // the tools unlocked in that case; without this the two disagreed, and the
       // server quietly won. Same env var drives both sides.
