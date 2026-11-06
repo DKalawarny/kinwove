@@ -20,7 +20,7 @@ import { LANG_NAMES } from './src/languages.js';
 // lives in the static-serving block and the sitemap builder does not.
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG, es: ANSWERS_ES_BY_SLUG, pt: ANSWERS_PT_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
-import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex } from './content/bible.js';
+import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
@@ -6375,7 +6375,7 @@ app.get('/bible/:path', (req, res, next) => {
   const hit = resolveBiblePath(String(req.params.path).toLowerCase());
   if (!hit) return next();
   res.set('Cache-Control', 'public, max-age=3600').type('html')
-    .send(hit.n ? renderChapterPage(hit.book, hit.n) : renderBookPage(hit.book));
+    .send(hit.guide ? renderStudyGuidePage(hit.book, hit.n) : hit.n ? renderChapterPage(hit.book, hit.n) : renderBookPage(hit.book));
 });
 
 app.get('/answers', (_req, res) => {

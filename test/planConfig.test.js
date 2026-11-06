@@ -71,6 +71,6 @@ test('free stays free, and a missing profile does not throw', () => {
 
 test('a lapsed grant drops to the free weekly cap, not the premium monthly one', () => {
   const plan = effectivePersonalPlan({ plan: 'premium', gift_expires_at: PAST });
-  assert.equal(PLAN_LIMITS[plan].limit, 5);
+  assert.equal(PLAN_LIMITS[plan].limit, PLAN_LIMITS.free.limit);
   assert.equal(PLAN_LIMITS[plan].period, 'weekly');
 });

@@ -3501,6 +3501,199 @@ export const ANSWERS = [
     ],
     related: ['what-does-the-bible-say-about-anxiety', 'what-does-the-bible-say-about-fear'],
   },
+
+  // ── From real visitor questions (6 Nov 2026) ──────────────────────────────
+  // Each of these was asked on the homepage or in Ask in Oct and Nov 2026 and
+  // had no page: the mark of the beast and Matthew 24 (a new member, 3 Nov),
+  // lust and Hermeticism (31 Oct), Psalm 22, 1 Peter 4:6, "who is Jesus" and
+  // Philippians 2.
+  {
+    slug: 'what-is-the-mark-of-the-beast',
+    question: `What is the mark of the beast?`,
+    category: 'Bible',
+    updated: '2026-11-06',
+    answer: `The mark of the beast comes from Revelation 13, where people who worship the beast take a mark on their right hand or forehead, and without it they cannot buy or sell. Christians disagree about whether it is a future, literal mark. Most agree on the main point: it stands for whose side you are on, and no one takes it by accident.`,
+    body: [
+      { h: `Where it comes from`, p: `In Revelation 13, John sees a beast that forces everyone to take a mark on the right hand or forehead, so that "they could not buy or sell unless they had the mark." The chapter ends with the famous number: "That number is 666." Revelation is full of symbols, so the question is what this one stands for.` },
+      { h: `Three ways Christians read it`, p: `Many evangelicals expect a literal mark under a world ruler before Jesus returns. Others read it as Rome under Nero: spelled in Hebrew letters, "Nero Caesar" adds up to 666, and some early copies of Revelation even read 616, which matches another spelling of his name. Others see it as a picture of any power, in any age, that demands the loyalty that belongs to God alone.` },
+      { h: `Why a hand and a forehead`, p: `In Revelation 7 and 14, God's people carry his name on their foreheads. The mark of the beast is the dark copy of that. In the Old Testament, God's words were to be tied on the hand and forehead (Deuteronomy 6:8), meaning what you do and what you think. So the mark is about worship and allegiance, not a tattoo or a chip on its own.` },
+      { h: `You cannot take it by accident`, p: `Revelation describes people choosing to worship the beast. A vaccine, a bank card or a barcode is not a hidden act of worship. If you are worried you might have it, that worry itself shows your heart is turned toward God, which is the opposite of what the mark means.` },
+    ],
+    scriptures: [
+      { ref: `Revelation 13:16-18`, text: `It also forced all people, great and small, rich and poor, free and slave, to receive a mark on their right hands or on their foreheads, so that they could not buy or sell unless they had the mark, which is the name of the beast or the number of its name. This calls for wisdom. Let the person who has insight calculate the number of the beast, for it is the number of a man. That number is 666.` },
+    ],
+    faqs: [
+      { q: `Is the mark of the beast a microchip?`, a: `Revelation does not say so. People have linked it to many technologies over the centuries. The text is about who you worship, not the device in your pocket.` },
+      { q: `Does Matthew 24 talk about the mark of the beast?`, a: `Not directly. Matthew 24 warns about false messiahs and persecution. Some Christians connect the two passages, and many read Matthew 24 mostly as Jerusalem's fall in AD 70.` },
+      { q: `What does 666 mean?`, a: `Many scholars think it spells Nero's name in Hebrew numbers. Others see 6 as falling just short of 7, the Bible's number of completeness.` },
+    ],
+    related: ['what-does-matthew-24-mean', 'is-hell-real'],
+  },
+  {
+    slug: 'what-does-matthew-24-mean',
+    question: `What does Matthew 24 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-06',
+    answer: `In Matthew 24, Jesus predicts the temple in Jerusalem will be destroyed and warns his followers about false messiahs, wars, persecution and his return. Christians debate how much refers to Rome destroying Jerusalem in AD 70 and how much to the end of history. Its main message is the same either way: do not be deceived, stay faithful, and be ready.`,
+    body: [
+      { h: `The setting`, p: `Jesus' disciples point out how impressive the temple buildings are, and he answers that "not one stone here will be left on another." On the Mount of Olives they ask when this will happen and what the sign of his coming will be. The rest of the chapter answers both questions, which is why it is hard to untangle.` },
+      { h: `False messiahs and hard times`, p: `Jesus warns that many will come claiming to be the Messiah, and that wars, famines and earthquakes are "the beginning of birth pains," not the end itself. His followers will be persecuted and hated. "The one who stands firm to the end will be saved."` },
+      { h: `AD 70 or the end of time?`, p: `In AD 70 Roman armies destroyed Jerusalem and the temple, within a generation of Jesus speaking, and many readers see most of the chapter fulfilled then. Others see a double fulfilment, with AD 70 as a preview of the final days. Many see a shift partway through, from Jerusalem's fall to Jesus' return.` },
+      { h: `Be ready, not afraid`, p: `Jesus says no one knows the day or hour, "not even the angels in heaven, nor the Son, but only the Father." So the chapter is not a timetable to decode. It ends with stories about servants who keep faithfully doing their work. The point is to live ready, not to live scared.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 24:4-6`, text: `Jesus answered: “Watch out that no one deceives you. For many will come in my name, claiming, ‘I am the Messiah,’ and will deceive many. You will hear of wars and rumors of wars, but see to it that you are not alarmed. Such things must happen, but the end is still to come.` },
+      { ref: `Matthew 24:36`, text: `“But about that day or hour no one knows, not even the angels in heaven, nor the Son, but only the Father.` },
+    ],
+    faqs: [
+      { q: `Is Matthew 24 about the end times?`, a: `At least partly. Christians agree it speaks of Jesus' return, but many read much of it as Jerusalem's destruction in AD 70.` },
+      { q: `Does Matthew 24 mention the mark of the beast?`, a: `No. The mark comes from Revelation 13. Some Christians connect the two passages; the text itself does not.` },
+      { q: `Should Matthew 24 make me afraid?`, a: `Jesus says the opposite: "see to it that you are not alarmed." The chapter calls for faithfulness and readiness, not fear.` },
+    ],
+    related: ['what-is-the-mark-of-the-beast', 'what-is-heaven-like'],
+  },
+  {
+    slug: 'what-does-the-bible-say-about-lust',
+    question: `What does the Bible say about lust?`,
+    category: 'Relationships',
+    updated: '2026-11-06',
+    answer: `The Bible does not treat attraction or desire as sin. Lust is something else: looking at someone as something to use or possess. Jesus said lust in the heart counts, not only what we do with our bodies. But the Bible's answer is not shame. It is a new heart, honest confession, and a God who forgives and helps us change.`,
+    body: [
+      { h: `Attraction is not lust`, p: `God made people with bodies and desire, and the Song of Songs celebrates love and attraction openly. Noticing that someone is attractive is not a sin. Lust is when that turns into wanting them as something to have.` },
+      { h: `Adultery can happen in the mind`, p: `In Matthew 5:28 Jesus says "anyone who looks at a woman lustfully has already committed adultery with her in his heart." He is raising the bar from the body to the heart. Unfaithfulness does not start when something physical happens. It starts when you keep looking and let yourself want someone.` },
+      { h: `Married or single changes the question`, p: `Jesus says this while talking about adultery, so his warning is mainly about wanting someone who is not your husband or wife. If you are married, desire for your own spouse is not lust at all; the Bible celebrates it (Proverbs 5:18-19, Song of Songs, 1 Corinthians 7:3-5). Desire for someone else is the danger, and Jesus is clear that it counts even if nothing physical ever happens. If you are single, being drawn to someone you might one day marry is not adultery. The question is whether you see them as a whole person to honour or as something to have.` },
+      { h: `Why the body matters`, p: `Paul says "your bodies are temples of the Holy Spirit" and "you were bought at a price. Therefore honor God with your bodies." Desire is not the enemy, but it is meant to serve love, not take from people.` },
+      { h: `Not shame, and not managing it alone`, p: `Some people say lust is just part of them and the goal is to harness it. The Bible agrees that shame does not heal anyone. But it offers more than control: God promises to forgive and "purify us from all unrighteousness." Change usually comes through honesty with God and a trusted friend, plus practical steps, more than willpower alone.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 5:27-28`, text: `“You have heard that it was said, ‘You shall not commit adultery.’ But I tell you that anyone who looks at a woman lustfully has already committed adultery with her in his heart.` },
+      { ref: `1 Corinthians 6:19-20`, text: `Do you not know that your bodies are temples of the Holy Spirit, who is in you, whom you have received from God? You are not your own; you were bought at a price. Therefore honor God with your bodies.` },
+      { ref: `1 John 1:9`, text: `If we confess our sins, he is faithful and just and will forgive us our sins and purify us from all unrighteousness.` },
+    ],
+    faqs: [
+      { q: `Is it a sin to be attracted to someone?`, a: `No. Attraction is part of being human. Lust is wanting someone as something to use or have.` },
+      { q: `I'm married and attracted to someone else. Have I already sinned?`, a: `A passing notice is not the sin. Jesus says adultery begins in the heart, so the sin starts when you keep looking and let yourself want them: replaying it, picturing it, letting it grow. That is real unfaithfulness even if you never act on it. Turn your attention back to your spouse, be honest with God, and if it keeps pulling at you, tell a trusted friend or counsellor before it goes further.` },
+      { q: `What if I keep failing?`, a: `You are not alone, and you are not too far gone. Confess it, receive forgiveness, tell someone you trust, and get practical help. If it has become compulsive, a counsellor can help.` },
+      { q: `Is masturbation lust?`, a: `The Bible never mentions it directly, and Christians disagree. Most agree that the thoughts and habits around it are what matter.` },
+    ],
+    related: ['will-god-forgive-me', 'what-does-the-bible-say-about-marriage'],
+  },
+  {
+    slug: 'why-did-jesus-say-my-god-why-have-you-forsaken-me',
+    question: `Why did Jesus say "My God, why have you forsaken me?"`,
+    category: 'Jesus Christ',
+    updated: '2026-11-06',
+    answer: `On the cross Jesus cried out the opening line of Psalm 22, "My God, my God, why have you forsaken me?" It was real anguish as he carried the weight of sin. It was also a pointer: Psalm 22 describes pierced hands and feet, mockers, and clothing divided by lot, and it ends in victory. People who knew the psalm would have heard the whole song.`,
+    body: [
+      { h: `He was quoting a psalm`, p: `Matthew records Jesus crying "Eli, Eli, lema sabachthani?" in Aramaic, the first line of Psalm 22. In Jesus' day, quoting the opening of a psalm called the whole psalm to mind, much like naming a hymn by its first line.` },
+      { h: `The psalm describes the cross`, p: `Psalm 22 was written about a thousand years earlier, long before crucifixion existed, yet it reads like an eyewitness account. "They pierce my hands and my feet" (v. 16). "They divide my clothes among them and cast lots for my garment" (v. 18), which John 19:23-24 says the soldiers did. Mockers sneer "let the Lord rescue him" (v. 8), almost word for word what the crowd shouted in Matthew 27:43. And "my tongue sticks to the roof of my mouth" (v. 15) matches Jesus saying "I am thirsty."` },
+      { h: `The psalm ends in victory`, p: `Psalm 22 does not stay in despair. It turns to praise, says God "has not hidden his face from him but has listened to his cry for help," and ends with future generations being told "He has done it!" Many hear that last line echoed in Jesus' final words, "It is finished."` },
+      { h: `Was Jesus really abandoned?`, p: `Christians hold two things together. The cry was not an act: Jesus truly experienced the horror of bearing sin and separation. Yet the Father did not stop loving the Son. Jesus prayed this psalm as someone still trusting, still saying "my God." That is why it can become your prayer too when God feels far away.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 27:46`, text: `About three in the afternoon Jesus cried out in a loud voice, “Eli, Eli, lema sabachthani?” (which means “My God, my God, why have you forsaken me?” ).` },
+      { ref: `Psalm 22:16-18`, text: `Dogs surround me, a pack of villains encircles me; they pierce my hands and my feet. All my bones are on display; people stare and gloat over me. They divide my clothes among them and cast lots for my garment.` },
+      { ref: `Psalm 22:24`, text: `For he has not despised or scorned the suffering of the afflicted one; he has not hidden his face from him but has listened to his cry for help.` },
+    ],
+    faqs: [
+      { q: `What does "Eli, Eli, lema sabachthani" mean?`, a: `It is Aramaic for "My God, my God, why have you forsaken me?", the first line of Psalm 22.` },
+      { q: `Did God turn his back on Jesus?`, a: `Christians describe it differently. All agree Jesus truly felt forsaken as he bore sin, and that the Father's love for the Son never ended. Psalm 22 itself says God "listened to his cry for help."` },
+      { q: `Is Psalm 22 a prophecy about Jesus?`, a: `The New Testament writers read it that way, pointing to the pierced hands and feet, the mocking and the divided clothing. Jewish readers have usually read it as David's own suffering.` },
+    ],
+    related: ['why-did-jesus-have-to-die', 'why-does-god-feel-so-far-away'],
+  },
+  {
+    slug: 'did-jesus-preach-to-the-dead',
+    question: `Did Jesus preach to the dead?`,
+    category: 'Bible',
+    updated: '2026-11-06',
+    answer: `Two verses in 1 Peter raise the question. 1 Peter 3:19 says Christ "made proclamation to the imprisoned spirits," and 1 Peter 4:6 says "the gospel was preached even to those who are now dead." Christians read them differently, but neither verse teaches a second chance after death. Most read 4:6 as believers who heard the gospel in life and have since died.`,
+    body: [
+      { h: `What 1 Peter 3:19 says`, p: `Peter says Christ was "put to death in the body but made alive in the Spirit," and then "made proclamation to the imprisoned spirits" who disobeyed in the days of Noah. Many scholars think these spirits are fallen angels, and that Christ announced his victory over them. Others think Christ preached through Noah to the people of his day.` },
+      { h: `What 1 Peter 4:6 says`, p: `This verse says the gospel "was preached even to those who are now dead." The word "now" matters: most readers take it to mean Christians who heard the gospel while they were alive and have since died. The world judged them, but they live with God.` },
+      { h: `The old creed line`, p: `The Apostles' Creed says Jesus "descended to the dead," and some traditions picture him freeing the faithful of earlier ages. Christians still debate exactly what that means. What they agree on is that Jesus' death and resurrection reached every part of creation.` },
+      { h: `Is there a second chance after death?`, p: `Most Christians say these verses do not teach one, and Hebrews 9:27 says people die once and then face judgment. The Bible's urgent invitation is for now. And it describes God as patient, "not wanting anyone to perish."` },
+    ],
+    scriptures: [
+      { ref: `1 Peter 3:18-19`, text: `For Christ also suffered once for sins, the righteous for the unrighteous, to bring you to God. He was put to death in the body but made alive in the Spirit. After being made alive, he went and made proclamation to the imprisoned spirits—` },
+      { ref: `1 Peter 4:6`, text: `For this is the reason the gospel was preached even to those who are now dead, so that they might be judged according to human standards in regard to the body, but live according to God in regard to the spirit.` },
+    ],
+    faqs: [
+      { q: `Who are the "imprisoned spirits" in 1 Peter 3:19?`, a: `Most likely fallen angels, connected to the days of Noah. Some read them as the people of Noah's time who heard God's warning and rejected it.` },
+      { q: `What did Jesus do between his death and resurrection?`, a: `The Bible gives few details. Jesus told the thief on the cross, "today you will be with me in paradise," and the creeds say he went to the realm of the dead.` },
+      { q: `Does this mean people who never heard the gospel get another chance?`, a: `These verses do not say so. Christians hold different views on people who never heard, and all of them trust God to judge fairly.` },
+    ],
+    related: ['what-happens-when-you-die', 'is-hell-real'],
+  },
+  {
+    slug: 'who-is-jesus',
+    question: `Who is Jesus?`,
+    category: 'Jesus Christ',
+    updated: '2026-11-06',
+    answer: `Jesus was a Jewish teacher from Nazareth who lived in the first century, was crucified under Pontius Pilate, and, his followers say, rose from the dead. Even historians who are not Christians accept that he lived and was crucified. Christians believe he is God the Son, who became human to bring people back to God.`,
+    body: [
+      { h: `A real person in history`, p: `Jesus' life is reported in the four Gospels, and also mentioned by Roman and Jewish writers such as Tacitus and Josephus, who were not his followers. Nearly all historians, believing or not, accept that he lived, taught in Galilee and was crucified in Jerusalem around AD 30.` },
+      { h: `What he claimed`, p: `Jesus did not only teach about God. He forgave sins, which only God can do, and said "I am the way and the truth and the life." When he asked his disciples, "Who do you say I am?", Peter answered, "You are the Messiah, the Son of the living God."` },
+      { h: `More than a good teacher`, p: `Because of what he claimed, many people find it hard to call Jesus only a wise moral teacher. If his claims were false, he was either deceived or deceiving. If they were true, he is who Christians say he is. You have to decide what to do with what he said.` },
+      { h: `Why it matters`, p: `John says "the Word became flesh and made his dwelling among us." Christians believe God came close in Jesus: he lived the life we could not, died for our sins, and rose again. Who Jesus is changes what life, death and forgiveness mean.` },
+    ],
+    scriptures: [
+      { ref: `Matthew 16:15-16`, text: `“But what about you?” he asked. “Who do you say I am?” Simon Peter answered, “You are the Messiah, the Son of the living God.”` },
+      { ref: `John 1:14`, text: `The Word became flesh and made his dwelling among us. We have seen his glory, the glory of the one and only Son, who came from the Father, full of grace and truth.` },
+    ],
+    faqs: [
+      { q: `Was Jesus a real person?`, a: `Yes. Almost all historians accept that he lived and was crucified, based on the Gospels and on non-Christian Roman and Jewish writers.` },
+      { q: `Did Jesus claim to be God?`, a: `Christians believe so. He forgave sins, accepted worship and spoke of himself as one with the Father. His opponents understood him to be making that claim.` },
+      { q: `What do other religions say about Jesus?`, a: `Islam honours him as a prophet. Many Jewish people see him as a teacher but not the Messiah. Christianity alone says he is God become human, who rose from the dead.` },
+    ],
+    related: ['is-jesus-really-god', 'is-the-resurrection-of-jesus-real'],
+  },
+  {
+    slug: 'what-does-philippians-2-mean',
+    question: `What does Philippians 2 mean?`,
+    category: 'Bible verses explained',
+    updated: '2026-11-06',
+    answer: `Philippians 2 calls Christians to humility and unity by pointing to Jesus. Paul says Jesus, though he was God, "made himself nothing," became a servant, and died on a cross, and so God exalted him above every name. Followers of Jesus are to think the same way: put others first and serve, trusting that God is at work in them.`,
+    body: [
+      { h: `Be like-minded`, p: `Paul opens by asking the church to be "one in spirit and of one mind." He says to "do nothing out of selfish ambition or vain conceit," but in humility to "value others above yourselves." This is the problem the rest of the chapter answers.` },
+      { h: `The Christ hymn`, p: `Verses 6 to 11 may be one of the earliest Christian hymns. Jesus, "being in very nature God," did not cling to his rights but "made himself nothing," became human, and obeyed to the point of death on a cross. So God raised him to the highest place, and one day "every knee should bow" and every tongue confess that Jesus Christ is Lord.` },
+      { h: `Work it out, because God works in you`, p: `Paul says to "continue to work out your salvation with fear and trembling, for it is God who works in you." This is not earning salvation. It is living out what God has already started, with God doing the deepest work.` },
+      { h: `Real examples`, p: `Paul ends with two people who live this out: Timothy, who cares for others more than himself, and Epaphroditus, who nearly died serving. Humility is not an idea; it looks like ordinary people putting others first.` },
+    ],
+    scriptures: [
+      { ref: `Philippians 2:3-4`, text: `Do nothing out of selfish ambition or vain conceit. Rather, in humility value others above yourselves, not looking to your own interests but each of you to the interests of the others.` },
+      { ref: `Philippians 2:5-8`, text: `In your relationships with one another, have the same mindset as Christ Jesus: Who, being in very nature God, did not consider equality with God something to be used to his own advantage; rather, he made himself nothing by taking the very nature of a servant, being made in human likeness. And being found in appearance as a man, he humbled himself by becoming obedient to death— even death on a cross!` },
+    ],
+    faqs: [
+      { q: `What does "made himself nothing" mean?`, a: `Jesus did not stop being God. He set aside his rights and glory to become a servant. Christians debate the exact sense of the Greek word, but agree on that.` },
+      { q: `Does "work out your salvation" mean we earn it?`, a: `No. The next line says "it is God who works in you." Paul means living out a salvation God gives.` },
+      { q: `Is Philippians 2 about humility?`, a: `Yes, and about unity. Jesus' humility is both the reason Christians can be humble and the pattern for how they treat each other.` },
+    ],
+    related: ['is-jesus-really-god', 'what-does-the-bible-say-about-pride'],
+  },
+  {
+    slug: 'is-hermeticism-compatible-with-christianity',
+    question: `Is Hermeticism compatible with Christianity?`,
+    category: 'Faith & Doubt',
+    updated: '2026-11-06',
+    answer: `Most Christians say no, though they often admire what draws people to it. Hermeticism is an old tradition of secret wisdom, astrology and alchemy, linked to "Hermes Trismegistus." It teaches that people rise toward God through hidden knowledge and self-mastery. Christianity says God comes down to us in Jesus, and we are saved by grace, not by mastering secrets.`,
+    body: [
+      { h: `What Hermeticism is`, p: `Hermeticism grew from writings that appeared in Roman Egypt in the early centuries AD, credited to a legendary sage called Hermes Trismegistus. It mixes philosophy, astrology and alchemy. Its core idea is that the human mind can climb back to the divine through hidden knowledge, and that the self can be refined and transformed.` },
+      { h: `Where it overlaps`, p: `People are often drawn to Hermeticism for good reasons: a sense that the world is full of meaning, a longing for God, and a desire to become whole. Christianity shares those longings. Some Christian thinkers in the Renaissance were fascinated by Hermetic texts for exactly that reason.` },
+      { h: `Where it parts ways`, p: `The difference is the direction. Hermeticism is about climbing up through secret knowledge and control. The gospel is about God coming down in Jesus, openly, for everyone. Paul warns against "hollow and deceptive philosophy," and the Bible forbids divination and sorcery (Deuteronomy 18:10-12). In Acts 19, new believers in Ephesus burned their books of sorcery.` },
+      { h: `If someone you love is exploring it`, p: `Start with what they are longing for, not with an argument. If they already believe there is no eternal life except through Christ, that is common ground. Ask what Hermeticism gives them that they have not found in Jesus, and listen. Then share how Jesus meets that longing without asking them to master it alone.` },
+    ],
+    scriptures: [
+      { ref: `Colossians 2:8`, text: `See to it that no one takes you captive through hollow and deceptive philosophy, which depends on human tradition and the elemental spiritual forces of this world rather than on Christ.` },
+      { ref: `Deuteronomy 18:10-12`, text: `Let no one be found among you who sacrifices their son or daughter in the fire, who practices divination or sorcery, interprets omens, engages in witchcraft, or casts spells, or who is a medium or spiritist or who consults the dead. Anyone who does these things is detestable to the Lord; because of these same detestable practices the Lord your God will drive out those nations before you.` },
+    ],
+    faqs: [
+      { q: `Is The Kybalion Christian?`, a: `No. The Kybalion is a 1908 book presenting "Hermetic principles." It is not Christian and does not come from the ancient Hermetic writings.` },
+      { q: `Can a Christian study Hermeticism?`, a: `Studying it to understand history or a friend is different from practising it. Most Christians would warn against using its practices, like astrology or rituals, as a spiritual path.` },
+      { q: `What does the Bible say about secret knowledge?`, a: `The gospel is not a secret for the few. Paul says Christ is the one "in whom are hidden all the treasures of wisdom and knowledge," and that wisdom is offered openly to everyone.` },
+    ],
+    related: ['is-christianity-the-only-way-to-god', 'who-is-jesus'],
+  },
 ];
 
 export const ANSWERS_BY_SLUG = Object.fromEntries(ANSWERS.map((a) => [a.slug, a]));

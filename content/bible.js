@@ -8,6 +8,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, shell } from './answers.js';
 import { bibleAlternates } from './bible-i18n.js';
+import { STUDY_GUIDES } from './study-guides.js';
 
 const SITE = 'https://www.kinwove.com';
 const STUDY_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'study');
@@ -56,8 +57,15 @@ function chapterName(book, n) {
 const bookUrl = (book) => `${SITE}/bible/${book.slug}`;
 const chapterUrl = (book, n) => `${SITE}/bible/${book.slug}-${n}`;
 
-// /bible/<path> → { book } or { book, n } or null.
+const guideFor = (book, n) => STUDY_GUIDES[book.code]?.[n] ?? null;
+const guideUrl = (book, n) => `${chapterUrl(book, n)}-study-guide`;
+
+// /bible/<path> → { book } or { book, n } or { book, n, guide } or null.
 export function resolveBiblePath(path) {
+  if (path.endsWith('-study-guide')) {
+    const hit = resolveBiblePath(path.slice(0, -'-study-guide'.length));
+    return hit?.n && guideFor(hit.book, hit.n) ? { ...hit, guide: true } : null;
+  }
   if (BY_SLUG[path]) return { book: BY_SLUG[path] };
   const m = path.match(/^(.+)-(\d{1,3})$/);
   const book = m && BY_SLUG[m[1]];
@@ -70,7 +78,10 @@ export function bibleSitemapEntries() {
   const entries = [`${SITE}/bible`];
   for (const b of BOOKS) {
     entries.push(bookUrl(b));
-    b.chapters.forEach((_, i) => entries.push(chapterUrl(b, i + 1)));
+    b.chapters.forEach((_, i) => {
+      entries.push(chapterUrl(b, i + 1));
+      if (guideFor(b, i + 1)) entries.push(guideUrl(b, i + 1));
+    });
   }
   return entries;
 }
@@ -145,6 +156,7 @@ export function renderChapterPage(book, n) {
       ${prev ? `<a href="${prev[0]}">← ${esc(prev[1])}</a>` : ''}
       ${next ? `<a href="${next[0]}">${esc(next[1])} →</a>` : ''}
       <a href="${bookUrl(book)}">About the book of ${esc(book.name)} →</a>
+      ${guideFor(book, n) ? `<a href="${guideUrl(book, n)}">Leading a group? ${esc(name)} study guide →</a>` : ''}
     </div>
     ${askBox(`Ask anything about ${name}…`)}
     ${foot()}`;
@@ -152,6 +164,55 @@ export function renderChapterPage(book, n) {
     title: `${name} Explained in Plain Words: ${c.title} | kinwove`,
     description: c.overview.slice(0, 155),
     canonical, jsonLd, bodyHtml, alternates: bibleAlternates(book.code, n),
+  });
+}
+
+export function renderStudyGuidePage(book, n) {
+  const c = book.chapters[n - 1];
+  const g = guideFor(book, n);
+  const name = chapterName(book, n);
+  const canonical = guideUrl(book, n);
+  const description = `${name} Bible study guide for small groups: an icebreaker, ${g.questions.length} discussion questions, how it applies this week, and a closing prayer.`;
+  const prev = guideFor(book, n - 1) ? [guideUrl(book, n - 1), `${chapterName(book, n - 1)} study guide`] : null;
+  const next = guideFor(book, n + 1) ? [guideUrl(book, n + 1), `${chapterName(book, n + 1)} study guide`] : null;
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org', '@type': 'Article',
+      headline: `${name} Bible study guide: ${c.title}`, description,
+      datePublished: '2026-11-06', dateModified: '2026-11-06',
+      author: { '@type': 'Organization', name: 'kinwove' },
+      publisher: { '@type': 'Organization', name: 'kinwove', url: SITE },
+      mainEntityOfPage: canonical,
+      about: { '@type': 'CreativeWork', name: `${name} (Bible)` },
+    },
+    crumbs([['Bible', `${SITE}/bible`], [book.name, bookUrl(book)], [name, chapterUrl(book, n)], ['Study guide', canonical]]),
+  ];
+  const askUrl = `${SITE}/?q=${encodeURIComponent(`Help me lead a group study on ${name}`)}`;
+  const bodyHtml = `
+    <div class="cat"><a href="${SITE}/bible" style="color:inherit;text-decoration:none">Bible</a> · <a href="${bookUrl(book)}" style="color:inherit;text-decoration:none">${esc(book.name)}</a> · Study guide</div>
+    <h1>${esc(name)} Bible study guide: ${esc(c.title)}</h1>
+    <div class="answer">${esc(c.overview)}</div>
+    <h2>Open with</h2><p>${esc(g.open)}</p>
+    <h2>Read together</h2><p>${g.read.map(esc).join(', then ')}. If you are leading, read the plain-words note on ${esc(name)} first (linked below).</p>
+    <h2>Discussion questions</h2>
+    <ol>${g.questions.map((q) => `<li><p>${esc(q)}</p></li>`).join('')}</ol>
+    <h2>For our lives this week</h2><p>${esc(g.life)}</p>
+    <h2>Close in prayer</h2><p>${esc(g.prayer)}</p>
+    <h2>Leader tip</h2><p>${esc(g.tip)}</p>
+    <a class="cta" href="${esc(askUrl)}">Plan this study with Ask →</a>
+    <div class="related">
+      <div class="cat">Keep going</div>
+      ${prev ? `<a href="${prev[0]}">← ${esc(prev[1])}</a>` : ''}
+      ${next ? `<a href="${next[0]}">${esc(next[1])} →</a>` : ''}
+      <a href="${chapterUrl(book, n)}">${esc(name)} explained in plain words →</a>
+      <a href="${bookUrl(book)}">About the book of ${esc(book.name)} →</a>
+    </div>
+    ${askBox(`Ask anything about ${name}…`)}
+    ${foot()}`;
+  return shell({
+    title: `${name} Bible Study Guide: Questions for Small Groups | kinwove`,
+    description: description.slice(0, 155),
+    canonical, jsonLd, bodyHtml,
   });
 }
 
