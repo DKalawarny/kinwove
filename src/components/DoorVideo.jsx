@@ -3,6 +3,8 @@ import { T } from '../theme.js';
 
 // Landing "Two ways in" videos. Files live in the public `site-video` bucket:
 // <name>-1080.mp4, <name>-720.mp4, <name>-poster.jpg, <name>.vtt
+// The card covers are small progressive copies in public/video/, served by the site itself:
+// the 160 KB storage poster loaded slowly on phones and showed only its top strip.
 const BASE = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/site-video`;
 
 // The cover inside a door card. Tapping it opens the large player.
@@ -10,7 +12,7 @@ export function DoorVideoCover({ name, onOpen, label = 'Watch' }) {
   return (
     <button onClick={onOpen} aria-label="Watch the video"
       style={{ position: 'relative', display: 'block', width: '100%', aspectRatio: '16 / 9', borderRadius: 14, overflow: 'hidden', border: 0, padding: 0, cursor: 'pointer', marginBottom: 22, background: '#000' }}>
-      <img src={`${BASE}/${name}-poster.jpg`} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      <img src={`/video/${name}-poster.jpg`} alt="" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.55))' }} />
       <span style={{ position: 'absolute', left: 14, bottom: 12, width: 44, height: 44, borderRadius: '50%', background: 'rgba(245,237,216,0.92)', display: 'grid', placeItems: 'center', boxShadow: '0 6px 24px rgba(0,0,0,0.4)' }}>
         <svg width="15" height="17" viewBox="0 0 20 22" style={{ marginLeft: 3 }}><path d="M0 0l20 11L0 22z" fill="#1A110A" /></svg>
