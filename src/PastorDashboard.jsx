@@ -672,6 +672,21 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
     setPublishError(null);
     setSermons((rows) => rows.map((s) => s.id === sermon.id ? { ...s, is_published: next } : s));
 
+    // Keep the church feed in step, the way the sermon editor does: a draft has no
+    // feed post, and going Live posts one (only if there isn't one already)
+    const { data: anns } = await supabase.from('posts').select('id')
+      .eq('scope', 'church').eq('scope_id', churchId)
+      .contains('body_data', { sermon_id: sermon.id, is_sermon_announcement: true }).limit(10);
+    if (!next && anns?.length) {
+      await supabase.from('posts').delete().in('id', anns.map((a) => a.id));
+    } else if (next && !anns?.length && session?.user?.id) {
+      await supabase.from('posts').insert({
+        author_id: session.user.id, scope: 'church', scope_id: churchId, kind: 'text', is_anonymous: false,
+        body: (sermon.title ?? '').trim(),
+        body_data: { sermon_id: sermon.id, is_sermon_announcement: true, sermon_title: (sermon.title ?? '').trim(), scripture_ref: sermon.scripture_ref?.trim() || null },
+      });
+    }
+
     // When publishing (not unpublishing), email all church members
     if (next && churchId) {
       import('./supabase.js').then(({ authedFetch }) => {

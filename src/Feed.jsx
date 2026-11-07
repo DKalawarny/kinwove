@@ -61,7 +61,15 @@ export default function Feed({ source, sessionUserId, refreshKey = 0, emptyMessa
 
     const { data, error } = await q;
     if (error) { setLoadError(true); setItems([]); setLoading(false); return; }
-    const rows = data ?? [];
+    let rows = data ?? [];
+    // A sermon's feed post shows only while the sermon is published: a draft, or a
+    // sermon switched back to draft or deleted, stays out of everyone's feed
+    const annIds = [...new Set(rows.map((r) => r.body?.is_sermon_announcement && r.body?.sermon_id).filter(Boolean))];
+    if (annIds.length) {
+      const { data: live } = await supabase.from('sermons').select('id').in('id', annIds).eq('is_published', true);
+      const liveIds = new Set((live ?? []).map((x) => x.id));
+      rows = rows.filter((r) => !(r.body?.is_sermon_announcement && r.body?.sermon_id) || liveIds.has(r.body.sermon_id));
+    }
     setItems(rows);
 
     supabase.from('sponsored_posts').select('*').eq('is_active', true).order('sort_order')
