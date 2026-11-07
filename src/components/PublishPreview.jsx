@@ -129,7 +129,12 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
             </div>
             <div style={{ border: `1px solid ${T.line}`, borderRadius: 12, overflow: 'hidden', background: '#F5EDD8' }}>
               {emailHtml
-                ? <iframe title="Email preview" srcDoc={emailHtml} sandbox="" style={{ width: '100%', height: 420, border: 0, display: 'block' }} />
+                // Look only: links inside must not navigate the box away from the email
+                // (a click on "Open kinwove" loaded the website in here). No scripts run;
+                // same-origin is only so the box can grow to the email's full height.
+                ? <iframe title="Email preview" srcDoc={emailHtml} sandbox="allow-same-origin" tabIndex={-1}
+                    onLoad={(e) => { try { const d = e.currentTarget.contentDocument; e.currentTarget.style.height = `${Math.max(200, d.documentElement.scrollHeight)}px`; } catch { /* keep default */ } }}
+                    style={{ width: '100%', height: 420, border: 0, display: 'block', pointerEvents: 'none' }} />
                 : <div style={{ padding: 18, fontSize: 13, color: T.inkMuted }}>Loading the email…</div>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
