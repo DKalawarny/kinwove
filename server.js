@@ -4722,6 +4722,101 @@ function escHtml(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// The pastor's publish preview: the real sermon email (this week's church posts
+// and prayers included) built the same way as the send, without sending it, and a
+// "send a test to me" that mails one copy to the caller (admins may pick the address).
+async function sermonEmailContext(churchId, userId) {
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' };
+  const [rolesRes, churchRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/church_roles?church_id=eq.${churchId}&user_id=eq.${userId}&is_owner=eq.true&select=id&limit=1`, { headers: h }),
+    fetch(`${SUPABASE_URL}/rest/v1/churches?id=eq.${churchId}&select=id,name,pastor_id&limit=1`, { headers: h }),
+  ]);
+  const roles = await rolesRes.json();
+  const churches = await churchRes.json();
+  const church = Array.isArray(churches) ? churches[0] : null;
+  if (!church) return { status: 404, error: 'Church not found' };
+  if (!(Array.isArray(roles) && roles.length) && church.pastor_id !== userId) return { status: 403, error: 'Not authorized for this church' };
+  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+  const [postsRes, prayersRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/posts?scope=eq.church&scope_id=eq.${churchId}&created_at=gte.${sevenDaysAgo}&select=body,author_id,reaction_counts,profiles!author_id(display_name)&order=created_at.desc&limit=20`, { headers: h }),
+    fetch(`${SUPABASE_URL}/rest/v1/personal_prayers?is_public=eq.true&created_at=gte.${sevenDaysAgo}&select=body,is_anonymous,profiles!user_id(church_id,display_name)&order=created_at.desc&limit=20`, { headers: h }),
+  ]);
+  const posts = await postsRes.json();
+  const topPosts = (Array.isArray(posts) ? posts : [])
+    .map((p) => {
+      const rc = p.reaction_counts ?? {};
+      const reactions = Object.values(rc).reduce((t, v) => t + (typeof v === 'number' ? v : 0), 0);
+      return { body: String(p.body ?? ''), author: p.profiles?.display_name ?? 'A member', reactions };
+    })
+    .sort((a, b) => b.reactions - a.reactions).slice(0, 3)
+    .filter((p) => p.body.trim().length > 0);
+  const allPrayers = await prayersRes.json();
+  const prayers = (Array.isArray(allPrayers) ? allPrayers : [])
+    .filter((p) => p.profiles?.church_id === churchId).slice(0, 3)
+    .map((p) => ({ body: String(p.body ?? ''), name: p.is_anonymous ? 'A member (anonymous)' : (p.profiles?.display_name ?? 'A member') }));
+  return { church, topPosts, prayers };
+}
+
+function sermonEmailInput(body) {
+  const b = body ?? {};
+  const str = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
+  return { churchId: b.churchId, sermon: { title: str(b.title, 200) || 'Untitled sermon', scripture_ref: str(b.scriptureRef, 120) || null }, note: str(b.note, 400) };
+}
+
+app.post('/api/sermon-email-preview', requireAuth, async (req, res) => {
+  const { churchId, sermon, note } = sermonEmailInput(req.body);
+  if (!isUuid(churchId)) return res.status(400).json({ error: 'invalid church' });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
+  try {
+    const ctx = await sermonEmailContext(churchId, req.userId);
+    if (ctx.error) return res.status(ctx.status).json({ error: ctx.error });
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note });
+    res.json({ html, subject: `New sermon: "${sermon.title}" at ${ctx.church.name}` });
+  } catch (err) { safeError(res, err, 'sermon-email-preview'); }
+});
+
+const sermonTestSends = new Map(); // userId → recent send times; 5 an hour is plenty for checking
+app.post('/api/sermon-email-test', requireAuth, async (req, res) => {
+  const now = Date.now();
+  const recent = (sermonTestSends.get(req.userId) ?? []).filter((t) => now - t < 3600000);
+  if (recent.length >= 5) return res.status(429).json({ error: 'Too many test emails. Try again in an hour.' });
+  sermonTestSends.set(req.userId, [...recent, now]);
+  const { churchId, sermon, note } = sermonEmailInput(req.body);
+  if (!isUuid(churchId)) return res.status(400).json({ error: 'invalid church' });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) return res.status(503).json({ error: 'RESEND_API_KEY not set' });
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+  try {
+    const ctx = await sermonEmailContext(churchId, req.userId);
+    if (ctx.error) return res.status(ctx.status).json({ error: ctx.error });
+    // One copy to the caller. An admin may send it to another address instead.
+    let to = '';
+    const asked = typeof req.body?.to === 'string' ? req.body.to.trim().toLowerCase() : '';
+    if (asked) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}&select=is_admin&limit=1`, { headers: h });
+      const rows = await r.json();
+      if (!rows?.[0]?.is_admin) return res.status(403).json({ error: 'Only an admin can choose the address' });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(asked)) return res.status(400).json({ error: 'invalid address' });
+      to = asked;
+    } else {
+      const u = await (await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${req.userId}`, { headers: h })).json();
+      to = u?.email ?? '';
+    }
+    if (!to) return res.status(400).json({ error: 'No email address on your account' });
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note });
+    const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to: [to], subject: `[Test] New sermon: "${sermon.title}" at ${ctx.church.name}`, html }),
+    });
+    if (!r.ok) return res.status(502).json({ error: "Couldn't send the test email" });
+    console.log(`[kinwove] sermon test email sent for church ${churchId}`);
+    res.json({ sent: true, to });
+  } catch (err) { safeError(res, err, 'sermon-email-test'); }
+});
+
 app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
   const { churchId, sermonId } = req.body ?? {};
   // Optional short note the pastor wrote on the publish preview

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { T } from '../theme.js';
-import { supabase } from '../supabase.js';
+import { supabase, authedFetch } from '../supabase.js';
 import { KinwoveStar } from './brand/KinwoveStar.jsx';
 
 export const PASTOR_NOTE_MAX = 400;
@@ -32,6 +32,48 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
         if (ann?.body_data?.pastor_note && !initialNote) setNote(ann.body_data.pastor_note);
       }, () => {});
   }, [churchId, sermonId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The real email, built by the server with this week's church posts and prayers
+  const [emailHtml, setEmailHtml] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
+  useEffect(() => {
+    if (!churchId || alreadyPosted || !sendEmail) return;
+    const t = setTimeout(() => {
+      authedFetch('/api/sermon-email-preview', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ churchId, title, scriptureRef, note }),
+      }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+        if (d?.html) { setEmailHtml(d.html); setEmailSubject(d.subject ?? ''); }
+      }).catch(() => {});
+    }, 400);
+    return () => clearTimeout(t);
+  }, [churchId, title, scriptureRef, note, alreadyPosted, sendEmail]);
+
+  // One test copy to yourself; an admin can send it to another address
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [testTo, setTestTo] = useState('hello@kinwove.com');
+  const [testState, setTestState] = useState('idle'); // idle | sending | sent | error
+  const [testMsg, setTestMsg] = useState('');
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const id = data?.user?.id;
+      if (!id) return;
+      supabase.from('profiles').select('is_admin').eq('id', id).maybeSingle()
+        .then(({ data: p }) => setIsAdmin(!!p?.is_admin), () => {});
+    }, () => {});
+  }, []);
+  async function sendTest() {
+    setTestState('sending'); setTestMsg('');
+    try {
+      const r = await authedFetch('/api/sermon-email-test', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ churchId, title, scriptureRef, note, ...(isAdmin && testTo.trim() ? { to: testTo.trim() } : {}) }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) { setTestState('error'); setTestMsg(d?.error ?? "Couldn't send the test"); return; }
+      setTestState('sent'); setTestMsg(`Test sent to ${d.to}`);
+    } catch { setTestState('error'); setTestMsg("Couldn't send the test"); }
+  }
 
   const label = { fontSize: 10.5, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.inkMuted, margin: '18px 0 8px' };
   const trimmed = note.trim();
@@ -81,15 +123,25 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
             No email. The sermon goes into your church feed and members still get the usual in-app notification.
           </div>
         ) : (
-          <div style={{ background: T.white, border: `1px solid ${T.line}`, borderRadius: 12, padding: '12px 14px' }}>
-            <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 8 }}>
-              Subject: <span style={{ color: T.ink, fontWeight: 600 }}>New sermon: "{title.trim() || 'Untitled sermon'}"{churchName ? ` at ${churchName}` : ''}</span>
+          <div>
+            <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 6 }}>
+              Subject: <span style={{ color: T.ink, fontWeight: 600 }}>{emailSubject || `New sermon: "${title.trim() || 'Untitled sermon'}"${churchName ? ` at ${churchName}` : ''}`}</span>
             </div>
-            <div style={{ fontFamily: T.serif, fontSize: 19, fontWeight: 600, color: T.ink, lineHeight: 1.2 }}>{title.trim() || 'Untitled sermon'}</div>
-            {scriptureRef?.trim() && <div style={{ fontSize: 13, color: T.goldDark, fontStyle: 'italic', marginTop: 4 }}>{scriptureRef.trim()}</div>}
-            {trimmed && <div style={{ fontFamily: T.serif, fontSize: 14.5, color: T.ink, lineHeight: 1.55, marginTop: 8, whiteSpace: 'pre-wrap' }}>{trimmed}</div>}
-            <div style={{ fontSize: 12.5, color: T.inkSoft, marginTop: 10, lineHeight: 1.5 }}>
-              Then a button to this week's devotional, and the week's top church posts and prayer requests. Everyone in your church who gets kinwove emails receives it.
+            <div style={{ border: `1px solid ${T.line}`, borderRadius: 12, overflow: 'hidden', background: '#F5EDD8' }}>
+              {emailHtml
+                ? <iframe title="Email preview" srcDoc={emailHtml} sandbox="" style={{ width: '100%', height: 420, border: 0, display: 'block' }} />
+                : <div style={{ padding: 18, fontSize: 13, color: T.inkMuted }}>Loading the email…</div>}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+              {isAdmin && (
+                <input value={testTo} onChange={(e) => setTestTo(e.target.value)} aria-label="Send the test to"
+                  style={{ flex: '1 1 180px', minWidth: 0, border: `1px solid ${T.line}`, borderRadius: 999, padding: '8px 12px', fontSize: 13, background: T.white, color: T.ink, outline: 'none' }} />
+              )}
+              <button onClick={sendTest} disabled={testState === 'sending'}
+                style={{ background: 'none', border: `1px solid ${T.line}`, borderRadius: 999, padding: '8px 14px', fontSize: 13, color: T.goldDark, fontWeight: 600, cursor: 'pointer', opacity: testState === 'sending' ? 0.6 : 1 }}>
+                {testState === 'sending' ? 'Sending…' : isAdmin ? 'Send a test' : 'Send a test to me'}
+              </button>
+              {testMsg && <span style={{ fontSize: 12.5, color: testState === 'error' ? '#A53F2B' : T.inkSoft }}>{testMsg}</span>}
             </div>
           </div>
         )}
