@@ -143,6 +143,12 @@ function ContentItem({ item, onChange, onRemove, onRegenerate, regenerating, any
   );
 }
 
+// The server answers errors as {"error": "..."}; show the sentence, not the raw JSON
+async function errorText(r) {
+  const t = await r.text();
+  try { return JSON.parse(t)?.error || t; } catch { return t || 'Something went wrong. Try again.'; }
+}
+
 export default function SermonComposer({ session, churchId, onBack, initialSermonId, onOpenSermon, embedded = false, userPlan = 'free', prefill = null, onPrefillConsumed }) {
   const [sermons, setSermons] = useState([]);
   const [view, setView] = useState('list');  // 'list' | 'edit'
@@ -353,7 +359,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ title, scripture_ref: scriptureRef, summary }),
       });
-      if (!r.ok) throw new Error(await r.text());
+      if (!r.ok) throw new Error(await errorText(r));
       const { content: generated } = await r.json();
       setContent(generated.map((c, i) => ({
         ...c,
@@ -382,7 +388,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ title, scripture_ref: scriptureRef, summary, targetKind: kind }),
       });
-      if (!r.ok) throw new Error(await r.text());
+      if (!r.ok) throw new Error(await errorText(r));
       const { content: generated } = await r.json();
       setContent((prev) => {
         const others = prev.filter((c) => c.kind !== kind);
@@ -429,7 +435,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
           existingItems,
         }),
       });
-      if (!r.ok) throw new Error(await r.text());
+      if (!r.ok) throw new Error(await errorText(r));
       const { content: generated } = await r.json();
       const replacement = Array.isArray(generated) ? generated[0] : null;
       if (!replacement) throw new Error('No replacement returned.');

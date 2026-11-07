@@ -1989,12 +1989,41 @@ app.post('/api/sermon/generate', requireAuth, requirePastor, limitAuthed({ capac
   }
 
   try {
+    // The week comes back through a forced tool call, so the API hands over parsed JSON.
+    // Writing it as raw text broke on outlines full of quotation marks (a pasted
+    // Bible chapter): "Could not parse generated content" (Daniel, 7 Nov).
     const resp = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: isSingle ? 800 : (targetKind ? 2500 : 6000),
+      max_tokens: isSingle ? 800 : (targetKind ? 2500 : 8000),
       system: SERMON_SYSTEM,
-      messages: [{ role: 'user', content: userContent + '\n\nREMINDER: Output ONLY the raw JSON object. Your entire response must start with { and end with }. No explanation, no markdown, no other text of any kind.' }],
+      tools: [{
+        name: 'save_week',
+        description: "Save the week's items for the congregation.",
+        input_schema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  kind: { type: 'string', enum: ['daily_verse', 'going_deeper', 'kid_version'] },
+                  day: { type: 'integer' },
+                  scripture: { type: 'string' },
+                  body: { type: 'string' },
+                },
+                required: ['kind', 'body'],
+              },
+            },
+          },
+          required: ['items'],
+        },
+      }],
+      tool_choice: { type: 'tool', name: 'save_week' },
+      messages: [{ role: 'user', content: userContent + '\n\nGive the items through the save_week tool, in the same shape described above.' }],
     });
+    const toolInput = resp.content.find((b) => b.type === 'tool_use' && b.name === 'save_week')?.input;
+    if (resp.stop_reason === 'max_tokens') console.warn('[kinwove] sermon generate hit max_tokens');
     const text = resp.content
       .filter((b) => b.type === 'text')
       .map((b) => b.text)
@@ -2027,9 +2056,9 @@ app.post('/api/sermon/generate', requireAuth, requirePastor, limitAuthed({ capac
       return out;
     }
 
-    let parsed;
+    let parsed = toolInput && Array.isArray(toolInput.items) ? toolInput : undefined;
     // Attempt 1: direct parse
-    try { parsed = JSON.parse(cleaned); } catch (_) {}
+    if (!parsed) { try { parsed = JSON.parse(cleaned); } catch (_) {} }
 
     // Attempt 2: repair raw control chars then parse
     if (!parsed) {
