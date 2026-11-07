@@ -1220,6 +1220,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
             <PublishPreview
               churchId={churchId} sermonId={editing?.id ?? null}
               title={title} scriptureRef={scriptureRef} busy={saving}
+              dailyQuestions={content.filter((c) => c.kind === 'daily_verse' && c.body?.trim()).sort((a, b) => (a.day ?? 99) - (b.day ?? 99))}
               onCancel={() => setPreviewOpen(false)}
               onPublish={async (note, sendEmail) => { await handleSave(true, note, sendEmail); setPreviewOpen(false); }}
             />

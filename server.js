@@ -3029,13 +3029,21 @@ app.get('/api/email/unsubscribe', async (req, res) => {
   // someone tired of a daily email still hears when something new happens.
   // Stopping everything is one more click on the page below.
   const dailyOnly = list === 'daily';
+  // ?list=church comes from a church's daily question email: it stops those only.
+  const churchOnly = list === 'church';
   // One click stops ALL non-transactional email, and the page below says so.
   // It used to set daily_verse_opt_out and tell the person "you won't get the
   // daily verse email anymore" — while in fact silencing the welcome sequence,
   // the profile nudge and the invite as well, because every sender filtered on
   // that one flag. Telling someone you have done a narrow thing while doing a
   // broad one is the part CASL is particular about.
-  if (ok && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+  if (ok && churchOnly && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+    const hh = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' };
+    const cur = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${u}&select=notif_prefs&limit=1`, { headers: hh }).then((x) => x.json()).catch(() => []);
+    const prefs = { ...(cur?.[0]?.notif_prefs ?? {}), church_question_email: !optOut };
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${u}`, { method: 'PATCH', headers: hh, body: JSON.stringify({ notif_prefs: prefs }) })
+      .catch((e) => console.error('[unsubscribe]', e.message));
+  } else if (ok && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
     await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${u}`, {
       method: 'PATCH',
       headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json' },
@@ -3046,6 +3054,13 @@ app.get('/api/email/unsubscribe', async (req, res) => {
   if (!ok) {
     title = 'Link expired';
     body  = 'Please use the unsubscribe link from a recent email.';
+  } else if (churchOnly && optOut) {
+    title  = 'No more daily questions';
+    body   = 'Your church’s daily questions won’t come by email anymore. You’ll still see them in kinwove, and the daily verse email is unchanged.';
+    action = `<a href="https://www.kinwove.com/api/email/unsubscribe?u=${u}&t=${t}&list=church&resub=1" style="color:#9C7B5E;text-decoration:none">Changed your mind? Keep the daily questions</a>`;
+  } else if (churchOnly) {
+    title = 'Daily questions are back on';
+    body  = 'Your church’s daily questions will come by email again.';
   } else if (dailyOnly && optOut) {
     title  = 'No more daily emails';
     body   = 'You won’t get the daily verse email anymore. You’ll still hear from us now and then when something new happens.';
@@ -3164,6 +3179,76 @@ app.get('/api/verse/today', requireAuth, async (_req, res) => {
   }
 });
 
+// ── Church daily questions in the daily email ────────────────────────────────
+// A church member's morning email leads with their own church's question for the
+// day (Daniel, 7 Nov: email the daily questions to keep the intrigue going), with
+// kinwove's daily verse underneath. Matching is per person, by profiles.church_id,
+// so a church's question only ever reaches that church's members. One email a
+// day per person, never two.
+//
+// "Today's" question: a published sermon's daily_verse item scheduled from 6h
+// before this run to 18h after it. The email goes at 13:00 UTC, so that covers the
+// pastor's chosen time anywhere from early morning in Europe to evening in the
+// Pacific, without picking up yesterday's. Two sermons on one day: the newest week wins.
+async function todaysChurchQuestions(now = new Date()) {
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+  const from = new Date(now.getTime() - 6 * 3600 * 1000).toISOString();
+  const to = new Date(now.getTime() + 18 * 3600 * 1000).toISOString();
+  const rows = await fetch(
+    `${SUPABASE_URL}/rest/v1/sermon_content?kind=eq.daily_verse&scheduled_at=gte.${from}&scheduled_at=lt.${to}&select=id,body,scripture,day,sermon_id,sermons!inner(id,church_id,title,week_starts_on,is_published)&sermons.is_published=eq.true&limit=500`,
+    { headers: h }
+  ).then((r) => r.json()).catch(() => []);
+  const byChurch = new Map();
+  for (const q of Array.isArray(rows) ? rows : []) {
+    const c = q.sermons?.church_id;
+    if (!c || !String(q.body ?? '').trim()) continue;
+    const prev = byChurch.get(c);
+    if (!prev || String(q.sermons.week_starts_on ?? '') > String(prev.week ?? '')) {
+      byChurch.set(c, { churchId: c, sermonId: q.sermon_id, sermonTitle: q.sermons.title ?? '', week: q.sermons.week_starts_on, topic: q.scripture ?? '', body: String(q.body) });
+    }
+  }
+  if (byChurch.size) {
+    const ids = [...byChurch.keys()].join(',');
+    const churches = await fetch(`${SUPABASE_URL}/rest/v1/churches?id=in.(${ids})&select=id,name`, { headers: h }).then((r) => r.json()).catch(() => []);
+    for (const c of Array.isArray(churches) ? churches : []) { const q = byChurch.get(c.id); if (q) q.churchName = c.name; }
+  }
+  return byChurch;
+}
+
+// The question is the first paragraph of the item's body; the rest is context.
+function splitQuestion(body) {
+  const parts = String(body ?? '').trim().split(/\n\s*\n/);
+  return { question: (parts[0] ?? '').trim(), context: parts.slice(1).join('\n\n').trim() };
+}
+
+function churchQuestionEmailHtml({ firstName, q, verse, words, reflectUrl, verseUnsubUrl, churchUnsubUrl, allUnsubUrl }) {
+  const { question, context } = splitQuestion(q.body);
+  const answerUrl = `https://www.kinwove.com/?church=${q.churchId}&sermon=${q.sermonId}`;
+  const verseBlock = verse ? `
+    <div style="border-top:1px solid #E8D5BB;margin:30px 0 0;padding-top:24px">
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#B8733A;font-weight:700;margin:0 0 12px">Today's verse</div>
+      <div style="font-family:Georgia,serif;font-size:18px;font-style:italic;line-height:1.5;color:#2C1810;margin:0 0 8px">&ldquo;${escapeHtml(verse.text)}&rdquo;</div>
+      <div style="font-size:13px;color:#B8733A;font-weight:600;margin:0 0 14px">${escapeHtml(verse.ref)}</div>
+      ${words ? `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.65;color:#6B5344">${escapeHtml(words).replace(/\n+/g, '<br><br>')}</div>` : ''}
+      <p style="margin:14px 0 0"><a href="${reflectUrl || 'https://www.kinwove.com'}" style="color:#A85530;text-decoration:none;font-size:14px;font-weight:600">Add your thoughts &rarr;</a></p>
+    </div>` : '';
+  const stops = [
+    `<a href="${churchUnsubUrl}" style="color:#9C7B5E;text-decoration:underline">Stop daily questions from ${escapeHtml(q.churchName || 'your church')}</a>`,
+    ...(verse ? [`<a href="${verseUnsubUrl}" style="color:#9C7B5E;text-decoration:underline">Stop the daily verse</a>`] : []),
+    `<a href="${allUnsubUrl}" style="color:#9C7B5E;text-decoration:underline">Stop all kinwove emails</a>`,
+  ].join(' &middot; ');
+  return emailWrap(`
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#B8733A;font-weight:700;margin:0 0 6px">${escapeHtml(q.churchName || 'Your church')}</div>
+    <div style="font-size:13px;color:#9C7B5E;margin:0 0 16px">Today's question${q.sermonTitle ? ` &middot; from &ldquo;${escapeHtml(q.sermonTitle)}&rdquo;` : ''}</div>
+    <div style="font-family:Georgia,serif;font-size:23px;font-weight:600;line-height:1.35;color:#2C1810;margin:0 0 14px">${escapeHtml(question)}</div>
+    ${context ? `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.65;color:#6B5344;margin:0 0 4px">${escapeHtml(context).replace(/\n+/g, '<br><br>')}</div>` : ''}
+    ${btnHtml('Answer in the discussion', answerUrl)}
+    <p style="font-size:13px;color:#9C7B5E;margin:0">See what others at your church are saying, ${escapeHtml(firstName)}.</p>
+    ${verseBlock}
+    <p style="font-size:12px;color:#9C7B5E;line-height:1.7;margin:28px 0 0">${stops}</p>
+  `, null);
+}
+
 // ── Daily email (cron) ────────────────────────────────────────────────────────
 // The day's post as one email: verse first, then the words under it. Back on
 // 9 Oct 2026 (Daniel: on for everyone, people opt out themselves). It had been
@@ -3172,19 +3257,32 @@ app.get('/api/verse/today', requireAuth, async (_req, res) => {
 // Its unsubscribe link stops THIS email only (daily_verse_opt_out); the page
 // offers stopping everything as a second step. email_opt_out stops all.
 app.post('/api/cron/daily-verse-email', async (req, res) => {
+  // ?dry=1 (cron secret or an admin) sends nothing and lists what each person would get.
+  const dry = req.query.dry === '1' || req.body?.dry === true;
   const secret = process.env.CRON_SECRET;
-  if (!secret || req.headers['x-cron-secret'] !== secret) return res.status(401).json({ error: 'unauthorized' });
+  let allowed = !!secret && req.headers['x-cron-secret'] === secret;
+  if (!allowed && dry) {
+    const userId = await attachUser(req);
+    if (userId && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+      const rows = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=is_admin&limit=1`, { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }).then((r) => r.json()).catch(() => []);
+      allowed = !!rows?.[0]?.is_admin;
+    }
+  }
+  if (!allowed) return res.status(401).json({ error: 'unauthorized' });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
 
   const verse = getDailyVerse();
   const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
-  const post = await ensureDailyPost(verse).catch((e) => { console.error('[daily-email] post:', e?.message); return null; });
-  if (!post) return res.status(500).json({ error: 'no daily post' });
-  const words = dailyWordsFrom(post, verse);
-  const reflectUrl = `https://www.kinwove.com/?post=${post.id}`;
+  // A dry run never writes the day's post; it only reads one that already exists.
+  const post = dry ? null : await ensureDailyPost(verse).catch((e) => { console.error('[daily-email] post:', e?.message); return null; });
+  if (!post && !dry) return res.status(500).json({ error: 'no daily post' });
+  const words = post ? dailyWordsFrom(post, verse) : '';
+  const reflectUrl = post ? `https://www.kinwove.com/?post=${post.id}` : 'https://www.kinwove.com';
+  const questions = await todaysChurchQuestions();
 
+  // Everyone who takes kinwove email at all; each person's choice is made below.
   const r = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?email_opt_out=eq.false&daily_verse_opt_out=not.is.true&is_system_account=not.is.true&display_name=not.is.null&select=id,display_name&limit=5000`,
+    `${SUPABASE_URL}/rest/v1/profiles?email_opt_out=eq.false&is_system_account=not.is.true&display_name=not.is.null&select=id,display_name,church_id,daily_verse_opt_out,notif_prefs&limit=5000`,
     { headers: h }
   );
   const users = await r.json().catch(() => []);
@@ -3192,27 +3290,43 @@ app.post('/api/cron/daily-verse-email', async (req, res) => {
 
   // Subject: the opening words of the reflection, cut at a word boundary.
   // An inbox of "Today's verse: Psalm 33:20" gives nobody a reason to open it.
-  const first = words.split(/\n/)[0].replace(/\s+/g, ' ').trim();
-  const subject = first.length <= 68 ? first : `${first.slice(0, 68).replace(/\s+\S*$/, '')}…`;
+  const cut = (t) => { const f = String(t).split(/\n/)[0].replace(/\s+/g, ' ').trim(); return f.length <= 68 ? f : `${f.slice(0, 68).replace(/\s+\S*$/, '')}…`; };
+  const verseSubject = cut(words) || verse.ref;
 
   let sent = 0;
+  const plan = [];
   for (const usr of users) {
+    const q = usr.church_id ? questions.get(usr.church_id) : null;
+    const wantsQuestion = !!q && usr.notif_prefs?.church_question_email !== false;
+    const wantsVerse = usr.daily_verse_opt_out !== true;
+    if (!wantsQuestion && !wantsVerse) continue;
+    const gets = wantsQuestion ? (wantsVerse ? 'question + verse' : 'question only') : 'verse only';
+    if (dry) { plan.push({ name: usr.display_name, church: wantsQuestion ? q.churchName : null, gets }); continue; }
     try {
       const email = await getUserEmail(usr.id);
       if (!email || isInternalEmail(email)) continue;
       const firstName = (usr.display_name || '').split(' ')[0] || 'friend';
-      const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${emailToken(usr.id)}&list=daily`;
-      await sendEmail(email, subject || verse.ref, dailyVerseEmailHtml(firstName, verse, unsubUrl, reflectUrl, words), {
-        'List-Unsubscribe': `<${unsubUrl}>`,
-      });
+      const tok = emailToken(usr.id);
+      const verseUnsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${tok}&list=daily`;
+      if (wantsQuestion) {
+        const churchUnsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${tok}&list=church`;
+        const allUnsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${tok}`;
+        const html = churchQuestionEmailHtml({ firstName, q, verse: wantsVerse ? verse : null, words, reflectUrl, verseUnsubUrl, churchUnsubUrl, allUnsubUrl });
+        await sendEmail(email, cut(splitQuestion(q.body).question) || verseSubject, html, { 'List-Unsubscribe': `<${churchUnsubUrl}>` });
+      } else {
+        await sendEmail(email, verseSubject, dailyVerseEmailHtml(firstName, verse, verseUnsubUrl, reflectUrl, words), {
+          'List-Unsubscribe': `<${verseUnsubUrl}>`,
+        });
+      }
       sent++;
       await new Promise((rr) => setTimeout(rr, 150)); // gentle pacing between sends
     } catch (e) {
       console.error('[daily-email]', e.message);
     }
   }
-  console.log(`[daily-email] sent ${sent} of ${users.length}, ${verse.ref}`);
-  res.json({ sent, total: users.length });
+  if (dry) return res.json({ dry: true, verse: verse.ref, churchesWithQuestion: [...questions.values()].map((q) => ({ church: q.churchName, sermon: q.sermonTitle, question: splitQuestion(q.body).question })), people: plan });
+  console.log(`[daily-email] sent ${sent} of ${users.length}, ${verse.ref}, ${questions.size} church question(s)`);
+  res.json({ sent, total: users.length, churchQuestions: questions.size });
 });
 
 // ── Daily post (cron, 12:50 UTC) ─────────────────────────────────────────────
@@ -4674,7 +4788,9 @@ app.post('/api/welcome-dm', requireAuth, limitAuthed({ capacity: 3, refillPerSec
 //   • Top 3 posts from the feed this week
 //   • Up to 3 recent prayer requests from the congregation
 
-function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note }) {
+function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion }) {
+  // The week's first daily question, so the email itself gives people something to think about
+  const fq = firstQuestion ? splitQuestion(firstQuestion) : null;
   const gold = '#B8733A';
   const ink  = '#2C1810';
   const soft = '#6B5344';
@@ -4712,7 +4828,13 @@ function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaU
         <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:600;color:${ink};margin:0 0 10px;letter-spacing:-0.025em;line-height:1.15">${escHtml(sermon.title)}</h1>
         ${sermon.scripture_ref ? `<div style="font-size:14px;color:${gold};font-style:italic;margin-bottom:14px">${escHtml(sermon.scripture_ref)}</div>` : ''}
         ${note ? `<div style="font-family:Georgia,serif;font-size:16px;color:${ink};line-height:1.6;margin:4px 0 18px;white-space:pre-wrap">${escHtml(note)}</div>` : ''}
-        <a href="${ctaUrl ?? 'https://www.kinwove.com'}" style="display:inline-block;background:${ink};color:#FDF8F0;text-decoration:none;border-radius:999px;padding:12px 26px;font-size:14px;font-weight:600">Read this week's devotional →</a>
+        ${fq?.question ? `<div style="background:${pale};border:1px solid ${line};border-radius:12px;padding:16px 18px;margin:6px 0 18px">
+          <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:8px">Monday's question</div>
+          <div style="font-family:Georgia,serif;font-size:19px;font-weight:600;color:${ink};line-height:1.4">${escHtml(fq.question)}</div>
+          ${fq.context ? `<div style="font-family:Georgia,serif;font-size:15px;color:${soft};line-height:1.6;margin-top:8px">${escHtml(fq.context)}</div>` : ''}
+          <div style="font-size:13px;color:${soft};margin-top:10px">A new question comes each day this week.</div>
+        </div>` : ''}
+        <a href="${ctaUrl ?? 'https://www.kinwove.com'}" style="display:inline-block;background:${ink};color:#FDF8F0;text-decoration:none;border-radius:999px;padding:12px 26px;font-size:14px;font-weight:600">${fq?.question ? 'Answer in the discussion' : "Read this week's devotional"} →</a>
       </td></tr>
 
       <!-- Divider -->
@@ -4789,17 +4911,17 @@ async function sermonEmailContext(churchId, userId) {
 function sermonEmailInput(body) {
   const b = body ?? {};
   const str = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
-  return { churchId: b.churchId, sermon: { title: str(b.title, 200) || 'Untitled sermon', scripture_ref: str(b.scriptureRef, 120) || null }, note: str(b.note, 400) };
+  return { churchId: b.churchId, sermon: { title: str(b.title, 200) || 'Untitled sermon', scripture_ref: str(b.scriptureRef, 120) || null }, note: str(b.note, 400), firstQuestion: str(b.firstQuestion, 1500) };
 }
 
 app.post('/api/sermon-email-preview', requireAuth, async (req, res) => {
-  const { churchId, sermon, note } = sermonEmailInput(req.body);
+  const { churchId, sermon, note, firstQuestion } = sermonEmailInput(req.body);
   if (!isUuid(churchId)) return res.status(400).json({ error: 'invalid church' });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
   try {
     const ctx = await sermonEmailContext(churchId, req.userId);
     if (ctx.error) return res.status(ctx.status).json({ error: ctx.error });
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note });
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note, firstQuestion });
     res.json({ html, subject: `New sermon: "${sermon.title}" at ${ctx.church.name}` });
   } catch (err) { safeError(res, err, 'sermon-email-preview'); }
 });
@@ -4810,7 +4932,7 @@ app.post('/api/sermon-email-test', requireAuth, async (req, res) => {
   const recent = (sermonTestSends.get(req.userId) ?? []).filter((t) => now - t < 3600000);
   if (recent.length >= 5) return res.status(429).json({ error: 'Too many test emails. Try again in an hour.' });
   sermonTestSends.set(req.userId, [...recent, now]);
-  const { churchId, sermon, note } = sermonEmailInput(req.body);
+  const { churchId, sermon, note, firstQuestion } = sermonEmailInput(req.body);
   if (!isUuid(churchId)) return res.status(400).json({ error: 'invalid church' });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
   const resendKey = process.env.RESEND_API_KEY;
@@ -4833,7 +4955,7 @@ app.post('/api/sermon-email-test', requireAuth, async (req, res) => {
       to = u?.email ?? '';
     }
     if (!to) return res.status(400).json({ error: 'No email address on your account' });
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note });
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note, firstQuestion });
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -4880,6 +5002,11 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
     const sermons = await sermonRes.json();
     const sermon = Array.isArray(sermons) ? sermons[0] : null;
     if (!sermon) return res.status(404).json({ error: 'Sermon not found' });
+    const firstQ = await fetch(
+      `${SUPABASE_URL}/rest/v1/sermon_content?sermon_id=eq.${sermonId}&kind=eq.daily_verse&select=body,day,sort_order&order=day.asc.nullslast,sort_order.asc&limit=1`,
+      { headers: h }
+    ).then((r) => r.json()).catch(() => []);
+    const firstQuestion = Array.isArray(firstQ) && firstQ[0]?.body ? String(firstQ[0].body) : '';
 
     // 3. Fetch church members (honoring the global email opt-out — CASL)
     const membersRes = await fetch(
@@ -4946,7 +5073,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
       await Promise.all(queue.slice(i, i + 10).map(async (m) => {
         try {
           const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${m.id}&t=${emailToken(m.id)}`;
-          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note });
+          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion });
           const r = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },

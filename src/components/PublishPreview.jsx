@@ -8,7 +8,17 @@ export const PASTOR_NOTE_MAX = 400;
 // What the congregation will see when a sermon goes out: the feed card and the
 // email, with an optional short note from the pastor on both. Nothing is posted
 // or sent until the pastor presses Publish here.
-export default function PublishPreview({ churchId, sermonId, title, scriptureRef, initialNote = '', busy = false, onPublish, onCancel }) {
+export default function PublishPreview({ churchId, sermonId, title, scriptureRef, initialNote = '', busy = false, onPublish, onCancel, dailyQuestions = null }) {
+  // The week's daily questions: passed in from the editor, or read for a saved sermon (dashboard)
+  const [savedQuestions, setSavedQuestions] = useState([]);
+  useEffect(() => {
+    if (dailyQuestions || !sermonId) return;
+    supabase.from('sermon_content').select('body, day, sort_order').eq('sermon_id', sermonId).eq('kind', 'daily_verse')
+      .order('day', { ascending: true, nullsFirst: false }).order('sort_order', { ascending: true })
+      .then(({ data }) => setSavedQuestions((data ?? []).filter((q) => q.body?.trim())), () => {});
+  }, [sermonId, dailyQuestions]);
+  const questions = dailyQuestions ?? savedQuestions;
+  const firstQuestion = questions[0]?.body ?? '';
   const [note, setNote] = useState(initialNote);
   // The pastor can publish quietly (a small fix, a midweek extra) without emailing everyone
   const [sendEmail, setSendEmail] = useState(true);
@@ -41,13 +51,13 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
     const t = setTimeout(() => {
       authedFetch('/api/sermon-email-preview', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ churchId, title, scriptureRef, note }),
+        body: JSON.stringify({ churchId, title, scriptureRef, note, firstQuestion }),
       }).then((r) => (r.ok ? r.json() : null)).then((d) => {
         if (d?.html) { setEmailHtml(d.html); setEmailSubject(d.subject ?? ''); }
       }).catch(() => {});
     }, 400);
     return () => clearTimeout(t);
-  }, [churchId, title, scriptureRef, note, alreadyPosted, sendEmail]);
+  }, [churchId, title, scriptureRef, note, alreadyPosted, sendEmail, firstQuestion]);
 
   // One test copy to yourself; an admin can send it to another address
   const [isAdmin, setIsAdmin] = useState(false);
@@ -67,7 +77,7 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
     try {
       const r = await authedFetch('/api/sermon-email-test', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ churchId, title, scriptureRef, note, ...(isAdmin && testTo.trim() ? { to: testTo.trim() } : {}) }),
+        body: JSON.stringify({ churchId, title, scriptureRef, note, firstQuestion, ...(isAdmin && testTo.trim() ? { to: testTo.trim() } : {}) }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) { setTestState('error'); setTestMsg(d?.error ?? "Couldn't send the test"); return; }
@@ -108,6 +118,11 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
         </div>
 
         <div style={label}>{alreadyPosted ? 'Email' : 'Email to your congregation'}</div>
+        {questions.length > 0 && (
+          <div style={{ fontSize: 13.5, color: T.inkSoft, lineHeight: 1.5, marginBottom: 10 }}>
+            Each morning this week, members also get that day's question in their kinwove email ({questions.length} {questions.length === 1 ? 'question' : 'questions'}). They can stop these anytime.
+          </div>
+        )}
         {!alreadyPosted && (
           <label style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14, color: T.ink, cursor: 'pointer', marginBottom: 10 }}>
             <input type="checkbox" checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)} style={{ width: 18, height: 18, accentColor: T.gold, margin: 0 }} />
