@@ -567,6 +567,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
             if (isEditing) {
               return (
                 <div key={note.id} style={{ background: '#FFFDF5', border: `1.5px solid rgba(184,115,58,0.35)`, borderRadius: 12, padding: '14px 14px 12px', boxShadow: '0 4px 20px rgba(26,17,8,0.10)' }}>
+                  <PreachMeter words={editWords} target={preachTarget} onTarget={choosePreachTarget} />
                   {/* Title */}
                   <input
                     value={editTitle} onChange={e => { setEditTitle(e.target.value); setIsDirty(true); setShowDonePrompt(false); }}
@@ -608,7 +609,6 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       style={{ width: 20, height: 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.22)', background: 'linear-gradient(135deg, transparent 44%, rgba(165,63,43,0.85) 46%, rgba(165,63,43,0.85) 54%, transparent 56%)', cursor: 'pointer', padding: 0, flexShrink: 0 }}
                     />
                   </div>
-                  <PreachMeter words={editWords} target={preachTarget} onTarget={choosePreachTarget} />
                   {/* contentEditable body */}
                   <div
                     ref={editorRef}
@@ -623,6 +623,14 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                         const k = editDraftKey(note.id);
                         if (k) localStorage.setItem(k, editorRef.current.innerHTML);
                       } catch { /* ignore */ }
+                    }}
+                    // Paste as plain text so it takes the note's own font, size and colour,
+                    // not the Bible reader's (dark background, red words of Jesus).
+                    onPaste={e => {
+                      const text = e.clipboardData?.getData('text/plain');
+                      if (!text) return;
+                      e.preventDefault();
+                      document.execCommand('insertText', false, text);
                     }}
                     onKeyDown={e => { if (e.key === 'Enter' && e.metaKey) { e.preventDefault(); saveEdit(note.id); } }}
                     style={{ width: '100%', minHeight: wide ? 420 : liveOpen ? 380 : 180, fontSize: wide ? 17 : liveOpen ? 15 : 14, fontFamily: T.display, color: T.ink, outline: 'none', lineHeight: 1.75, boxSizing: 'border-box' }}
@@ -1011,26 +1019,20 @@ function PreachMeter({ words, target, onTarget }) {
   const mins = preachMinutes(words);
   const pct = target ? Math.min(100, (mins / target) * 100) : 0;
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 12.5, fontWeight: 600, color: T.ink }}>
+    <div title="Based on your notes as written. Outlines usually run longer when preached." style={{ marginBottom: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: T.inkMuted }}>
+        <span style={{ whiteSpace: 'nowrap' }}>
           {words ? `${preachLabel(words)} to preach` : 'Nothing to time yet'}
-          {target ? <span style={{ fontWeight: 400, color: T.inkMuted }}>{` · ${Math.round(mins)} of ${target} min`}</span> : null}
+          {target ? ` · ${Math.round(mins)} of ${target} min` : ''}
         </span>
-        <div style={{ flex: 1 }} />
+        <div style={{ flex: 1, height: 3, borderRadius: 2, background: target ? 'rgba(26,17,8,0.08)' : 'transparent', overflow: 'hidden' }}>
+          {target ? <div style={{ width: `${pct}%`, height: '100%', background: T.gold, transition: 'width 0.3s' }} /> : null}
+        </div>
         <select value={target ?? ''} onChange={e => onTarget(Number(e.target.value) || null)} aria-label="Usual sermon length"
           style={{ fontSize: 11, color: T.goldDark, fontWeight: 600, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit' }}>
           <option value="">{target ? 'No target' : 'Set a target'}</option>
           {TARGET_CHOICES.map(m => <option key={m} value={m}>{`Target: ${m} min`}</option>)}
         </select>
-      </div>
-      {target ? (
-        <div style={{ height: 4, borderRadius: 2, background: 'rgba(26,17,8,0.08)', marginTop: 6, overflow: 'hidden' }}>
-          <div style={{ width: `${pct}%`, height: '100%', background: T.gold, borderRadius: 2, transition: 'width 0.3s' }} />
-        </div>
-      ) : null}
-      <div style={{ fontSize: 10.5, color: T.inkMuted, marginTop: 4, lineHeight: 1.4 }}>
-        Based on your notes as written. Outlines usually run longer when preached.
       </div>
     </div>
   );

@@ -161,7 +161,8 @@ export const globalCss = `
   }
   button { font-family: inherit; cursor: pointer; }
   input, textarea { font-family: inherit; }
-  ::selection { background: ${T.ink}; color: ${T.cream}; }
+  /* Gold tint, text keeps its own colour: dark ink vanished on the dark Bible reader */
+  ::selection { background: rgba(212,162,74,0.45); }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(8px); }
