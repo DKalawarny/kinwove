@@ -15,6 +15,24 @@ const BOOK_ORDER = [
   '1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation',
 ];
 
+// Same order as BOOK_ORDER. Highlights made before book_name was stored only
+// carry a chapter_id like "PSA.31", so the name comes from its code.
+const BOOK_CODES = 'GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB JAS 1PE 2PE 1JN 2JN 3JN JUD REV'.split(' ');
+function highlightBook(hl) {
+  return hl.book_name ?? BOOK_ORDER[BOOK_CODES.indexOf(String(hl.chapter_id ?? '').split('.')[0])] ?? 'Unknown';
+}
+
+// Study-tab notes are rich HTML; the card shows them as plain text.
+function htmlToText(html) {
+  return String(html ?? '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|h[1-6]|blockquote|tr)>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 function bookRank(name) {
   const i = BOOK_ORDER.indexOf(name);
   return i === -1 ? 999 : i;
@@ -345,7 +363,8 @@ const HL_TINTS = {
 
 function HighlightCard({ hl, onOpenBible }) {
   const chapter = String(hl.chapter_id ?? '').split('.')[1] ?? '';
-  const ref = `${hl.book_name ?? ''} ${chapter}:${hl.verse_num}`.trim();
+  const book = highlightBook(hl);
+  const ref = `${book === 'Unknown' ? '' : book} ${chapter}:${hl.verse_num}`.trim();
   return (
     <button
       onClick={() => onOpenBible?.(`${hl.chapter_id}.${hl.verse_num}`)}
@@ -537,7 +556,7 @@ function NoteCard({ note, onOpenBible, onAskVerse, onSave, onDelete }) {
 // space, but the author sees them here so all their study lands in one place.
 function PrepNoteCard({ note }) {
   const [expanded, setExpanded] = useState(false);
-  const body = note.body ?? '';
+  const body = htmlToText(note.body);
   const clamped = !expanded && body.length > 280;
   return (
     <div
@@ -644,7 +663,7 @@ export default function Journal({ session, onClose, onOpenBible, onAskVerse, onC
   );
 
   const filteredHighlights = highlights.filter((h) =>
-    !q || h.book_name?.toLowerCase().includes(q) || h.verse_text?.toLowerCase().includes(q)
+    !q || highlightBook(h).toLowerCase().includes(q) || h.verse_text?.toLowerCase().includes(q)
   );
 
   // Group bible_notes + verse bookmarks + highlights by book
@@ -662,7 +681,7 @@ export default function Journal({ session, onClose, onOpenBible, onAskVerse, onC
     bookMap[bookName].bookmarks.push(bm);
   }
   for (const h of filteredHighlights) {
-    const key = h.book_name ?? 'Unknown';
+    const key = highlightBook(h);
     if (!bookMap[key]) { bookMap[key] = { notes: [], bookmarks: [], highlights: [] }; grouped.push(key); }
     bookMap[key].highlights.push(h);
   }

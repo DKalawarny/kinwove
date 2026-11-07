@@ -492,6 +492,7 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
   if (isMobile && openCare) {
     return (
       <CareConversation
+        key={openCare.id}
         session={session}
         profile={profile}
         conversationId={openCare.id}
@@ -504,6 +505,7 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
     return (
       <Suspense fallback={null}>
         <DMConversation
+          key={openDm.id}
           session={session}
           profile={profile}
           conversationId={openDm.id}
@@ -841,6 +843,7 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
         {openDm ? (
           <Suspense fallback={null}>
             <DMConversation
+          key={openDm.id}
               session={session}
               profile={profile}
               conversationId={openDm.id}
@@ -853,6 +856,7 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
           </Suspense>
         ) : openCare ? (
           <CareConversation
+        key={openCare.id}
             session={session}
             profile={profile}
             conversationId={openCare.id}

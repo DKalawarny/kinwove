@@ -130,7 +130,7 @@ export default function InstallPrompt({ triggerNow = false, suppressed = false }
       <div
         onClick={dismiss}
         style={{
-          position: 'fixed', inset: 0, zIndex: 95, background: 'rgba(14,7,3,0.55)',
+          position: 'fixed', inset: 0, zIndex: 500, background: 'rgba(14,7,3,0.55)',
           display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
         }}
       >

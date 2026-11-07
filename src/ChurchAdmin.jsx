@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { isNativeApp } from './native.js';
 import { Download, Copy, Check, QrCode } from 'lucide-react';
 import { supabase, resizeImageToDataUrl, authedFetch } from './supabase.js';
 import { moderateImage } from './moderation.js';
@@ -233,6 +234,7 @@ function SettingsPanel({ church, churchId, session, onOpenChurchPage, onChurchUp
 
   // Membership approval toggle
   const [openJoin, setOpenJoin]     = useState(church?.open_join ?? true);
+  useEffect(() => { setOpenJoin(church?.open_join ?? true); }, [church?.open_join]);
   const [savingJoin, setSavingJoin] = useState(false);
 
   async function saveOpenJoin(val) {
@@ -283,6 +285,7 @@ function SettingsPanel({ church, churchId, session, onOpenChurchPage, onChurchUp
   useEffect(() => { setPinDraft(church?.pinned_post ?? ''); }, [church?.pinned_post]);
   useEffect(() => { setServiceDraft(church?.service_info ?? ''); }, [church?.service_info]);
   useEffect(() => { setAddressDraft(church?.street_address ?? ''); }, [church?.street_address]);
+  useEffect(() => { setGivingDraft(church?.giving_url ?? ''); }, [church?.giving_url]);
   useEffect(() => { setCountriesDraft(church?.countries_open_to ?? []); }, [church?.countries_open_to]);
 
   const dirty      = (pinDraft.trim() || '') !== (church?.pinned_post ?? '');
@@ -1633,7 +1636,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                         textDecoration: 'none', cursor: 'pointer',
                       }}
                     >💬 Text</a>
-                    <button
+                    <button hidden={isNativeApp}
                       onClick={() => {
                         const w = window.open('', '_blank');
                         if (!w) return; // popup blocked / native webview
@@ -1745,7 +1748,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                       style={{ background: 'transparent', border: `1px solid ${T.line}`, borderRadius: 999, padding: '7px 14px', fontSize: 13, color: T.inkSoft, cursor: 'pointer' }}
                     >{youthEmailCopied ? '✓ Copied' : '✉️ Copy email template'}</button>
                     <a href={`sms:?body=Join ${encodeURIComponent(church?.name ?? 'our church')} youth group on kinwove: ${encodeURIComponent(youthJoinUrl)}`} style={{ display: 'inline-block', background: 'transparent', border: `1px solid ${T.line}`, borderRadius: 999, padding: '7px 14px', fontSize: 13, color: T.inkSoft, textDecoration: 'none', cursor: 'pointer' }}>💬 Text</a>
-                    <button
+                    <button hidden={isNativeApp}
                       onClick={() => {
                         const w = window.open('', '_blank');
                         if (!w) return; // popup blocked / native webview
@@ -2521,7 +2524,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
     let active = true;
     supabase
       .from('churches')
-      .select('id, name, city, region, invite_code, invite_code_rotated_at, countries_open_to, seat_blocks')
+      .select('id, name, city, region, invite_code, invite_code_rotated_at, countries_open_to, seat_blocks, pinned_post, service_info, street_address, giving_url, open_join, avatar_url, banner_preset, youth_invite_code')
       .eq('id', churchId)
       .single()
       .then(({ data }) => { if (active) setChurch(data); });
@@ -2584,7 +2587,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
         )}
         {tab === 'ask' && (
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-          <div ref={setSermonBarEl} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, padding: '10px 16px', background: T.parchment, borderBottom: `1px solid ${T.line}`, position: 'relative', zIndex: 5 }} />
+          <div ref={setSermonBarEl} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, padding: '10px 16px', background: T.parchment, borderBottom: `1px solid ${T.line}`, position: 'relative', zIndex: 40 }} />
           <div style={{ display: 'flex', flexDirection: deskSide === 'left' ? 'row-reverse' : 'row', flex: 1, minHeight: 0, overflow: 'hidden', position: 'relative', alignItems: 'stretch' }}>
             {/* Chat — takes remaining width */}
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>

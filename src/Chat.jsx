@@ -23,6 +23,8 @@ import { cleanText } from './moderation.js';
 import { isWiderCanonText, WiderCanonTag } from './widerCanon.jsx';
 import { syncUiFlag, useUiFlagState } from './uiFlags.js';
 import { useEscape } from './useEscape.js';
+import { enterSends } from './lib/enterSends.js';
+import { compressImage } from './imageAttach.jsx';
 
 const GUEST_COUNT_KEY = 'kinwove:guest_count';
 
@@ -973,12 +975,14 @@ export default function Chat({
 
   function pickImage() { imgInputRef.current?.click(); }
 
-  function onImagePicked(e) {
-    const file = e.target.files?.[0];
+  async function onImagePicked(e) {
+    const picked = e.target.files?.[0];
     e.target.value = '';
-    if (!file) return;
+    if (!picked) return;
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!validTypes.includes(file.type)) { alert('Please attach a JPEG, PNG, GIF, or WebP image.'); return; }
+    if (!validTypes.includes(picked.type)) { alert('Please attach a JPEG, PNG, GIF, or WebP image.'); return; }
+    // Phone photos run 4-12 MB; shrink them the way post photos are shrunk before the size check
+    const file = await compressImage(picked).catch(() => picked);
     if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5 MB.'); return; }
     const previewUrl = URL.createObjectURL(file);
     const reader = new FileReader();
@@ -2265,7 +2269,7 @@ export default function Chat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (enterSends(e)) {
                 e.preventDefault();
                 send();
               }

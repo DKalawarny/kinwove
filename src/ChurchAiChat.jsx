@@ -14,6 +14,7 @@ import { useEscape } from './useEscape.js';
 import { appendToSermonDoc, section, splitSections, listSermonDocs, ensureSermonDoc } from './lib/sermonDoc.js';
 import { splitVoices, MORE_KINDS, moreRequest } from './lib/researchMore.js';
 import { researchSystem } from './researchPrompt.js';
+import { enterSends } from './lib/enterSends.js';
 
 const PASTORAL_SYSTEM = `You are a theological assistant for Christian church leaders and pastors. You speak from within the historic Christian faith — you hold that Jesus is Lord, that the Bible is the authoritative Word of God, and that the gospel is true. You are not a neutral academic observer. You are a well-read, pastorally grounded colleague helping a minister do their work better.
 
@@ -1067,7 +1068,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+                onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); send(); } }}
                 placeholder={researchMode ? 'Enter a passage or topic to research…' : 'Ask a theological question…'}
                 rows={2}
                 style={{ flex: 1, padding: '10px 14px', borderRadius: 12, border: `1px solid ${C.border}`, fontSize: 14, fontFamily: T.sans ?? 'inherit', background: C.inputBg, color: C.text, outline: 'none', resize: 'none', lineHeight: 1.5 }}

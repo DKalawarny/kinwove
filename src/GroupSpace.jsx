@@ -6,6 +6,7 @@ import ShareSheet from './ShareSheet.jsx';
 import PostImageGrid from './PostImageGrid.jsx';
 import { useImageDrafts, ImageDraftGrid, ImageAttachButton } from './imageAttach.jsx';
 import { reportClientError } from './errorReport.js';
+import { enterSends } from './lib/enterSends.js';
 
 const MEMBER_PALETTE = [
   '#A85530','#6B7C5E','#5B6E8A','#7A4A6B',
@@ -303,7 +304,7 @@ function ThreadCard({ thread, groupId, myId, isPastor, onDelete, onPin, refreshK
             <input
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitReply(); } }}
+              onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); submitReply(); } }}
               placeholder="Write a reply…"
               style={{ flex: 1, background: 'transparent', border: 'none', padding: '12px 16px', fontSize: 14, fontFamily: T.serif, color: T.ink, outline: 'none' }}
             />
@@ -756,7 +757,7 @@ export default function GroupSpace({ group, role, session, profile, onLeave, onC
               ref={msgInputRef}
               value={msgInput}
               onChange={(e) => { setMsgInput(e.target.value); sessionStorage.setItem(CHAT_DRAFT_KEY, e.target.value); }}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+              onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); sendMessage(); } }}
               placeholder="Message the group…"
               style={{ flex: 1, background: T.white, border: `1px solid rgba(184,115,58,0.25)`, borderRadius: 999, padding: '10px 16px', fontSize: 14, fontFamily: T.serif, color: T.ink, outline: 'none' }}
             />

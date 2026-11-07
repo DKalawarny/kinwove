@@ -10,6 +10,7 @@ import { useImageDrafts, ImageDraftGrid, ImageAttachButton } from './imageAttach
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { Avatar } from './ProfilePage.jsx';
 import { track } from './analytics.js';
+import { enterSends } from './lib/enterSends.js';
 
 const EMOJIS = [
   '😀','😊','😂','🥹','😍','🥰','😭','😅','🤔','😏','😌','🙃','😇','🤩','😬','🤯',
@@ -305,7 +306,7 @@ export default function SermonDiscussion({ sermonContentId, sermonId, churchId, 
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && text.trim() && !busy) {
+              if (enterSends(e) && text.trim() && !busy) {
                 e.preventDefault();
                 submit();
               }

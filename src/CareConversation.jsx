@@ -4,6 +4,7 @@ import { T } from './theme.js';
 import { exactTime } from './time.js';
 import { Avatar } from './ProfilePage.jsx';
 import { useUiKit } from './uikit.jsx';
+import { enterSends } from './lib/enterSends.js';
 
 const SAFETY_PATTERNS = [
   /\b(suicide|kill myself|end my life|don'?t want to (be alive|live)|wanna die|want to die|self[\s-]?harm|cutting myself|hurt myself)\b/i,
@@ -373,7 +374,7 @@ export default function CareConversation({ session, profile, conversationId, vie
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+                if (enterSends(e)) { e.preventDefault(); handleSend(); }
               }}
               placeholder="Write a message…"
               rows={1}

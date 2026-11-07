@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from './supabase.js';
 import { T } from './theme.js';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import { enterSends } from './lib/enterSends.js';
 
 const STARTER_QUESTIONS = [
   'What\u2019s actually in the Bible?',
@@ -234,7 +235,7 @@ export default function AnonymousWelcome({ churchId, churchName, onSignUp, onTal
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (enterSends(e)) {
                 e.preventDefault();
                 ask(draft);
               }

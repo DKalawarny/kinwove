@@ -778,7 +778,7 @@ function DeleteAccountModal({ open, onClose, onDeleted }) {
       style={{
         position: 'fixed', inset: 0, background: 'rgba(44,24,16,0.55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 60, padding: 20, animation: 'fadeIn 0.15s ease',
+        zIndex: 500, padding: 20, animation: 'fadeIn 0.15s ease',
       }}
     >
       <SwipeableSheet
@@ -1383,7 +1383,7 @@ function Board({ open, onClose, notes, onRemove, onGoDeeper, onSharePublicly }) 
         top: 0, bottom: 0, right: 0,
         left: sidebarW,
         background: 'rgba(44,24,16,0.55)',
-        zIndex: 160,
+        zIndex: 210, // above the top-right buttons (160/200), like History
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
@@ -2008,6 +2008,15 @@ export default function App() {
   }, [stage, boardOpen]);
   const [chatPanelOpen, setChatPanelOpen] = useState(false);
   const [viewingUserId, setViewingUserId] = useState(null);
+  // The profile overlay sits on top of every stage. Close it when the screen
+  // changes under it (Messages, the phone ⋮ menu, links in the chat), or those
+  // taps look like they did nothing. The stage is recorded whenever a profile
+  // opens, so goBack() restoring a stage and a profile together keeps it open.
+  const profileStageRef = useRef(null);
+  useEffect(() => { profileStageRef.current = viewingUserId ? stage : null; }, [viewingUserId]);
+  useEffect(() => {
+    if (viewingUserId && profileStageRef.current !== null && profileStageRef.current !== stage) setViewingUserId(null);
+  }, [stage]);
   const [viewingChurchId, setViewingChurchId] = useState(null);
   const [winW, setWinW] = useState(() => window.innerWidth);
   // Shared with BibleReader's commentary sheet — see useKeyboardViewport.js.
@@ -3174,6 +3183,9 @@ export default function App() {
   // bottom bar, Find/⋮) disappears; the way out is the shell's switcher.
   // Bell + Messages stay — pastors need member-join + DM signals in church mode.
   const inChurchMode = stage === 'church-admin';
+  // On a phone the ⋮ button is hidden in church mode; Bell + Messages slide into its
+  // place so they stop covering the church header's ⇄ Personal switch.
+  const fabShift = !isDesktop && inChurchMode ? -52 : 0;
   // Hide on full-screen flows that have no header room at all.
   // On a phone the Ask panel covers the screen; the floating bell/messages sat on its header.
   const showTopRight = showNav && !['onboarding', 'intake', 'anon-welcome', 'church-entry'].includes(stage) && !(chatPanelOpen && !isDesktop);
@@ -3684,6 +3696,7 @@ export default function App() {
       {/* ── User profile overlay ─────────────────────────────────── */}
       {viewingUserId && session && (
         <UserProfile
+          key={viewingUserId}
           userId={viewingUserId}
           session={session}
           onClose={() => setViewingUserId(null)}
@@ -3907,7 +3920,7 @@ export default function App() {
             }}
             onGoRead={() => { setViewingUserId(null); if (stage === 'read') setReadHomeKey((k) => k + 1); else setStage('read'); }}
             onGoMe={() => { setViewingUserId(null); setStage('me'); }}
-            onToggleChat={() => chatPanelOpen ? closeChatPanel() : (currentConvId ? setChatPanelOpen(true) : (startChatFromProfile(), setChatPanelOpen(true)))}
+            onToggleChat={() => chatPanelOpen ? closeChatPanel() : (setViewingUserId(null), currentConvId ? setChatPanelOpen(true) : (startChatFromProfile(), setChatPanelOpen(true)))}
             onFindPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
             onOpenBoard={() => { setViewingUserId(null); setStage('feed'); setBoardOpen(true); }}
             onOpenHistory={() => { setViewingUserId(null); setStage('feed'); setHistoryOpen(true); }}
@@ -3947,9 +3960,9 @@ export default function App() {
             setStage('churches');
           }}
           onGoRead={() => { setViewingUserId(null); if (stage === 'read') setReadHomeKey((k) => k + 1); else setStage('read'); }}
-          onGoPeople={() => setPeopleSearchOpen(true)}
+          onGoPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
           onGoMe={() => { setViewingUserId(null); setStage('me'); }}
-          onToggleChat={() => chatPanelOpen ? closeChatPanel() : (currentConvId ? setChatPanelOpen(true) : (startChatFromProfile(), setChatPanelOpen(true)))}
+          onToggleChat={() => chatPanelOpen ? closeChatPanel() : (setViewingUserId(null), currentConvId ? setChatPanelOpen(true) : (startChatFromProfile(), setChatPanelOpen(true)))}
         />}
         </>
       )}
@@ -3992,7 +4005,7 @@ export default function App() {
         <MessagesButton
           session={session}
           isDesktop={isDesktop}
-          rightOffset={isDocked ? chatPanelWidth : 0}
+          rightOffset={isDocked ? chatPanelWidth : fabShift}
           onOpenMessages={() => setStage('messages')}
           onOpenConversation={(id, kind) => {
             if (kind === 'care') setPendingCareId(id);
@@ -4005,7 +4018,7 @@ export default function App() {
         <NotificationsBell
           session={session}
           isDesktop={isDesktop}
-          rightOffset={isDocked ? chatPanelWidth : 0}
+          rightOffset={isDocked ? chatPanelWidth : fabShift}
           onOpen={() => requestNotificationPermission()}
           onViewProfile={(uid) => uid === session?.user?.id ? setStage('me') : setViewingUserId(uid)}
           onRoleAccepted={({ roleLabel, churchName, churchId, roleKey }) => {

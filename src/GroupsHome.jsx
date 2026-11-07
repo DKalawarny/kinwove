@@ -152,6 +152,7 @@ export default function GroupsHome({ userGroups, session, profile, onOpenGroup, 
   if (showSetup) {
     return (
       <GroupSetup
+        key={`${setupTab}:${initialGroupCode ?? ''}`}
         session={session}
         initialCode={initialGroupCode ?? ''}
         initialTab={setupTab}

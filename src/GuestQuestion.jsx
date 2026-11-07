@@ -7,6 +7,7 @@ import { getStoredUtm } from './utm.js';
 import ShareSheet from './ShareSheet.jsx';
 import { languageInstruction } from './languages.js';
 import { useStrings } from './i18n/viewLanguage.js';
+import { enterSends } from './lib/enterSends.js';
 
 // Keep in sync with server.js anon /api/chat limit (3/day) and Chat.jsx
 // GuestWall — the audit found three different numbers promised (5/2/2).
@@ -923,7 +924,7 @@ function InputRow({ value, onChange, onSend, taRef, placeholder, tall, autoFocus
         value={value}
         autoFocus={autoFocus}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSend(); } }}
+        onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); onSend(); } }}
         placeholder={placeholder ?? 'Type your question…'}
         rows={tall ? 3 : 2}
         style={{

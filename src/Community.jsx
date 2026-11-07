@@ -24,6 +24,7 @@ import LinkPreview, { stripFirstUrl } from './LinkPreview.jsx';
 import { track } from './analytics.js';
 import { cleanText } from './moderation.js';
 import { useEscape } from './useEscape.js';
+import { enterSends } from './lib/enterSends.js';
 const PostComposer = lazy(() => import('./PostComposer.jsx'));
 
 // Each reaction owns its own register: Yes is the casual like (blue-grey),
@@ -886,7 +887,7 @@ function PostCard({ post, index = 0, session, currentUserId, userProfile, userGr
                         ref={replyInputRef}
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleReply(); } }}
+                        onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); handleReply(); } }}
                         placeholder="Write a comment…"
                         autoFocus
                         onFocus={(e) => { setTimeout(() => e.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 350); }}
@@ -1358,7 +1359,7 @@ function PrayerCard({ prayer, session, currentUserId, onPray, onViewProfile, tab
                 <input
                   value={encInput}
                   onChange={(e) => setEncInput(e.target.value.slice(0, 120))}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitEnc(); } }}
+                  onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); submitEnc(); } }}
                   placeholder="Write an encouragement…"
                   autoFocus
                   style={{ flex: 1, border: 'none', outline: 'none', fontFamily: T.serif, fontSize: 14, color: T.ink, background: 'transparent' }}

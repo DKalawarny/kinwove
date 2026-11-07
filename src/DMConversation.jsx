@@ -6,6 +6,7 @@ import { Avatar } from './ProfilePage.jsx';
 import MsgText from './MsgText.jsx';
 import { getSystemPrompt } from './prompts.js';
 import { KinwoveStar } from './components/brand/KinwoveStar';
+import { enterSends } from './lib/enterSends.js';
 
 function timeAgo(ts) {
   const diff = (Date.now() - new Date(ts)) / 1000;
@@ -398,7 +399,7 @@ export default function DMConversation({ session, profile, conversationId, other
   }
 
   function onKeyDown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    if (enterSends(e)) { e.preventDefault(); send(); }
   }
 
   return (
@@ -477,7 +478,7 @@ export default function DMConversation({ session, profile, conversationId, other
                       value={editBody}
                       onChange={(e) => setEditBody(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(msg.id); }
+                        if (enterSends(e)) { e.preventDefault(); saveEdit(msg.id); }
                         if (e.key === 'Escape') cancelEdit();
                       }}
                       rows={Math.min(6, (editBody.match(/\n/g)?.length ?? 0) + 1)}

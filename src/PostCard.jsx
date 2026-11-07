@@ -16,6 +16,7 @@ import { codeToFlag } from './countries.js';
 import { useUiKit } from './uikit.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { useEscape } from './useEscape.js';
+import { enterSends } from './lib/enterSends.js';
 
 function renderWithMentions(text, mentions, onViewProfile, onViewChurch) {
   if (!mentions?.length || !text) return text;
@@ -1395,7 +1396,7 @@ export default function PostCard({
                     value={modalText}
                     onChange={(e) => setModalText(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey && modalText.trim() && !modalBusy) {
+                      if (enterSends(e) && modalText.trim() && !modalBusy) {
                         e.preventDefault();
                         submitModalComment();
                       }

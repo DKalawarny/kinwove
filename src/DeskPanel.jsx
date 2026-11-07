@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState, useEffect, useRef, useMemo } from 'react';
+import { isNativeApp } from './native.js';
 import { T } from './theme.js';
 import { supabase } from './supabase.js';
 import { useDraft } from './useDraft.js';
@@ -442,7 +443,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
           </button>
         )}
         {notes.length > 1 && !liveOpen && (
-          <button onClick={() => printAllNotes(notes)} title="Print all notes"
+          <button hidden={isNativeApp} onClick={() => printAllNotes(notes)} title="Print all notes"
             style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 9px', fontSize: 11, color: T.inkMuted, cursor: 'pointer' }}>
             🖨 All
           </button>
@@ -641,7 +642,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       style={{ ...btnBase, background: T.ink, color: T.cream, opacity: saveState === 'saving' ? 0.7 : 1 }}>
                       {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? '✓ Saved' : 'Save'}
                     </button>
-                    <button
+                    <button hidden={isNativeApp}
                       onClick={() => printNote({ ...note, title: editTitle, body: editorRef.current?.innerHTML ?? note.body })}
                       style={{ ...btnBase, background: 'transparent', color: T.inkMuted, border: `1px solid rgba(26,17,8,0.14)` }}>
                       🖨 Print
@@ -693,7 +694,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       </div>
                     </div>
                   )}
-                  {!showDonePrompt && <div style={{ fontSize: 11, color: T.inkMuted, marginTop: 8, opacity: 0.55 }}>⌘↵ to save</div>}
+                  {!showDonePrompt && !(typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches) && <div style={{ fontSize: 11, color: T.inkMuted, marginTop: 8, opacity: 0.55 }}>⌘↵ to save</div>}
                 </div>
               );
             }
@@ -723,7 +724,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                   </span>
                   <div style={{ display: 'flex', gap: 4, flexShrink: 0, alignItems: 'center' }}>
                     <span title="Drag to reorder" aria-hidden="true" style={{ color: T.inkMuted, opacity: 0.4, fontSize: 11, letterSpacing: 1, cursor: 'grab', userSelect: 'none' }}>⋮⋮</span>
-                    <button onClick={e => { e.stopPropagation(); printNote(note); }}
+                    <button hidden={isNativeApp} onClick={e => { e.stopPropagation(); printNote(note); }}
                       title="Print" style={{ background: 'none', border: 'none', fontSize: 12, cursor: 'pointer', color: T.inkMuted, opacity: 0.6, padding: '0 2px', lineHeight: 1 }}>🖨</button>
                   </div>
                 </div>

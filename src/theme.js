@@ -198,7 +198,9 @@ export const globalCss = `
   /* ── Design vocabulary ──────────────────────────────────────────── */
   /* Stagger entrance: set --i (0,1,2...) on each child, wrap in .stagger-in */
   .stagger-in > * {
-    animation: fadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    /* backwards, not both: a transform left on each card after the animation traps
+       fixed tap-away layers (post ⋯ menus) inside the card */
+    animation: fadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
     animation-delay: calc(var(--i, 0) * 80ms);
   }
 

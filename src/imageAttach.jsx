@@ -14,7 +14,7 @@ const MAX_DIMENSION = 1600;
 const JPEG_QUALITY  = 0.82;
 const SKIP_BELOW    = 700 * 1024; // already small enough to send as-is
 
-async function compressImage(file) {
+export async function compressImage(file) {
   if (file.size <= SKIP_BELOW) return file;
   // GIFs/SVGs would lose animation/vectors through canvas — pass through.
   if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) return file;

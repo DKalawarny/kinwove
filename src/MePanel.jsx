@@ -20,6 +20,7 @@ import { REACTIONS, TYPE_COLORS, timeAgo, loadChurchContext, ChurchAttendsCard }
 import EmptyState from './EmptyState.jsx';
 import { codeToFlag } from './countries.js';
 import { useAiUsage, PLAN_LIMITS } from './useAiUsage.js';
+import { enterSends } from './lib/enterSends.js';
 
 const PRAYER_REACTIONS = [
   { kind: 'praying',  emoji: '🙏', label: 'Praying',  semantic: 'prayer'     },
@@ -436,7 +437,7 @@ function ProfilePost({ post, session, profile, onReact, churchCtx, onDelete, onV
                     position: 'absolute', bottom: 'calc(100% + 4px)', left: 16, right: 16, zIndex: 11,
                     background: T.white, border: `1px solid ${T.line}`, borderRadius: 14,
                     boxShadow: '0 8px 24px rgba(44,24,16,0.13)', padding: 10,
-                    display: 'grid', gridTemplateColumns: 'repeat(16, 1fr)', gap: 2,
+                    display: 'grid', gridTemplateColumns: 'repeat(8, minmax(0, 1fr))', gap: 2,
                   }}>
                     {['😀','😊','😂','🥹','😍','🥰','😭','😅','🤔','😏','😌','🙃','😇','🤩','😬','🤯',
                       '🙏','✝️','🕊️','🌿','🌸','🌺','🌻','☀️','🌙','⭐','🔥','💫','✨','🌈','🌊','🍃',
@@ -464,7 +465,7 @@ function ProfilePost({ post, session, profile, onReact, churchCtx, onDelete, onV
                       ref={replyInputRef}
                       value={replyInput}
                       onChange={(e) => setReplyInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitReply(); } }}
+                      onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); submitReply(); } }}
                       placeholder="Write a comment…"
                       autoFocus
                       style={{ width: '100%', border: 'none', outline: 'none', fontFamily: T.serif, fontSize: 14, color: T.ink, background: 'transparent' }}
@@ -1865,7 +1866,7 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
                         <input
                           value={encInputMap[p.id] ?? ''}
                           onChange={(e) => setEncInputMap(prev => ({ ...prev, [p.id]: e.target.value.slice(0, 120) }))}
-                          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitMePanelEnc(p.id); } }}
+                          onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); submitMePanelEnc(p.id); } }}
                           placeholder="Write an encouragement…"
                           style={{ flex: 1, border: 'none', outline: 'none', fontFamily: T.serif, fontSize: 13, color: T.ink, background: 'transparent' }}
                         />

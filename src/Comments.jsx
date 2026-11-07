@@ -9,6 +9,7 @@ import { relativeTime } from './time.js';
 import { useUiKit, TextButton } from './uikit.jsx';
 import { codeToFlag } from './countries.js';
 import { Avatar } from './ProfilePage.jsx';
+import { enterSends } from './lib/enterSends.js';
 
 const EMOJIS = [
   '😀','😊','😂','🥹','😍','🥰','😭','😅','🤔','😏','😌','🙃','😇','🤩','😬','🤯',
@@ -303,7 +304,7 @@ export default function Comments({ item, sessionUserId, authorMap, rolesByUser, 
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && text.trim() && !busy) {
+              if (enterSends(e) && text.trim() && !busy) {
                 e.preventDefault();
                 submit();
               }
