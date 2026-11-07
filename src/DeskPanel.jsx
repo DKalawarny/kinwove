@@ -5,6 +5,7 @@ import { useDraft } from './useDraft.js';
 import { parseRef } from './bibleRefUtils.js';
 import { studySessionTitles } from './studySessions.js';
 import { appendToSermonDoc, section, DOC_SOURCE } from './lib/sermonDoc.js';
+import { wordCount, preachMinutes, preachLabel, TARGET_CHOICES } from './lib/preachTime.js';
 
 const BibleReader = lazy(() => import('./BibleReader.jsx'));
 
@@ -200,6 +201,18 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
   const [saveState, setSaveState]           = useState('idle');
   const [confirmDelete, setConfirmDelete]   = useState(null);
   const [isDirty, setIsDirty]              = useState(false);
+  // Rough preaching time for the open note, and the pastor's usual sermon length (this device)
+  const [editWords, setEditWords]           = useState(0);
+  const [preachTarget, setPreachTarget]     = useState(null);
+  const preachTargetKey = userId ? `kw:preachTarget:${userId}` : null;
+  useEffect(() => {
+    try { const v = preachTargetKey && Number(localStorage.getItem(preachTargetKey)); setPreachTarget(v > 0 ? v : null); } catch { setPreachTarget(null); }
+  }, [preachTargetKey]);
+  function choosePreachTarget(v) {
+    setPreachTarget(v || null);
+    try { if (preachTargetKey) { if (v) localStorage.setItem(preachTargetKey, String(v)); else localStorage.removeItem(preachTargetKey); } } catch { /* ignore */ }
+  }
+  const countEditor = () => setEditWords(wordCount(editorRef.current?.innerHTML));
   const [showDonePrompt, setShowDonePrompt] = useState(false);
   const [formSeries, setFormSeries]         = useState('');
   const [seriesEditId, setSeriesEditId]     = useState(null);
@@ -294,6 +307,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
       editorRef.current.insertAdjacentHTML('beforeend', fresh.body.slice(prev.length));
       saveEdit(id);
     } else return;
+    countEditor();
     requestAnimationFrame(() => editorRef.current?.lastElementChild?.scrollIntoView({ block: 'end', behavior: 'smooth' }));
   }
 
@@ -325,6 +339,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
         setIsDirty(true);
       }
     } catch { /* ignore */ }
+    countEditor();
     setShowDonePrompt(false);
     if (live && !showList) return;
     editorRef.current.focus();
@@ -519,6 +534,10 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                     <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: key ? T.gold : T.inkMuted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flexShrink: 1 }}>
                       {key || 'General notes'}
                     </span>
+                    {key && (() => {
+                      const w = group.reduce((t, n) => t + wordCount(n.id === editingId ? editorRef.current?.innerHTML ?? n.body : n.body), 0);
+                      return w > 0 && <span title="Rough preaching time for these notes as written" style={{ fontSize: 10.5, color: T.inkMuted, whiteSpace: 'nowrap' }}>~{Math.max(1, Math.round(preachMinutes(w)))} min</span>;
+                    })()}
                     <div style={{ flex: 1, height: 1, background: key ? `rgba(184,115,58,0.25)` : 'rgba(26,17,8,0.08)' }} />
                     {key && onOpenSession && !live && sessionTitles.has(key) && (
                       <button
@@ -589,6 +608,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       style={{ width: 20, height: 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.22)', background: 'linear-gradient(135deg, transparent 44%, rgba(165,63,43,0.85) 46%, rgba(165,63,43,0.85) 54%, transparent 56%)', cursor: 'pointer', padding: 0, flexShrink: 0 }}
                     />
                   </div>
+                  <PreachMeter words={editWords} target={preachTarget} onTarget={choosePreachTarget} />
                   {/* contentEditable body */}
                   <div
                     ref={editorRef}
@@ -597,6 +617,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                     onInput={() => {
                       isDirtyRef.current = true;
                       setIsDirty(true); setShowDonePrompt(false);
+                      countEditor();
                       if (liveOpen) { clearTimeout(autoSaveRef.current); autoSaveRef.current = setTimeout(() => saveEdit(note.id), 1200); }
                       try {
                         const k = editDraftKey(note.id);
@@ -979,6 +1000,37 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
           </Suspense>
         )}
         {activeTab === 'notes' && <NotesSection live session={session} churchId={churchId} refreshKey={refreshKey + bibleSaves} onOpenSession={onOpenSession} onUseInSermon={onUseInSermon} currentSeries={currentSeries} />}
+      </div>
+    </div>
+  );
+}
+
+// ── How long these notes would take to preach, as written ───────────────────
+function PreachMeter({ words, target, onTarget }) {
+  if (!words && !target) return null;
+  const mins = preachMinutes(words);
+  const pct = target ? Math.min(100, (mins / target) * 100) : 0;
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: T.ink }}>
+          {words ? `${preachLabel(words)} to preach` : 'Nothing to time yet'}
+          {target ? <span style={{ fontWeight: 400, color: T.inkMuted }}>{` · ${Math.round(mins)} of ${target} min`}</span> : null}
+        </span>
+        <div style={{ flex: 1 }} />
+        <select value={target ?? ''} onChange={e => onTarget(Number(e.target.value) || null)} aria-label="Usual sermon length"
+          style={{ fontSize: 11, color: T.goldDark, fontWeight: 600, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit' }}>
+          <option value="">{target ? 'No target' : 'Set a target'}</option>
+          {TARGET_CHOICES.map(m => <option key={m} value={m}>{`Target: ${m} min`}</option>)}
+        </select>
+      </div>
+      {target ? (
+        <div style={{ height: 4, borderRadius: 2, background: 'rgba(26,17,8,0.08)', marginTop: 6, overflow: 'hidden' }}>
+          <div style={{ width: `${pct}%`, height: '100%', background: T.gold, borderRadius: 2, transition: 'width 0.3s' }} />
+        </div>
+      ) : null}
+      <div style={{ fontSize: 10.5, color: T.inkMuted, marginTop: 4, lineHeight: 1.4 }}>
+        Based on your notes as written. Outlines usually run longer when preached.
       </div>
     </div>
   );
