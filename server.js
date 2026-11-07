@@ -4788,85 +4788,63 @@ app.post('/api/welcome-dm', requireAuth, limitAuthed({ capacity: 3, refillPerSec
 //   • Top 3 posts from the feed this week
 //   • Up to 3 recent prayer requests from the congregation
 
-function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion }) {
-  // The week's first daily question, so the email itself gives people something to think about
+// The publish email, in the same look as the daily email (white card, dark kinwove
+// header), which also survives mail apps' dark mode (Daniel, 7 Nov: the old beige
+// layout turned brown in Mail). Leads with Monday's question, then the pastor's note,
+// the week's church posts and prayers, and today's verse.
+function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse, verseWords }) {
   const fq = firstQuestion ? splitQuestion(firstQuestion) : null;
-  const gold = '#B8733A';
-  const ink  = '#2C1810';
-  const soft = '#6B5344';
-  const pale = '#FDF8F0';
-  const line = '#E8D5BB';
-
+  const label = (t) => `<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#B8733A;font-weight:700;margin:0 0 10px">${t}</div>`;
   const postRows = topPosts.map((p) => `
-    <tr>
-      <td style="padding:12px 0;border-bottom:1px solid ${line}">
-        <div style="font-size:13px;font-weight:600;color:${gold};margin-bottom:4px">${escHtml(p.author)}</div>
-        <div style="font-size:15px;color:${ink};line-height:1.55;font-family:Georgia,serif">${escHtml(p.body.slice(0, 200))}${p.body.length > 200 ? '…' : ''}</div>
-        ${p.reactions > 0 ? `<div style="font-size:12px;color:${soft};margin-top:6px">❤️ ${p.reactions} reaction${p.reactions !== 1 ? 's' : ''}</div>` : ''}
-      </td>
-    </tr>`).join('');
-
+    <div style="padding:12px 0;border-top:1px solid #E8D5BB">
+      <div style="font-size:13px;font-weight:600;color:#B8733A;margin-bottom:4px">${escHtml(p.author)}</div>
+      <div style="font-family:Georgia,serif;font-size:15px;color:#2C1810;line-height:1.55">${escHtml(p.body.slice(0, 200))}${p.body.length > 200 ? '…' : ''}</div>
+    </div>`).join('');
   const prayerRows = prayers.map((p) => `
-    <tr>
-      <td style="padding:10px 0;border-bottom:1px solid ${line}">
-        <div style="font-size:12px;font-weight:700;color:${gold};margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em">${escHtml(p.name)}</div>
-        <div style="font-size:14px;color:${soft};line-height:1.6;font-family:Georgia,serif">${escHtml(p.body.slice(0, 160))}${p.body.length > 160 ? '…' : ''}</div>
-      </td>
-    </tr>`).join('');
+    <div style="padding:10px 0;border-top:1px solid #E8D5BB">
+      <div style="font-size:12px;font-weight:700;color:#B8733A;margin-bottom:3px">${escHtml(p.name)}</div>
+      <div style="font-family:Georgia,serif;font-size:15px;color:#6B5344;line-height:1.6">${escHtml(p.body.slice(0, 160))}${p.body.length > 160 ? '…' : ''}</div>
+    </div>`).join('');
+  return emailWrap(`
+    ${label(escHtml(churchName))}
+    <div style="font-size:13px;color:#9C7B5E;margin:0 0 8px">This week's sermon</div>
+    <div style="font-family:Georgia,serif;font-size:28px;font-weight:600;line-height:1.2;color:#2C1810;margin:0 0 6px">${escHtml(sermon.title)}</div>
+    ${sermon.scripture_ref ? `<div style="font-size:14px;color:#B8733A;font-weight:600;margin:0 0 16px">${escHtml(sermon.scripture_ref)}</div>` : '<div style="height:10px"></div>'}
+    ${note ? `<div style="font-family:Georgia,serif;font-size:17px;line-height:1.65;color:#2C1810;margin:0 0 18px;white-space:pre-wrap">${escHtml(note)}</div>` : ''}
+    ${fq?.question ? `
+      <div style="border-top:1px solid #E8D5BB;padding-top:20px;margin-top:6px">
+        ${label("Monday's question")}
+        <div style="font-family:Georgia,serif;font-size:21px;font-weight:600;line-height:1.35;color:#2C1810;margin:0 0 10px">${escHtml(fq.question)}</div>
+        ${fq.context ? `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.65;color:#6B5344">${escHtml(fq.context)}</div>` : ''}
+        <div style="font-size:13px;color:#9C7B5E;margin-top:10px">A new question comes in your kinwove email each morning this week.</div>
+      </div>` : ''}
+    ${btnHtml(fq?.question ? 'Answer in the discussion' : "Read this week's devotional", ctaUrl ?? 'https://www.kinwove.com')}
+    ${topPosts.length ? `<div style="margin-top:8px">${label('From your church this week')}${postRows}</div>` : ''}
+    ${prayers.length ? `<div style="margin-top:22px">${label('Prayer wall')}${prayerRows}</div>` : ''}
+    ${verse ? `
+      <div style="border-top:1px solid #E8D5BB;margin:26px 0 0;padding-top:22px">
+        ${label("Today's verse")}
+        <div style="font-family:Georgia,serif;font-size:18px;font-style:italic;line-height:1.5;color:#2C1810;margin:0 0 8px">&ldquo;${escHtml(verse.text)}&rdquo;</div>
+        <div style="font-size:13px;color:#B8733A;font-weight:600;margin:0 0 12px">${escHtml(verse.ref)}</div>
+        ${verseWords ? `<div style="font-family:Georgia,serif;font-size:16px;line-height:1.65;color:#6B5344">${escHtml(verseWords).replace(/\n+/g, '<br><br>')}</div>` : ''}
+      </div>` : ''}
+    <p style="font-size:12px;color:#9C7B5E;line-height:1.7;margin:28px 0 0">You're getting this because you're a member of ${escHtml(churchName)} on kinwove.${unsubUrl ? ` <a href="${unsubUrl}" style="color:#9C7B5E;text-decoration:underline">Unsubscribe from emails</a>` : ''}</p>
+  `, null);
+}
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escHtml(sermon.title)} — ${escHtml(churchName)}</title></head>
-<body style="margin:0;padding:0;background:#F5EDD8;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
-
-      <!-- Header -->
-      <tr><td style="padding-bottom:28px;text-align:left">
-        <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:20px">kinwove · ${escHtml(churchName)}</div>
-        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:10px">This week's sermon</div>
-        <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:600;color:${ink};margin:0 0 10px;letter-spacing:-0.025em;line-height:1.15">${escHtml(sermon.title)}</h1>
-        ${sermon.scripture_ref ? `<div style="font-size:14px;color:${gold};font-style:italic;margin-bottom:14px">${escHtml(sermon.scripture_ref)}</div>` : ''}
-        ${note ? `<div style="font-family:Georgia,serif;font-size:16px;color:${ink};line-height:1.6;margin:4px 0 18px;white-space:pre-wrap">${escHtml(note)}</div>` : ''}
-        ${fq?.question ? `<div style="background:${pale};border:1px solid ${line};border-radius:12px;padding:16px 18px;margin:6px 0 18px">
-          <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:8px">Monday's question</div>
-          <div style="font-family:Georgia,serif;font-size:19px;font-weight:600;color:${ink};line-height:1.4">${escHtml(fq.question)}</div>
-          ${fq.context ? `<div style="font-family:Georgia,serif;font-size:15px;color:${soft};line-height:1.6;margin-top:8px">${escHtml(fq.context)}</div>` : ''}
-          <div style="font-size:13px;color:${soft};margin-top:10px">A new question comes each day this week.</div>
-        </div>` : ''}
-        <a href="${ctaUrl ?? 'https://www.kinwove.com'}" style="display:inline-block;background:${ink};color:#FDF8F0;text-decoration:none;border-radius:999px;padding:12px 26px;font-size:14px;font-weight:600">${fq?.question ? 'Answer in the discussion' : "Read this week's devotional"} →</a>
-      </td></tr>
-
-      <!-- Divider -->
-      <tr><td style="border-top:1px solid ${line};padding-bottom:24px"></td></tr>
-
-      ${topPosts.length > 0 ? `
-      <!-- Feed highlights -->
-      <tr><td style="padding-bottom:8px">
-        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:12px">From the community</div>
-        <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${line}">${postRows}</table>
-      </td></tr>
-      <tr><td style="height:24px"></td></tr>` : ''}
-
-      ${prayers.length > 0 ? `
-      <!-- Prayer wall -->
-      <tr><td style="padding-bottom:8px">
-        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:12px">🙏 Prayer wall</div>
-        <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${line}">${prayerRows}</table>
-      </td></tr>
-      <tr><td style="height:24px"></td></tr>` : ''}
-
-      <!-- Footer -->
-      <tr><td style="padding-top:8px;text-align:center">
-        <p style="font-size:11px;color:#9C7B5E;line-height:1.6;margin:0">
-          You're receiving this because you're a member of ${escHtml(churchName)} on kinwove.<br>
-          <a href="https://www.kinwove.com" style="color:#9C7B5E">Open kinwove</a>${unsubUrl ? ` · <a href="${unsubUrl}" style="color:#9C7B5E">Unsubscribe from emails</a>` : ''}
-        </p>
-      </td></tr>
-
-    </table>
-  </td></tr></table>
-</body></html>`;
+// Today's verse and the words under it, read from the day's post if it exists
+// (never written from here: the daily-post cron and the morning email own that).
+async function todaysVerseForEmail() {
+  const verse = getDailyVerse();
+  try {
+    const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+    const systemId = await getOrCreateSystemAccount();
+    if (!systemId) return { verse, words: '' };
+    const since = new Date(Date.now() - 22 * 3600 * 1000).toISOString();
+    const rows = await fetch(`${SUPABASE_URL}/rest/v1/posts?author_id=eq.${systemId}&created_at=gte.${since}&select=id,body&order=created_at.desc&limit=25`, { headers: h }).then((r) => r.json()).catch(() => []);
+    const post = Array.isArray(rows) ? rows.find((p) => (p.body || '').includes(verse.text.slice(0, 40))) : null;
+    return { verse, words: post ? dailyWordsFrom(post, verse) : '' };
+  } catch { return { verse, words: '' }; }
 }
 
 function escHtml(s) {
@@ -4886,7 +4864,11 @@ async function sermonEmailContext(churchId, userId) {
   const churches = await churchRes.json();
   const church = Array.isArray(churches) ? churches[0] : null;
   if (!church) return { status: 404, error: 'Church not found' };
-  if (!(Array.isArray(roles) && roles.length) && church.pastor_id !== userId) return { status: 403, error: 'Not authorized for this church' };
+  if (!(Array.isArray(roles) && roles.length) && church.pastor_id !== userId) {
+    // kinwove admins can preview and test any church's email (Daniel has no church of his own)
+    const adm = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=is_admin&limit=1`, { headers: h }).then((r) => r.json()).catch(() => []);
+    if (!adm?.[0]?.is_admin) return { status: 403, error: 'Not authorized for this church' };
+  }
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
   const [postsRes, prayersRes] = await Promise.all([
     fetch(`${SUPABASE_URL}/rest/v1/posts?scope=eq.church&scope_id=eq.${churchId}&created_at=gte.${sevenDaysAgo}&select=body,author_id,reaction_counts,profiles!author_id(display_name)&order=created_at.desc&limit=20`, { headers: h }),
@@ -4921,7 +4903,8 @@ app.post('/api/sermon-email-preview', requireAuth, async (req, res) => {
   try {
     const ctx = await sermonEmailContext(churchId, req.userId);
     if (ctx.error) return res.status(ctx.status).json({ error: ctx.error });
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note, firstQuestion });
+    const tv = await todaysVerseForEmail();
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note, firstQuestion, verse: tv.verse, verseWords: tv.words });
     res.json({ html, subject: `New sermon: "${sermon.title}" at ${ctx.church.name}` });
   } catch (err) { safeError(res, err, 'sermon-email-preview'); }
 });
@@ -4955,7 +4938,8 @@ app.post('/api/sermon-email-test', requireAuth, async (req, res) => {
       to = u?.email ?? '';
     }
     if (!to) return res.status(400).json({ error: 'No email address on your account' });
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note, firstQuestion });
+    const tv = await todaysVerseForEmail();
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note, firstQuestion, verse: tv.verse, verseWords: tv.words });
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -5065,6 +5049,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
     const subject = `New sermon: "${sermon.title}" at ${church.name}`;
     const ctaUrl = `https://www.kinwove.com/?church=${churchId}&sermon=${sermonId}`; // opens this sermon, not just the church
+    const tv = await todaysVerseForEmail();
 
     let sent = 0;
     const queue = members.filter((m) => emailMap[m.id]);
@@ -5073,7 +5058,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
       await Promise.all(queue.slice(i, i + 10).map(async (m) => {
         try {
           const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${m.id}&t=${emailToken(m.id)}`;
-          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion });
+          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse: tv.verse, verseWords: tv.words });
           const r = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
