@@ -1852,7 +1852,9 @@ function SidebarNav({ stage, session, profile, chatOpen,
     <div style={{
       position: 'fixed', top: 56, left: 0, bottom: 0, width: 240,
       background: T.cream, borderRight: `1px solid ${T.line}`,
-      display: 'flex', flexDirection: 'column', zIndex: 100,
+      // The Settings menu lives inside this box, so while it is open the box has to sit
+      // above another person's profile (z 150), or the menu opens hidden behind it.
+      display: 'flex', flexDirection: 'column', zIndex: settingsOpen ? 400 : 100,
       boxShadow: '1px 0 12px rgba(44,24,16,0.05)',
     }}>
 
