@@ -254,7 +254,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [churchId, initialSermonId]);
 
-  function startNew() {
+  function startNew({ restore = true } = {}) {
     setEditing(null);
     setTitle('');
     setScriptureRef('');
@@ -270,6 +270,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     imageDrafts.clear();
     setError(null);
     setView('edit');
+    if (restore) applyDraft(draftKeyFor(null));
   }
 
   // "Use in sermon →" from the Scholar's Desk: open a fresh draft seeded with
@@ -280,7 +281,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
   const [pendingSeriesName, setPendingSeriesName] = useState(null);
   useEffect(() => {
     if (!prefill) return;
-    startNew();
+    startNew({ restore: false });
     setTitle(prefill.seriesName ?? '');
     setScriptureRef(prefill.scriptureRef ?? '');
     setSummary(prefill.summary ?? '');
@@ -319,7 +320,48 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
       .order('sort_order');
     setContent(data ?? []);
     setView('edit');
+    applyDraft(draftKeyFor(sermon.id));
   }
+
+  // ── Unsaved work survives leaving the page (Daniel, 7 Nov: "every time I have
+  // to regen the questions if I leave the page"). The whole editor, generated week
+  // included, is kept on this device per person, church and sermon until it is
+  // saved or published. Photos are not kept (files can't be).
+  const draftKeyFor = (sermonId) => (session?.user?.id && churchId ? `kw:draft:${session.user.id}:sermon:${churchId}:${sermonId ?? 'new'}` : null);
+  const [restoredAt, setRestoredAt] = useState(null);
+  function applyDraft(key) {
+    setRestoredAt(null);
+    if (!key) return;
+    try {
+      const d = JSON.parse(localStorage.getItem(key) || 'null');
+      if (!d) return;
+      setTitle(d.title ?? ''); setScriptureRef(d.scriptureRef ?? ''); setSummary(d.summary ?? '');
+      if (d.weekStartsOn) setWeekStartsOn(d.weekStartsOn);
+      if (Array.isArray(d.content)) setContent(d.content);
+      setSeriesId(d.seriesId ?? null); setSeriesIndex(d.seriesIndex ?? null);
+      setRestoredAt(d.savedAt ?? Date.now());
+    } catch { /* ignore */ }
+  }
+  function discardDraft() {
+    const key = draftKeyFor(editing?.id);
+    try { if (key) localStorage.removeItem(key); } catch { /* ignore */ }
+    setRestoredAt(null);
+    if (editing) startEdit(editing); else startNew({ restore: false });
+  }
+  useEffect(() => {
+    if (view !== 'edit') return;
+    const key = draftKeyFor(editing?.id);
+    if (!key) return;
+    const t = setTimeout(() => {
+      const empty = !title.trim() && !scriptureRef.trim() && !summary.trim() && content.length === 0;
+      try {
+        if (empty) localStorage.removeItem(key);
+        else localStorage.setItem(key, JSON.stringify({ title, scriptureRef, summary, weekStartsOn, content, seriesId, seriesIndex, savedAt: Date.now() }));
+      } catch { /* storage full or blocked: the page still works */ }
+    }, 600);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, editing?.id, title, scriptureRef, summary, weekStartsOn, content, seriesId, seriesIndex]);
 
   async function handleCreateSeries() {
     const name = newSeriesName.trim();
@@ -633,6 +675,10 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
       showToast('Sermon unpublished. The feed post is gone.', 'info');
     }
 
+    // Saved to the database: the device copy is no longer needed
+    try { [draftKeyFor(editing?.id), draftKeyFor(null), draftKeyFor(sermonId)].forEach((k) => k && localStorage.removeItem(k)); } catch { /* ignore */ }
+    setRestoredAt(null);
+
     // Refresh list
     const { data: refreshed } = await supabase
       .from('sermons')
@@ -653,6 +699,12 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
           <button onClick={() => setView('list')} style={{
             background: 'none', border: 'none', color: T.goldDark, fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 14,
           }}>← Sermons</button>
+          {restoredAt && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', background: T.parchment, border: `1px solid ${T.goldLight}`, borderRadius: 12, padding: '10px 14px', margin: '0 0 14px', fontSize: 13.5, color: T.inkSoft }}>
+              <span style={{ flex: 1, minWidth: 200 }}>We kept your unsaved work from {new Date(restoredAt).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}. Save a draft to keep it for good.</span>
+              <button onClick={discardDraft} style={{ background: 'none', border: 'none', color: T.goldDark, fontWeight: 600, fontSize: 13, cursor: 'pointer', padding: 0 }}>Start over</button>
+            </div>
+          )}
 
           {!embedded && (
             <div style={{ fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: T.goldDark, marginBottom: 8 }}>
