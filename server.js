@@ -4908,7 +4908,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
     // HTML is built per member so each gets their own signed unsubscribe link.
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
     const subject = `New sermon: "${sermon.title}" at ${church.name}`;
-    const ctaUrl = `https://www.kinwove.com/?church=${churchId}`;
+    const ctaUrl = `https://www.kinwove.com/?church=${churchId}&sermon=${sermonId}`; // opens this sermon, not just the church
 
     let sent = 0;
     const queue = members.filter((m) => emailMap[m.id]);

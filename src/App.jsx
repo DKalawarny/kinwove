@@ -2053,6 +2053,9 @@ export default function App() {
   const [guestPost, setGuestPost] = useState(null);
   const [studySessionId] = useState(() => new URLSearchParams(window.location.search).get('gs'));
   const [initialChurchId] = useState(() => new URLSearchParams(window.location.search).get('church'));
+  // The sermon email's "Read this week's devotional" opens that sermon (?church=…&sermon=…).
+  // Signed out, the church page shows first; signing in then opens the sermon.
+  const [deepLinkSermonId] = useState(() => new URLSearchParams(window.location.search).get('sermon'));
   const [referralRef] = useState(() => new URLSearchParams(window.location.search).get('ref'));
   const [initialAnonChurchId] = useState(() => new URLSearchParams(window.location.search).get('anon'));
   const [initialJoinCode, setInitialJoinCode] = useState(() => new URLSearchParams(window.location.search).get('join'));
@@ -2458,6 +2461,7 @@ export default function App() {
         if (deepLinkInviteId) { loadInvite(deepLinkInviteId); loadProfile(data.session.user.id); }
         else if (deepLinkPostId) { localStorage.removeItem('kw:stage'); setStage('feed'); loadProfile(data.session.user.id); window.history.replaceState({}, '', window.location.pathname); }
         else if (initialAnonChurchId) { setViewingChurchId(initialAnonChurchId); setStage('church-entry'); loadProfile(data.session.user.id); }
+        else if (deepLinkSermonId) { if (initialChurchId) setViewingChurchId(initialChurchId); setViewingSermonId(deepLinkSermonId); setStage('sermon-view'); loadProfile(data.session.user.id); }
         else if (initialChurchId) { setViewingChurchId(initialChurchId); setStage('church'); loadProfile(data.session.user.id); }
         else {
           const local = localStorage.getItem('kw:stage');
@@ -2523,6 +2527,7 @@ export default function App() {
           else if (deepLinkInviteId) { loadInvite(deepLinkInviteId); loadProfile(s.user.id); }
           else if (deepLinkPostId) { setStage('feed'); loadProfile(s.user.id); window.history.replaceState({}, '', window.location.pathname); }
           else if (initialAnonChurchId) { setViewingChurchId(initialAnonChurchId); setStage('church-entry'); }
+          else if (deepLinkSermonId) { if (initialChurchId) setViewingChurchId(initialChurchId); setViewingSermonId(deepLinkSermonId); setStage('sermon-view'); }
           else if (initialChurchId) { setViewingChurchId(initialChurchId); setStage('church'); }
           else {
             const local = localStorage.getItem('kw:stage');
