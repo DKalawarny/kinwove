@@ -664,7 +664,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
     else setPreviewSermon(sermon);
   }
 
-  async function togglePublish(sermon, note = '') {
+  async function togglePublish(sermon, note = '', sendEmail = true) {
     setSermonBusy(sermon.id);
     const next = !sermon.is_published;
     const { error: err } = await supabase
@@ -696,7 +696,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
     }
 
     // When publishing (not unpublishing), email all church members
-    if (next && churchId) {
+    if (next && churchId && sendEmail) {
       import('./supabase.js').then(({ authedFetch }) => {
         authedFetch('/api/send-sermon-digest', {
           method: 'POST',
@@ -723,7 +723,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
           title={previewSermon.title ?? ''} scriptureRef={previewSermon.scripture_ref ?? ''}
           busy={sermonBusy === previewSermon.id}
           onCancel={() => setPreviewSermon(null)}
-          onPublish={async (note) => { await togglePublish(previewSermon, note); setPreviewSermon(null); }}
+          onPublish={async (note, sendEmail) => { await togglePublish(previewSermon, note, sendEmail); setPreviewSermon(null); }}
         />
       )}
       <div style={{ maxWidth: 760, margin: '0 auto' }}>

@@ -468,7 +468,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     setDeleting(false);
   }
 
-  async function handleSave(publish = true, pastorNote = '') {
+  async function handleSave(publish = true, pastorNote = '', sendEmail = true) {
     if (!session?.user?.id) {
       setError('You must be signed in to save.');
       return;
@@ -610,10 +610,11 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
           console.warn('sermon announcement insert failed', eAnn.message);
           showToast(`Sermon saved, but it didn't post to the feed: ${eAnn.message}`, 'error');
         } else {
-          showToast('Sermon published. Your congregation is being emailed now.', 'success');
-          // First publish (no announcement existed yet) → email the congregation.
+          showToast(sendEmail ? 'Sermon published. Your congregation is being emailed now.' : 'Sermon published. No email sent.', 'success');
+          // First publish (no announcement existed yet) → email the congregation,
+          // unless the pastor unticked it on the preview.
           // Fire-and-forget, same as the PastorDashboard draft→Live toggle.
-          authedFetch('/api/send-sermon-digest', {
+          if (sendEmail) authedFetch('/api/send-sermon-digest', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ churchId, sermonId, note: pastorNote || undefined }),
@@ -1212,7 +1213,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
               churchId={churchId} sermonId={editing?.id ?? null}
               title={title} scriptureRef={scriptureRef} busy={saving}
               onCancel={() => setPreviewOpen(false)}
-              onPublish={async (note) => { await handleSave(true, note); setPreviewOpen(false); }}
+              onPublish={async (note, sendEmail) => { await handleSave(true, note, sendEmail); setPreviewOpen(false); }}
             />
           )}
         </div>

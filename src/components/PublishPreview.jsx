@@ -10,6 +10,8 @@ export const PASTOR_NOTE_MAX = 400;
 // or sent until the pastor presses Publish here.
 export default function PublishPreview({ churchId, sermonId, title, scriptureRef, initialNote = '', busy = false, onPublish, onCancel }) {
   const [note, setNote] = useState(initialNote);
+  // The pastor can publish quietly (a small fix, a midweek extra) without emailing everyone
+  const [sendEmail, setSendEmail] = useState(true);
   const [churchName, setChurchName] = useState('');
   // An email goes out the first time a sermon is published; republishing an edit
   // updates the feed post without emailing everyone again.
@@ -64,9 +66,19 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
         </div>
 
         <div style={label}>{alreadyPosted ? 'Email' : 'Email to your congregation'}</div>
+        {!alreadyPosted && (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 14, color: T.ink, cursor: 'pointer', marginBottom: 10 }}>
+            <input type="checkbox" checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)} style={{ width: 18, height: 18, accentColor: T.gold, margin: 0 }} />
+            Also email my congregation
+          </label>
+        )}
         {alreadyPosted ? (
           <div style={{ fontSize: 13.5, color: T.inkSoft, lineHeight: 1.5 }}>
             This sermon already went out, so publishing again updates the feed post. No new email is sent.
+          </div>
+        ) : !sendEmail ? (
+          <div style={{ fontSize: 13.5, color: T.inkSoft, lineHeight: 1.5 }}>
+            No email. The sermon goes into your church feed and members still get the usual in-app notification.
           </div>
         ) : (
           <div style={{ background: T.white, border: `1px solid ${T.line}`, borderRadius: 12, padding: '12px 14px' }}>
@@ -83,7 +95,7 @@ export default function PublishPreview({ churchId, sermonId, title, scriptureRef
         )}
 
         <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-          <button onClick={() => onPublish(trimmed)} disabled={busy}
+          <button onClick={() => onPublish(trimmed, sendEmail && !alreadyPosted)} disabled={busy}
             style={{ flex: 1, background: T.ink, color: T.cream, border: 'none', borderRadius: 999, padding: '13px 18px', fontSize: 15, fontWeight: 600, cursor: 'pointer', opacity: busy ? 0.6 : 1 }}>
             {busy ? 'Publishing…' : 'Publish now'}
           </button>
