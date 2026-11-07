@@ -7,6 +7,7 @@ import { useUiKit } from './uikit.jsx';
 import { useImageDrafts, ImageDraftGrid, ImageAttachButton } from './imageAttach.jsx';
 import PostImageGrid from './PostImageGrid.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
+import PublishPreview from './components/PublishPreview.jsx';
 
 const KIND_LABEL = {
   daily_verse:    'Daily question',
@@ -192,6 +193,8 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
   const [sectionGenerating, setSectionGenerating] = useState(null); // kind string | null
   const [regeneratingIdx, setRegeneratingIdx] = useState(null);   // content array index | null
   const [saving, setSaving] = useState(false);
+  // Publish shows what the congregation will see (feed card + email) first
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null); // sermon id pending delete
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState(null);
@@ -465,7 +468,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
     setDeleting(false);
   }
 
-  async function handleSave(publish = true) {
+  async function handleSave(publish = true, pastorNote = '') {
     if (!session?.user?.id) {
       setError('You must be signed in to save.');
       return;
@@ -580,6 +583,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
         is_sermon_announcement:  true,
         sermon_title:            title.trim(),
         scripture_ref:           scriptureRef.trim() || null,
+        ...(pastorNote ? { pastor_note: pastorNote } : {}),
         ...(allImageUrls.length ? { image_urls: allImageUrls } : {}),
       };
 
@@ -612,7 +616,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
           authedFetch('/api/send-sermon-digest', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ churchId, sermonId }),
+            body: JSON.stringify({ churchId, sermonId, note: pastorNote || undefined }),
           }).catch(() => {});
         }
       }
@@ -1182,7 +1186,7 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
 
           <div style={{ display: 'flex', gap: 10, marginTop: 22 }}>
             <button
-              onClick={() => handleSave(true)}
+              onClick={() => { if (!title.trim()) { setError('Title is required.'); return; } setPreviewOpen(true); }}
               disabled={saving}
               style={{
                 flex: 1, background: T.ink, color: T.cream, border: 'none', borderRadius: 999,
@@ -1203,6 +1207,14 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
               Save draft
             </button>
           </div>
+          {previewOpen && (
+            <PublishPreview
+              churchId={churchId} sermonId={editing?.id ?? null}
+              title={title} scriptureRef={scriptureRef} busy={saving}
+              onCancel={() => setPreviewOpen(false)}
+              onPublish={async (note) => { await handleSave(true, note); setPreviewOpen(false); }}
+            />
+          )}
         </div>
       </div>
     );

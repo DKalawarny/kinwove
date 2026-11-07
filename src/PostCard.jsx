@@ -960,6 +960,11 @@ export default function PostCard({
                 {effectiveItem.body.scripture_ref}
               </div>
             )}
+            {effectiveItem.body.pastor_note && (
+              <div style={{ fontFamily: T.serif, fontSize: 14.5, color: T.ink, lineHeight: 1.55, margin: '6px 0 4px', whiteSpace: 'pre-wrap' }}>
+                {effectiveItem.body.pastor_note}
+              </div>
+            )}
             {onOpenSermon && (
               <button
                 onClick={() => onOpenSermon(effectiveItem.body.sermon_id)}

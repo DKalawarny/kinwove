@@ -3,6 +3,7 @@ import { supabase } from './supabase.js';
 import { T } from './theme.js';
 import { SHOW_WALKS } from './flags.js';
 import { KinwoveStar } from './components/brand/KinwoveStar';
+import PublishPreview from './components/PublishPreview.jsx';
 
 const PostComposer  = lazy(() => import('./PostComposer.jsx'));
 const WalkCreator   = lazy(() => import('./WalkCreator.jsx'));
@@ -292,6 +293,8 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
   const [careTeamSize, setCareTeamSize] = useState(0);
   const [sermons, setSermons] = useState([]);
   const [sermonBusy, setSermonBusy] = useState(null); // id currently toggling
+  // Going Live shows what the congregation will see first; going back to Draft does not
+  const [previewSermon, setPreviewSermon] = useState(null);
   const [publishError, setPublishError] = useState(null);
   const [recentAnonCount, setRecentAnonCount] = useState(0);
   const [postCount, setPostCount] = useState(0);
@@ -656,7 +659,12 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
     writeSetupState(churchId, next);
   }
 
-  async function togglePublish(sermon) {
+  function requestToggle(sermon) {
+    if (sermon.is_published) togglePublish(sermon);
+    else setPreviewSermon(sermon);
+  }
+
+  async function togglePublish(sermon, note = '') {
     setSermonBusy(sermon.id);
     const next = !sermon.is_published;
     const { error: err } = await supabase
@@ -683,7 +691,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
       await supabase.from('posts').insert({
         author_id: session.user.id, scope: 'church', scope_id: churchId, kind: 'text', is_anonymous: false,
         body: (sermon.title ?? '').trim(),
-        body_data: { sermon_id: sermon.id, is_sermon_announcement: true, sermon_title: (sermon.title ?? '').trim(), scripture_ref: sermon.scripture_ref?.trim() || null },
+        body_data: { sermon_id: sermon.id, is_sermon_announcement: true, sermon_title: (sermon.title ?? '').trim(), scripture_ref: sermon.scripture_ref?.trim() || null, ...(note ? { pastor_note: note } : {}) },
       });
     }
 
@@ -693,7 +701,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
         authedFetch('/api/send-sermon-digest', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ churchId, sermonId: sermon.id }),
+          body: JSON.stringify({ churchId, sermonId: sermon.id, note: note || undefined }),
         }).catch(() => {}); // fire-and-forget — don't block or surface errors to UI
       });
     }
@@ -709,6 +717,15 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
 
   return (
     <div style={{ minHeight: embedded ? 'auto' : '100vh', background: T.cream, padding: embedded ? 0 : '32px 20px 80px', overflowY: 'auto' }}>
+      {previewSermon && (
+        <PublishPreview
+          churchId={churchId} sermonId={previewSermon.id}
+          title={previewSermon.title ?? ''} scriptureRef={previewSermon.scripture_ref ?? ''}
+          busy={sermonBusy === previewSermon.id}
+          onCancel={() => setPreviewSermon(null)}
+          onPublish={async (note) => { await togglePublish(previewSermon, note); setPreviewSermon(null); }}
+        />
+      )}
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         {/* First-run setup checklist — shows until pastor explicitly dismisses
             with all five items done. Sits at the top of Overview so a brand-
@@ -876,7 +893,7 @@ export default function PastorDashboard({ session, profile, churchId, onBack, on
                 key={s.id}
                 sermon={s}
                 onEdit={(sermon) => onOpenComposer(sermon.id)}
-                onTogglePublish={togglePublish}
+                onTogglePublish={requestToggle}
                 busy={sermonBusy === s.id}
               />
             ))

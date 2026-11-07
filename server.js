@@ -4645,7 +4645,7 @@ app.post('/api/welcome-dm', requireAuth, limitAuthed({ capacity: 3, refillPerSec
 //   • Top 3 posts from the feed this week
 //   • Up to 3 recent prayer requests from the congregation
 
-function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl }) {
+function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note }) {
   const gold = '#B8733A';
   const ink  = '#2C1810';
   const soft = '#6B5344';
@@ -4682,6 +4682,7 @@ function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaU
         <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${gold};font-weight:700;margin-bottom:10px">This week's sermon</div>
         <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:600;color:${ink};margin:0 0 10px;letter-spacing:-0.025em;line-height:1.15">${escHtml(sermon.title)}</h1>
         ${sermon.scripture_ref ? `<div style="font-size:14px;color:${gold};font-style:italic;margin-bottom:14px">${escHtml(sermon.scripture_ref)}</div>` : ''}
+        ${note ? `<div style="font-family:Georgia,serif;font-size:16px;color:${ink};line-height:1.6;margin:4px 0 18px;white-space:pre-wrap">${escHtml(note)}</div>` : ''}
         <a href="${ctaUrl ?? 'https://www.kinwove.com'}" style="display:inline-block;background:${ink};color:#FDF8F0;text-decoration:none;border-radius:999px;padding:12px 26px;font-size:14px;font-weight:600">Read this week's devotional →</a>
       </td></tr>
 
@@ -4723,6 +4724,8 @@ function escHtml(s) {
 
 app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
   const { churchId, sermonId } = req.body ?? {};
+  // Optional short note the pastor wrote on the publish preview
+  const note = typeof req.body?.note === 'string' ? req.body.note.trim().slice(0, 400) : '';
   if (!churchId || !sermonId) return res.status(400).json({ error: 'churchId and sermonId required' });
   if (!isUuid(churchId) || !isUuid(sermonId)) return res.status(400).json({ error: 'invalid id' });
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
@@ -4809,7 +4812,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
     // 7. Send one email per member (fire in parallel, cap concurrency).
     // HTML is built per member so each gets their own signed unsubscribe link.
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
-    const subject = `New sermon: "${sermon.title}" — ${church.name}`;
+    const subject = `New sermon: "${sermon.title}" at ${church.name}`;
     const ctaUrl = `https://www.kinwove.com/?church=${churchId}`;
 
     let sent = 0;
@@ -4819,7 +4822,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
       await Promise.all(queue.slice(i, i + 10).map(async (m) => {
         try {
           const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${m.id}&t=${emailToken(m.id)}`;
-          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl });
+          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note });
           const r = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
