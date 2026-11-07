@@ -45,9 +45,9 @@ export default function ReportModal({ onClose }) {
   };
 
   return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(44,24,16,0.52)', zIndex: 500, display: 'flex', alignItems: 'flex-end' }}>
+    <div onClick={onClose} style={{ position: 'fixed', left: 0, right: 0, top: 'var(--vvtop, 0px)', height: 'var(--vvh, 100%)', background: 'rgba(44,24,16,0.52)', zIndex: 500, display: 'flex', alignItems: 'flex-end' }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        width: '100%', maxHeight: '90vh', overflowY: 'auto',
+        width: '100%', maxHeight: 'calc(var(--vvh, 100vh) * 0.9)', overflowY: 'auto',
         background: T.cream, borderRadius: '20px 20px 0 0',
         padding: '24px 20px 48px', boxShadow: '0 -8px 40px rgba(0,0,0,0.2)',
       }}>

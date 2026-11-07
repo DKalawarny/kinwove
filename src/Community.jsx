@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback, lazy, Suspense, Fragment } from 'react';
 import SeeTranslation from './i18n/SeeTranslation.jsx';
+import { sermonLabel } from './lib/sermonLabel.js';
 import { createPortal } from 'react-dom';
 import { Smile, Bookmark } from 'lucide-react';
 import { supabase } from './supabase.js';
@@ -304,7 +305,7 @@ function SermonTeaserCard({ sermon, isMember, onOpenChurch }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
           <KinwoveStar size={11} style={{ color: T.gold, flexShrink: 0 }} />
           <span style={{ fontSize: 11, fontWeight: 700, color: T.goldDark, letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-            This week's sermon
+            {sermonLabel(sermon.week_starts_on)}
           </span>
         </div>
         <div style={{ fontFamily: T.serif, fontSize: 19, fontWeight: 600, color: T.ink, lineHeight: 1.25, letterSpacing: '-0.015em', marginBottom: sermon.scripture_ref ? 5 : 10 }}>
@@ -339,6 +340,8 @@ function PostCard({ post, index = 0, session, currentUserId, userProfile, userGr
   // shape ({id, body, created_at, profiles}) hydrated by the relationship.
   // Optimistic appends use the same shape so the UI doesn't flicker.
   const [localReplies,   setLocalReplies]   = useState(post.post_comments ?? []);
+  // Fresh comments from the feed (a notification tap refetches them) replace the mount-time copy
+  useEffect(() => { if (post.post_comments) setLocalReplies(post.post_comments); }, [post.post_comments]);
   const [replyText,      setReplyText]      = useState('');
   const [submitting,     setSubmitting]     = useState(false);
   const [shareOpen,      setShareOpen]      = useState(false);
@@ -1634,6 +1637,13 @@ useEffect(() => {
     // If the post is already in the feed, just scroll to it
     const found = posts.find((p) => p.id === openCommentPostId);
     if (found) {
+      // The notification is usually about a new comment; the feed's copy predates it
+      supabase.from('post_comments')
+        .select('id, body, created_at, profiles!author_id(display_name, avatar_config, avatar_url)')
+        .eq('post_id', openCommentPostId).order('created_at', { ascending: true })
+        .then(({ data }) => {
+          if (data) setPosts((prev) => prev.map((p) => p.id === openCommentPostId ? { ...p, post_comments: data } : p));
+        }, () => {});
       // Give React one frame to render, then scroll
       requestAnimationFrame(() => {
         const el = document.querySelector(`[data-post-id="${openCommentPostId}"]`);

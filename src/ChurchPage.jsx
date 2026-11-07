@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import SeeTranslation from './i18n/SeeTranslation.jsx';
+import { sermonLabel } from './lib/sermonLabel.js';
 import { ArrowLeft, Share2, Check, ExternalLink, Globe } from 'lucide-react';
 import { supabase } from './supabase.js';
 import { T, SHADOW, RADIUS, SEMANTIC, SPACE } from './theme.js';
@@ -1029,7 +1030,7 @@ export default function ChurchPage({
                 borderRadius: 14, padding: '20px', marginBottom: 16,
               }}>
                 <div style={{ fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: T.goldDark, fontWeight: 700, marginBottom: 8, display: 'flex', alignItems: 'center' }}>
-                  <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> This week's sermon
+                  <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> {sermonLabel(latestSermon?.week_starts_on)}
                 </div>
                 {latestSermon ? (
                   <>
@@ -1070,7 +1071,7 @@ export default function ChurchPage({
                 boxShadow: '0 2px 8px rgba(184,115,58,0.10)',
               }}>
                 <div style={{ fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: T.goldDark, fontWeight: 700, marginBottom: 8, display: 'flex', alignItems: 'center' }}>
-                  <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> This week's sermon
+                  <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> {sermonLabel(latestSermon?.week_starts_on)}
                 </div>
                 <div style={{ fontFamily: T.display, fontSize: 22, fontWeight: 600, color: T.ink, lineHeight: 1.2, letterSpacing: '-0.015em', marginBottom: 6 }}>
                   {latestSermon.title}
@@ -1779,7 +1780,7 @@ export default function ChurchPage({
         <div
           onClick={() => !reportSubmitting && setReportOpen(false)}
           style={{
-            position: 'fixed', inset: 0, zIndex: 400,
+            position: 'fixed', left: 0, right: 0, top: 'var(--vvtop, 0px)', height: 'var(--vvh, 100%)', zIndex: 400, boxSizing: 'border-box',
             background: 'rgba(44,24,16,0.55)',
             display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 16,
           }}
@@ -1787,7 +1788,7 @@ export default function ChurchPage({
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: T.white, borderRadius: 18,
+              background: T.white, borderRadius: 18, maxHeight: '100%', overflowY: 'auto', boxSizing: 'border-box',
               padding: '22px 22px 18px', width: '100%', maxWidth: 480,
               boxShadow: '0 -8px 28px rgba(0,0,0,0.18)',
             }}

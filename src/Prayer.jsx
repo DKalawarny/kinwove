@@ -422,12 +422,13 @@ function MyPrayers({ session, profile }) {
         {/* Praise report sheet */}
         {praiseTarget && (
           <div
-            style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(44,24,16,0.75)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 20 }}
+            style={{ position: 'fixed', left: 0, right: 0, top: 'var(--vvtop, 0px)', height: 'var(--vvh, 100%)', boxSizing: 'border-box', zIndex: 300, background: 'rgba(44,24,16,0.75)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 20 }}
             onClick={() => setPraiseTarget(null)}
           >
             <div onClick={e => e.stopPropagation()} style={{
               background: T.cream, border: `1px solid ${T.line}`, borderRadius: 20,
               padding: '28px 24px', width: '100%', maxWidth: 420, marginBottom: 20,
+              maxHeight: 'calc(100% - 20px)', overflowY: 'auto', boxSizing: 'border-box',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <StarburstCheck size={30} animate />

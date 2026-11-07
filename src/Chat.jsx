@@ -1799,7 +1799,7 @@ export default function Chat({
               const { error } = await supabase.from('user_notes').insert({
                 user_id: session.user.id, title, body, source: 'ask',
               });
-              if (!error) setSavedIdx((s) => new Set(s).add(i));
+              if (!error) { setSavedIdx((s) => new Set(s).add(i)); window.dispatchEvent(new CustomEvent('kw:notes-changed')); }
             };
             // Topic accent: detect from the preceding user question (first AI response only per topic)
             const precedingUserMsg = isAssistant && i > 0 && messages[i - 1]?.role === 'user'

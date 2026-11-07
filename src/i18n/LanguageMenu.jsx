@@ -42,7 +42,7 @@ export default function LanguageMenu({ value, onChange, tone = 'light', compact 
   const wideScreen = typeof window !== 'undefined' && window.innerWidth >= 700;
 
   return (
-    <div ref={box} style={{ position: 'relative' }}>
+    <div ref={box} className={open ? 'kw-lang-open' : undefined} style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox" aria-expanded={open} aria-label={`${s.language}: ${current.native}`}

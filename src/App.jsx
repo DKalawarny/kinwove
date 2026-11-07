@@ -1618,7 +1618,7 @@ function StreakChip({ streak, onClick, compact = false }) {
 function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, language, onPickLanguage }) {
   const verse = getDailyVerse();
   return (
-    <div style={{
+    <div className="kw-topbar" style={{
       position: 'fixed', top: 0, left: 0, right: 0,
       height: 56, zIndex: 110,
       background: '#1e1208',
@@ -1689,7 +1689,7 @@ function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, lang
   const showVerse = availW >= 500;
   const showQuote = availW >= 620;
   return (
-    <div style={{
+    <div className="kw-topbar" style={{
       position: 'fixed',
       top: 0,
       left: 0, right: 0,
@@ -2008,6 +2008,20 @@ export default function App() {
   }, [stage, boardOpen]);
   const [chatPanelOpen, setChatPanelOpen] = useState(false);
   const [viewingUserId, setViewingUserId] = useState(null);
+  const [careInboxKey, setCareInboxKey] = useState(0);
+  // Me page lists (friends, following, requests) reload after a profile closes,
+  // since unfriending or unfollowing happens inside that overlay
+  const [meKey, setMeKey] = useState(0);
+  const hadProfileRef = useRef(false);
+  useEffect(() => {
+    if (hadProfileRef.current && !viewingUserId) setMeKey((k) => k + 1);
+    hadProfileRef.current = !!viewingUserId;
+  }, [viewingUserId]);
+  useEffect(() => {
+    const bump = () => setMeKey((k) => k + 1);
+    window.addEventListener('kw:friends-changed', bump);
+    return () => window.removeEventListener('kw:friends-changed', bump);
+  }, []);
   // The profile overlay sits on top of every stage. Close it when the screen
   // changes under it (Messages, the phone ⋮ menu, links in the chat), or those
   // taps look like they did nothing. The stage is recorded whenever a profile
@@ -3363,6 +3377,7 @@ export default function App() {
       )}
       {stage === 'me' && session && (
         <MePanel
+          refreshKey={meKey}
           session={session}
           profile={profile}
           onClose={() => goBack('feed')}
@@ -3400,6 +3415,7 @@ export default function App() {
           profile={profile}
           homeKey={readHomeKey}
           jumpRef={bibleJumpRef}
+          onJumpConsumed={() => setBibleJumpRef(null)}
           onClose={() => goBack('feed')}
           onOpenChat={(q) => { if (!currentConvId) startChatFromProfile(); if (q) setPrefilledInput(q); setChatPanelOpen(true); }}
         />
@@ -3605,6 +3621,7 @@ export default function App() {
       )}
       {stage === 'care-inbox' && session && (careTeamRecord || pastorChurchId || profile?.church_id) && (
         <CareTeamInbox
+          refreshKey={careInboxKey}
           session={session}
           profile={profile}
           churchId={careTeamRecord?.church_id ?? pastorChurchId ?? profile?.church_id}
@@ -3719,12 +3736,16 @@ export default function App() {
           )}
           <div style={{
             position: 'fixed',
+            // iPad (docked, not desktop): start below the top bar (z 110), which otherwise
+            // covered the panel's close button and menu
             top: isDesktop && showNav ? HEADER_H
               : (chatPanelOpen && kbViewport) ? `calc(${kbViewport.offsetTop}px + env(safe-area-inset-top, 0px))`
+              : isDocked && showNav ? `calc(${HEADER_H}px + env(safe-area-inset-top, 0px))`
               : 'env(safe-area-inset-top, 0px)',
             right: 0,
             height: isDesktop && showNav ? `calc(100vh - ${HEADER_H}px)`
               : (chatPanelOpen && kbViewport) ? `calc(${kbViewport.height}px - env(safe-area-inset-top, 0px))`
+              : isDocked && showNav ? `calc(100vh - ${HEADER_H}px - 62px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))`
               : 'calc(100vh - 62px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
             width: Math.min(chatPanelWidth, winW - (isDesktop && showNav ? SIDEBAR_W : 0)),
             zIndex: isDocked ? 101 : 150,
@@ -4052,6 +4073,7 @@ export default function App() {
             }
             else if (n.kind === 'care_safety_flag' || n.kind === 'care_new_request') {
               setStage('care-inbox'); // urgent care alerts → the team's inbox to claim/open
+              setCareInboxKey((k) => k + 1); // already open: reload it so the new request shows
             }
             else if (n.kind === 'care_message' || n.target_type === 'care_conversation') {
               const convId = n.data?.conversation_id ?? n.target_id;

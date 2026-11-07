@@ -362,7 +362,9 @@ export default function PeopleSearch({ session, profile, onClose, onViewProfile,
         // behind the status bar and the Dynamic Island — on a phone that pushed
         // the header, and the ✕ living in it, up under the hardware. Twelve
         // other overlays already add the inset; this was the one that didn't.
-        padding: 'calc(env(safe-area-inset-top, 0px) + 64px) 20px calc(env(safe-area-inset-bottom, 0px) + 20px)',
+        // bottom clears the phone tab bar (62px, above this overlay) so the last results stay reachable
+        padding: `calc(env(safe-area-inset-top, 0px) + 64px) 20px calc(env(safe-area-inset-bottom, 0px) + ${window.innerWidth < 1024 ? 82 : 20}px)`,
+        boxSizing: 'border-box',
         animation: 'fadeIn 0.15s ease',
       }}
     >
@@ -371,7 +373,7 @@ export default function PeopleSearch({ session, profile, onClose, onViewProfile,
         style={{
           background: T.cream, borderRadius: 20,
           width: '100%', maxWidth: 520,
-          maxHeight: 'calc(100vh - 100px)',
+          maxHeight: '100%',
           display: 'flex', flexDirection: 'column',
           border: `1px solid ${T.line}`,
           boxShadow: '0 20px 60px rgba(44,24,16,0.25)',

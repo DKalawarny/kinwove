@@ -133,7 +133,7 @@ function ConversationRow({ conversation, lastMessage, onOpen, isUnclaimed, helpe
   );
 }
 
-export default function CareTeamInbox({ session, profile, churchId, onBack }) {
+export default function CareTeamInbox({ session, profile, churchId, onBack, refreshKey = 0 }) {
   const [view, setView] = useState('list');
   const [openConvId, setOpenConvId] = useState(null);
   const [openConvViewerRole, setOpenConvViewerRole] = useState('care_member');
@@ -145,9 +145,20 @@ export default function CareTeamInbox({ session, profile, churchId, onBack }) {
   const [memberRecord, setMemberRecord] = useState(null);
   const [helperProfiles, setHelperProfiles] = useState({}); // care_member_id → display_name
 
+  // New requests, claims by another team member and new replies arrive while this is open
+  const [liveKey, setLiveKey] = useState(0);
   useEffect(() => {
     if (!session?.user?.id || !churchId) return;
-    setLoading(true);
+    const channel = supabase
+      .channel(`care-team-inbox-${churchId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'care_conversations' }, () => setLiveKey((k) => k + 1))
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [session?.user?.id, churchId]);
+
+  useEffect(() => {
+    if (!session?.user?.id || !churchId) return;
+    if (liveKey === 0 && refreshKey === 0) setLoading(true);
     (async () => {
       const { data: m } = await supabase
         .from('care_team_members')
@@ -208,7 +219,7 @@ export default function CareTeamInbox({ session, profile, churchId, onBack }) {
       }
       setLoading(false);
     })();
-  }, [session?.user?.id, churchId]);
+  }, [session?.user?.id, churchId, liveKey, refreshKey]);
 
   async function handleAcceptCovenant() {
     if (memberRecord) {

@@ -163,6 +163,8 @@ export const globalCss = `
   input, textarea { font-family: inherit; }
   /* Gold tint, text keeps its own colour: dark ink vanished on the dark Bible reader */
   ::selection { background: rgba(212,162,74,0.45); }
+  /* The language list hangs below the top bar; lift the bar over a profile (z 150) while it is open */
+  .kw-topbar:has(.kw-lang-open) { z-index: 400 !important; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(8px); }

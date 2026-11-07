@@ -857,7 +857,7 @@ function PlanLine({ plan, aiUsage, session, onUpgrade }) {
   );
 }
 
-export default function MePanel({ session, profile, onClose, onEditProfile, onSignOut, onDeleteAccount, onOpenBoard, onOpenHistory, onProfileUpdate, onOpenChat, onViewProfile, onFindPeople, onInviteFriends, onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue, onOpenChurchDisputesQueue, onOpenChurch, onOpenSermon, onOpenWalks, onOpenTalkToSomeone, onOpenCareInbox, onOpenMessages, onOpenConnect, onOpenPastorDashboard, hasCareTeamRole, hasPastoredChurch, onUpgrade }) {
+export default function MePanel({ session, profile, onClose, onEditProfile, onSignOut, onDeleteAccount, onOpenBoard, onOpenHistory, onProfileUpdate, onOpenChat, onViewProfile, onFindPeople, onInviteFriends, onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue, onOpenChurchDisputesQueue, onOpenChurch, onOpenSermon, onOpenWalks, onOpenTalkToSomeone, onOpenCareInbox, onOpenMessages, onOpenConnect, onOpenPastorDashboard, hasCareTeamRole, hasPastoredChurch, onUpgrade, refreshKey = 0 }) {
   const [posts, setPosts] = useState([]);
   const [stats, setStats] = useState({ posts: 0, following: 0, followers: 0 });
   const [followingList, setFollowingList] = useState([]);
@@ -1058,7 +1058,7 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
     });
     supabase.from('follows').select('following_id').eq('follower_id', uid)
       .then(async ({ data }) => {
-        if (!data?.length) return;
+        if (!data?.length) { setFollowingList([]); return; }
         const { data: profiles } = await supabase
           .from('profiles').select('id, display_name, avatar_config, avatar_url, person_type, tradition')
           .in('id', data.map((f) => f.following_id));
@@ -1066,17 +1066,17 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
       });
     loadFriends(uid);
     loadPosts(uid);
-  }, [session]);
+    // refreshKey: App bumps it when a profile opened from here closes or a friend
+    // request is answered from the bell, so unfriends and accepts show up
+  }, [session, refreshKey]);
 
   async function loadFriends(uid) {
     const { data } = await supabase
       .from('friend_requests')
       .select('id, sender_id, receiver_id, status')
       .or(`sender_id.eq.${uid},receiver_id.eq.${uid}`);
-    if (!data?.length) return;
-
-    const accepted = data.filter((r) => r.status === 'accepted');
-    const pending = data.filter((r) => r.status === 'pending' && r.receiver_id === uid);
+    const accepted = (data ?? []).filter((r) => r.status === 'accepted');
+    const pending = (data ?? []).filter((r) => r.status === 'pending' && r.receiver_id === uid);
 
     const friendIds = accepted.map((r) => r.sender_id === uid ? r.receiver_id : r.sender_id);
     const pendingIds = pending.map((r) => ({ reqId: r.id, senderId: r.sender_id }));
@@ -1086,7 +1086,8 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
         .select('id, display_name, avatar_config, avatar_url, person_type, tradition')
         .in('id', friendIds);
       setFriendsList(fp ?? []);
-    }
+    } else setFriendsList([]);
+    if (!pendingIds.length) setPendingRequests([]);
     if (pendingIds.length) {
       const { data: pp } = await supabase.from('profiles')
         .select('id, display_name, avatar_config, avatar_url, person_type, tradition')
@@ -1883,12 +1884,13 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
 
             {/* Praise report sheet */}
             {praiseTarget && (
-              <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(44,24,16,0.7)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 20 }}
+              <div style={{ position: 'fixed', left: 0, right: 0, top: 'var(--vvtop, 0px)', height: 'var(--vvh, 100%)', boxSizing: 'border-box', zIndex: 300, background: 'rgba(44,24,16,0.7)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 20 }}
                 onClick={() => setPraiseTarget(null)}
               >
                 <div onClick={e => e.stopPropagation()} style={{
                   background: T.cream, border: `1px solid ${T.line}`, borderRadius: 20,
                   padding: '28px 24px', width: '100%', maxWidth: 420, marginBottom: 20,
+                  maxHeight: 'calc(100% - 20px)', overflowY: 'auto', boxSizing: 'border-box',
                   boxShadow: '0 18px 50px rgba(44,24,16,0.18)',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>

@@ -70,11 +70,16 @@ function DeleteConfirmModal({ name, onConfirm, onCancel }) {
 
 function ThreadRow({ name, avatarConfig, photoUrl, subtitle, subtitleColor, lastBody, ts, onOpen, accent, active, onDelete, onMarkUnread, unread }) {
   const [hovered, setHovered] = useState(false);
+  // A phone has no hover, so a ⋯ button reveals the same actions there
+  const [touchOpen, setTouchOpen] = useState(false);
+  const touch = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const hasActions = !!(onMarkUnread || onDelete);
+  const showActions = hovered || touchOpen;
   return (
     <div
       style={{ position: 'relative', marginBottom: 6 }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseLeave={() => { setHovered(false); setTouchOpen(false); }}
     >
       <button
         onClick={onOpen}
@@ -84,7 +89,7 @@ function ThreadRow({ name, avatarConfig, photoUrl, subtitle, subtitleColor, last
           border: 'none',
           borderLeft: unread ? `3px solid ${T.goldDark}` : active ? `3px solid ${T.gold}` : '3px solid transparent',
           borderRadius: 12,
-          padding: '11px 14px 11px 13px',
+          padding: touch && hasActions ? '11px 46px 11px 13px' : '11px 14px 11px 13px',
           cursor: 'pointer',
           outline: 'none',
           transition: 'background 0.12s',
@@ -134,21 +139,28 @@ function ThreadRow({ name, avatarConfig, photoUrl, subtitle, subtitleColor, last
           </div>
 
           {/* Chevron — always present, just dimmer when read */}
-          <svg width="7" height="12" viewBox="0 0 7 12" fill="none" style={{ flexShrink: 0, opacity: active ? 0.7 : 0.3 }}>
+          {!(touch && hasActions) && <svg width="7" height="12" viewBox="0 0 7 12" fill="none" style={{ flexShrink: 0, opacity: active ? 0.7 : 0.3 }}>
             <path d="M1 1l5 5-5 5" stroke={T.ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          </svg>}
         </div>
       </button>
 
-      {/* Hover actions: mark-unread + delete — slide in from right */}
+      {touch && hasActions && !touchOpen && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setTouchOpen(true); }}
+          aria-label="More actions"
+          style={{ position: 'absolute', top: '50%', right: 6, transform: 'translateY(-50%)', width: 36, height: 36, borderRadius: 10, border: 'none', background: 'transparent', color: T.inkMuted, fontSize: 18, cursor: 'pointer', lineHeight: 1 }}
+        >⋯</button>
+      )}
+      {/* Hover actions (⋯ on a phone): mark-unread + delete — slide in from right */}
       {(onMarkUnread || onDelete) && (
         <div style={{
           position: 'absolute', top: '50%', right: 8,
           transform: 'translateY(-50%)',
           display: 'flex', alignItems: 'center', gap: 2,
-          opacity: hovered ? 1 : 0,
+          opacity: showActions ? 1 : 0,
           transition: 'opacity 0.15s',
-          pointerEvents: hovered ? 'auto' : 'none',
+          pointerEvents: showActions ? 'auto' : 'none',
         }}>
           {onMarkUnread && !unread && (
             <button
@@ -309,6 +321,9 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
         () => setRefreshKey((k) => k + 1))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dm_conversations' },
         () => setRefreshKey((k) => k + 1))
+      // someone messaging for the first time creates the conversation
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'dm_conversations' },
+        () => setRefreshKey((k) => k + 1))
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [session?.user?.id]);
@@ -351,6 +366,9 @@ export default function MessagesInbox({ session, profile, onBack, pendingShareUr
         setOpenDm({ id: target.id, otherProfile: target.otherProfile });
         initialDmIdRef.current = null;
         onInitialDmConsumed?.();
+      } else {
+        // a conversation newer than this list: reload, and the load picks up the ref
+        setRefreshKey((k) => k + 1);
       }
     }
   }, [initialDmId]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -2626,8 +2626,10 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
                 />
                 {/* Drawer */}
                 <div style={{
-                  position: 'fixed', bottom: 0, left: 0, right: 0,
-                  height: '65vh', zIndex: 201,
+                  // Rides above the phone keyboard: --vvh/--vvtop track the visible area while it is open
+                  position: 'fixed', left: 0, right: 0,
+                  top: 'calc(var(--vvtop, 0px) + var(--vvh, 100vh) - min(65vh, var(--vvh, 100vh)))',
+                  height: 'min(65vh, var(--vvh, 100vh))', zIndex: 201,
                   boxShadow: '0 -8px 40px rgba(26,17,8,0.18)',
                 }}>
                   <Suspense fallback={null}>

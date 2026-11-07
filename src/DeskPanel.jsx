@@ -9,6 +9,8 @@ import { appendToSermonDoc, section, DOC_SOURCE } from './lib/sermonDoc.js';
 import { wordCount, preachMinutes, preachLabel, TARGET_CHOICES } from './lib/preachTime.js';
 
 const BibleReader = lazy(() => import('./BibleReader.jsx'));
+// Phones get larger toolbar buttons and swatches (fingers, not a mouse)
+const touchUi = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function stripHtml(html) {
@@ -426,7 +428,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
       <button
         title={title}
         onMouseDown={e => { e.preventDefault(); fmt(cmd, val); }}
-        style={{ background: 'none', border: '1px solid rgba(26,17,8,0.13)', borderRadius: 5, minWidth: 26, height: 24, fontSize: 12, cursor: 'pointer', color: T.ink, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px', ...s }}
+        style={{ background: 'none', border: '1px solid rgba(26,17,8,0.13)', borderRadius: 5, minWidth: touchUi ? 34 : 26, height: touchUi ? 32 : 24, fontSize: 12, cursor: 'pointer', color: T.ink, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px', ...s }}
       >{label}</button>
     );
   }
@@ -602,12 +604,12 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                     ].map(([t, c]) => (
                       <button key={t} title={t}
                         onMouseDown={e => { e.preventDefault(); fmt('hiliteColor', c); }}
-                        style={{ width: 20, height: 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.18)', background: c, cursor: 'pointer', padding: 0, flexShrink: 0 }}
+                        style={{ width: touchUi ? 28 : 20, height: touchUi ? 28 : 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.18)', background: c, cursor: 'pointer', padding: 0, flexShrink: 0 }}
                       />
                     ))}
                     <button title="Remove highlight"
                       onMouseDown={e => { e.preventDefault(); fmt('hiliteColor', 'transparent'); }}
-                      style={{ width: 20, height: 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.22)', background: 'linear-gradient(135deg, transparent 44%, rgba(165,63,43,0.85) 46%, rgba(165,63,43,0.85) 54%, transparent 56%)', cursor: 'pointer', padding: 0, flexShrink: 0 }}
+                      style={{ width: touchUi ? 28 : 20, height: touchUi ? 28 : 20, borderRadius: '50%', border: '1px solid rgba(26,17,8,0.22)', background: 'linear-gradient(135deg, transparent 44%, rgba(165,63,43,0.85) 46%, rgba(165,63,43,0.85) 54%, transparent 56%)', cursor: 'pointer', padding: 0, flexShrink: 0 }}
                     />
                   </div>
                   {/* contentEditable body */}
@@ -668,7 +670,7 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       </>
                     ) : (
                       <button onClick={() => setConfirmDelete(note.id)}
-                        style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 11, cursor: 'pointer', opacity: 0.55 }}>
+                        style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 11, cursor: 'pointer', opacity: 0.55, padding: '8px 6px' }}>
                         Delete
                       </button>
                     )}

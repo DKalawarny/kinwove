@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import SeeTranslation from './i18n/SeeTranslation.jsx';
+import { useDraft } from './useDraft.js';
+import { sermonLabel } from './lib/sermonLabel.js';
 import { Bookmark, Smile } from 'lucide-react';
 import { track } from './analytics.js';
 import { supabase } from './supabase.js';
@@ -505,6 +507,7 @@ export default function PostCard({
 
   // Pinned modal input state (kept here so input stays pinned outside scroll area)
   const [modalText, setModalText]       = useState('');
+  useDraft(`comment:${item?.id ?? ''}`, modalText, setModalText, sessionUserId);
   const [modalAnon, setModalAnon]       = useState(false);
   const [modalBusy, setModalBusy]       = useState(false);
   const [modalEmojiOpen, setModalEmojiOpen] = useState(false);
@@ -947,7 +950,7 @@ export default function PostCard({
             padding: '12px 14px',
           }}>
             <div style={{ fontSize: 11, letterSpacing: 1.4, textTransform: 'uppercase', color: T.goldDark, fontWeight: 700, marginBottom: 6, display: 'flex', alignItems: 'center' }}>
-              <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> This week's sermon
+              <KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> {sermonLabel(effectiveItem.created_at)}
             </div>
             <div style={{ fontFamily: T.serif, fontSize: 17, fontWeight: 600, color: T.ink, lineHeight: 1.3, marginBottom: 4 }}>
               {effectiveItem.body.sermon_title ?? effectiveItem.body.text}

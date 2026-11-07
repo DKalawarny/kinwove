@@ -111,6 +111,7 @@ function NotificationRow({ n, onClick, onFriendAction, onAvatarClick, onRoleAcce
       .eq('id', n.target_id);
     setFriendState(action === 'accept' ? 'accepted' : 'declined');
     onMarkRead?.(n);
+    window.dispatchEvent(new CustomEvent('kw:friends-changed')); // Me page reloads its lists
     // Don't call onFriendAction/loadRecent — it sets loading=true which
     // unmounts and remounts all rows, resetting friendState back to null.
     // The confirmed label stays until the user closes and reopens the panel.

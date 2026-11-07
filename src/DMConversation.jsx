@@ -500,13 +500,13 @@ export default function DMConversation({ session, profile, conversationId, other
                 /* ── Normal bubble ── */
                 <div style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 6 }}>
                   {isMe && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', flexShrink: 0 }}>
                       {isDeleting ? (
-                        <button onClick={() => deleteMsg(msg.id)} style={{ background: 'none', border: 'none', color: '#c0392b', fontSize: 11, fontWeight: 600, cursor: 'pointer', padding: '2px 8px', borderRadius: 6, whiteSpace: 'nowrap' }}>Delete</button>
+                        <button onClick={() => deleteMsg(msg.id)} style={{ background: 'none', border: 'none', color: '#c0392b', fontSize: 11, fontWeight: 600, cursor: 'pointer', padding: '8px 8px', minHeight: 32, borderRadius: 6, whiteSpace: 'nowrap' }}>Delete</button>
                       ) : (
                         <>
-                          <button onClick={() => startEdit(msg)} style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 12, cursor: 'pointer', padding: '2px 4px', opacity: 0.45, lineHeight: 1 }} title="Edit message">✎</button>
-                          <button onClick={() => setDeletingId(msg.id)} style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 14, cursor: 'pointer', padding: '2px 4px', opacity: 0.45, lineHeight: 1 }} title="Delete message">×</button>
+                          <button onClick={() => startEdit(msg)} style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 13, cursor: 'pointer', width: 32, height: 30, padding: 0, opacity: 0.55, lineHeight: 1 }} title="Edit message" aria-label="Edit message">✎</button>
+                          <button onClick={() => setDeletingId(msg.id)} style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 16, cursor: 'pointer', width: 32, height: 30, padding: 0, opacity: 0.55, lineHeight: 1 }} title="Delete message" aria-label="Delete message">×</button>
                         </>
                       )}
                     </div>

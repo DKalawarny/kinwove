@@ -594,6 +594,13 @@ export default function Journal({ session, onClose, onOpenBible, onAskVerse, onC
   const [newSaving,  setNewSaving]  = useState(false);
   const newTaRef = useRef(null);
 
+  // A note saved from the Ask panel docked beside this page shows up without leaving it
+  const [notesKey, setNotesKey] = useState(0);
+  useEffect(() => {
+    const bump = () => setNotesKey((k) => k + 1);
+    window.addEventListener('kw:notes-changed', bump);
+    return () => window.removeEventListener('kw:notes-changed', bump);
+  }, []);
   useEffect(() => {
     if (!session?.user?.id) return;
     const uid = session.user.id;
@@ -616,7 +623,7 @@ export default function Journal({ session, onClose, onOpenBible, onAskVerse, onC
       setPrepNotes(cn ?? []);
       setLoading(false);
     });
-  }, [session?.user?.id]);
+  }, [session?.user?.id, notesKey]);
 
   useEffect(() => {
     if (newOpen && newTaRef.current) newTaRef.current.focus();

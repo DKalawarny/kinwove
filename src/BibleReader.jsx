@@ -1146,7 +1146,7 @@ function IlluminatedCap({ seedKey, letter, quote, red, dark, scale = 1 }) {
   );
 }
 
-export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, topOffset = 0, fillParent = false, churchNoteContext = null, churchNoteSeries = '', onChurchNoteSaved }) {
+export default function BibleReader({ session, profile, homeKey = 0, onClose, onOpenChat, jumpRef, onJumpConsumed, topOffset = 0, fillParent = false, churchNoteContext = null, churchNoteSeries = '', onChurchNoteSaved }) {
   const uid = session?.user?.id ?? 'guest';
 
   // ── Navigation state ────────────────────────────────────────────────────────
@@ -1603,6 +1603,9 @@ export default function BibleReader({ session, profile, homeKey = 0, onClose, on
     setChNum(parsed.chapter);
     if (parsed.verse != null) setPendingVerseScroll(parsed.verse);
     setView('reading');
+    // Hand the request back so the same verse can be asked for again, and a later
+    // visit to Read doesn't replay this one
+    onJumpConsumed?.();
   }, [jumpRef]);
 
   useEffect(() => {

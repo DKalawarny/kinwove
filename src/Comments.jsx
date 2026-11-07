@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import SeeTranslation from './i18n/SeeTranslation.jsx';
+import { useDraft } from './useDraft.js';
 import { Smile } from 'lucide-react';
 import { supabase, authedFetch } from './supabase.js';
 import { track } from './analytics.js';
@@ -26,6 +27,7 @@ export default function Comments({ item, sessionUserId, authorMap, rolesByUser, 
   const [comments, setComments] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [text, setText]         = useState('');
+  useDraft(`comment:${item?.id ?? ''}`, text, setText, sessionUserId);
   const [anon, setAnon]         = useState(false);
   const [busy, setBusy]         = useState(false);
   const [profMap, setProfMap]   = useState({});
