@@ -837,6 +837,10 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
 // scrollable div so BibleReader can expand freely while DeskPanel clips it.
 // For the reading view, topOffset=126 makes height = calc(100vh-188px) which
 // matches DeskPanel content area: calc(100vh-130px) minus ~58px tab bar.
+// fillParent now sizes the reading view to the pane itself: the fixed formula stopped
+// matching once the beta banner and sermon bar sat above the desk, leaving the text
+// 74px taller than the pane inside a second scroller, so drag-selecting raced both
+// scrollers (Daniel, 7 Nov).
 const BIBLE_TOP_OFFSET = 126;
 
 export default function DeskPanel({ session, profile, churchId, onClose, isMobile, initialTab, width = 480, refreshKey = 0, onOpenSession, onUseInSermon, threePane = false, side = 'right', currentSeries = '' }) {
@@ -904,11 +908,12 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
               Loading Bible…
             </div>
           }>
-            <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <BibleReader
                 session={session}
                 profile={bibleProfile}
                 topOffset={BIBLE_TOP_OFFSET}
+                fillParent
                 churchNoteContext={churchId}
                 churchNoteSeries={currentSeries}
                 onChurchNoteSaved={() => setBibleSaves(n => n + 1)}
@@ -1003,11 +1008,12 @@ export default function DeskPanel({ session, profile, churchId, onClose, isMobil
             {/* Scrollable wrapper: BibleReader home view uses minHeight:100vh so it
                 needs a scroll container here instead of clipping the page. Reading
                 view sets its own fixed height so the wrapper stays put. */}
-            <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <BibleReader
                 session={session}
                 profile={bibleProfile}
                 topOffset={BIBLE_TOP_OFFSET}
+                fillParent
                 churchNoteContext={churchId}
                 churchNoteSeries={currentSeries}
                 onChurchNoteSaved={() => setBibleSaves(n => n + 1)}
