@@ -842,11 +842,13 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
                     color: T.cream, border: 'none', borderRadius: 999,
                     padding: '11px 22px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
                     boxShadow: '0 3px 14px rgba(184,115,58,0.35)',
-                    opacity: (generating || !summary.trim()) ? 0.5 : 1,
+                    opacity: generating ? 1 : !summary.trim() ? 0.5 : 1,
+                    cursor: generating ? 'progress' : 'pointer',
                   }}
                 >
-                  {generating ? 'Generating week…' : content.length > 0 ? <><KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> Regenerate the week</> : <><KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> Generate the week</>}
+                  {generating ? <><KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 6, flexShrink: 0, animation: 'spin 1.6s linear infinite', display: 'inline-block' }} /> Writing your week…</> : content.length > 0 ? <><KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> Regenerate the week</> : <><KinwoveStar size={12} style={{ verticalAlign: 'middle', marginRight: 5, flexShrink: 0 }} /> Generate the week</>}
                 </button>
+                {generating && <GenerateProgress />}
                 {!sermonAi.loading && (
                   <SermonAiNudge
                     remaining={sermonAi.remaining}
@@ -1383,6 +1385,30 @@ export default function SermonComposer({ session, churchId, onBack, initialSermo
             )}
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+// The week takes about a minute and the server answers all at once, so show it is
+// working: a moving bar, the seconds so far, and what it is drafting.
+const GEN_STEPS = ['Reading your outline', 'Writing the daily questions', 'Choosing the verses', 'Drafting the deeper track', 'Writing the kids version', 'Finishing the week'];
+function GenerateProgress() {
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setSecs((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const pct = Math.min(94, Math.round(100 * (1 - Math.exp(-secs / 30))));
+  const step = GEN_STEPS[Math.min(GEN_STEPS.length - 1, Math.floor(secs / 10))];
+  return (
+    <div style={{ marginTop: 12, maxWidth: 420 }} aria-live="polite">
+      <div style={{ height: 4, borderRadius: 2, background: 'rgba(184,115,58,0.15)', overflow: 'hidden' }}>
+        <div style={{ width: `${pct}%`, height: '100%', background: T.gold, transition: 'width 1s linear' }} />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 12.5, color: T.inkSoft, marginTop: 6 }}>
+        <span>{step}…</span>
+        <span style={{ color: T.inkMuted, whiteSpace: 'nowrap' }}>{secs}s · usually about a minute</span>
       </div>
     </div>
   );
