@@ -744,7 +744,12 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                       style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
                       Podium
                     </button>
-                    <button onClick={() => startEdit(note)}
+                    <button onClick={() => {
+                      // In Study, opening a sermon's notes opens that sermon too, so the top bar names it
+                      const series = note.series?.trim();
+                      if (live && series && onOpenSession && series !== (currentSeries || '').trim()) onOpenSession(series);
+                      startEdit(note);
+                    }}
                       style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
                       Edit
                     </button>

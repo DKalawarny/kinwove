@@ -510,14 +510,13 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   }
   const isEmpty = messages.length === 0;
 
-  // Note → thread: a saved note's series is its session title. Load that
-  // session on request; if it isn't in this browser's history (sessions are
-  // per-device), open the history picker instead of failing silently.
+  // Note → thread: a saved note's series is its session title. Opening a note
+  // opens that sermon, so the bar names it; sessions are per-device, so one
+  // with no chat here starts fresh under that sermon's name.
   useEffect(() => {
     if (!openSessionTitle) return;
-    const conv = history.find((c) => c.title === openSessionTitle);
-    if (conv) loadConversation(conv);
-    else setHistoryOpen(true);
+    // switchToSermon opens its chat when this device has one, else starts that sermon fresh
+    switchToSermon(openSessionTitle);
     onSessionOpened?.();
   }, [openSessionTitle]);
 
