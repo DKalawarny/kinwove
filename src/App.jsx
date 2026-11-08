@@ -3016,6 +3016,7 @@ export default function App() {
           onInviteFriends={() => setStage('invite')}
           onOpenPrayer={() => setStage('prayer')}
           onOpenRead={() => setStage('read')}
+          onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }}
           onVerseClick={() => setShowVerseCard(true)}
           onOpenChurch={() => {
             if (profile?.church_id) { setViewingChurchId(profile.church_id); setStage('church'); }

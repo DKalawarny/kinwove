@@ -2330,11 +2330,11 @@ export default function Chat({
             Send
           </button>
         </div>
-        {!panelMode && (
+        {(
           <div
             style={{
               maxWidth: 720,
-              margin: '8px auto 0',
+              margin: panelMode ? '6px auto 0' : '8px auto 0',
               fontSize: 11,
               color: C.muted,
               textAlign: 'center',

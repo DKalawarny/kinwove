@@ -26,6 +26,7 @@ import { track } from './analytics.js';
 import { cleanText } from './moderation.js';
 import { useEscape } from './useEscape.js';
 import { enterSends } from './lib/enterSends.js';
+import { splitScriptureRefs } from './lib/scriptureLinks.js';
 const PostComposer = lazy(() => import('./PostComposer.jsx'));
 
 // Each reaction owns its own register: Yes is the casual like (blue-grey),
@@ -330,7 +331,22 @@ function SermonTeaserCard({ sermon, isMember, onOpenChurch }) {
   );
 }
 
-function PostCard({ post, index = 0, session, currentUserId, userProfile, userGroup, onReact, onReplySubmit, onRepost, onSendDM, isFollowing, onFollow, onViewProfile, tabColor = '#A85530', tabText = '#8E5528', isSaved = false, onSaveToggle, isAuthorBlocked = false, onBlockAuthor, defaultCommentsOpen = false, churchName = null }) {
+// Post text with Bible references ("John 3:16") as gold links that open the passage.
+function RefText({ text, onRef }) {
+  if (!onRef) return text;
+  return splitScriptureRefs(text).map((p, i) => p.ref ? (
+    <span
+      key={i}
+      role="link"
+      tabIndex={0}
+      onClick={(e) => { e.stopPropagation(); onRef(p.ref); }}
+      onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onRef(p.ref); } }}
+      style={{ color: T.goldDark, cursor: 'pointer', textDecoration: 'underline', textDecorationColor: 'rgba(142,85,40,0.35)', textUnderlineOffset: 3 }}
+    >{p.text}</span>
+  ) : <Fragment key={i}>{p.text}</Fragment>);
+}
+
+function PostCard({ post, index = 0, session, currentUserId, userProfile, userGroup, onReact, onReplySubmit, onRepost, onSendDM, isFollowing, onFollow, onViewProfile, tabColor = '#A85530', tabText = '#8E5528', isSaved = false, onSaveToggle, isAuthorBlocked = false, onBlockAuthor, defaultCommentsOpen = false, churchName = null, onOpenRef }) {
   const [bodyExpanded,   setBodyExpanded]   = useState(false);
   const [commentsOpen,   setCommentsOpen]   = useState(defaultCommentsOpen);
   // A notification tap on an already-rendered post flips this back to true.
@@ -616,7 +632,7 @@ function PostCard({ post, index = 0, session, currentUserId, userProfile, userGr
                 color: T.ink, lineHeight: 1.55, whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word',
                 letterSpacing: '-0.01em', fontVariationSettings: '"opsz" 18',
               }}>
-                {(() => { const t = stripFirstUrl(post.body); return bodyExpanded ? t : t.slice(0, 280) + (t.length > 280 ? '…' : ''); })()}
+                <RefText onRef={onOpenRef} text={(() => { const t = stripFirstUrl(post.body); return bodyExpanded ? t : t.slice(0, 280) + (t.length > 280 ? '…' : ''); })()} />
               </div>
             </div>
           ) : (
@@ -625,7 +641,7 @@ function PostCard({ post, index = 0, session, currentUserId, userProfile, userGr
               lineHeight: 1.55, margin: '6px 0 16px', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word',
               letterSpacing: '-0.01em', fontWeight: 400, fontVariationSettings: '"opsz" 18',
             }}>
-              {(() => { const t = stripFirstUrl(post.body); return bodyExpanded ? t : t.slice(0, 280) + (t.length > 280 ? '…' : ''); })()}
+              <RefText onRef={onOpenRef} text={(() => { const t = stripFirstUrl(post.body); return bodyExpanded ? t : t.slice(0, 280) + (t.length > 280 ? '…' : ''); })()} />
             </div>
           )}
           {!post.body_data?.repost_of && <SeeTranslation text={post.body} style={{ margin: '-8px 0 14px' }} />}
@@ -2191,6 +2207,7 @@ useEffect(() => {
                         ) : (
                         <div data-post-id={p.id}>
                         <PostCard
+                          onOpenRef={onOpenBible}
                           post={p}
                           index={Math.min(i, 6)}
                           session={session}
@@ -2379,6 +2396,7 @@ useEffect(() => {
                   {milestones.map((p, i) => (
                     <Fragment key={`post:${p.id}`}>
                       <PostCard
+                        onOpenRef={onOpenBible}
                         post={p}
                         index={Math.min(i, 6)}
                         session={session}
