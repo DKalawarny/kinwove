@@ -101,7 +101,7 @@ import { supabase, authedFetch } from './supabase.js';
 import { getDailyVerse } from './dailyVerse.js';
 import { SHOW_WALKS, SHOW_CONNECT, SHOW_MILESTONES_TAB, SHOW_FOLLOWS } from './flags.js';
 import {
-  UserPlus, Inbox, Building2,
+  UserPlus, Inbox, Building2, KeyRound,
   Star, ShieldCheck, Flag, Megaphone, UserCog, LogOut, Trash2, Settings as SettingsIcon, HelpCircle, BookOpen,
 } from 'lucide-react';
 import SwipeableSheet from './SwipeableSheet.jsx';
@@ -1507,7 +1507,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
   onOpenTalkToSomeone, onOpenCareInbox, onOpenPastorDashboard,
   onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue,
   onOpenChurchDisputesQueue, onOpenSponsorAdmin,
-  onEditProfile, onSignOut, onDeleteAccount, onOpenHelp, onOpenReport, onOpenJournal,
+  onEditProfile, onOpenAccount, onSignOut, onDeleteAccount, onOpenHelp, onOpenReport, onOpenJournal,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const popoverRef = useRef(null);
@@ -1592,6 +1592,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
     onOpenChurchDisputesQueue && { Icon: Flag,        label: 'Listing disputes',    onClick: onOpenChurchDisputesQueue },
     onOpenSponsorAdmin        && { Icon: Megaphone,   label: 'Site analytics',      onClick: onOpenSponsorAdmin },
     onEditProfile  && { Icon: UserCog,    label: 'Edit profile',    onClick: onEditProfile },
+    onOpenAccount  && { Icon: KeyRound,   label: 'Email & password', onClick: onOpenAccount },
     onOpenHelp     && { Icon: HelpCircle, label: 'Help',             onClick: onOpenHelp },
     onOpenReport   && { Icon: Flag,       label: 'Report an issue', onClick: onOpenReport },
     onSignOut      && { Icon: LogOut,  label: 'Sign out',        onClick: onSignOut,      danger: true },
@@ -1746,6 +1747,9 @@ export default function App() {
   // Me page lists (friends, following, requests) reload after a profile closes,
   // since unfriending or unfollowing happens inside that overlay
   const [meKey, setMeKey] = useState(0);
+  // Bumped by Settings → Email & password: opens You on the About tab at that card.
+  const [meAccountKey, setMeAccountKey] = useState(0);
+  const openAccount = () => { setViewingUserId(null); setMeAccountKey((k) => k + 1); setStage('me'); };
   const hadProfileRef = useRef(false);
   useEffect(() => {
     if (hadProfileRef.current && !viewingUserId) setMeKey((k) => k + 1);
@@ -3064,6 +3068,7 @@ export default function App() {
       {stage === 'me' && session && (
         <MePanel
           refreshKey={meKey}
+          openAccountKey={meAccountKey}
           session={session}
           profile={profile}
           onClose={() => goBack('feed')}
@@ -3629,6 +3634,7 @@ export default function App() {
             onOpenSponsorAdmin={profile?.is_admin ? () => { setViewingUserId(null); setStage('app-admin'); } : undefined}
             onOpenHelp={() => { setViewingUserId(null); setStage('help'); }}
             onEditProfile={() => { setViewingUserId(null); setProfileEditOrigin('me'); setAuthStage('profile-setup'); }}
+            onOpenAccount={openAccount}
             onOpenReport={() => setReportOpen(true)}
             onOpenJournal={() => { setViewingUserId(null); setStage('journal'); }}
             onSignOut={() => { supabase.auth.signOut(); setSession(null); setProfile(null); setStage('landing'); }}
@@ -3681,6 +3687,7 @@ export default function App() {
           onOpenSponsorAdmin={profile?.is_admin ? () => setStage('app-admin') : undefined}
           onOpenHelp={() => setStage('help')}
           onEditProfile={() => { setProfileEditOrigin('me'); setAuthStage('profile-setup'); }}
+          onOpenAccount={openAccount}
           onOpenReport={() => setReportOpen(true)}
           onSignOut={() => { supabase.auth.signOut(); setSession(null); setProfile(null); setStage('landing'); }}
           onDeleteAccount={() => setShowDeleteAccount(true)}

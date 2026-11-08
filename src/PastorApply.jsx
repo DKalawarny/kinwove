@@ -197,7 +197,7 @@ export default function PastorApply({ session, profile, onClose, onBecamePastor 
             You're in, with one note.
           </div>
           <div style={{ fontFamily: T.serif, fontSize: 15, color: T.inkSoft, lineHeight: 1.7, marginBottom: 16 }}>
-            Your church page is active and your dashboard is ready. Because we couldn't verify an email, your church shows a <strong style={{ color: T.ink }}>"Self-reported"</strong> badge and won't appear in the public directory yet.
+            Your church page is active and your dashboard is ready. Because we couldn't verify an email, your church shows a <strong style={{ color: T.ink }}>"Self-reported"</strong> badge until it's verified.
           </div>
           <div style={{ background: T.parchment, border: `1px solid ${T.line}`, borderRadius: 12, padding: '14px 16px', fontSize: 13, color: T.inkSoft, lineHeight: 1.6, marginBottom: 24 }}>
             Once you have a church email set up, you can verify anytime from your dashboard to remove the badge and go fully public.
@@ -355,7 +355,7 @@ export default function PastorApply({ session, profile, onClose, onBecamePastor 
                 {submittingUnverified ? 'Setting up…' : 'Continue without verifying'}
               </button>
               <div style={{ fontSize: 11.5, color: T.inkMuted, marginTop: 8, lineHeight: 1.55 }}>
-                Your church will show a "Self-reported" badge and won't appear in the public directory until verified.
+                Your church will show a "Self-reported" badge until it's verified.
               </div>
             </div>
           )}

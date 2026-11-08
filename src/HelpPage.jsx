@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Compass, Users, Heart, BookOpen, Building2, UserCheck, Shield, Search, Sparkles, Volume2, StickyNote, Mic } from 'lucide-react';
+import { Compass, Users, Heart, BookOpen, Building2, UserCheck, Shield, Search, Sparkles, Volume2, StickyNote, Mic, KeyRound } from 'lucide-react';
 import { T } from './theme.js';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 
@@ -13,62 +13,62 @@ const SECTIONS = [
     items: [
       {
         q: 'What is kinwove?',
-        a: 'kinwove is a faith community for people at every stage of their spiritual journey, from the curious to the committed. You can share posts, pray together, study the Bible, find a church, and connect with others walking the same road.',
+        a: 'kinwove is a faith community for people at every stage of their spiritual journey, from the curious to the committed. You can ask questions about the Bible and faith, read and study Scripture, share posts, pray together, and find a church.',
       },
       {
         q: 'How do I set up my profile?',
-        a: 'Tap your avatar in the bottom nav (or "You" in the sidebar on desktop) to open your profile. From there you can upload a photo or build a custom avatar, set your banner colour, write a bio, and choose what you\'re looking for on your journey.',
-      },
-      {
-        q: 'Who can see my posts?',
-        a: 'When you write a post you choose the audience: Public (anyone on kinwove), Church (your church family only), or Only me. You can change this at any time from the ⋯ menu on the post.',
+        a: 'Tap your name in the bottom nav (or in the sidebar on desktop) to open your profile. From there you can add a photo or build an avatar, pick a banner colour, and add a bio. Settings → Edit profile has the rest: your name, city, language, what you\'re looking for, and the voice used to read answers aloud.',
       },
       {
         q: 'What does Ask do?',
-        a: 'Ask is kinwove\'s AI, powered by Claude. It answers Scripture questions, explores theology, helps you work through doubt, and never judges where you are in your journey. Tap Ask in the sidebar or the ⋮ menu on mobile to open it. Your conversation history is saved and accessible any time from the Conversations panel inside Ask.',
+        a: 'Ask is kinwove\'s AI, powered by Claude. It answers Scripture questions, explores theology, and helps you work through doubt, without judging where you are. Tap Ask in the sidebar, or the centre button of the bottom nav on mobile. Your past chats are under ◷ Conversation history in Ask\'s menu.',
       },
       {
-        q: 'Can I access my Ask conversations on another device?',
-        a: 'Yes. Open the Conversations panel inside Ask and turn on "Sync across devices." Your history will be saved to your account and loaded automatically whenever you sign in on any device.',
+        q: 'Can I see my Ask conversations on another device?',
+        a: 'Yes. New accounts sync conversations to your account automatically, so they show up wherever you sign in. You can check or change this in Conversation history: it says "Synced" when it\'s on.',
+      },
+      {
+        q: 'Can I use kinwove in my language?',
+        a: 'Yes. Pick your language from the globe in the top bar, or in Settings → Edit profile. Ask replies in that language, and posts and comments in other languages have a "See translation" link. Some buttons and menus are still in English only.',
       },
     ],
   },
   {
     id: 'community',
     Icon: Users,
-    title: 'Community & posting',
+    title: 'Feed & posting',
     items: [
       {
         q: 'How do I make a post?',
-        a: 'Tap the compose area at the top of the Community tab or your profile. Type your thought, attach up to 4 photos, choose your audience, and tap Post. You can also mark a post as a ✶ Journey Milestone to log spiritual milestones over time.',
+        a: 'Open the Feed and tap the compose box at the top of the Posts tab. Write your thought, attach up to 4 photos, choose who can see it, and tap Post. Tap ✶ Milestone to mark a step in your journey.',
       },
       {
-        q: 'How do I save a post to read later?',
-        a: 'Tap the bookmark icon at the bottom-right of any post. Your saved posts are collected under the Saved tab on your profile: tap the bookmark again, or tap Unsave, to remove it.',
-      },
-      {
-        q: 'How do I react to a post?',
-        a: 'Use the four reaction buttons below each post: 👍 Yes, ❤️ Love, 🙏 Amen, and 💡 Insightful. Tap again to remove your reaction.',
-      },
-      {
-        q: 'How do I comment?',
-        a: 'Tap the comment button at the bottom of any post to open the reply thread. Comments are visible to whoever can see the original post.',
-      },
-      {
-        q: 'What is the ⋯ menu on a post?',
-        a: 'On your own posts: edit content, change the audience, or delete it. On other people\'s posts: report the content or block the user. Blocking someone removes their posts from your feed and prevents them from interacting with yours.',
-      },
-      {
-        q: 'How do I block someone?',
-        a: 'Tap ⋯ on any post you didn\'t write and choose Block user. The block takes effect immediately. Their content will no longer appear for you. Blocking is silent; they won\'t be notified.',
-      },
-      {
-        q: 'How do I report a post?',
-        a: 'Tap ⋯ on a post you didn\'t write, then choose Report post. Select a reason, spam, harmful content, offensive material, misinformation, or other, then tap Submit. Reports are confidential and reviewed by our team.',
+        q: 'Who can see my posts?',
+        a: 'You choose when you write it: Public, Church (your church family), or Only me. Public posts show on your profile and in the Feed of people connected to you, like members of your church.',
       },
       {
         q: 'Can I post anonymously?',
-        a: 'Yes. When composing in the Community tab, toggle the Anonymous option. Your name and avatar won\'t appear on the post.',
+        a: 'Yes. Tap 👤 Anonymous in the compose box before you post. Your name and photo won\'t appear on it.',
+      },
+      {
+        q: 'How do I edit or delete my post?',
+        a: 'Open your profile and go to the Posts tab. Tap ⋯ on the post and choose Edit post or Delete post.',
+      },
+      {
+        q: 'How do I react to a post?',
+        a: 'Use the reaction buttons under each post: 👍 Yes, ❤️ Love, 🙏 Amen, and 💡 Insightful. Tap again to remove your reaction.',
+      },
+      {
+        q: 'How do I comment?',
+        a: 'Tap Comment under any post to open the conversation. Comments are visible to whoever can see the post.',
+      },
+      {
+        q: 'How do I save a post to read later?',
+        a: 'Tap the bookmark at the bottom right of a post. Saved posts are under the Saves tab on your profile. Tap the bookmark again to remove it.',
+      },
+      {
+        q: 'How do I report a post?',
+        a: 'Tap ⋯ on a post you didn\'t write and choose 🚩 Report post. Pick a reason and tap Submit report. Reports are confidential and reviewed by our team.',
       },
     ],
   },
@@ -79,19 +79,19 @@ const SECTIONS = [
     items: [
       {
         q: 'What are Circles?',
-        a: 'Circles are small private groups: for a Bible study, a friend group, or any community you want to keep close. Open the Groups section from the sidebar (desktop) or the navigation menu (mobile).',
+        a: 'Circles are small private groups: for a Bible study, a friend group, or anyone you want to stay close to. Open the Feed and tap the Circles tab.',
       },
       {
         q: 'How do I start a Circle?',
-        a: 'Open Groups and tap "Start a circle." Give it a name, and share the join code with people you want to invite. You\'re the host. You can manage the group and its members.',
+        a: 'In Feed → Circles, tap + New. Give it a name and share the join code with the people you want in it. As the host you can delete the circle.',
       },
       {
         q: 'How do I join a Circle?',
-        a: 'Get a join code from someone already in the circle. Open Groups, tap "Join with code," and enter it. You\'ll be added straight away.',
+        a: 'Get the 6 character code from someone in the circle. In Feed → Circles, tap Join with code and enter it. You\'re in straight away.',
       },
       {
         q: 'Can I be in more than one Circle?',
-        a: 'Yes. You can be in as many as you like. Each circle has its own discussion thread. A dot appears on the circle card when there are new posts since you last visited.',
+        a: 'Yes, as many as you like. Each circle has its own conversation, and a dot shows on a circle when there\'s something new.',
       },
     ],
   },
@@ -101,20 +101,24 @@ const SECTIONS = [
     title: 'Prayer',
     items: [
       {
-        q: 'How do I add a prayer request?',
-        a: 'Open the Prayer tab and tap the compose area. Prayers are private by default, tap the visibility toggle to share a request with the community if you\'d like others praying alongside you.',
+        q: 'Where do I keep my own prayers?',
+        a: 'Open your profile and tap the Prayer Journal tab. Prayers there are private: only you can see them.',
+      },
+      {
+        q: 'How do I ask others to pray for me?',
+        a: 'Open the Feed, tap the 🙏 Prayers tab, then tap Share a prayer request…. These are visible to the community.',
+      },
+      {
+        q: 'How do I pray for someone else\'s request?',
+        a: 'In Feed → 🙏 Prayers, tap 🙏 Praying on a request. The person gets a quiet notification that someone is praying for them. Tap 💬 Encourage to leave them a few words.',
       },
       {
         q: 'How do I mark a prayer as answered?',
-        a: 'Find the prayer in your Prayer tab and tap Answered. You can write a praise report to share what happened. These are an encouragement for the whole community.',
+        a: 'In your Prayer Journal, tap ⋯ on the prayer and choose Mark answered. You can add a short testimony of what happened.',
       },
       {
-        q: 'Can I pray for someone else\'s request?',
-        a: 'Yes, on any public prayer request, tap Pray for this. The person receives a quiet notification that someone is praying for them. One tap, and it genuinely means the world.',
-      },
-      {
-        q: 'What is the Community Prayer Wall?',
-        a: 'The Prayer section in the Community tab shows public prayer requests from people in the feed. You can pray for them, leave encouragements, or add requests to your own private prayer list.',
+        q: 'Does my church have its own prayer list?',
+        a: 'Yes. Members can open their church page and tap the 🙏 Pray tab to see and pray for requests from the congregation.',
       },
     ],
   },
@@ -125,31 +129,35 @@ const SECTIONS = [
     items: [
       {
         q: 'How does the Bible reader work?',
-        a: 'Open the Bible tab to read Scripture with a built-in study interface. Tap any verse to access explanations, cross-references, original language insights, and more. The Daily Verse shown in the header is tappable. It opens the reader directly to that passage.',
+        a: 'Open the Bible tab and pick a book and chapter. Tap any verse for options: 💬 Ask about it, Explain simply, Historical context, Cross-references, Original language, Compare versions, ✏ Note, highlight colours, and Share. You can choose NIV, KJV, NKJV, or ASV, turn on dark mode, and tap Aa to change the text size.',
       },
       {
-        q: 'Can I listen to a chapter being read aloud?',
-        a: 'Yes. Once a chapter loads, tap "▶ Read chapter" above the verses. The chapter is read in your chosen voice (James or Grace, set in Edit Profile → Preferences). While playing you get full controls: ⏮ back 10 seconds, ⏸ pause, ⏭ skip 10 seconds, and ✕ to stop. Flipping to the next chapter automatically stops the current one and starts reading the new chapter.',
+        q: 'Are there study notes for each chapter?',
+        a: 'Yes. Every chapter has a short plain-language study note, and each book has an introduction: what happens, the background, where Christians read it differently, and a question to think about.',
+      },
+      {
+        q: 'How do I highlight a verse?',
+        a: 'Tap the verse and choose one of the highlight colours in the popup. Your highlights also show up on your Notes page.',
+      },
+      {
+        q: 'Can I listen to a chapter read aloud?',
+        a: 'Yes. Tap ▶ Read chapter above the verses. While it plays you can go back or skip 10 seconds, pause, or stop, and it carries on into the next chapter.',
       },
       {
         q: 'Can I start listening from a specific verse?',
-        a: 'Yes, tap any verse in the chapter and choose "▶ Read from here" in the popup. The audio will start from that verse and continue to the end of the chapter. kinwove remembers where you left off, so when you return the button says "Resume from v.X."',
+        a: 'Yes. Tap the verse and choose ▶ Read from here. Next time you open that chapter, the button offers to resume from that verse.',
       },
       {
-        q: 'How do I change the reading voice?',
-        a: 'Go to Settings → Edit Profile → Preferences and choose between James (deep, unhurried) and Grace (soft, soothing). The change applies everywhere voices are used, Bible read-aloud and AI response playback.',
+        q: 'How do I change the voice that reads answers aloud?',
+        a: 'Go to Settings → Edit profile → Read-back voice and choose James (deep and unhurried) or Grace (soft and soothing). This is the voice used when you tap Listen on an Ask answer.',
       },
       {
-        q: 'How do I open a passage from a post?',
-        a: 'Scripture references shown in gold text inside posts are tappable and jump directly to that passage in the Bible reader.',
+        q: 'Are there reading plans?',
+        a: 'Yes. In the Bible tab, open Reading plans and pick one. Tap Mark read to move on to the next chapter.',
       },
       {
-        q: 'What can the AI help me with in Bible study?',
-        a: 'Tap Ask and ask anything: explanation of a passage, word study, historical background, theological questions, or just working through doubt. The AI draws on multiple translations and always responds with grace.',
-      },
-      {
-        q: 'What are Walks?',
-        a: 'Walks are guided multi-day journeys through a theme or book of the Bible. Open the Bible tab and find Walks to start one at your own pace.',
+        q: 'What\'s the daily verse?',
+        a: 'Each day has a verse, shown in the header. Tap it to open the verse card, then Read in context to open the whole chapter.',
       },
     ],
   },
@@ -160,27 +168,31 @@ const SECTIONS = [
     items: [
       {
         q: 'How do I take a note on a Bible verse?',
-        a: 'Tap any verse in the Bible reader to open the verse popup, then choose "✏ Note." Write your thought and tap Save. A small gold dot will appear next to that verse so you can see at a glance which verses you\'ve annotated.',
+        a: 'Tap the verse, choose ✏ Note, write your thought, and tap Save note. A small gold dot appears beside verses that have a note.',
+      },
+      {
+        q: 'How do I save an answer from Ask?',
+        a: 'Tap Note under any answer. It\'s saved to your Notes page under Saved notes, along with the question you asked.',
       },
       {
         q: 'Where do I find all my notes?',
-        a: 'Tap Notes in the sidebar nav (between Bible and You on desktop, or via the menu on mobile). Your notes are grouped by book of the Bible in canonical order, Genesis through Revelation.',
+        a: 'Tap Notes in the sidebar (on mobile, it\'s in the ⋮ menu). Saved notes and any sermon prep notes come first, then your verse notes and highlights grouped by book, Genesis through Revelation. Tap + New note to write one from scratch.',
       },
       {
         q: 'Can I edit a note after saving it?',
-        a: 'Yes, tap the note text to edit it inline. Make your changes and tap Save. Clearing the text entirely and saving will delete the note.',
+        a: 'Yes. Tap Edit on the note, make your changes, and save. Clearing all the text and saving deletes the note.',
       },
       {
         q: 'Can I search my notes?',
-        a: 'Yes. Use the search bar at the top of the Notes screen to filter by book name, note text, or the verse text itself.',
+        a: 'Yes. Use the search bar at the top of the Notes page to search by book name, your note, or the verse text.',
       },
       {
         q: 'What does "Ask about this" do on a note?',
-        a: 'Tapping "Ask about this" on any note opens the AI with that verse preloaded as context, so you can dig deeper into exactly what you were reflecting on.',
+        a: 'It opens Ask with that verse ready in the box, so you can dig deeper into what you were thinking about.',
       },
       {
-        q: 'Can I jump from a note back to the verse in the Bible?',
-        a: 'Yes, tap the gold verse reference at the top of any note card (e.g. GENESIS 1:3 ↗) and you\'ll be taken straight to that passage in the Bible reader.',
+        q: 'Can I jump from a note back to the verse?',
+        a: 'Yes. Tap the gold verse reference at the top of the note (for example GENESIS 1:3 ↗) to open that passage in the Bible.',
       },
     ],
   },
@@ -191,31 +203,27 @@ const SECTIONS = [
     items: [
       {
         q: 'How does kinwove make sure the AI gets scripture right?',
-        a: 'Every scripture reference the AI produces is automatically checked against the King James Bible in real time. If a reference is confirmed, a small ✓ appears next to it. If it cannot be verified, a ⚠ appears instead. The AI is also built with a strict rule: it must never invent a verse number, misquote a passage, or present a paraphrase as a direct quote.',
+        a: 'Every scripture reference the AI gives is checked against the Bible as the answer appears. A small ✓ means the reference was confirmed. A ⚠ means it couldn\'t be confirmed, so check it in your Bible.',
       },
       {
-        q: 'What do the ✓ and ⚠ symbols next to a scripture reference mean?',
-        a: '✓ means the reference was looked up against the Bible and confirmed: the book, chapter, and verse all exist. ⚠ means the lookup could not be verified. This might mean the reference is wrong, or it may be a formatting edge case. Either way, treat ⚠ as a prompt to check your Bible before sharing or acting on that reference.',
+        q: 'Can I tap a scripture reference in an answer?',
+        a: 'Yes. References in gold are tappable. Tap one to read the verse right there, in the version you read in the Bible tab (NIV unless you picked another).',
       },
       {
-        q: 'Can I tap on a scripture reference in the AI\'s response?',
-        a: 'Yes. Any scripture reference shown in gold text is tappable. Tap it to see the actual verse text in the version you read in the Bible tab (NIV unless you pick another), pulled directly from the Bible. You can then dismiss the card and continue your conversation.',
-      },
-      {
-        q: 'Why does the AI sometimes show a quote in a different style with a line down the side?',
-        a: 'When the AI is paraphrasing rather than quoting directly, it marks it as a paraphrase, and kinwove displays it with a gold left-border and slight italic style so you can see at a glance that it\'s a summary, not the exact words of the text. This helps you know when to go check the original wording yourself.',
+        q: 'Why is some text shown with a line down the side?',
+        a: 'That marks a paraphrase: a summary of what a passage says, not its exact words. It\'s shown in a different style so you can tell the difference at a glance.',
       },
       {
         q: 'Does the AI know about commonly misquoted "Bible verses"?',
-        a: 'Yes. It is specifically programmed to recognise phrases that people often treat as scripture but that do not appear in the Bible. These include "God helps those who help themselves," "This too shall pass," "Everything happens for a reason," and "Money is the root of all evil" (the actual text is "the love of money is a root of all kinds of evil," 1 Timothy 6:10). The AI will never present these as biblical quotes.',
+        a: 'Yes. It recognises sayings people often treat as scripture that aren\'t in the Bible, like "God helps those who help themselves" and "Everything happens for a reason", and says so gently.',
       },
       {
         q: 'What if I think the AI got something wrong?',
-        a: 'Tap the flag icon (the small ⚑ button next to Share and Copy on any AI response) and we\'ll be notified. The response is logged for manual review by our team. The AI will not be perfect, no AI is, but flagging helps us find patterns and improve over time.',
+        a: 'Tap Flag under the answer (next to Share and Copy). It\'s logged for our team to review. No AI is perfect, and flags help us find and fix patterns.',
       },
       {
-        q: 'Is the AI meant to replace reading the Bible itself?',
-        a: 'No, and that is intentional. The disclaimer at the bottom of every AI response says it directly: "Built to honour scripture, not replace it." The AI is a companion for study, not an authority. It is there to help you engage with the text more deeply, ask better questions, and find your way to the passages themselves.',
+        q: 'Is the AI meant to replace reading the Bible?',
+        a: 'No. It\'s built to help you engage with Scripture, not to stand in for it. Always check references in your own Bible.',
       },
     ],
   },
@@ -226,73 +234,100 @@ const SECTIONS = [
     items: [
       {
         q: 'How do I find a church?',
-        a: 'Tap Church in the bottom nav or sidebar. Browse the directory or search by name. Each church page shows the pastor, location, and this week\'s sermon.',
+        a: 'Tap Church in the nav. If you haven\'t joined one yet, you\'ll see the directory: search by name, city, or denomination. If you already have a church, use the Find button and choose Find a church.',
       },
       {
         q: 'How do I join a church?',
-        a: 'Open the church page and tap Join. Some churches are open. You\'ll be added immediately. Others require the pastor to approve requests. Either way, once you\'re a member you\'ll see church-only posts in your community feed.',
+        a: 'Open the church page and tap Join. Some churches let you in straight away; others have the pastor approve requests. Once you\'re in, you\'ll see the church\'s posts, sermons, and prayer list on its page.',
+      },
+      {
+        q: 'What do members see on the church page?',
+        a: 'The church\'s own feed (posts, events, polls, and announcements), the latest sermon and its daily questions, a 🙏 Pray tab, and Talk to someone for when you need a person to talk to.',
+      },
+      {
+        q: 'Will my church email me?',
+        a: 'When your pastor publishes a sermon they can email it to the congregation. During that week you may also get one short morning email with the day\'s sermon question and the daily verse. Every email has an unsubscribe link at the bottom.',
       },
       {
         q: 'I\'m a pastor, how do I register my church?',
-        a: 'Tap the ⋮ menu (mobile) or open the sidebar (desktop) and tap Apply as a pastor. Fill in your details and church information. You\'ll get access to your pastor dashboard straight away.',
-      },
-      {
-        q: 'What are church-only posts?',
-        a: 'When you set a post audience to Church, only members of your church on kinwove can see it. It\'s a space for your congregation to share within the family.',
+        a: 'Open Settings (the ⋮ menu on mobile) and tap Apply as a pastor. Fill in your details and your church, and your pastor dashboard is ready straight away. If we can\'t verify your email, your church shows a "Self-reported" badge until it\'s verified.',
       },
       {
         q: 'How does the youth invite work?',
-        a: 'Pastors can generate a separate youth invite code from their church dashboard (People tab). Share it with parents or youth group members. When someone joins with the youth code they\'re added to the church as a youth-sponsored member. Accounts automatically graduate to full access when the member turns 17. No manual steps needed.',
+        a: 'Pastors can make a separate youth invite code in the dashboard\'s People tab. When someone joins with it, they\'re added as a youth member. If they\'ve entered a date of birth, they get full access once they turn 17.',
       },
     ],
   },
   {
     id: 'sermonprep',
     Icon: Mic,
-    title: 'Sermon prep (pastors)',
+    title: 'Sermons (pastors)',
     items: [
       {
         q: 'What is the Study tab in my church dashboard?',
-        a: 'Study is a research space built for sermon prep: a pastoral AI for theology, exegesis, and pastoral care, with a Scholar\'s Desk beside it holding a Bible and your prep notes. Ask anything, save the answers worth keeping, and name each session so you can pick the thread back up later.',
+        a: 'Study is a research space for sermon prep: a pastoral AI for theology, exegesis, and pastoral care, with a desk beside it holding a Bible and your prep notes. Ask anything, save the answers worth keeping, and name each session so you can come back to it.',
       },
       {
         q: 'How do prep notes and series work?',
-        a: 'Any response in the Study chat can be saved as a note, and you can write your own from the Desk\'s Notes tab. Give notes a series name, "Romans," or this Sunday\'s title, and they group together under that heading. Drag notes by the ⋮⋮ grip to put them in preaching order, highlight key lines in four colours, and print one note or the whole set for the pulpit.',
+        a: 'Any Study answer can be saved as a note, and you can write your own in the desk\'s Notes. Give notes a series name ("Romans", or this Sunday\'s title) and they group together. Drag notes by the ⋮⋮ grip to reorder them, highlight in four colours, and print a note or a whole series. The series shows a rough preaching time as it grows.',
       },
       {
         q: 'How do I turn my prep notes into a sermon?',
-        a: 'Tap "Use in sermon →" on any series heading in the Desk notes. You\'ll see the series\' notes with everything checked, uncheck anything personal you don\'t want carried over, then tap Continue. A new sermon draft opens with the series name as its title, the scripture reference picked up from your note titles, and your notes stitched into the outline in your drag order. Everything is editable before you generate or publish, and your notes stay in the Desk untouched.',
+        a: 'Tap "Use in sermon →" on a series heading. Uncheck anything you don\'t want carried over, then tap Continue →. A sermon draft opens in the Sermons tab with your notes.',
+      },
+      {
+        q: 'How do I publish a sermon?',
+        a: 'In the Sermons tab, tap Publish to congregation. Before it goes out you\'ll see exactly what members will see, can add a short note from you, and choose whether to email it. Tap Send a test to me to see the email in your own inbox first. Your work is kept if you leave the page before saving.',
       },
       {
         q: 'Do my prep notes show up in my personal notes too?',
-        a: 'Yes, your sermon prep notes also appear in a read-only "Sermon prep" section of your personal Notes page, so everything you\'ve written lives in one place. They stay church-scoped: to edit one, open it in your church Study tab.',
+        a: 'Yes, they appear in a read-only Sermon prep section of your Notes page. To edit one, open it in your church Study tab.',
       },
       {
         q: 'Are scripture references in Study checked like they are in Ask?',
-        a: 'Yes. The same verification runs here. Gold references in Study responses are tappable (read the verse right there) and checked in the background: ✓ means confirmed, ⚠ means check your Bible before you preach it. Commentary and scholar names appear as slate-blue chips, so you can tell source material from scripture at a glance.',
+        a: 'Yes. Gold references are tappable and checked in the background: ✓ means confirmed, ⚠ means check your Bible before you preach it.',
       },
     ],
   },
   {
     id: 'friends',
     Icon: UserCheck,
-    title: 'Friends & connections',
+    title: 'Friends & messages',
     items: [
       {
-        q: 'What\'s the difference between Following and Friends?',
-        a: 'Following is one-way. You see their public posts in your feed. Friends is mutual. You both accepted the connection. Manage incoming requests in your profile under the Friends tab.',
+        q: 'How do I add a friend?',
+        a: 'Open someone\'s profile and tap + Friend. They\'ll get a notification and can accept.',
       },
       {
-        q: 'How do I send a friend request?',
-        a: 'Open someone\'s profile and tap + Friend. They\'ll get a notification. You can accept or decline incoming requests from the Friends tab on your profile.',
-      },
-      {
-        q: 'How do I follow someone?',
-        a: 'Open their profile and tap Follow. Their public posts will appear in your community feed. You can unfollow at any time from their profile.',
+        q: 'Where are my friends and friend requests?',
+        a: 'Open your profile and tap the Friends count. You\'ll see your friends and any requests waiting for you.',
       },
       {
         q: 'How do I send a direct message?',
-        a: 'Open someone\'s profile and tap Message, or open Messages from the navigation. Conversations are private between you and the other person.',
+        a: 'Open someone\'s profile and tap ✉ Message, or tap the messages button at the top right. Conversations are private between the two of you.',
+      },
+    ],
+  },
+  {
+    id: 'account',
+    Icon: KeyRound,
+    title: 'Account & settings',
+    items: [
+      {
+        q: 'How do I change my password or email?',
+        a: 'Open Settings (the ⋮ menu on mobile) and tap Email & password. Type a new password twice (at least 8 characters) and tap Update password. To change your email, type the new one and tap Update email, then confirm from both inboxes.',
+      },
+      {
+        q: 'How do I turn off some notifications?',
+        a: 'Settings → Email & password has a Notifications list. Switch off comments and reactions, prayer support, friends, direct messages, or church and sermons. Care team and safety alerts can\'t be muted.',
+      },
+      {
+        q: 'How do I stop the daily email?',
+        a: 'Tap Unsubscribe at the bottom of any kinwove email. The daily email and church question emails each have their own link, so you can stop one and keep the others.',
+      },
+      {
+        q: 'How do I delete my account?',
+        a: 'Open Settings (the ⋮ menu on mobile) and tap Delete account. This permanently removes your profile, posts, prayers, and conversations, and can\'t be undone.',
       },
     ],
   },
@@ -303,23 +338,15 @@ const SECTIONS = [
     items: [
       {
         q: 'Who can see my profile?',
-        a: 'Your name, avatar, and person type are visible to all logged-in users. Your posts follow the audience you chose when writing them. Your church membership and friends list are only visible to relevant parties.',
-      },
-      {
-        q: 'Can I turn off friend requests?',
-        a: 'Yes, in Settings → Edit profile, toggle off Allow friend requests. People can still follow you but won\'t be able to send a request.',
+        a: 'Your name, photo, and city are visible to people signed in to kinwove. Your posts follow the audience you chose for each one. Your Prayer Journal is only ever visible to you.',
       },
       {
         q: 'How do I block someone?',
-        a: 'Tap ⋯ on any post by the person you want to block and choose Block user. Their content will no longer appear in your feed and they won\'t be able to interact with yours. Blocking is silent. They are not notified.',
+        a: 'Tap ⋯ on one of their posts, or on their profile, and choose Block. Their posts disappear for you and they can\'t interact with yours. They aren\'t notified. To unblock, go to Settings → Email & password → Blocked accounts.',
       },
       {
         q: 'Are my conversations with the AI private?',
-        a: 'Yes. Conversations with Ask are private to you and are never shared with other users or visible on your profile. By default they are stored locally on your device only. You can optionally turn on "Sync across devices" inside the Conversations panel to save your history to your account.',
-      },
-      {
-        q: 'How do I delete my account?',
-        a: 'Go to your profile → Settings → Delete account. This permanently removes all your data: posts, prayers, messages, and profile. This action cannot be undone.',
+        a: 'Yes. Your Ask conversations are never shown to other people or on your profile. They\'re saved to your account so you can pick them up on any device. Questions are also kept on our side so we can improve answers and catch problems.',
       },
     ],
   },

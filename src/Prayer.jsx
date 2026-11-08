@@ -123,11 +123,14 @@ function MyPrayers({ session, profile }) {
     if (data) setPrayers(prev => [data, ...prev]);
   }
 
+  // Only a prayer that is already public can switch between your name and
+  // Anonymous. A private one stays private: this used to label private prayers
+  // "Anonymous" and one tap published them under your name.
   async function toggleAnonymous(p) {
-    // Always keep is_public: true — just flip is_anonymous
-    const is_anonymous = !(p.is_anonymous || !p.is_public); // treat old private as anonymous
-    await supabase.from('personal_prayers').update({ is_public: true, is_anonymous }).eq('id', p.id);
-    setPrayers(prev => prev.map(x => x.id === p.id ? { ...x, is_public: true, is_anonymous } : x));
+    if (!p.is_public) return;
+    const is_anonymous = !p.is_anonymous;
+    await supabase.from('personal_prayers').update({ is_anonymous }).eq('id', p.id);
+    setPrayers(prev => prev.map(x => x.id === p.id ? { ...x, is_anonymous } : x));
   }
 
   // Unanswering is instant; answering opens the praise-report sheet
@@ -337,20 +340,30 @@ function MyPrayers({ session, profile }) {
             {/* Actions */}
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
 
-              {/* Privacy toggle */}
-              <button onClick={() => toggleAnonymous(p)}
-                title={(p.is_anonymous || !p.is_public) ? 'Anonymous, tap to show your name' : 'Public, tap to post anonymously'}
-                style={{
-                  background: (p.is_anonymous || !p.is_public) ? 'rgba(44,24,16,0.08)' : 'rgba(184,115,58,0.12)',
-                  border: `1px solid ${(p.is_anonymous || !p.is_public) ? 'rgba(44,24,16,0.22)' : 'rgba(184,115,58,0.4)'}`,
+              {/* Privacy: private prayers say so; public ones toggle name / Anonymous */}
+              {!p.is_public ? (
+                <span title="Private. Only you can see this" style={{
+                  background: 'rgba(44,24,16,0.08)', border: '1px solid rgba(44,24,16,0.22)',
                   borderRadius: 999, padding: '5px 12px', fontSize: 11, fontWeight: 600,
-                  color: (p.is_anonymous || !p.is_public) ? T.ink : T.goldDark,
+                  color: T.ink, display: 'inline-flex', alignItems: 'center', gap: 4,
+                }}>
+                  <Lock size={11} strokeWidth={2} /> Private
+                </span>
+              ) : (
+              <button onClick={() => toggleAnonymous(p)}
+                title={p.is_anonymous ? 'Anonymous, tap to show your name' : 'Shows your name, tap to post anonymously'}
+                style={{
+                  background: p.is_anonymous ? 'rgba(44,24,16,0.08)' : 'rgba(184,115,58,0.12)',
+                  border: `1px solid ${p.is_anonymous ? 'rgba(44,24,16,0.22)' : 'rgba(184,115,58,0.4)'}`,
+                  borderRadius: 999, padding: '5px 12px', fontSize: 11, fontWeight: 600,
+                  color: p.is_anonymous ? T.ink : T.goldDark,
                   cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4,
                 }}>
-                {(p.is_anonymous || !p.is_public)
+                {p.is_anonymous
                   ? <><Lock size={11} strokeWidth={2} /> Anonymous</>
                   : <><Globe size={11} strokeWidth={2} /> Public</>}
               </button>
+              )}
 
               {/* Mark answered / unanswered */}
               <button onClick={() => handleAnswerButton(p)} style={{

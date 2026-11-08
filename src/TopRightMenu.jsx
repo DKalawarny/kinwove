@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   MoreVertical, Clock, UserPlus, Phone, Inbox,
   Building2, Star, ShieldCheck, Flag, UserCog,
-  LogOut, Trash2, Megaphone, HelpCircle, Users, Search, AlertTriangle, NotebookPen,
+  LogOut, Trash2, Megaphone, KeyRound, HelpCircle, Users, Search, AlertTriangle, NotebookPen,
 } from 'lucide-react';
 import { T } from './theme.js';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
@@ -27,6 +27,7 @@ export default function TopRightMenu({
   onOpenSponsorAdmin,
   onOpenHelp,
   onEditProfile,
+  onOpenAccount,
   onOpenReport,
   onSignOut,
   onDeleteAccount,
@@ -68,6 +69,7 @@ export default function TopRightMenu({
       label: 'Account',
       items: [
         onEditProfile   && { icon: UserCog,       label: 'Edit profile',    onClick: onEditProfile },
+        onOpenAccount   && { icon: KeyRound,      label: 'Email & password', onClick: onOpenAccount },
         onOpenHelp      && { icon: HelpCircle,    label: 'Help',            onClick: onOpenHelp },
         onOpenReport    && { icon: AlertTriangle,  label: 'Report an issue', onClick: onOpenReport },
         onSignOut       && { icon: LogOut,         label: 'Sign out',        onClick: onSignOut,       danger: true },

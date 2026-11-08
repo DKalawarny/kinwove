@@ -857,7 +857,7 @@ function PlanLine({ plan, aiUsage, session, onUpgrade }) {
   );
 }
 
-export default function MePanel({ session, profile, onClose, onEditProfile, onSignOut, onDeleteAccount, onOpenBoard, onOpenHistory, onProfileUpdate, onOpenChat, onViewProfile, onFindPeople, onInviteFriends, onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue, onOpenChurchDisputesQueue, onOpenChurch, onOpenSermon, onOpenWalks, onOpenTalkToSomeone, onOpenCareInbox, onOpenMessages, onOpenConnect, onOpenPastorDashboard, hasCareTeamRole, hasPastoredChurch, onUpgrade, refreshKey = 0 }) {
+export default function MePanel({ session, profile, onClose, onEditProfile, onSignOut, onDeleteAccount, onOpenHistory, onProfileUpdate, onOpenChat, onViewProfile, onFindPeople, onInviteFriends, onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue, onOpenChurchDisputesQueue, onOpenChurch, onOpenSermon, onOpenWalks, onOpenTalkToSomeone, onOpenCareInbox, onOpenMessages, onOpenConnect, onOpenPastorDashboard, hasCareTeamRole, hasPastoredChurch, onUpgrade, refreshKey = 0, openAccountKey = 0 }) {
   const [posts, setPosts] = useState([]);
   const [stats, setStats] = useState({ posts: 0, following: 0, followers: 0 });
   const [followingList, setFollowingList] = useState([]);
@@ -866,7 +866,15 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
   const [followersOpen, setFollowersOpen] = useState(false);
   const [friendsList, setFriendsList] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]); // incoming pending
-  const [tab, setTab] = useState('posts');
+  const [tab, setTab] = useState(openAccountKey ? 'about' : 'posts');
+  // Settings → Email & password lands here: About tab, scrolled to that card.
+  const accountRef = useRef(null);
+  useEffect(() => {
+    if (!openAccountKey) return;
+    setTab('about');
+    const t = setTimeout(() => accountRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    return () => clearTimeout(t);
+  }, [openAccountKey]);
   const [loading, setLoading] = useState(true);
   const [pickingAvatar, setPickingAvatar] = useState(false);
   const [avatarLightbox, setAvatarLightbox] = useState(false);
@@ -2158,7 +2166,9 @@ export default function MePanel({ session, profile, onClose, onEditProfile, onSi
               </div>
             )}
 
-            <AccountSecurityCard session={session} onViewProfile={onViewProfile} />
+            <div ref={accountRef} style={{ scrollMarginTop: 72 }}>
+              <AccountSecurityCard session={session} onViewProfile={onViewProfile} />
+            </div>
 
           </div>
         )}
