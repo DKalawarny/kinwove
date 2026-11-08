@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  MoreVertical, LayoutGrid, Clock, UserPlus, Phone, Inbox,
+  MoreVertical, Clock, UserPlus, Phone, Inbox,
   Building2, Star, ShieldCheck, Flag, UserCog,
   LogOut, Trash2, Megaphone, HelpCircle, Users, Search, AlertTriangle, NotebookPen,
 } from 'lucide-react';
@@ -14,7 +14,6 @@ export default function TopRightMenu({
   rightOffset = 0,
   isDesktop = false,
   onFindPeople,
-  onOpenBoard,
   onOpenJournal,
   onOpenHistory,
   onInviteFriends,
@@ -48,7 +47,6 @@ export default function TopRightMenu({
     {
       label: 'Go to',
       items: [
-        onOpenBoard     && { icon: LayoutGrid, label: 'Your board',    onClick: onOpenBoard },
         onOpenJournal   && { icon: NotebookPen, label: 'Notes',        onClick: onOpenJournal },
         onFindPeople    && { icon: Users,      label: 'Find people',   onClick: onFindPeople },
         onFindChurches  && { icon: Search,     label: 'Find a church', onClick: onFindChurches },

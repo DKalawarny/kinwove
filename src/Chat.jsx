@@ -878,9 +878,6 @@ export default function Chat({
   personType,
   seekingContext,
   onChangeType,
-  notes,
-  onAddNote,
-  onOpenBoard,
   onOpenCommunity,
   onOpenPrayer,
   onOpenJourneys,
@@ -1776,7 +1773,7 @@ export default function Chat({
               <Tip
                 tipId="chat_save_note"
                 icon="📌"
-                text="Save any answer as a note, tap the bookmark icon on a response to keep it on your board."
+                text="Save any answer as a note, tap the bookmark icon on a response to keep it in your Notes."
                 style={{ marginTop: 20, width: '100%', maxWidth: 440, textAlign: 'left' }}
               />
             </div>

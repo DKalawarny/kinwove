@@ -40,7 +40,7 @@ const STEPS = [
     id: 'me',
     tabPct: 90,
     title: 'Your space',
-    body: 'Your profile, reading history, and personal notes board. Private unless you choose to share.',
+    body: 'Your profile, reading history, and personal notes. Private unless you choose to share.',
   },
 ];
 

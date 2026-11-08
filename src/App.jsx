@@ -101,11 +101,10 @@ import { supabase, authedFetch } from './supabase.js';
 import { getDailyVerse } from './dailyVerse.js';
 import { SHOW_WALKS, SHOW_CONNECT, SHOW_MILESTONES_TAB, SHOW_FOLLOWS } from './flags.js';
 import {
-  LayoutGrid, UserPlus, Inbox, Building2,
+  UserPlus, Inbox, Building2,
   Star, ShieldCheck, Flag, Megaphone, UserCog, LogOut, Trash2, Settings as SettingsIcon, HelpCircle, BookOpen,
 } from 'lucide-react';
 import SwipeableSheet from './SwipeableSheet.jsx';
-import MsgText from './MsgText.jsx';
 import Auth from './Auth.jsx';
 import ProfileSetup from './Profile.jsx';
 import ProfilePage, { Avatar } from './ProfilePage.jsx';
@@ -719,7 +718,7 @@ function Onboarding({ onPick, onBack }) {
             { icon: '🔤', label: 'Hebrew & Greek originals', desc: 'Surfaces the original word behind any translation' },
             { icon: '📷', label: 'Analyze images', desc: 'Attach a photo: manuscripts, pages, art, notes' },
             { icon: '🔊', label: 'Listen aloud', desc: 'Tap any answer to hear it read to you' },
-            { icon: '💾', label: 'Save to your board', desc: 'Keep answers that matter with one tap' },
+            { icon: '💾', label: 'Save to your notes', desc: 'Keep answers that matter with one tap' },
             { icon: '🔗', label: 'Share conversations', desc: 'Send a link to any conversation with anyone' },
             { icon: '⛪', label: 'Church study groups', desc: 'Connect with your church and study together' },
           ].map((f) => (
@@ -1161,7 +1160,7 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
 }
 
 function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, onNew, rightOffset = 0, syncEnabled = false, onToggleSync }) {
-  // Escape closes — matches the Board modal pattern. Without this the only way
+  // Escape closes — matches the other modals. Without this the only way
   // out was the Close button or a backdrop click, which didn't read like a
   // modal you could dismiss the usual way.
   useEffect(() => {
@@ -1294,292 +1293,44 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
   );
 }
 
-function useNotes(userId = null) {
-  const [notes, setNotes] = useState([]);
-  const loadedForRef = useRef(null);
-
-  useEffect(() => {
-    if (!userId) { setNotes([]); loadedForRef.current = null; return; }
-    if (loadedForRef.current === userId) return;
-    loadedForRef.current = userId;
-    try { const raw = localStorage.getItem(`${NOTES_KEY}:${userId}`); setNotes(raw ? JSON.parse(raw) : []); }
-    catch { setNotes([]); }
-  }, [userId]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// "Your board" kept answers in this browser only. The Note button on an answer
+// now saves to Notes (user_notes), so anything still sitting in the old board
+// moves there once, the first time its owner signs in on that browser.
+function useMoveBoardToNotes(userId = null) {
   useEffect(() => {
     if (!userId) return;
-    try { localStorage.setItem(`${NOTES_KEY}:${userId}`, JSON.stringify(notes)); }
-    catch {}
-  }, [notes]);
-
-  const addNote = (n) => {
-    const note = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      createdAt: Date.now(),
-      ...n,
-    };
-    setNotes((arr) => [note, ...arr]);
-    return note.id;
-  };
-  const removeNote = (id) => setNotes((arr) => arr.filter((n) => n.id !== id));
-  const clearAll = () => setNotes([]);
-
-  return { notes, addNote, removeNote, clearAll };
+    const key = `${NOTES_KEY}:${userId}`;
+    let old;
+    try { old = JSON.parse(localStorage.getItem(key) ?? '[]'); } catch { old = []; }
+    if (!Array.isArray(old) || old.length === 0) {
+      try { localStorage.removeItem(key); } catch {}
+      return;
+    }
+    const rows = old.filter((n) => n?.answer).map((n) => {
+      const q = n.question && n.question !== '(no question)' ? n.question : '';
+      return {
+        user_id: userId,
+        title: (q || n.answer).slice(0, 70),
+        body: q ? `Q: ${q}\n\n${n.answer}` : n.answer,
+        source: 'ask',
+        created_at: new Date(n.createdAt ?? Date.now()).toISOString(),
+      };
+    });
+    // Take them out first so a second run can't insert them twice; put them
+    // back if the save fails, to try again next sign-in.
+    try { localStorage.removeItem(key); } catch {}
+    if (rows.length === 0) return;
+    supabase.from('user_notes').insert(rows).then(({ error }) => {
+      if (error) { try { localStorage.setItem(key, JSON.stringify(old)); } catch {} return; }
+      window.dispatchEvent(new CustomEvent('kw:notes-changed'));
+    });
+  }, [userId]);
 }
 
 function formatNoteDate(ts) {
   const d = new Date(ts);
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
-
-function buildExportText(notes) {
-  if (notes.length === 0) return '';
-  const head = 'Notes from kinwove\n\n';
-  return (
-    head +
-    notes
-      .map((n) => {
-        const when = new Date(n.createdAt).toLocaleString();
-        return `, ${when}\nQuestion: ${n.question}\n\n${n.answer}\n`;
-      })
-      .join('\n────────\n\n')
-  );
-}
-
-function Board({ open, onClose, notes, onRemove, onGoDeeper, onSharePublicly }) {
-  const [copiedId, setCopiedId] = useState(null);
-  const [copiedAll, setCopiedAll] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  const copy = async (text, id) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      if (id === '__all__') {
-        setCopiedAll(true);
-        setTimeout(() => setCopiedAll(false), 1400);
-      } else {
-        setCopiedId(id);
-        setTimeout(() => setCopiedId(null), 1400);
-      }
-    } catch {}
-  };
-
-  const sidebarW = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 240 : 0;
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        top: 0, bottom: 0, right: 0,
-        left: sidebarW,
-        background: 'rgba(44,24,16,0.55)',
-        zIndex: 210, // above the top-right buttons (160/200), like History
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        // Same fix as the conversation-history modal (b11f8f2): the card used to
-        // grow past the screen with the backdrop scrolling, so the × at the top
-        // scrolled out of reach and the only way out was a lucky backdrop tap.
-        // The card is now capped and scrolls inside itself instead.
-        padding: 'calc(20px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 0px))',
-        animation: 'fadeIn 0.15s ease',
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="fade-up"
-        style={{
-          background: T.parchment,
-          borderRadius: 18,
-          maxWidth: 680,
-          width: '100%',
-          maxHeight: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          border: `1px solid ${T.line}`,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '18px 20px',
-            borderBottom: `1px solid ${T.line}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            background: T.cream,
-            flexShrink: 0,
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: T.goldDark, marginBottom: 3 }}>
-              Your Board
-            </div>
-            <div style={{ fontFamily: T.serif, fontSize: 22, color: T.ink, fontWeight: 600, letterSpacing: '-0.018em', lineHeight: 1.18 }}>
-              {notes.length === 0 ? 'Nothing saved yet' : `${notes.length} ${notes.length === 1 ? 'note' : 'notes'}`}
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-            {notes.length > 0 && (
-              <button
-                onClick={() => copy(buildExportText(notes), '__all__')}
-                style={{
-                  background: T.ink, color: T.cream, border: 'none', borderRadius: 999,
-                  padding: '8px 14px', fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                }}
-              >
-                {copiedAll ? 'Copied ✓' : 'Copy all'}
-              </button>
-            )}
-            <button
-              onClick={onClose}
-              style={{
-                background: 'transparent', border: `1px solid ${T.line}`, borderRadius: '50%',
-                width: 34, height: 34, fontSize: 18, lineHeight: '1',
-                color: T.inkMuted, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              ×
-            </button>
-          </div>
-        </div>
-
-        <div style={{ padding: '8px 0', flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          {notes.length === 0 && (
-            <div
-              style={{
-                padding: '48px 32px',
-                textAlign: 'center',
-                color: T.inkMuted,
-                fontFamily: T.serif,
-                fontSize: 16,
-                lineHeight: 1.6,
-              }}
-            >
-              Tap the bookmark on any answer to save it here.
-              <br />
-              For later. For deeper. For sharing with a group.
-            </div>
-          )}
-
-          {notes.map((n) => (
-            <div
-              key={n.id}
-              style={{
-                padding: '20px 24px',
-                borderBottom: `1px solid ${T.line}`,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  letterSpacing: 1,
-                  textTransform: 'uppercase',
-                  color: T.inkMuted,
-                  marginBottom: 8,
-                }}
-              >
-                {formatNoteDate(n.createdAt)} · {n.personLabel ?? ''}
-              </div>
-              <div
-                style={{
-                  fontFamily: T.serif,
-                  fontStyle: 'italic',
-                  color: T.inkSoft,
-                  fontSize: 15,
-                  marginBottom: 12,
-                  lineHeight: 1.5,
-                }}
-              >
-                {n.question}
-              </div>
-              <div
-                style={{
-                  fontFamily: T.serif,
-                  fontSize: 16,
-                  color: T.ink,
-                  lineHeight: 1.7,
-                  whiteSpace: 'pre-wrap',
-                  marginBottom: 14,
-                }}
-              >
-                <MsgText text={n.answer} />
-              </div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => copy(`${n.question}\n\n${n.answer}`, n.id)}
-                  style={{
-                    background: 'transparent',
-                    border: `1px solid ${T.line}`,
-                    borderRadius: 999,
-                    padding: '6px 12px',
-                    fontSize: 12,
-                    color: T.inkSoft,
-                  }}
-                >
-                  {copiedId === n.id ? 'Copied ✓' : 'Copy'}
-                </button>
-                <button
-                  onClick={() => onGoDeeper(n)}
-                  style={{
-                    background: 'transparent',
-                    border: `1px solid ${T.gold}`,
-                    borderRadius: 999,
-                    padding: '6px 12px',
-                    fontSize: 12,
-                    color: T.goldDark,
-                  }}
-                >
-                  {n.convId ? 'Resume chat' : 'Ask more on this'}
-                </button>
-                <button
-                  onClick={() => onSharePublicly?.(n)}
-                  style={{
-                    background: 'transparent',
-                    border: `1px solid ${T.line}`,
-                    borderRadius: 999,
-                    padding: '6px 12px',
-                    fontSize: 12,
-                    color: T.inkSoft,
-                  }}
-                >
-                  Share publicly
-                </button>
-                <button
-                  onClick={() => onRemove(n.id)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    padding: '6px 8px',
-                    fontSize: 12,
-                    color: T.inkMuted,
-                    marginLeft: 'auto',
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 
 // ── Global app header (desktop only) ────────────────────────────────────────
 // Full-width dark bar pinned to the very top of the viewport. Left segment
@@ -1752,7 +1503,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
   onGoHome, onGoChurch, onGoRead, onGoMe, onToggleChat,
   // Settings / more-actions (same callbacks as TopRightMenu)
   hasCareTeamRole, hasPastoredChurch,
-  onFindPeople, onOpenBoard, onOpenHistory, onInviteFriends,
+  onFindPeople, onOpenHistory, onInviteFriends,
   onOpenTalkToSomeone, onOpenCareInbox, onOpenPastorDashboard,
   onFindChurches, onApplyAsPastor, onOpenPastorAdminQueue,
   onOpenChurchDisputesQueue, onOpenSponsorAdmin,
@@ -1833,7 +1584,6 @@ function SidebarNav({ stage, session, profile, chatOpen,
   // Settings menu items — mirrors TopRightMenu but lives in sidebar
   // Find people / Find a church moved to dedicated FindButton FAB
   const settingsItems = [
-    onOpenBoard       && { Icon: LayoutGrid, label: 'Your board',          onClick: onOpenBoard },
     onInviteFriends   && { Icon: UserPlus,   label: 'Invite friends',      onClick: onInviteFriends },
     hasCareTeamRole   && onOpenCareInbox     && { Icon: Inbox,     label: 'Conversations',      onClick: onOpenCareInbox },
     hasPastoredChurch && onOpenPastorDashboard && { Icon: Building2, label: 'Manage your church', onClick: onOpenPastorDashboard },
@@ -1987,25 +1737,9 @@ export default function App() {
   const [peopleSearchOpen, setPeopleSearchOpen] = useState(false);
   // Find-people is a full-screen overlay with no route of its own, so tapping a
   // tab underneath changed the screen and left it sitting on top — the nav lit up
-  // the new tab and the list stayed (Daniel, 8/29). The board already dismissed
-  // itself this way; this one never did. Safe as a plain stage watch because none
-  // of the openers change stage, unlike the board's.
+  // the new tab and the list stayed (Daniel, 8/29). Safe as a plain stage watch because none
+  // of the openers change stage.
   useEffect(() => { setPeopleSearchOpen(false); }, [stage]);
-  const [boardOpen, setBoardOpen] = useState(false);
-  // The board is a floating overlay — navigating anywhere (Bible, feed, …)
-  // should dismiss it instead of staying stacked over the new screen.
-  //
-  // But every menu entry opens it with setStage('feed') + setBoardOpen(true) in
-  // the same handler, so from anywhere except the feed this effect fired on the
-  // stage it had just caused and closed the board before it painted: "Your board"
-  // did nothing on the first tap and worked on the second. Remember the stage the
-  // board opened on and only dismiss when it actually changes afterwards.
-  const boardStageRef = useRef(null);
-  useEffect(() => {
-    if (!boardOpen) { boardStageRef.current = null; return; }
-    if (boardStageRef.current === null) { boardStageRef.current = stage; return; }
-    if (boardStageRef.current !== stage) setBoardOpen(false);
-  }, [stage, boardOpen]);
   const [chatPanelOpen, setChatPanelOpen] = useState(false);
   const [viewingUserId, setViewingUserId] = useState(null);
   const [careInboxKey, setCareInboxKey] = useState(0);
@@ -2152,7 +1886,7 @@ export default function App() {
     setInitialQ(null);
     try { const u = new URL(window.location.href); u.searchParams.delete('q'); window.history.replaceState({}, '', u); } catch {}
   }, [session, initialQ, profile]); // eslint-disable-line react-hooks/exhaustive-deps
-  const { notes, addNote, removeNote } = useNotes(session?.user?.id ?? null);
+  useMoveBoardToNotes(session?.user?.id ?? null);
   // Keep a ref so stage-save effect can access the current session without
   // needing session in its dependency array (would cause double-saves).
   const _setSession = (s) => {
@@ -2978,59 +2712,6 @@ export default function App() {
     setChatPanelOpen(true);
   }
 
-  const goDeeper = (note) => {
-    setBoardOpen(false);
-    setChatScrollToMsg(null);
-
-    if (note.convId) {
-      const conv = conversations.find((c) => c.id === note.convId);
-      if (conv) {
-        // Resume the exact saved conversation and scroll to the saved message
-        setChatSeededFromNote(false);
-        setCurrentConvId(conv.id);
-        setPersonType(conv.personType ?? note.personType ?? personType);
-        if (note.msgIdx != null) setChatScrollToMsg(note.msgIdx);
-        setChatPanelOpen(true);
-        return;
-      }
-    }
-
-    // No convId (old note) or conversation was cleared — rebuild from saved Q&A
-    const pt = note.personType ?? personType ?? profile?.person_type ?? 'curious';
-    const conv = createConv(pt);
-    const seeded = [];
-    if (note.question && note.question !== '(no question)') {
-      seeded.push({ role: 'user', content: note.question });
-    }
-    if (note.answer) {
-      seeded.push({ role: 'assistant', content: note.answer });
-    }
-    setChatSeededFromNote(true);
-    setCurrentConvId(conv.id);
-    setPersonType(pt);
-    if (seeded.length > 0) {
-      updateConv(conv.id, seeded);
-      setChatScrollToMsg(seeded.length - 1); // scroll to the AI answer
-    }
-    setChatPanelOpen(true);
-  };
-
-  async function sharePublicly(note) {
-    if (!session) {
-      setBoardOpen(false);
-      setAuthStage('auth');
-      return;
-    }
-    await supabase.from('posts').insert({
-      author_id: session.user.id,
-      body: note.answer,
-      question: note.question,
-      person_type: note.personType ?? null,
-    });
-    setBoardOpen(false);
-    setStage('feed');
-  }
-
   function closeChatPanel() {
     // Delete the conversation if user never sent a message
     if (currentConvId) {
@@ -3386,7 +3067,6 @@ export default function App() {
           session={session}
           profile={profile}
           onClose={() => goBack('feed')}
-          onOpenBoard={() => { setStage('feed'); setBoardOpen(true); }}
           onOpenHistory={() => { setStage('feed'); setHistoryOpen(true); }}
           onEditProfile={() => { setProfileEditOrigin('me'); setAuthStage('profile-setup'); }}
           onSignOut={() => { supabase.auth.signOut(); setSession(null); setProfile(null); setStage('landing'); }}
@@ -3802,9 +3482,6 @@ export default function App() {
               onNewConversation={() => { setChatSeededFromNote(false); newConversation(personType ?? profile?.person_type ?? 'curious'); }}
               onDeleteConversation={currentConvId ? () => { removeConv(currentConvId); setChatSeededFromNote(false); newConversation(personType ?? profile?.person_type ?? 'curious'); } : undefined}
               seededFromNote={chatSeededFromNote}
-              notes={notes}
-              onAddNote={(n) => addNote({ ...n, convId: currentConvId })}
-              onOpenBoard={() => setBoardOpen(true)}
               onOpenCommunity={() => { setChatPanelOpen(false); setStage('feed'); }}
               onUpgrade={() => setShowUpgrade(true)}
               onOpenPrayer={() => { setChatPanelOpen(false); setStage('prayer'); }}
@@ -3846,14 +3523,6 @@ export default function App() {
           />
         </div>
       )}
-      <Board
-        open={boardOpen}
-        onClose={() => setBoardOpen(false)}
-        notes={notes}
-        onRemove={removeNote}
-        onGoDeeper={goDeeper}
-        onSharePublicly={sharePublicly}
-      />
       <ConversationHistory
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
@@ -3948,7 +3617,6 @@ export default function App() {
             onGoMe={() => { setViewingUserId(null); setStage('me'); }}
             onToggleChat={() => chatPanelOpen ? closeChatPanel() : (setViewingUserId(null), currentConvId ? setChatPanelOpen(true) : (startChatFromProfile(), setChatPanelOpen(true)))}
             onFindPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
-            onOpenBoard={() => { setViewingUserId(null); setStage('feed'); setBoardOpen(true); }}
             onOpenHistory={() => { setViewingUserId(null); setStage('feed'); setHistoryOpen(true); }}
             onInviteFriends={() => { setViewingUserId(null); setStage('invite'); }}
             onOpenTalkToSomeone={profile?.church_id ? () => { setViewingUserId(null); setViewingChurchId(profile.church_id); setStage('talk-to-someone'); } : undefined}
@@ -3999,7 +3667,6 @@ export default function App() {
           hasPastoredChurch={!!pastorChurchId}
           isDesktop={isDesktop}
           rightOffset={isDocked ? chatPanelWidth : 0}
-          onOpenBoard={() => { setStage('feed'); setBoardOpen(true); }}
           onOpenHistory={() => { setStage('feed'); setHistoryOpen(true); }}
           onOpenJournal={() => { setViewingUserId(null); setStage('journal'); }}
           onFindPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
