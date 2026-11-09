@@ -3241,6 +3241,7 @@ export default function App() {
           <ChurchPage
             session={session}
             profile={profile}
+            onOpenBible={(ref) => { setBibleJumpRef(ref); setStage('read'); }}
             churchId={viewingChurchId}
             pastorChurchId={pastorChurchId}
             chromeless={isOwnChurch}

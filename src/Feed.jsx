@@ -16,7 +16,7 @@ function parseSource(source) {
   return { scope: null, scopeId: null, authorId: null };
 }
 
-export default function Feed({ source, sessionUserId, refreshKey = 0, emptyMessage, onOpenSermon, userPlan, blockedUserIds = [], isPastor = false, openCommentPostId, onViewProfile, onPickWalk }) {
+export default function Feed({ source, sessionUserId, refreshKey = 0, emptyMessage, onOpenSermon, userPlan, blockedUserIds = [], isPastor = false, openCommentPostId, onViewProfile, onPickWalk, onOpenRef }) {
   const { scope, scopeId, authorId } = parseSource(source);
 
   const [items, setItems]         = useState([]);
@@ -231,6 +231,7 @@ export default function Feed({ source, sessionUserId, refreshKey = 0, emptyMessa
               rolesByUser={rolesByUser}
               commentCount={commentCounts[item.id] ?? 0}
               onOpenSermon={onOpenSermon}
+              onOpenRef={onOpenRef}
               onViewProfile={onViewProfile}
               onPickWalk={onPickWalk}
               isPastor={isPastor}

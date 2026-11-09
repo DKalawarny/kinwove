@@ -19,9 +19,10 @@ import { useUiKit } from './uikit.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { useEscape } from './useEscape.js';
 import { enterSends } from './lib/enterSends.js';
+import RefText from './components/RefText.jsx';
 
-function renderWithMentions(text, mentions, onViewProfile, onViewChurch) {
-  if (!mentions?.length || !text) return text;
+function renderWithMentions(text, mentions, onViewProfile, onViewChurch, onOpenRef) {
+  if (!mentions?.length || !text) return <RefText text={text} onRef={onOpenRef} />;
   const parts = [];
   let remaining = text;
   // Match longer names first so "@John Smith" beats "@John"
@@ -37,7 +38,7 @@ function renderWithMentions(text, mentions, onViewProfile, onViewChurch) {
   if (remaining) parts.push(remaining);
   if (!parts.length) return text;
   return parts.map((p, i) =>
-    typeof p === 'string' ? p :
+    typeof p === 'string' ? <RefText key={i} text={p} onRef={onOpenRef} /> :
     <span
       key={i}
       onClick={() => p.mention.type === 'user'
@@ -206,7 +207,7 @@ function PollBody({ item, sessionUserId }) {
   );
 }
 
-function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSermon) {
+function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSermon, onOpenRef) {
   const b = item.body ?? {};
   // Mentions may live in body.mentions (feed_items jsonb merge) or body_data.mentions
   const mentions = b.mentions ?? item.body_data?.mentions ?? [];
@@ -233,7 +234,7 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
           )}
           {b.text && (
             <div style={{ fontFamily: T.serif, fontSize: 15, lineHeight: 1.65, color: T.ink, whiteSpace: 'pre-wrap', marginTop: 6 }}>
-              {b.text}
+              <RefText text={b.text} onRef={onOpenRef} />
             </div>
           )}
         </div>
@@ -252,11 +253,11 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
           </div>
           {b.scripture_ref && (
             <div style={{ fontSize: 13, color: T.goldDark, fontStyle: 'italic', marginBottom: 6 }}>
-              {b.scripture_ref}
+              <RefText text={b.scripture_ref} onRef={onOpenRef} />
             </div>
           )}
           <div style={{ fontFamily: T.serif, fontSize: 15.5, lineHeight: 1.65, color: T.ink, whiteSpace: 'pre-wrap' }}>
-            {b.text}
+            <RefText text={b.text} onRef={onOpenRef} />
           </div>
         </div>
       );
@@ -265,24 +266,24 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
         <>
           {b.scripture_ref && (
             <div style={{ fontSize: 13, color: T.goldDark, fontStyle: 'italic', marginBottom: 6 }}>
-              {b.scripture_ref}
+              <RefText text={b.scripture_ref} onRef={onOpenRef} />
             </div>
           )}
           <div style={{ fontFamily: T.serif, fontSize: 15.5, lineHeight: 1.65, color: T.ink, whiteSpace: 'pre-wrap' }}>
-            {b.text}
+            <RefText text={b.text} onRef={onOpenRef} />
           </div>
         </>
       );
     case 'question':
       return (
         <div style={{ fontFamily: T.serif, fontSize: 15.5, lineHeight: 1.65, color: T.ink, whiteSpace: 'pre-wrap' }}>
-          <span style={{ fontWeight: 600, color: T.goldDark, marginRight: 6 }}>Q:</span>{b.text}
+          <span style={{ fontWeight: 600, color: T.goldDark, marginRight: 6 }}>Q:</span><RefText text={b.text} onRef={onOpenRef} />
         </div>
       );
     case 'prayer':
       return (
         <div style={{ fontFamily: T.serif, fontSize: 15.5, lineHeight: 1.65, color: T.ink, whiteSpace: 'pre-wrap' }}>
-          {b.text}
+          <RefText text={b.text} onRef={onOpenRef} />
         </div>
       );
     case 'sermon_item': {
@@ -405,7 +406,7 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
           <div>
             {b.text ? (
               <div style={{ fontFamily: T.display, fontSize: 16, color: T.ink, lineHeight: 1.55, whiteSpace: 'pre-wrap', marginBottom: 10 }}>
-                {b.text}
+                <RefText text={b.text} onRef={onOpenRef} />
               </div>
             ) : null}
             <div style={{ border: `1px solid ${T.line}`, borderRadius: 10, padding: '12px 14px', background: T.parchment }}>
@@ -432,7 +433,7 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
         <>
           {b.scripture_ref && (
             <div style={{ fontSize: 13, color: T.goldDark, fontStyle: 'italic', marginBottom: 4 }}>
-              {b.scripture_ref}
+              <RefText text={b.scripture_ref} onRef={onOpenRef} />
             </div>
           )}
           <div style={{
@@ -440,7 +441,7 @@ function bodyForKind(item, onViewProfile, onViewChurch, sessionUserId, onOpenSer
             whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word',
             letterSpacing: '-0.01em', fontVariationSettings: '"opsz" 18',
           }}>
-            {renderWithMentions(stripFirstUrl(b.text), mentions, onViewProfile, onViewChurch)}
+            {renderWithMentions(stripFirstUrl(b.text), mentions, onViewProfile, onViewChurch, onOpenRef)}
           </div>
           <SeeTranslation text={b.text} />
           <LinkPreview text={b.text} />
@@ -467,6 +468,7 @@ export default function PostCard({
   authorMap,
   rolesByUser,
   onOpenSermon,
+  onOpenRef,
   onDeleted,
   commentCount = 0,
   defaultCommentsOpen = false,
@@ -978,7 +980,7 @@ export default function PostCard({
             )}
           </div>
         ) : (
-          bodyForKind(effectiveItem, onViewProfile, onViewChurch, sessionUserId, onOpenSermon)
+          bodyForKind(effectiveItem, onViewProfile, onViewChurch, sessionUserId, onOpenSermon, onOpenRef)
         )}
         {!editing && <PostImageGrid urls={effectiveItem.body?.image_urls} />}
 
@@ -1318,7 +1320,7 @@ export default function PostCard({
                   </div>
                 )}
                 <div style={{ marginBottom: 14 }}>
-                  {bodyForKind(effectiveItem, onViewProfile, onViewChurch, sessionUserId, onOpenSermon)}
+                  {bodyForKind(effectiveItem, onViewProfile, onViewChurch, sessionUserId, onOpenSermon, onOpenRef)}
                 </div>
               </div>
 

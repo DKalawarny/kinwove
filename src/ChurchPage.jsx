@@ -25,7 +25,7 @@ export default function ChurchPage({
   onBack, onProfileUpdate, onViewProfile,
   onOpenSermon, onOpenAdmin, onRequestJoin,
   onOpenFeed, onOpenPrayer, onOpenTalkToSomeone, onOpenCareInbox,
-  onOpenPastorDashboard, onOpenWalks, onFindChurches,
+  onOpenPastorDashboard, onOpenWalks, onFindChurches, onOpenBible,
   onNewSermon,
   chromeless = false,
   initialTab = null,
@@ -989,6 +989,7 @@ export default function ChurchPage({
                     sessionUserId={session?.user?.id}
                     refreshKey={feedRefresh}
                     onOpenSermon={onOpenSermon}
+                    onOpenRef={onOpenBible}
                     onViewProfile={onViewProfile}
                     onPickWalk={() => onOpenWalks?.()}
                     userPlan={profile?.plan ?? 'free'}
