@@ -23,6 +23,7 @@ import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderFo
 import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { LOOKS_BACKWARD, ASKS_TO_SAVE } from './src/recallTriggers.js';
+import { auditAnswer, AUDIT_RULES } from './src/askAudit.js';
 import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
 import { isCrisisMessage } from './src/safetyPatterns.js';
@@ -271,6 +272,32 @@ app.get('/api/health/crons', async (_req, res) => {
     out.error = e?.message;
   }
   res.status(out.ok ? 200 : 503).json(out);
+});
+
+// Weekly check that Ask's real answers keep its rules (src/askAudit.js).
+// .github/workflows/ask-audit.yml calls it; a 503 fails the run and GitHub
+// emails Daniel. Returns ids and rule names only, never what anyone asked.
+// Answers from before the 9 Nov 2026 fixes are not counted: they are known.
+const ASK_AUDIT_FROM = '2026-11-09T16:00:00Z';
+app.get('/api/health/ask-audit', async (_req, res) => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.json({ ok: true, note: 'supabase not configured' });
+  try {
+    const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString();
+    const since = weekAgo > ASK_AUDIT_FROM ? weekAgo : ASK_AUDIT_FROM;
+    const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+    const rows = await fetch(`${SUPABASE_URL}/rest/v1/qa_events?created_at=gte.${encodeURIComponent(since)}&select=id,created_at,question,answer,user_id&order=created_at.desc&limit=2000`, { headers: h })
+      .then((r) => r.json());
+    if (!Array.isArray(rows)) throw new Error('qa_events read failed');
+    const flags = [];
+    for (const r of rows) {
+      for (const rule of auditAnswer({ question: r.question, answer: r.answer, signedIn: !!r.user_id })) {
+        flags.push({ id: r.id, at: r.created_at, rule, what: AUDIT_RULES[rule] });
+      }
+    }
+    res.status(flags.length ? 503 : 200).json({ ok: flags.length === 0, since, checked: rows.length, flags });
+  } catch (e) {
+    res.status(503).json({ ok: false, error: e?.message });
+  }
 });
 
 // ── Client error reporting ───────────────────────────────────────────────────

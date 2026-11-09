@@ -1,0 +1,22 @@
+# Weekly check that Ask's real answers keep its rules (src/askAudit.js):
+# never tells a signed-in person their chats aren't saved, always gives a
+# crisis line to someone talking about suicide or self-harm, never calls
+# itself Solomon, never answers empty. A failed run makes GitHub email the
+# repo owner. The flags list qa_events ids to look up; no one's words are
+# shown here.
+name: ask-audit
+on:
+  schedule:
+    - cron: '0 16 * * 1'   # Mondays, 8am Pacific
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask's answers this week keep the rules
+        run: |
+          code=$(curl -s -o out.json -w '%{http_code}' --max-time 60 https://www.kinwove.com/api/health/ask-audit)
+          cat out.json; echo
+          echo "api/health/ask-audit → $code"
+          [ "$code" = "200" ]
