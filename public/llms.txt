@@ -1,7 +1,7 @@
 # kinwove: honest answers to hard faith questions
 # https://www.kinwove.com
 # llms.txt: machine-readable product summary for AI assistants and LLM crawlers
-# Last updated: 2026-10-21
+# Last updated: 2026-11-09
 
 ## What is kinwove?
 
@@ -64,7 +64,7 @@ A: Sarlia Digital Inc., a British Columbia, Canada company. Contact: hello@kinwo
 
 ## Answers library, citable pages
 
-Every question below is a standalone page of sourced content at https://www.kinwove.com/answers/<slug>, written to be read and cited directly. 82 pages in total.
+Every question below is a standalone page of sourced content at https://www.kinwove.com/answers/<slug>, written to be read and cited directly. 140 pages in total.
 
 ### For Pastors
 - How do I keep my congregation engaged between Sundays?: https://www.kinwove.com/answers/how-do-i-keep-my-congregation-engaged-between-sundays
@@ -98,6 +98,9 @@ Every question below is a standalone page of sourced content at https://www.kinw
 - What is faith?: https://www.kinwove.com/answers/what-is-faith
 - Can you believe in evolution and the Bible?: https://www.kinwove.com/answers/can-you-believe-in-evolution-and-the-bible
 - Is it okay to be angry at God?: https://www.kinwove.com/answers/is-it-okay-to-be-angry-at-god
+- What does the Bible say about patience?: https://www.kinwove.com/answers/what-does-the-bible-say-about-patience
+- What does the Bible say about hope?: https://www.kinwove.com/answers/what-does-the-bible-say-about-hope
+- Is Hermeticism compatible with Christianity?: https://www.kinwove.com/answers/is-hermeticism-compatible-with-christianity
 
 ### Suffering & Evil
 - Why does God allow suffering?: https://www.kinwove.com/answers/why-does-god-allow-suffering
@@ -114,11 +117,17 @@ Every question below is a standalone page of sourced content at https://www.kinw
 - Do Genesis 1 and 2 contradict each other?: https://www.kinwove.com/answers/do-genesis-1-and-2-contradict
 - How do I study the Bible deeper on my own?: https://www.kinwove.com/answers/how-do-i-study-the-bible-deeper-on-my-own
 - Can AI help me study the Bible?: https://www.kinwove.com/answers/can-ai-help-me-study-the-bible
+- What does the Bible say about drinking alcohol?: https://www.kinwove.com/answers/what-does-the-bible-say-about-drinking-alcohol
+- What does the Bible say about tattoos?: https://www.kinwove.com/answers/what-does-the-bible-say-about-tattoos
+- What is the mark of the beast?: https://www.kinwove.com/answers/what-is-the-mark-of-the-beast
+- Did Jesus preach to the dead?: https://www.kinwove.com/answers/did-jesus-preach-to-the-dead
 
 ### Jesus Christ
 - Is Jesus really God?: https://www.kinwove.com/answers/is-jesus-really-god
 - What is the Trinity?: https://www.kinwove.com/answers/what-is-the-trinity
 - Why did Jesus have to die?: https://www.kinwove.com/answers/why-did-jesus-have-to-die
+- Why did Jesus say "My God, why have you forsaken me?": https://www.kinwove.com/answers/why-did-jesus-say-my-god-why-have-you-forsaken-me
+- Who is Jesus?: https://www.kinwove.com/answers/who-is-jesus
 
 ### Eternal Life
 - What happens when you die?: https://www.kinwove.com/answers/what-happens-when-you-die
@@ -145,6 +154,7 @@ Every question below is a standalone page of sourced content at https://www.kinw
 - What is the meaning of life?: https://www.kinwove.com/answers/what-is-the-meaning-of-life
 - How do I know God's will for my life?: https://www.kinwove.com/answers/how-do-i-know-gods-will-for-my-life
 - What does the Bible say about self-worth?: https://www.kinwove.com/answers/what-does-the-bible-say-about-self-worth
+- What does the Bible say about work?: https://www.kinwove.com/answers/what-does-the-bible-say-about-work
 
 ### Grace
 - Does God love me?: https://www.kinwove.com/answers/does-god-love-me
@@ -152,6 +162,8 @@ Every question below is a standalone page of sourced content at https://www.kinw
 - Am I too far gone for God?: https://www.kinwove.com/answers/am-i-too-far-gone-for-god
 - What is grace?: https://www.kinwove.com/answers/what-is-grace
 - What is the unforgivable sin, and have I committed it?: https://www.kinwove.com/answers/what-is-the-unforgivable-sin
+- What does the Bible say about pride?: https://www.kinwove.com/answers/what-does-the-bible-say-about-pride
+- What does the Bible say about love?: https://www.kinwove.com/answers/what-does-the-bible-say-about-love
 
 ### Mental Health
 - What does the Bible say about anxiety?: https://www.kinwove.com/answers/what-does-the-bible-say-about-anxiety
@@ -161,6 +173,9 @@ Every question below is a standalone page of sourced content at https://www.kinw
 - What does the Bible say about grief and losing someone?: https://www.kinwove.com/answers/what-does-the-bible-say-about-grief
 - What does the Bible say about addiction?: https://www.kinwove.com/answers/what-does-the-bible-say-about-addiction
 - What does the Bible say about rest and burnout?: https://www.kinwove.com/answers/what-does-the-bible-say-about-rest
+- What does the Bible say about anger?: https://www.kinwove.com/answers/what-does-the-bible-say-about-anger
+- What does the Bible say about jealousy?: https://www.kinwove.com/answers/what-does-the-bible-say-about-jealousy
+- What does the Bible say about worrying about the future?: https://www.kinwove.com/answers/what-does-the-bible-say-about-worrying-about-the-future
 
 ### Holy Spirit
 - Who is the Holy Spirit?: https://www.kinwove.com/answers/who-is-the-holy-spirit
@@ -177,6 +192,122 @@ Every question below is a standalone page of sourced content at https://www.kinw
 ### Relationships
 - How do I forgive someone who hurt me?: https://www.kinwove.com/answers/how-do-i-forgive-someone-who-hurt-me
 - What does the Bible say about divorce?: https://www.kinwove.com/answers/what-does-the-bible-say-about-divorce
+- What does the Bible say about marriage?: https://www.kinwove.com/answers/what-does-the-bible-say-about-marriage
+- What does the Bible say about friendship?: https://www.kinwove.com/answers/what-does-the-bible-say-about-friendship
+- What does the Bible say about gossip?: https://www.kinwove.com/answers/what-does-the-bible-say-about-gossip
+- What does the Bible say about lying?: https://www.kinwove.com/answers/what-does-the-bible-say-about-lying
+- What does the Bible say about kindness?: https://www.kinwove.com/answers/what-does-the-bible-say-about-kindness
+- What does the Bible say about lust?: https://www.kinwove.com/answers/what-does-the-bible-say-about-lust
+
+### Bible verses explained
+- What does John 3:16 mean?: https://www.kinwove.com/answers/what-does-john-3-16-mean
+- What does Jeremiah 29:11 mean?: https://www.kinwove.com/answers/what-does-jeremiah-29-11-mean
+- What does Philippians 4:13 mean?: https://www.kinwove.com/answers/what-does-philippians-4-13-mean
+- What does Romans 8:28 mean?: https://www.kinwove.com/answers/what-does-romans-8-28-mean
+- What does Proverbs 3:5-6 mean?: https://www.kinwove.com/answers/what-does-proverbs-3-5-6-mean
+- What does Isaiah 41:10 mean?: https://www.kinwove.com/answers/what-does-isaiah-41-10-mean
+- What does Joshua 1:9 mean?: https://www.kinwove.com/answers/what-does-joshua-1-9-mean
+- What does Matthew 11:28 mean?: https://www.kinwove.com/answers/what-does-matthew-11-28-mean
+- What does "Be still, and know that I am God" mean?: https://www.kinwove.com/answers/what-does-psalm-46-10-mean
+- What does 2 Corinthians 5:17 mean?: https://www.kinwove.com/answers/what-does-2-corinthians-5-17-mean
+- What does Romans 12:2 mean?: https://www.kinwove.com/answers/what-does-romans-12-2-mean
+- What is the fruit of the Spirit?: https://www.kinwove.com/answers/what-is-the-fruit-of-the-spirit
+- What does "love is patient, love is kind" mean?: https://www.kinwove.com/answers/what-does-love-is-patient-love-is-kind-mean
+- What does Isaiah 40:31 mean?: https://www.kinwove.com/answers/what-does-isaiah-40-31-mean
+- What does Micah 6:8 mean?: https://www.kinwove.com/answers/what-does-micah-6-8-mean
+- What does 2 Timothy 1:7 mean?: https://www.kinwove.com/answers/what-does-2-timothy-1-7-mean
+- What does Psalm 139:14 mean?: https://www.kinwove.com/answers/what-does-psalm-139-14-mean
+- What does Lamentations 3:22-23 mean?: https://www.kinwove.com/answers/what-does-lamentations-3-22-23-mean
+- What does John 14:6 mean?: https://www.kinwove.com/answers/what-does-john-14-6-mean
+- What does Matthew 6:33 mean?: https://www.kinwove.com/answers/what-does-matthew-6-33-mean
+- What does Hebrews 11:1 mean?: https://www.kinwove.com/answers/what-does-hebrews-11-1-mean
+- What does Romans 6:23 mean?: https://www.kinwove.com/answers/what-does-romans-6-23-mean
+- What does Ephesians 2:8-9 mean?: https://www.kinwove.com/answers/what-does-ephesians-2-8-9-mean
+- What does Philippians 4:6-7 mean?: https://www.kinwove.com/answers/what-does-philippians-4-6-7-mean
+- What does 1 Peter 5:7 mean?: https://www.kinwove.com/answers/what-does-1-peter-5-7-mean
+- What does Romans 3:23 mean?: https://www.kinwove.com/answers/what-does-romans-3-23-mean
+- What is the Great Commission?: https://www.kinwove.com/answers/what-is-the-great-commission
+- What does John 16:33 mean?: https://www.kinwove.com/answers/what-does-john-16-33-mean
+- What does Psalm 37:4 mean?: https://www.kinwove.com/answers/what-does-psalm-37-4-mean
+- What does Hebrews 13:5 mean?: https://www.kinwove.com/answers/what-does-hebrews-13-5-mean
+- What does James 1:2-4 mean?: https://www.kinwove.com/answers/what-does-james-1-2-4-mean
+- What does 1 John 1:9 mean?: https://www.kinwove.com/answers/what-does-1-john-1-9-mean
+- What does Psalm 34:18 mean?: https://www.kinwove.com/answers/what-does-psalm-34-18-mean
+- What does Romans 10:9 mean?: https://www.kinwove.com/answers/what-does-romans-10-9-mean
+- What does 2 Corinthians 12:9 mean?: https://www.kinwove.com/answers/what-does-2-corinthians-12-9-mean
+- What does Matthew 24 mean?: https://www.kinwove.com/answers/what-does-matthew-24-mean
+- What does Philippians 2 mean?: https://www.kinwove.com/answers/what-does-philippians-2-mean
+
+## The Bible, explained chapter by chapter
+
+A plain-words study note for every chapter of the Bible (1189 chapters) and an introduction to each of the 66 books, written like a study Bible anyone can follow: what happens, the background, where Christians read it differently, and a question to think about. Not yet reviewed by a pastor. Index: https://www.kinwove.com/bible. Book pages are https://www.kinwove.com/bible/<book> and chapter pages are https://www.kinwove.com/bible/<book>-<chapter>, for example https://www.kinwove.com/bible/romans-8 or https://www.kinwove.com/bible/psalms-23.
+
+- Genesis: https://www.kinwove.com/bible/genesis
+- Exodus: https://www.kinwove.com/bible/exodus
+- Leviticus: https://www.kinwove.com/bible/leviticus
+- Numbers: https://www.kinwove.com/bible/numbers
+- Deuteronomy: https://www.kinwove.com/bible/deuteronomy
+- Joshua: https://www.kinwove.com/bible/joshua
+- Judges: https://www.kinwove.com/bible/judges
+- Ruth: https://www.kinwove.com/bible/ruth
+- 1 Samuel: https://www.kinwove.com/bible/1-samuel
+- 2 Samuel: https://www.kinwove.com/bible/2-samuel
+- 1 Kings: https://www.kinwove.com/bible/1-kings
+- 2 Kings: https://www.kinwove.com/bible/2-kings
+- 1 Chronicles: https://www.kinwove.com/bible/1-chronicles
+- 2 Chronicles: https://www.kinwove.com/bible/2-chronicles
+- Ezra: https://www.kinwove.com/bible/ezra
+- Nehemiah: https://www.kinwove.com/bible/nehemiah
+- Esther: https://www.kinwove.com/bible/esther
+- Job: https://www.kinwove.com/bible/job
+- Psalms: https://www.kinwove.com/bible/psalms
+- Proverbs: https://www.kinwove.com/bible/proverbs
+- Ecclesiastes: https://www.kinwove.com/bible/ecclesiastes
+- Song of Solomon: https://www.kinwove.com/bible/song-of-solomon
+- Isaiah: https://www.kinwove.com/bible/isaiah
+- Jeremiah: https://www.kinwove.com/bible/jeremiah
+- Lamentations: https://www.kinwove.com/bible/lamentations
+- Ezekiel: https://www.kinwove.com/bible/ezekiel
+- Daniel: https://www.kinwove.com/bible/daniel
+- Hosea: https://www.kinwove.com/bible/hosea
+- Joel: https://www.kinwove.com/bible/joel
+- Amos: https://www.kinwove.com/bible/amos
+- Obadiah: https://www.kinwove.com/bible/obadiah
+- Jonah: https://www.kinwove.com/bible/jonah
+- Micah: https://www.kinwove.com/bible/micah
+- Nahum: https://www.kinwove.com/bible/nahum
+- Habakkuk: https://www.kinwove.com/bible/habakkuk
+- Zephaniah: https://www.kinwove.com/bible/zephaniah
+- Haggai: https://www.kinwove.com/bible/haggai
+- Zechariah: https://www.kinwove.com/bible/zechariah
+- Malachi: https://www.kinwove.com/bible/malachi
+- Matthew: https://www.kinwove.com/bible/matthew
+- Mark: https://www.kinwove.com/bible/mark
+- Luke: https://www.kinwove.com/bible/luke
+- John: https://www.kinwove.com/bible/john
+- Acts: https://www.kinwove.com/bible/acts
+- Romans: https://www.kinwove.com/bible/romans
+- 1 Corinthians: https://www.kinwove.com/bible/1-corinthians
+- 2 Corinthians: https://www.kinwove.com/bible/2-corinthians
+- Galatians: https://www.kinwove.com/bible/galatians
+- Ephesians: https://www.kinwove.com/bible/ephesians
+- Philippians: https://www.kinwove.com/bible/philippians
+- Colossians: https://www.kinwove.com/bible/colossians
+- 1 Thessalonians: https://www.kinwove.com/bible/1-thessalonians
+- 2 Thessalonians: https://www.kinwove.com/bible/2-thessalonians
+- 1 Timothy: https://www.kinwove.com/bible/1-timothy
+- 2 Timothy: https://www.kinwove.com/bible/2-timothy
+- Titus: https://www.kinwove.com/bible/titus
+- Philemon: https://www.kinwove.com/bible/philemon
+- Hebrews: https://www.kinwove.com/bible/hebrews
+- James: https://www.kinwove.com/bible/james
+- 1 Peter: https://www.kinwove.com/bible/1-peter
+- 2 Peter: https://www.kinwove.com/bible/2-peter
+- 1 John: https://www.kinwove.com/bible/1-john
+- 2 John: https://www.kinwove.com/bible/2-john
+- 3 John: https://www.kinwove.com/bible/3-john
+- Jude: https://www.kinwove.com/bible/jude
+- Revelation: https://www.kinwove.com/bible/revelation
 
 ## Languages
 
