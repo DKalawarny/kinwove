@@ -1103,15 +1103,24 @@ const FILTERS = [
   { id: 'blocked', label: 'Blocked' },
 ];
 
-function InviteModal({ member, existingRoles, pendingInvites, onClose, onSubmit }) {
-  const [roleKey, setRoleKey] = useState(INVITABLE_ROLES[0].key);
+// "Pastor" opens the pastor dashboard on the person's own account. Only the
+// church's owner can offer it.
+const PASTOR_INVITE = {
+  ...presetForRole('pastor'),
+  emoji: '✝',
+  blurb: "Opens the pastor dashboard on their own account: Study, sermons and church posts. After they accept, choose what else they can do here in People.",
+};
+
+function InviteModal({ member, existingRoles, pendingInvites, onClose, onSubmit, canInvitePastor = false }) {
+  const roles = canInvitePastor ? [PASTOR_INVITE, ...INVITABLE_ROLES] : INVITABLE_ROLES;
+  const [roleKey, setRoleKey] = useState(roles[0].key);
   const [customLabel, setCustomLabel] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(null);
 
   const isCustom = roleKey === '__custom__';
-  const preset = presetForRole(roleKey);
+  const preset = roleKey === 'pastor' ? PASTOR_INVITE : presetForRole(roleKey);
   const alreadyHas    = (existingRoles  ?? []).some((r) => r.role_key === roleKey);
   const alreadyPending = !isCustom && (pendingInvites ?? []).some((i) => i.role_key === roleKey);
   const blocked = alreadyHas || alreadyPending;
@@ -1155,7 +1164,7 @@ function InviteModal({ member, existingRoles, pendingInvites, onClose, onSubmit 
           Role
         </div>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
-          {INVITABLE_ROLES.map((r) => {
+          {roles.map((r) => {
             const active = roleKey === r.key;
             return (
               <button key={r.key} onClick={() => setRoleKey(r.key)} style={{
@@ -1258,7 +1267,57 @@ function InviteModal({ member, existingRoles, pendingInvites, onClose, onSubmit 
   );
 }
 
-function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, onShowQr }) {
+// What a second pastor can do, as switches the church owner flips in People.
+// Each one is a column on their church_roles row.
+const PASTOR_SWITCHES = [
+  { col: 'can_post_sermons',       label: 'Sermons & Study' },
+  { col: 'can_post_announcements', label: 'Church posts' },
+  { col: 'can_moderate',           label: 'Moderate' },
+  { col: 'can_manage_staff',       label: 'People & roles' },
+  { col: 'can_edit_church',        label: 'Church settings' },
+];
+
+function PastorSwitches({ role, onChange, onError }) {
+  const [busy, setBusy] = useState(null);
+  async function flip(col) {
+    setBusy(col);
+    const next = !role[col];
+    const { error } = await supabase.from('church_roles').update({ [col]: next }).eq('id', role.id);
+    setBusy(null);
+    if (error) { onError?.(`Couldn't change that: ${error.message}`); return; }
+    onChange({ ...role, [col]: next });
+  }
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6, marginTop: 8 }}>
+      <span style={{ fontSize: 11.5, color: T.inkMuted, marginRight: 2 }}>Can use:</span>
+      {PASTOR_SWITCHES.map((sw) => {
+        const on = !!role[sw.col];
+        return (
+          <button
+            key={sw.col}
+            onClick={() => flip(sw.col)}
+            disabled={busy === sw.col}
+            role="switch"
+            aria-checked={on}
+            style={{
+              background: on ? 'rgba(184,115,58,0.14)' : 'transparent',
+              border: `1px solid ${on ? T.goldLight : T.line}`,
+              color: on ? T.goldDark : T.inkMuted,
+              borderRadius: 999, padding: '4px 10px', fontSize: 11.5, fontWeight: 600,
+              cursor: 'pointer', opacity: busy === sw.col ? 0.5 : 1,
+            }}
+          >
+            {on ? '✓ ' : ''}{sw.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, onShowQr, perms = { owner: true, staff: true } }) {
+  // Assigning and removing roles is for the owner or a pastor given "People & roles".
+  const canManage = !!(perms.owner || perms.staff);
   const [members, setMembers]   = useState([]);
   const [rolesByUser, setRolesByUser] = useState({});  // { user_id: [role rows] }
   const [pendingInvites, setPendingInvites] = useState([]);  // [{...invite, user_profile}]
@@ -1315,7 +1374,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
         .order('display_name', { ascending: true }),
       supabase
         .from('church_roles')
-        .select('id, user_id, role_key, role_label, role_title, is_owner, granted_at')
+        .select('id, user_id, role_key, role_label, role_title, is_owner, granted_at, can_post_sermons, can_post_announcements, can_moderate, can_manage_staff, can_edit_church')
         .eq('church_id', churchId),
       supabase
         .from('church_role_invites')
@@ -1999,7 +2058,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                         {memberRoles.map((r) => (
                           <span key={r.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                             <Badge role={r} />
-                            {m.id !== session?.user?.id && (
+                            {m.id !== session?.user?.id && canManage && (r.role_key !== 'pastor' || perms.owner) && (
                               <button
                                 onClick={() => revokeRole(r, m.display_name)}
                                 title={`Revoke ${presetForRole(r.role_key)?.label ?? r.role_label ?? r.role_key}`}
@@ -2041,8 +2100,19 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
                           {[m.city, m.country].filter(Boolean).join(', ')}
                         </div>
                       )}
+                      {perms.owner && memberRoles.filter((r) => r.role_key === 'pastor' && !r.is_owner).map((r) => (
+                        <PastorSwitches
+                          key={r.id}
+                          role={r}
+                          onError={(msg) => showToast(msg, 'error')}
+                          onChange={(next) => setRolesByUser((prev) => ({
+                            ...prev,
+                            [m.id]: (prev[m.id] ?? []).map((x) => x.id === next.id ? next : x),
+                          }))}
+                        />
+                      ))}
                     </div>
-                    {m.id !== session?.user?.id && !(rolesByUser[m.id] ?? []).some(r => r.is_owner) && (
+                    {canManage && m.id !== session?.user?.id && !(rolesByUser[m.id] ?? []).some(r => r.is_owner) && (
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                         <button onClick={() => setInvitingMember(m)} style={{
                           background: T.parchment, border: `1px solid ${T.goldLight}`, borderRadius: 999,
@@ -2072,6 +2142,7 @@ function PeoplePanel({ session, church, churchId, churchPlan, onChurchUpdate, on
           member={invitingMember}
           existingRoles={rolesByUser[invitingMember.id] ?? []}
           pendingInvites={pendingInvites.filter((i) => i.user_id === invitingMember.id)}
+          canInvitePastor={!!perms.owner}
           onClose={() => setInvitingMember(null)}
           onSubmit={async (payload) => {
             const r = await grantRole({ user_id: invitingMember.id, ...payload });
@@ -2400,15 +2471,23 @@ function NotesPanel({ session, churchId, onOpenSession }) {
   );
 }
 
-export default function ChurchAdmin({ session, profile, churchId, onBack, onOpenChurchPage, onOpenChurchHub, onOpenSermon, onOpenCareInbox, initialTab }) {
+const ALL_PERMS = { owner: true, sermons: true, announce: true, moderate: true, staff: true, edit: true, prayers: true };
+
+export default function ChurchAdmin({ session, profile, churchId, onBack, onOpenChurchPage, onOpenChurchHub, onOpenSermon, onOpenCareInbox, initialTab, perms = ALL_PERMS }) {
+  // A second pastor only gets the tabs their switches allow.
+  const hiddenTabs = [
+    ...(perms.sermons ? [] : ['ask', 'bible', 'sermons', 'notes']),
+    ...(perms.edit ? [] : ['settings']),
+  ];
   // Allow deep-links into a specific tab (e.g. ChurchPage's "Edit in Pastor
   // settings" lands on Settings, not Overview). Falls back to overview.
   const VALID_TABS = ['overview', 'people', 'ask', 'bible', 'sermons', 'notes', 'settings'];
   // Remember the last tab — leaving mid-Study and coming back lands in Study,
   // not Overview. Explicit deep-links (initialTab) still win.
+  const allowed = (t) => VALID_TABS.includes(t) && !hiddenTabs.includes(t);
   const [tab, setTabState] = useState(() => {
-    if (initialTab && VALID_TABS.includes(initialTab)) return initialTab;
-    try { const saved = localStorage.getItem('kw:church-tab'); if (VALID_TABS.includes(saved)) return saved; } catch { /* ignore */ }
+    if (initialTab && allowed(initialTab)) return initialTab;
+    try { const saved = localStorage.getItem('kw:church-tab'); if (allowed(saved)) return saved; } catch { /* ignore */ }
     return 'overview';
   });
   function setTab(t) {
@@ -2418,7 +2497,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   // Deep-links that arrive while the dashboard is already open (notification
   // taps, the church page's tab buttons) switch the tab instead of being ignored.
   useEffect(() => {
-    if (initialTab && VALID_TABS.includes(initialTab)) setTab(initialTab);
+    if (initialTab && allowed(initialTab)) setTab(initialTab);
   }, [initialTab]); // eslint-disable-line react-hooks/exhaustive-deps
   const [church, setChurch] = useState(null);
   const [showPastorTour, setShowPastorTour] = useState(false);
@@ -2515,6 +2594,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
   }
 
   function gotoSettings(action) {
+    if (!perms.edit) return;
     if (action) setPendingAction(action);
     setTab('settings');
   }
@@ -2547,6 +2627,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
       onOpenChurchHub={onOpenChurchHub}
       currentSubpage={null}
       fullBleed={tab === 'bible' || tab === 'ask'}
+      hiddenTabs={hiddenTabs}
       profile={profile}
       onSwitchToPersonal={onBack}
     >
@@ -2577,6 +2658,7 @@ export default function ChurchAdmin({ session, profile, churchId, onBack, onOpen
         )}
         {tab === 'people' && (
           <PeoplePanel
+            perms={perms}
             session={session}
             church={church}
             churchId={churchId}

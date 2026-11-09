@@ -107,11 +107,13 @@ export function joinSections(existingBody, html) {
 }
 
 // Sermons that have a document, newest first: [{ id, title, created_at }]
-export async function listSermonDocs(supabase, churchId) {
+// Only this pastor's own: another pastor's shared document isn't a session here.
+export async function listSermonDocs(supabase, churchId, userId) {
   if (!churchId) return [];
-  const { data } = await supabase.from('church_notes').select('id, series, created_at')
-    .eq('church_id', churchId).eq('source', DOC_SOURCE).not('series', 'is', null)
-    .order('created_at', { ascending: false });
+  let q = supabase.from('church_notes').select('id, series, created_at')
+    .eq('church_id', churchId).eq('source', DOC_SOURCE).not('series', 'is', null);
+  if (userId) q = q.eq('author_id', userId);
+  const { data } = await q.order('created_at', { ascending: false });
   const seen = new Set();
   return (data ?? []).filter((r) => r.series?.trim() && !seen.has(r.series.trim()) && seen.add(r.series.trim()))
     .map((r) => ({ id: r.id, title: r.series.trim(), created_at: r.created_at }));

@@ -54,6 +54,8 @@ export default function ChurchModeShell({
   fullBleed = false,
   profile,
   onSwitchToPersonal,
+  // Tabs this person can't use (a second pastor without that permission).
+  hiddenTabs = [],
   children,
 }) {
   const isVisitorView = currentSubpage === 'public';
@@ -143,7 +145,7 @@ export default function ChurchModeShell({
               edge and scrolls (justifyContent:center pushed Overview off-screen). */}
           <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
             <div style={{ display: 'flex', gap: 2, width: 'max-content', margin: '0 auto' }}>
-              {TABS.map((t) => (
+              {TABS.filter((t) => !hiddenTabs.includes(t.id)).map((t) => (
                 <TabButton
                   key={t.id}
                   tab={t}

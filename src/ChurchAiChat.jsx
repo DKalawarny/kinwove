@@ -527,7 +527,7 @@ export default function ChurchAiChat({ session, profile, churchId, churchPlan, o
   const [sermonMenuOpen, setSermonMenuOpen] = useState(false);
   useEscape(sermonMenuOpen, () => setSermonMenuOpen(false));
   const [newSermonName, setNewSermonName] = useState('');
-  function refreshSermons() { listSermonDocs(supabase, churchId).then(setSermons, () => {}); }
+  function refreshSermons() { listSermonDocs(supabase, churchId, session?.user?.id).then(setSermons, () => {}); }
   useEffect(() => { refreshSermons(); }, [churchId]);
   // a chat started with no sermon open: naming or picking a sermon keeps it
   const looseChat = convTitle === 'New conversation' && messages.length > 0;

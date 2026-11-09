@@ -31,6 +31,7 @@ function formatWeekOf(dateStr) {
 
 export default function SermonView({ session, profile, sermonId, onBack, onChangeSermon, onOpenChurch, chromeless = false }) {
   const [sermon, setSermon]   = useState(null);
+  const [preacher, setPreacher] = useState(null);
   const [churchName, setChurchName] = useState('');
   const [items, setItems]     = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,6 +65,10 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
       ]);
       if (cancelled) return;
       setSermon(s ?? null);
+      if (s?.pastor_id) {
+        supabase.from('profiles').select('display_name').eq('id', s.pastor_id).maybeSingle()
+          .then(({ data: p }) => { if (!cancelled) setPreacher(p?.display_name?.trim() || null); }, () => {});
+      }
       setItems(c ?? []);
       setLoading(false);
     }
@@ -176,8 +181,13 @@ export default function SermonView({ session, profile, sermonId, onBack, onChang
             {sermon.title}
           </h1>
           {sermon.scripture_ref && (
-            <div style={{ fontFamily: T.sans, fontSize: 12.5, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', color: T.goldDark, marginBottom: SPACE[3] }}>
+            <div style={{ fontFamily: T.sans, fontSize: 12.5, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', color: T.goldDark, marginBottom: preacher ? 4 : SPACE[3] }}>
               {sermon.scripture_ref}
+            </div>
+          )}
+          {preacher && (
+            <div style={{ fontSize: 13, color: T.inkMuted, marginBottom: SPACE[3] }}>
+              Preached by {preacher}
             </div>
           )}
           {Array.isArray(sermon.image_urls) && sermon.image_urls.length > 0 && (

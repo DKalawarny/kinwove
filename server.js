@@ -618,13 +618,36 @@ const ELEVEN_VOICES = {
 
 // Server-side pastor gate for the expensive generator endpoints (client hid
 // them, but nothing stopped a non-pastor calling the API directly).
+// May this person do `perm` in this church? Same rule as public.church_can():
+// the owner can do everything; a second pastor only what their switches allow.
+// perm: sermons | announce | moderate | staff | edit | prayers
+const PERM_COLS = {
+  sermons: 'can_post_sermons', announce: 'can_post_announcements', moderate: 'can_moderate',
+  staff: 'can_manage_staff', edit: 'can_edit_church', prayers: 'can_view_prayers',
+};
+async function churchCan(churchId, userId, perm) {
+  if (!isUuid(churchId) || !isUuid(userId)) return false;
+  const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+  const [churches, roles] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/churches?id=eq.${churchId}&select=pastor_id&limit=1`, { headers: h }).then((r) => r.json()).catch(() => []),
+    fetch(`${SUPABASE_URL}/rest/v1/church_roles?church_id=eq.${churchId}&user_id=eq.${userId}&select=is_owner,${Object.values(PERM_COLS).join(',')}`, { headers: h }).then((r) => r.json()).catch(() => []),
+  ]);
+  if (churches?.[0]?.pastor_id === userId) return true;
+  return (Array.isArray(roles) ? roles : []).some((r) => r.is_owner || (perm && PERM_COLS[perm] && r[PERM_COLS[perm]]));
+}
+
 async function requirePastor(req, res, next) {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.status(503).json({ error: 'not configured' });
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}&select=is_pastor&limit=1`,
-      { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } });
+    const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}&select=is_pastor&limit=1`, { headers: h });
     const [p] = await r.json();
-    if (!p?.is_pastor) return res.status(403).json({ error: 'pastor access required' });
+    if (!p?.is_pastor) {
+      // A second pastor (Pastor role with sermons switched on) uses the same tools.
+      const rr = await fetch(`${SUPABASE_URL}/rest/v1/church_roles?user_id=eq.${req.userId}&role_key=eq.pastor&can_post_sermons=eq.true&select=id&limit=1`, { headers: h });
+      const roles = await rr.json().catch(() => []);
+      if (!(Array.isArray(roles) && roles.length)) return res.status(403).json({ error: 'pastor access required' });
+    }
     next();
   } catch (e) {
     console.error('[requirePastor]', e?.message);
@@ -1194,7 +1217,13 @@ async function getServerPlan(userId) {
     // A pastor on a free personal plan is covered by their church's plan —
     // otherwise the 5/week personal cap walls off their own sermon prep.
     const cr = await fetch(`${SUPABASE_URL}/rest/v1/churches?pastor_id=eq.${userId}&select=plan,trial_started_at&limit=1`, { headers });
-    const [church] = await cr.json();
+    let [church] = await cr.json();
+    if (!church) {
+      // A second pastor who can preach is covered by the church's plan too.
+      const rr = await fetch(`${SUPABASE_URL}/rest/v1/church_roles?user_id=eq.${userId}&role_key=eq.pastor&can_post_sermons=eq.true&select=churches(plan,trial_started_at)&limit=1`, { headers });
+      const [role] = await rr.json().catch(() => []);
+      church = role?.churches ?? null;
+    }
     if (church) {
       const trialEnd = church.trial_started_at ? new Date(church.trial_started_at).getTime() + TRIAL_DAYS * 86400000 : 0;
       const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
@@ -2259,7 +2288,7 @@ async function getUserEmail(userId) {
 
 // Server-side role key → display label (mirrors Badge.jsx ROLE_PRESETS)
 const ROLE_LABELS = {
-  owner: 'Owner', elder: 'Elder', staff: 'Staff',
+  owner: 'Owner', pastor: 'Pastor', elder: 'Elder', staff: 'Staff',
   care: 'Care team', careTeam: 'Care team',
   worship: 'Worship', youth: 'Youth',
 };
@@ -2403,12 +2432,15 @@ function welcomeEmailHtml(firstName) {
   `);
 }
 
-function roleInviteEmailHtml({ memberName, pastorName, roleLabel, churchName, inviteUrl }) {
+function roleInviteEmailHtml({ memberName, pastorName, roleLabel, churchName, inviteUrl, isPastor = false }) {
   const url = inviteUrl || 'https://www.kinwove.com';
+  const what = isPastor
+    ? `to be a pastor at <strong>${churchName}</strong> on kinwove. Once you accept, the pastor dashboard opens on your own account, with Study, sermons and church posts`
+    : `to join the <strong>${roleLabel}</strong> team at <strong>${churchName}</strong>`;
   return emailWrap(`
     <h1 style="font-size:26px;font-weight:600;margin:0 0 14px;letter-spacing:-0.02em;color:#2C1810">You've been invited.</h1>
     <p style="font-size:16px;color:#6B5344;line-height:1.75;margin:0 0 20px">
-      <strong>${pastorName}</strong> has invited you to join the <strong>${roleLabel}</strong> team at <strong>${churchName}</strong>.
+      <strong>${pastorName}</strong> has invited you ${what}.
     </p>
     <div style="background:#FDF8F0;border:1px solid #E8D5BB;border-radius:12px;padding:18px 20px;margin-bottom:24px;font-size:14px;color:#6B5344;line-height:1.7">
       Tap the button below to accept or decline — it takes you straight to the invitation, no searching required.
@@ -2578,12 +2610,10 @@ app.post('/api/church/role-invite', requireAuth, limitAuthed({ capacity: 20, ref
   const [church] = await churchR.json().catch(() => []);
   if (!church) return res.status(404).json({ error: 'church not found' });
 
-  const isOwner = church.pastor_id === req.userId;
-  if (!isOwner) {
-    // Also check church_roles for manager/owner role
-    const rolesR = await fetch(`${SUPABASE_URL}/rest/v1/church_roles?church_id=eq.${church_id}&user_id=eq.${req.userId}&is_owner=eq.true&select=id`, { headers: h });
-    const roles = await rolesR.json().catch(() => []);
-    if (!roles.length) return res.status(403).json({ error: 'pastor access required' });
+  // The owner, or a pastor given "People & roles". Only the owner makes someone a Pastor.
+  if (!(await churchCan(church_id, req.userId, 'staff'))) return res.status(403).json({ error: 'pastor access required' });
+  if (role_key === 'pastor' && !(await churchCan(church_id, req.userId, 'owner'))) {
+    return res.status(403).json({ error: 'Only the church owner can add a pastor.' });
   }
 
   // Insert the pending invite — return=representation gives us the created row (with id)
@@ -2622,8 +2652,8 @@ app.post('/api/church/role-invite', requireAuth, limitAuthed({ capacity: 20, ref
       console.log(`[role-invite email] sending to ${memberEmail} for role "${label}" — link: ${inviteUrl}`);
       await sendEmail(
         memberEmail,
-        `You've been invited to join the ${label} team at ${church.name}`,
-        roleInviteEmailHtml({ memberName, pastorName, roleLabel: label, churchName: church.name, inviteUrl }),
+        role_key === 'pastor' ? `You've been invited to be a pastor at ${church.name}` : `You've been invited to join the ${label} team at ${church.name}`,
+        roleInviteEmailHtml({ memberName, pastorName, roleLabel: label, churchName: church.name, inviteUrl, isPastor: role_key === 'pastor' }),
       );
       console.log(`[role-invite email] sent OK to ${memberEmail}`);
     } catch (e) {
@@ -3995,7 +4025,7 @@ app.post('/api/church/rotate-invite-code', requireAuth, async (req, res) => {
   ).then(r => r.json()).catch(() => []);
   const church = Array.isArray(rows) ? rows[0] : null;
   if (!church) return res.status(404).json({ error: 'Church not found' });
-  if (church.pastor_id !== req.userId) return res.status(403).json({ error: 'Not your church' });
+  if (church.pastor_id !== req.userId && !(await churchCan(churchId, req.userId, 'staff'))) return res.status(403).json({ error: 'Not your church' });
   // Generate new 8-char code
   const newCode = Math.random().toString(36).substring(2, 10).toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 8).padEnd(8, 'A');
   const updated = await fetch(
@@ -4018,7 +4048,7 @@ app.post('/api/church/youth-invite-code', requireAuth, async (req, res) => {
   ).then(r => r.json()).catch(() => []);
   const church = Array.isArray(rows) ? rows[0] : null;
   if (!church) return res.status(404).json({ error: 'Church not found' });
-  if (church.pastor_id !== req.userId) return res.status(403).json({ error: 'Not your church' });
+  if (church.pastor_id !== req.userId && !(await churchCan(churchId, req.userId, 'staff'))) return res.status(403).json({ error: 'Not your church' });
   const newCode = 'Y-' + Math.random().toString(36).substring(2, 8).toUpperCase();
   const updated = await fetch(
     `${SUPABASE_URL}/rest/v1/churches?id=eq.${encodeURIComponent(churchId)}`,
@@ -4792,7 +4822,14 @@ app.post('/api/welcome-dm', requireAuth, limitAuthed({ capacity: 3, refillPerSec
 // header), which also survives mail apps' dark mode (Daniel, 7 Nov: the old beige
 // layout turned brown in Mail). Leads with Monday's question, then the pastor's note,
 // the week's church posts and prayers, and today's verse.
-function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse, verseWords }) {
+async function displayNameOf(userId) {
+  if (!isUuid(userId)) return null;
+  const rows = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=display_name&limit=1`,
+    { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } }).then((r) => r.json()).catch(() => []);
+  return rows?.[0]?.display_name?.trim() || null;
+}
+
+function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse, verseWords, preacher }) {
   const fq = firstQuestion ? splitQuestion(firstQuestion) : null;
   const label = (t) => `<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#B8733A;font-weight:700;margin:0 0 10px">${t}</div>`;
   const postRows = topPosts.map((p) => `
@@ -4809,7 +4846,8 @@ function digestEmailHtml({ churchName, topPosts, prayers, sermon, unsubUrl, ctaU
     ${label(escHtml(churchName))}
     <div style="font-size:13px;color:#9C7B5E;margin:0 0 8px">This week's sermon</div>
     <div style="font-family:Georgia,serif;font-size:28px;font-weight:600;line-height:1.2;color:#2C1810;margin:0 0 6px">${escHtml(sermon.title)}</div>
-    ${sermon.scripture_ref ? `<div style="font-size:14px;color:#B8733A;font-weight:600;margin:0 0 16px">${escHtml(sermon.scripture_ref)}</div>` : '<div style="height:10px"></div>'}
+    ${sermon.scripture_ref ? `<div style="font-size:14px;color:#B8733A;font-weight:600;margin:0 0 ${preacher ? 4 : 16}px">${escHtml(sermon.scripture_ref)}</div>` : '<div style="height:10px"></div>'}
+    ${preacher ? `<div style="font-size:13px;color:#9C7B5E;margin:0 0 16px">Preached by ${escHtml(preacher)}</div>` : ''}
     ${note ? `<div style="font-family:Georgia,serif;font-size:17px;line-height:1.65;color:#2C1810;margin:0 0 18px;white-space:pre-wrap">${escHtml(note)}</div>` : ''}
     ${fq?.question ? `
       <div style="border-top:1px solid #E8D5BB;padding-top:20px;margin-top:6px">
@@ -4864,7 +4902,7 @@ async function sermonEmailContext(churchId, userId) {
   const churches = await churchRes.json();
   const church = Array.isArray(churches) ? churches[0] : null;
   if (!church) return { status: 404, error: 'Church not found' };
-  if (!(Array.isArray(roles) && roles.length) && church.pastor_id !== userId) {
+  if (!(Array.isArray(roles) && roles.length) && church.pastor_id !== userId && !(await churchCan(churchId, userId, 'sermons'))) {
     // kinwove admins can preview and test any church's email (Daniel has no church of his own)
     const adm = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=is_admin&limit=1`, { headers: h }).then((r) => r.json()).catch(() => []);
     if (!adm?.[0]?.is_admin) return { status: 403, error: 'Not authorized for this church' };
@@ -4904,7 +4942,8 @@ app.post('/api/sermon-email-preview', requireAuth, async (req, res) => {
     const ctx = await sermonEmailContext(churchId, req.userId);
     if (ctx.error) return res.status(ctx.status).json({ error: ctx.error });
     const tv = await todaysVerseForEmail();
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note, firstQuestion, verse: tv.verse, verseWords: tv.words });
+    const preacher = await displayNameOf(req.userId);
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '#', ctaUrl: '#', note, firstQuestion, verse: tv.verse, verseWords: tv.words, preacher });
     res.json({ html, subject: `New sermon: "${sermon.title}" at ${ctx.church.name}` });
   } catch (err) { safeError(res, err, 'sermon-email-preview'); }
 });
@@ -4939,7 +4978,8 @@ app.post('/api/sermon-email-test', requireAuth, async (req, res) => {
     }
     if (!to) return res.status(400).json({ error: 'No email address on your account' });
     const tv = await todaysVerseForEmail();
-    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note, firstQuestion, verse: tv.verse, verseWords: tv.words });
+    const preacher = await displayNameOf(req.userId);
+    const html = digestEmailHtml({ churchName: ctx.church.name, topPosts: ctx.topPosts, prayers: ctx.prayers, sermon, unsubUrl: '', ctaUrl: `https://www.kinwove.com/?church=${churchId}`, note, firstQuestion, verse: tv.verse, verseWords: tv.words, preacher });
     const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -4976,11 +5016,11 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
     if (!church) return res.status(404).json({ error: 'Church not found' });
     const isOwner  = Array.isArray(roles) && roles.length > 0;
     const isPastor = church.pastor_id === req.userId;
-    if (!isOwner && !isPastor) return res.status(403).json({ error: 'Not authorized for this church' });
+    if (!isOwner && !isPastor && !(await churchCan(churchId, req.userId, 'sermons'))) return res.status(403).json({ error: 'Not authorized for this church' });
 
     // 2. Fetch the specific sermon
     const sermonRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/sermons?id=eq.${sermonId}&church_id=eq.${churchId}&select=title,scripture_ref,summary&limit=1`,
+      `${SUPABASE_URL}/rest/v1/sermons?id=eq.${sermonId}&church_id=eq.${churchId}&select=title,scripture_ref,summary,pastor_id&limit=1`,
       { headers: h }
     );
     const sermons = await sermonRes.json();
@@ -4991,6 +5031,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
       { headers: h }
     ).then((r) => r.json()).catch(() => []);
     const firstQuestion = Array.isArray(firstQ) && firstQ[0]?.body ? String(firstQ[0].body) : '';
+    const preacher = await displayNameOf(sermon.pastor_id);
 
     // 3. Fetch church members (honoring the global email opt-out — CASL)
     const membersRes = await fetch(
@@ -5058,7 +5099,7 @@ app.post('/api/send-sermon-digest', requireAuth, async (req, res) => {
       await Promise.all(queue.slice(i, i + 10).map(async (m) => {
         try {
           const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${m.id}&t=${emailToken(m.id)}`;
-          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse: tv.verse, verseWords: tv.words });
+          const html = digestEmailHtml({ churchName: church.name, topPosts, prayers, sermon, unsubUrl, ctaUrl, note, firstQuestion, verse: tv.verse, verseWords: tv.words, preacher });
           const r = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },

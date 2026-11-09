@@ -189,6 +189,10 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
   const [formBody, setFormBody]   = useState('');
   const [creating, setCreating]   = useState(false);
   const [podiumNote, setPodiumNote] = useState(null);
+  // Other pastors' notes they chose to share: read-only, kept apart from your own
+  // so editing, reordering and "Use in sermon" only ever touch your notes.
+  const [teamNotes, setTeamNotes] = useState([]);
+  const [teamNames, setTeamNames] = useState({});
   // Live mode (the Study desk): the open session's document stays open in the
   // pane, and each thing saved from the chat or the Bible lands in it as you watch.
   const [showList, setShowList] = useState(false);
@@ -291,7 +295,24 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
     if (!churchId) return;
     supabase.from('church_notes')
       .select('*').eq('church_id', churchId).order('updated_at', { ascending: false })
-      .then(({ data }) => { setNotes(data ?? []); setLoading(false); syncOpenDoc(data ?? []); }, () => setLoading(false));
+      .then(({ data }) => {
+        const all = data ?? [];
+        const own = all.filter(n => n.author_id === userId);
+        const team = all.filter(n => n.author_id !== userId);
+        setNotes(own); setTeamNotes(team); setLoading(false); syncOpenDoc(own);
+        const ids = [...new Set(team.map(n => n.author_id))];
+        if (ids.length) {
+          supabase.from('profiles').select('id, display_name').in('id', ids)
+            .then(({ data: ps }) => setTeamNames(Object.fromEntries((ps ?? []).map(p => [p.id, p.display_name]))), () => {});
+        }
+      }, () => setLoading(false));
+  }
+
+  async function toggleShared(note) {
+    const shared = !note.shared;
+    setNotes(prev => prev.map(n => n.id === note.id ? { ...n, shared } : n));
+    const { error } = await supabase.from('church_notes').update({ shared }).eq('id', note.id);
+    if (error) setNotes(prev => prev.map(n => n.id === note.id ? { ...n, shared: !shared } : n));
   }
   useEffect(() => { loadNotes(); }, [churchId, refreshKey]);
 
@@ -743,6 +764,11 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
                     )}
                   </span>
                   <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                    <button onClick={() => toggleShared(note)}
+                      title={note.shared ? 'The other pastors at your church can read this. Tap to make it private.' : 'Only you can see this. Tap to let the other pastors at your church read it.'}
+                      style={{ background: note.shared ? 'rgba(184,115,58,0.12)' : 'none', border: `1px solid ${note.shared ? 'rgba(184,115,58,0.35)' : 'rgba(26,17,8,0.14)'}`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: note.shared ? T.goldDark : T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
+                      {note.shared ? 'Shared ✓' : 'Share'}
+                    </button>
                     <button onClick={() => setPodiumNote(note)} title="Full screen, large type, for reading while you preach"
                       style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
                       Podium
@@ -767,6 +793,41 @@ export function NotesSection({ session, churchId, refreshKey = 0, onOpenSession,
         </>
         );
       })()}
+
+      {teamNotes.length > 0 && !liveOpen && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: T.inkMuted, whiteSpace: 'nowrap' }}>Shared by your team</span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(26,17,8,0.08)' }} />
+          </div>
+          {teamNotes.map(note => {
+            const preview = makePreview(note.body);
+            return (
+              <div key={note.id} style={{ background: T.white, border: '1px solid rgba(26,17,8,0.10)', borderRadius: 10, padding: '10px 13px' }}>
+                <div style={{ fontFamily: T.serif, fontSize: 13, fontWeight: 600, color: T.ink, lineHeight: 1.35 }}>
+                  {note.title || preview.slice(0, 55) + (preview.length > 55 ? '…' : '')}
+                </div>
+                <div style={{ fontSize: 12, color: T.inkMuted, marginTop: 4, lineHeight: 1.4 }}>
+                  {preview.slice(0, 90)}{preview.length > 90 ? '…' : ''}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, gap: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 11, color: T.inkMuted }}>
+                    From {teamNames[note.author_id] ?? 'another pastor'}{note.series ? ` · ${note.series}` : ''}
+                  </span>
+                  <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                    <button hidden={isNativeApp} onClick={() => printNote(note)} title="Print"
+                      style={{ background: 'none', border: 'none', fontSize: 12, cursor: 'pointer', color: T.inkMuted, opacity: 0.6, padding: '0 2px' }}>🖨</button>
+                    <button onClick={() => setPodiumNote(note)}
+                      style={{ background: 'none', border: `1px solid rgba(26,17,8,0.14)`, borderRadius: 8, padding: '3px 10px', fontSize: 11, color: T.inkSoft, cursor: 'pointer', fontWeight: 500 }}>
+                      Read
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {podiumNote && <PodiumView note={podiumNote} onClose={() => setPodiumNote(null)} />}
 

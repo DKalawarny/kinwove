@@ -175,7 +175,7 @@ import LanguageMenu from './i18n/LanguageMenu.jsx';
 
 // ── Role label map (client-side mirror of server ROLE_LABELS) ────────────────
 const ROLE_LABELS_CLIENT = {
-  owner: 'Owner', elder: 'Elder', staff: 'Staff',
+  owner: 'Owner', pastor: 'Pastor', elder: 'Elder', staff: 'Staff',
   care: 'Care team', careTeam: 'Care team',
   worship: 'Worship', youth: 'Youth',
 };
@@ -892,6 +892,7 @@ function PastorPrompt({ open, onApply, onClose }) {
 }
 
 const NOTES_KEY = 'kinwove:notes:v1';
+const CHURCH_OWNER_PERMS = { owner: true, sermons: true, announce: true, moderate: true, staff: true, edit: true, prayers: true };
 const CONVS_KEY = 'kinwove:convs:v1';
 const convsKey  = (uid) => `${CONVS_KEY}:${uid}`;
 
@@ -1802,6 +1803,10 @@ export default function App() {
   const [joinResult, setJoinResult] = useState(null); // { ok: bool, message: string, churchName? }
   const [careTeamRecord, setCareTeamRecord] = useState(null);
   const [pastorChurchId, setPastorChurchId] = useState(null);
+  // What this person may do in the church they lead or help lead. The owner gets
+  // everything; a second pastor gets the switches the owner turned on for them
+  // (sermons, posts, moderate, people, settings, prayers). Null = no church role.
+  const [churchPerms, setChurchPerms] = useState(null);
   // Used by ChurchModeShell on wrapped sub-pages so the header shows the
   // pastor's own church name even before the page-specific data loads.
   const [pastorChurch,   setPastorChurch]   = useState(null);
@@ -2311,6 +2316,7 @@ export default function App() {
         setCareTeamRecord(null);
         setPastorChurchId(null);
         setPastorChurch(null);
+        setChurchPerms(null);
         // Only wipe saved stage on explicit sign-out. TOKEN_REFRESHED can fire
         // with s=null briefly — don't treat that as signed-out.
         if (event === 'SIGNED_OUT') {
@@ -2604,8 +2610,35 @@ export default function App() {
       } catch { /* non-fatal */ }
     }
 
+    let perms = church ? CHURCH_OWNER_PERMS : null;
+
+    // Not the owner: a Pastor role on the church they belong to opens the same
+    // dashboard, limited to what the owner switched on for them.
+    if (!church) {
+      const { data: coRole } = await supabase
+        .from('church_roles')
+        .select('church_id, can_post_sermons, can_post_announcements, can_moderate, can_manage_staff, can_edit_church, can_view_prayers, churches(id, name, city, region)')
+        .eq('user_id', userId)
+        .eq('role_key', 'pastor')
+        .limit(1)
+        .maybeSingle();
+      if (coRole?.churches) {
+        church = coRole.churches;
+        perms = {
+          owner: false,
+          sermons: !!coRole.can_post_sermons,
+          announce: !!coRole.can_post_announcements,
+          moderate: !!coRole.can_moderate,
+          staff: !!coRole.can_manage_staff,
+          edit: !!coRole.can_edit_church,
+          prayers: !!coRole.can_view_prayers,
+        };
+      }
+    }
+
     setPastorChurchId(church?.id ?? null);
     setPastorChurch(church ?? null);
+    setChurchPerms(perms);
   }
 
 
@@ -3090,12 +3123,12 @@ export default function App() {
           onOpenSermon={(id) => { setViewingSermonId(id); setStage('sermon-view'); }}
           onOpenWalks={SHOW_WALKS ? () => setStage('walks') : undefined}
           onOpenTalkToSomeone={profile?.church_id ? () => { setViewingChurchId(profile.church_id); setStage('talk-to-someone'); } : undefined}
-          onOpenCareInbox={(careTeamRecord || pastorChurchId) ? () => setStage('care-inbox') : undefined}
+          onOpenCareInbox={(careTeamRecord || churchPerms?.owner) ? () => setStage('care-inbox') : undefined}
           onOpenMessages={() => setStage('messages')}
           onOpenConnect={SHOW_CONNECT ? () => setStage('connect') : undefined}
 
           onOpenPastorDashboard={pastorChurchId ? () => setStage('church-admin') : undefined}
-          hasCareTeamRole={!!(careTeamRecord || pastorChurchId)}
+          hasCareTeamRole={!!(careTeamRecord || churchPerms?.owner)}
           hasPastoredChurch={!!pastorChurchId}
           onUpgrade={() => setShowUpgrade(true)}
         />
@@ -3235,7 +3268,7 @@ export default function App() {
             onOpenTalkToSomeone={(profile?.church_id === viewingChurchId || pastorChurchId === viewingChurchId)
               ? () => setStage('talk-to-someone')
               : undefined}
-            onOpenCareInbox={(careTeamRecord || pastorChurchId) ? () => setStage('care-inbox') : undefined}
+            onOpenCareInbox={(careTeamRecord || churchPerms?.owner) ? () => setStage('care-inbox') : undefined}
             onOpenWalks={SHOW_WALKS ? () => setStage('walks') : undefined}
             onFindChurches={() => { setViewingUserId(null); setStage('churches'); }}
             onRequestJoin={!session
@@ -3359,7 +3392,8 @@ export default function App() {
       })()}
       {(stage === 'pastor-dashboard') && session && pastorChurchId && (
         <ChurchAdmin
-          onOpenCareInbox={() => setStage('care-inbox')}
+          onOpenCareInbox={(careTeamRecord || churchPerms?.owner !== false) ? () => setStage('care-inbox') : undefined}
+          perms={churchPerms ?? CHURCH_OWNER_PERMS}
           session={session}
           profile={profile}
           churchId={pastorChurchId}
@@ -3370,7 +3404,8 @@ export default function App() {
       )}
       {stage === 'church-admin' && session && (pastorChurchId || (profile?.is_pastor && profile?.church_id)) && (
         <ChurchAdmin
-          onOpenCareInbox={() => setStage('care-inbox')}
+          onOpenCareInbox={(careTeamRecord || churchPerms?.owner !== false) ? () => setStage('care-inbox') : undefined}
+          perms={churchPerms ?? CHURCH_OWNER_PERMS}
           session={session}
           profile={profile}
           churchId={pastorChurchId || profile.church_id}
@@ -3600,7 +3635,7 @@ export default function App() {
             session={session}
             profile={profile}
             chatOpen={chatPanelOpen}
-            hasCareTeamRole={!!(careTeamRecord || pastorChurchId)}
+            hasCareTeamRole={!!(careTeamRecord || churchPerms?.owner)}
             hasPastoredChurch={!!pastorChurchId}
             onGoHome={() => { setViewingUserId(null); setStage('home'); }}
             onGoChurch={() => {
@@ -3626,7 +3661,7 @@ export default function App() {
             onOpenHistory={() => { setViewingUserId(null); setStage('feed'); setHistoryOpen(true); }}
             onInviteFriends={() => { setViewingUserId(null); setStage('invite'); }}
             onOpenTalkToSomeone={profile?.church_id ? () => { setViewingUserId(null); setViewingChurchId(profile.church_id); setStage('talk-to-someone'); } : undefined}
-            onOpenCareInbox={(careTeamRecord || pastorChurchId) ? () => { setViewingUserId(null); setStage('care-inbox'); } : undefined}
+            onOpenCareInbox={(careTeamRecord || churchPerms?.owner) ? () => { setViewingUserId(null); setStage('care-inbox'); } : undefined}
             onOpenPastorDashboard={pastorChurchId ? () => { setViewingUserId(null); setStage('church-admin'); } : undefined}
             onFindChurches={() => { setViewingUserId(null); setStage('churches'); }}
             onApplyAsPastor={() => { setViewingUserId(null); setStage('pastor-apply'); }}
@@ -3670,7 +3705,7 @@ export default function App() {
       {showTopRight && (!chatPanelOpen || isDesktop) && !inChurchMode && (
         <TopRightMenu
           profile={profile}
-          hasCareTeamRole={!!(careTeamRecord || pastorChurchId)}
+          hasCareTeamRole={!!(careTeamRecord || churchPerms?.owner)}
           hasPastoredChurch={!!pastorChurchId}
           isDesktop={isDesktop}
           rightOffset={isDocked ? chatPanelWidth : 0}
@@ -3679,7 +3714,7 @@ export default function App() {
           onFindPeople={() => { setViewingUserId(null); setPeopleSearchOpen(true); }}
           onInviteFriends={() => setStage('invite')}
           onOpenTalkToSomeone={profile?.church_id ? () => { setViewingChurchId(profile.church_id); setStage('talk-to-someone'); } : undefined}
-          onOpenCareInbox={(careTeamRecord || pastorChurchId) ? () => setStage('care-inbox') : undefined}
+          onOpenCareInbox={(careTeamRecord || churchPerms?.owner) ? () => setStage('care-inbox') : undefined}
           onOpenPastorDashboard={pastorChurchId ? () => setStage('church-admin') : undefined}
           onFindChurches={() => { setViewingUserId(null); setStage('churches'); }}
           onApplyAsPastor={() => setStage('pastor-apply')}
@@ -3814,7 +3849,7 @@ export default function App() {
             }
             const roleLabel = pendingInvite.role_label || ROLE_LABELS_CLIENT[pendingInvite.role_key] || pendingInvite.role_key;
             setPendingInvite(null);
-            setBadgeEarned({ roleLabel, churchName: pendingInvite.churches?.name });
+            setBadgeEarned({ roleLabel, churchName: pendingInvite.churches?.name, roleKey: pendingInvite.role_key, churchId: pendingInvite.church_id });
             // Optimistic — show Care inbox immediately
             if (pendingInvite.role_key === 'care' && pendingInvite.church_id) {
               setCareTeamRecord({ church_id: pendingInvite.church_id, role_label: roleLabel, is_active: true });
@@ -3843,6 +3878,7 @@ export default function App() {
             const cid = badgeEarned?.churchId;
             setBadgeEarned(null);
             if (rk === 'care' && cid) setStage('care-inbox');
+            if (rk === 'pastor' && cid) setStage('church-admin');
           }}
         >
           <div style={{ textAlign: 'center', padding: '0 32px', pointerEvents: 'none' }}>
@@ -3862,7 +3898,9 @@ export default function App() {
               fontFamily: T.serif, fontSize: 30, fontWeight: 600,
               color: '#FAF3E2', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 10,
             }}>
-              Welcome to the<br />{(badgeEarned.roleLabel ?? '').replace(/\s*team$/i, '')} team.
+              {badgeEarned?.roleKey === 'pastor'
+                ? <>You&rsquo;re a pastor<br />here now.</>
+                : <>Welcome to the<br />{(badgeEarned.roleLabel ?? '').replace(/\s*team$/i, '')} team.</>}
             </div>
             {badgeEarned.churchName && (
               <div style={{ fontSize: 15, color: '#C17B45', marginTop: 6 }}>
@@ -3870,7 +3908,9 @@ export default function App() {
               </div>
             )}
             <div style={{ fontSize: 13, color: 'rgba(250,243,226,0.45)', marginTop: 28 }}>
-              {badgeEarned?.roleKey === 'care' ? 'Tap to open your conversations →' : 'Tap anywhere to continue'}
+              {badgeEarned?.roleKey === 'care' ? 'Tap to open your conversations →'
+                : badgeEarned?.roleKey === 'pastor' ? 'Tap to open the pastor dashboard →'
+                : 'Tap anywhere to continue'}
             </div>
           </div>
           <style>{`
