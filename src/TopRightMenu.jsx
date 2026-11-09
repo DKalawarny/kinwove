@@ -59,7 +59,7 @@ export default function TopRightMenu({
       items: [
         hasCareTeamRole   && onOpenCareInbox      && { icon: Inbox,      label: 'Conversations',      onClick: onOpenCareInbox },
         hasPastoredChurch && onOpenPastorDashboard && { icon: Building2,  label: 'Manage your church', onClick: onOpenPastorDashboard },
-        onApplyAsPastor && !profile?.is_pastor     && { icon: Star,       label: 'Apply as a pastor',  onClick: onApplyAsPastor },
+        onApplyAsPastor && !profile?.is_pastor && !hasPastoredChurch && { icon: Star,       label: 'Apply as a pastor',  onClick: onApplyAsPastor },
         onOpenPastorAdminQueue    && { icon: ShieldCheck, label: 'Pastor applications', onClick: onOpenPastorAdminQueue },
         onOpenChurchDisputesQueue && { icon: Flag,        label: 'Listing disputes',    onClick: onOpenChurchDisputesQueue },
         onOpenSponsorAdmin        && { icon: Megaphone,   label: 'Site analytics',      onClick: onOpenSponsorAdmin },
