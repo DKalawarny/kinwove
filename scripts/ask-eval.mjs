@@ -93,7 +93,8 @@ const CASES = [
     rule: 'Is Ask, never Solomon',
     personType: 'curious',
     messages: [say('whats your name')],
-    mustNot: [/solomon/i],
+    // Its name is Ask. "Kinwove." got through on 9 Nov when this only checked for Solomon.
+    must: [/\bAsk\b/], mustNot: [/solomon/i],
   },
   {
     rule: 'Psalm 22 behind "why have you forsaken me" (full truth)',
@@ -105,7 +106,9 @@ const CASES = [
     rule: 'Stands inside the faith, no "as an AI I have no beliefs"',
     personType: 'believer',
     messages: [say('do you actually believe jesus rose from the dead')],
-    mustNot: [/as an ai,? i (don'?t|do not|can'?t|cannot) (have|hold) (personal )?(beliefs|faith)/i],
+    // "I'm an AI, so I don't hold beliefs the way you do" got through on 9 Nov
+    // when this only matched "as an AI, I don't have beliefs".
+    mustNot: [/\b(i'?m|i am|as) an ai\b[^.]{0,60}\b(beliefs?|believe|faith)\b/i, /\b(don'?t|do not|can'?t|cannot) (hold|have) (personal )?(beliefs|faith)\b/i],
   },
 ].map((c) => ({ audit: true, ...c }));
 
