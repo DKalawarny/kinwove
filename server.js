@@ -22,6 +22,7 @@ const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG, es: ANSWERS_ES_BY_SLUG, pt: ANSWERS
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
 import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
+import { LOOKS_BACKWARD, ASKS_TO_SAVE } from './src/recallTriggers.js';
 import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
 import { isCrisisMessage } from './src/safetyPatterns.js';
@@ -1534,6 +1535,9 @@ app.post('/api/chat', optionalAuth, limitEither(
   const planCfg = PLAN_LIMITS[realPlan] ?? PLAN_LIMITS.free;
   const usagePeriod = serverPeriod(planCfg.period);
   const lastUserMsg = msgText([...messages].reverse().find((m) => m.role === 'user')?.content ?? '');
+  // An answer built from someone's own saved conversations is theirs alone: it
+  // must never be replayed from, or written into, the shared answer cache.
+  const personalRecall = !!req.userId && (LOOKS_BACKWARD.test(lastUserMsg) || ASKS_TO_SAVE.test(lastUserMsg));
   // Someone reaching out in crisis must never meet a billing wall. The crisis
   // guidance (988, Samaritans, abuse, minors) lives in the system prompt, so
   // refusing here hands them a price instead of a helpline. These go through,
@@ -1583,7 +1587,7 @@ app.post('/api/chat', optionalAuth, limitEither(
   const cacheType = groundCommentary ? (researchIsStock ? `research-v2:${researchVersionName}` : null) : personType;
   // "Fresh answer": the pastor asked for a new take, so skip the saved copy this once
   const wantsFresh = groundCommentary && req.body?.fresh === true;
-  if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass && !wantsFresh) {
+  if (isFirstTurn && cacheType && !hasImages && !internal && !crisisBypass && !wantsFresh && !personalRecall) {
     const cached = await lookupCachedAnswer(cacheType, lastUserMsg);
     if (cached?.answer) {
       send('cache_hit', { id: cached.id });
@@ -1631,6 +1635,7 @@ app.post('/api/chat', optionalAuth, limitEither(
 
   // Recall across their own past conversations when the question points back.
   const historyContext = await recallContext(req.userId, lastUserMsg, messages).catch(() => '');
+  const saveContext = ASKS_TO_SAVE.test(lastUserMsg) ? await saveNote(req.userId).catch(() => '') : '';
 
   // Grounded commentary (research mode only): if the last message references a
   // passage, pull the ACTUAL public-domain commentary text so the AI quotes real
@@ -1709,7 +1714,7 @@ app.post('/api/chat', optionalAuth, limitEither(
       // Sermon Research briefs run long (translations, debates, voices); at 2048
       // they stopped mid-sentence. Everything else keeps the shorter cap.
       max_tokens: internal ? 500 : (groundCommentary ? 6000 : 2048),
-      system: cachedSystem(system + AI_SAFETY_BLOCK, urlContext + memoryContext + historyContext + commentaryContext + widerContext),
+      system: cachedSystem(system + AI_SAFETY_BLOCK, urlContext + memoryContext + historyContext + saveContext + commentaryContext + widerContext),
       messages: trimmed,
     });
     req.on('close', () => stream.controller?.abort?.());
@@ -1742,7 +1747,7 @@ app.post('/api/chat', optionalAuth, limitEither(
     // Never cache image conversations — every image is unique context.
     // ...and never write one into the shared cache: qa_cache holds question_raw
     // verbatim with no user_id, and a crisis disclosure has no business there.
-    if (isFirstTurn && cacheType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass) {
+    if (isFirstTurn && cacheType && fullText.length > 0 && !hasUrlContext && !hasImages && !crisisBypass && !personalRecall) {
       writeCacheEntry({ personType: cacheType, question: lastUserMsg, answer: fullText, model });
     }
     logQaEvent({
@@ -3589,7 +3594,7 @@ app.post('/api/cron/pastor-rhythm', async (req, res) => {
 
 // Only run on questions that actually reach for the past. Searching every
 // message would cost a query and a slab of context on "what is Lent".
-const LOOKS_BACKWARD = /\b(earlier|before|last time|previously|the other day|yesterday|last (week|night|month|year)|we (talked|discussed|spoke|were talking)|you (said|told|mentioned|asked)|i (told|mentioned|said) you|do you remember|remember (when|that|our)|recall|that conversation|our (last |previous )?(chat|conversation|talk)|back (when|to the)|from (before|the start)|go back)\b/i;
+// LOOKS_BACKWARD lives in src/recallTriggers.js.
 
 const RECALL_STOPWORDS = new Set(('a an the and or but if then than that this these those of to in on at for with about from into over after before is are was were be been being do does did doing have has had i you he she it we they me my your our their what when where who why how can could would should will just like get got some any all not no yes said say tell told think know'
 ).split(' '));
@@ -3705,6 +3710,20 @@ ${blocks.join('\n')}
 
 Use these to answer directly — quote or summarise what was actually said. If none of it is what they meant, say plainly that you looked back and couldn't find it rather than guessing, and ask what to look for. Never invent details that are not in these excerpts.
 You DO have access to their saved conversations. Never tell them you have no memory, that you cannot see earlier conversations, or that each conversation starts fresh — it is untrue and it is the thing they are most likely to be testing.`;
+}
+
+// "can you save this for next time?" Ask used to say it couldn't and suggest a
+// screenshot, while the thread was already saved to their account.
+async function saveNote(userId) {
+  if (!userId || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) return '';
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=sync_conversations`,
+    { headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` } });
+  const synced = (await r.json())?.[0]?.sync_conversations === true;
+  return synced
+    ? `\n\n── THEY ASKED YOU TO SAVE OR REMEMBER THIS CONVERSATION ──
+It is already saved to their account, automatically. They can open it again any time under ◷ Conversation history in Ask's ⋮ menu, on any device they sign in on, and when they ask you about it next time you can look back at it. Tell them that plainly in a sentence or two. Do not tell them to screenshot or copy it, and do not say you can't save conversations.`
+    : `\n\n── THEY ASKED YOU TO SAVE OR REMEMBER THIS CONVERSATION ──
+It is saved on this device only, under ◷ Conversation history in Ask's ⋮ menu. Turning on "Sync across devices" there saves it to their account, so it is there on any device and you can look back at it next time. Tell them that plainly in a sentence or two. Do not tell them to screenshot or copy it.`;
 }
 
 // ── AI memory: update user profile after a conversation ─────────────────────
