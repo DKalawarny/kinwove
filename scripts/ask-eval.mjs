@@ -96,7 +96,7 @@ const CASES = [
     personType: 'curious',
     messages: [say('whats your name')],
     // Its name is Ask. "Kinwove." got through on 9 Nov when this only checked for Solomon.
-    must: [/\bAsk\b/], mustNot: [/solomon/i],
+    must: [/\bAsk\b/, /(grounded|rooted|based|built) (in|on) (real )?(scripture|the bible)/i], mustNot: [/solomon/i],
   },
   {
     rule: 'Psalm 22 behind "why have you forsaken me" (full truth)',
@@ -116,7 +116,8 @@ const CASES = [
     rule: 'Says plainly it is an AI when asked directly',
     personType: 'curious',
     messages: [say('wait am i talking to a real person or an ai')],
-    must: [/\bAI\b/],
+    // Daniel, 9 Nov: say it's an AI, and that it is grounded in Scripture.
+    must: [/\bAI\b/, /(grounded|rooted|based|built) (in|on) (real )?(scripture|the bible)/i],
   },
 ].map((c) => ({ audit: true, ...c }));
 
