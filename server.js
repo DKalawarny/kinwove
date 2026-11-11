@@ -24,6 +24,7 @@ import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { LOOKS_BACKWARD, ASKS_TO_SAVE } from './src/recallTriggers.js';
 import { auditAnswer, AUDIT_RULES } from './src/askAudit.js';
+import { missingEmails } from './src/emailWatch.js';
 import { plainDashes } from './src/lib/plainDashes.js';
 import { RESEARCH_SYSTEM, researchVersionNote } from './src/researchPrompt.js';
 import { isCrisisMessage } from './src/safetyPatterns.js';
@@ -300,6 +301,47 @@ app.get('/api/health/ask-audit', async (_req, res) => {
   }
 });
 
+// Did the emails go out? Checks email_log against who should have had what
+// (src/emailWatch.js), plus today's daily verse and any email Resend refused.
+// .github/workflows/email-watch.yml calls it; a 503 fails the run and GitHub
+// emails Daniel. Returns account ids and email kinds only, never addresses.
+// Emails due before the log existed are not checked.
+const EMAIL_LOG_FROM = '2026-11-11T17:30:00Z';
+app.get('/api/health/emails', async (_req, res) => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return res.json({ ok: true, note: 'supabase not configured' });
+  try {
+    const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+    const now = Date.now();
+    const twoWeeks = new Date(now - 14 * 864e5).toISOString();
+    const day = new Date(now - 26 * 3600e3).toISOString();
+    const get = (path) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: h }).then((r) => r.json());
+    const [profiles, logs, failed, daily, dailyReaders] = await Promise.all([
+      get(`profiles?created_at=gte.${twoWeeks}&display_name=not.is.null&is_system_account=not.is.true&select=id,created_at,is_pastor,email_opt_out&limit=1000`),
+      get(`email_log?created_at=gte.${twoWeeks}&ok=eq.true&user_id=not.is.null&select=user_id,kind&limit=10000`),
+      get(`email_log?created_at=gte.${day}&ok=eq.false&select=id,created_at,kind,user_id,error&limit=50`),
+      get(`email_log?created_at=gte.${day}&ok=eq.true&kind=in.(daily-verse,church-question)&select=id&limit=1`),
+      get(`profiles?email_opt_out=eq.false&daily_verse_opt_out=not.is.true&display_name=not.is.null&is_system_account=not.is.true&select=id&limit=1`),
+    ]);
+    if (![profiles, logs, failed, daily, dailyReaders].every(Array.isArray)) throw new Error('read failed');
+    const sent = new Set(logs.map((l) => `${l.user_id}|${l.kind}`));
+    // @kinwove.com test accounts are skipped by the drip, so they never count as missing.
+    const candidates = missingEmails({ profiles, sent, now, from: EMAIL_LOG_FROM });
+    const missing = [];
+    for (const m of candidates) {
+      if (m.kind !== 'welcome' && isInternalEmail(await getUserEmail(m.user_id))) continue;
+      missing.push(m);
+    }
+    const flags = [...missing];
+    for (const f of failed) flags.push({ kind: f.kind, user_id: f.user_id, what: 'Resend refused it', at: f.created_at, error: f.error });
+    if (now - new Date(EMAIL_LOG_FROM).getTime() > 26 * 3600e3 && dailyReaders.length && !daily.length) {
+      flags.push({ kind: 'daily-verse', what: 'no daily verse email went out in the last 26 hours' });
+    }
+    res.status(flags.length ? 503 : 200).json({ ok: flags.length === 0, from: EMAIL_LOG_FROM, people: profiles.length, flags });
+  } catch (e) {
+    res.status(503).json({ ok: false, error: e?.message });
+  }
+});
+
 // ── Client error reporting ───────────────────────────────────────────────────
 // The frontend posts uncaught errors / crashes here. We log them (visible in
 // Render logs) and send a rate-limited email alert so a production break is
@@ -364,7 +406,7 @@ app.post('/api/client-error', async (req, res) => {
           [`${kind ? `[${kind}] ` : ''}${msg}`, '', `URL: ${url ?? '—'}`, `Agent: ${userAgent ?? '—'}`, '', String(stack ?? '').slice(0, 2500)]
             .join('\n').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]))
         }</pre>`;
-        sendEmail(alertTo, `kinwove error: ${msg.slice(0, 90)}`, html).catch((e) =>
+        sendEmail(alertTo, `kinwove error: ${msg.slice(0, 90)}`, html, undefined, { kind: 'error-alert' }).catch((e) =>
           console.error('[client-error] alert email failed:', e?.message));
       }
     }
@@ -824,7 +866,7 @@ function alertOps(key, subject, detail) {
   _errorAlertSeen.set(`ops:${key}`, now);
   const html = `<p style="font-size:15px;color:#333;line-height:1.6">${detail}</p>` +
     `<p style="font-size:13px;color:#888">Live status is in the admin dashboard → System panels.</p>`;
-  sendEmail(to, subject, html).catch((e) => console.error('[ops-alert] email failed:', e?.message));
+  sendEmail(to, subject, html, undefined, { kind: 'ops-alert' }).catch((e) => console.error('[ops-alert] email failed:', e?.message));
 }
 
 // Skip your own/system addresses in bulk sends (welcome sequence, backfill) so
@@ -2328,17 +2370,41 @@ const ROLE_LABELS = {
 /** Send an email via Resend. Throws on failure. Optional per-message headers
  *  (e.g. List-Unsubscribe) improve inbox placement. Defaults to the VERIFIED
  *  kinwove.com domain — never the shared resend.dev domain, which lands in spam. */
-async function sendEmail(to, subject, html, headers) {
+// log: { kind, userId } recorded in email_log (scripts/2026-11-11-email-log.sql)
+// so /api/health/emails can tell which emails went out. Never the address.
+async function sendEmail(to, subject, html, headers, log = {}) {
   const key  = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM || 'kinwove <hello@kinwove.com>';
   if (!key) throw new Error('RESEND_API_KEY not set');
-  const r = await fetch('https://api.resend.com/emails', {
-    method:  'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ from, to: [to], subject, html, ...(headers ? { headers } : {}) }),
-  });
-  if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text().catch(() => '')}`);
+  let r;
+  try {
+    r = await fetch('https://api.resend.com/emails', {
+      method:  'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ from, to: [to], subject, html, ...(headers ? { headers } : {}) }),
+    });
+  } catch (e) {
+    logEmail(log, { ok: false, error: e?.message });
+    throw e;
+  }
+  if (!r.ok) {
+    const err = `Resend ${r.status}: ${await r.text().catch(() => '')}`;
+    logEmail(log, { ok: false, error: err });
+    throw new Error(err);
+  }
+  const body = await r.json().catch(() => ({}));
+  logEmail(log, { ok: true, resend_id: body?.id ?? null });
   trackEmail();
+}
+
+// Best effort: a failed log write never fails the email.
+function logEmail({ kind = 'other', userId = null } = {}, result) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return;
+  fetch(`${SUPABASE_URL}/rest/v1/email_log`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+    body: JSON.stringify({ kind, user_id: userId, resend_id: result.resend_id ?? null, ok: result.ok, error: result.error ? String(result.error).slice(0, 500) : null }),
+  }).then((r) => { if (!r.ok) console.error('[email_log] write', r.status); }, (e) => console.error('[email_log] write', e?.message));
 }
 
 // The real KinwoveWordmark, rendered by scripts/render-wordmark.mjs.
@@ -2620,7 +2686,7 @@ app.post('/api/email/welcome', requireAuth, async (req, res) => {
     const [profile] = await pr.json().catch(() => [{}]);
     const firstName = (profile?.display_name ?? '').split(' ')[0] || 'friend';
 
-    await sendEmail(email, `Welcome to kinwove, ${firstName} ✦`, welcomeEmailHtml(firstName));
+    await sendEmail(email, `Welcome to kinwove, ${firstName} ✦`, welcomeEmailHtml(firstName), undefined, { kind: 'welcome', userId: req.userId });
     res.json({ ok: true });
   } catch (e) {
     safeError(res, e, 'email/welcome');
@@ -2686,6 +2752,8 @@ app.post('/api/church/role-invite', requireAuth, limitAuthed({ capacity: 20, ref
         memberEmail,
         role_key === 'pastor' ? `You've been invited to be a pastor at ${church.name}` : `You've been invited to join the ${label} team at ${church.name}`,
         roleInviteEmailHtml({ memberName, pastorName, roleLabel: label, churchName: church.name, inviteUrl, isPastor: role_key === 'pastor' }),
+        undefined,
+        { kind: 'role-invite', userId: user_id },
       );
       console.log(`[role-invite email] sent OK to ${memberEmail}`);
     } catch (e) {
@@ -2811,7 +2879,7 @@ app.post('/api/cron/question-followup', async (req, res) => {
         // Sending a real person into an inbox nobody works is a job Daniel
         // doesn't want. The button is the reply path — the AI answers there.
         'Reply-To': 'no-reply@kinwove.com',
-      });
+      }, { kind: 'lead-followup' });
       await fetch(`${SUPABASE_URL}/rest/v1/question_leads?email=eq.${encodeURIComponent(lead.email)}`, {
         method: 'PATCH',
         headers: { ...h, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
@@ -2958,7 +3026,7 @@ app.post('/api/cron/nudge-incomplete', async (req, res) => {
       // incase its a weird email your pulling a name from just keep it out."
       // A wrong or odd name in the first line is worse than no name at all.
       const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${id}&t=${emailToken(id)}`;
-      await sendEmail(email, 'the part of kinwove you never got to see', nudgeEmailHtml(unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` });
+      await sendEmail(email, 'the part of kinwove you never got to see', nudgeEmailHtml(unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: 'nudge-incomplete', userId: id });
       sent++;
       await new Promise((r) => setTimeout(r, 200)); // gentle rate-limit between sends
     } catch (e) {
@@ -3011,7 +3079,7 @@ app.post('/api/cron/welcome-sequence', async (req, res) => {
         if (!email || isInternalEmail(email)) continue;
         const firstName = (row.display_name || '').trim().split(/\s+/)[0] || email.split('@')[0] || 'friend';
         const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${row.id}&t=${emailToken(row.id)}`;
-        await sendEmail(email, st.subject, st.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` });
+        await sendEmail(email, st.subject, st.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: `welcome-${st.name}`, userId: row.id });
         counts[st.name]++;
         await new Promise((r) => setTimeout(r, 200)); // gentle rate-limit
       } catch (e) {
@@ -3071,7 +3139,7 @@ app.post('/api/cron/welcome-backfill', async (req, res) => {
       if (!email || isInternalEmail(email)) { skipped++; continue; }
       const firstName = (row.display_name || '').trim().split(/\s+/)[0] || email.split('@')[0] || 'friend';
       const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${row.id}&t=${emailToken(row.id)}`;
-      await sendEmail(email, def.subject, def.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` });
+      await sendEmail(email, def.subject, def.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: `welcome-${stage}`, userId: row.id });
       sent++;
       await new Promise((r) => setTimeout(r, 200)); // gentle rate-limit
     } catch (e) {
@@ -3374,11 +3442,11 @@ app.post('/api/cron/daily-verse-email', async (req, res) => {
         const churchUnsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${tok}&list=church`;
         const allUnsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${usr.id}&t=${tok}`;
         const html = churchQuestionEmailHtml({ firstName, q, verse: wantsVerse ? verse : null, words, reflectUrl, verseUnsubUrl, churchUnsubUrl, allUnsubUrl });
-        await sendEmail(email, cut(splitQuestion(q.body).question) || verseSubject, html, { 'List-Unsubscribe': `<${churchUnsubUrl}>` });
+        await sendEmail(email, cut(splitQuestion(q.body).question) || verseSubject, html, { 'List-Unsubscribe': `<${churchUnsubUrl}>` }, { kind: 'church-question', userId: usr.id });
       } else {
         await sendEmail(email, verseSubject, dailyVerseEmailHtml(firstName, verse, verseUnsubUrl, reflectUrl, words), {
           'List-Unsubscribe': `<${verseUnsubUrl}>`,
-        });
+        }, { kind: 'daily-verse', userId: usr.id });
       }
       sent++;
       await new Promise((rr) => setTimeout(rr, 150)); // gentle pacing between sends
@@ -3572,7 +3640,7 @@ app.post('/api/cron/pastor-rhythm', async (req, res) => {
           <p style="font-size:16px;line-height:1.7">Hi ${escHtml(firstName)},</p>
           <p style="font-size:16px;line-height:1.7">Sunday's on its way, and there's no sermon loaded for ${escHtml(church.name)} yet. Paste your outline into the composer and kinwove drafts the whole week — daily discussion questions, going-deeper notes, all of it — in about two minutes.</p>
           <p style="margin:26px 0"><a href="${churchUrl}" style="display:inline-block;background:#2C1810;color:#FDF8F0;text-decoration:none;border-radius:999px;padding:13px 28px;font-size:15px;font-weight:600">Open the sermon composer →</a></p>
-        `, unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` }).then(() => sent++).catch((e) => console.error('[pastor-rhythm] nudge send:', e.message));
+        `, unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: 'pastor-nudge', userId: church.pastor_id }).then(() => sent++).catch((e) => console.error('[pastor-rhythm] nudge send:', e.message));
       } else {
         // Monday digest: the last 7 days at their church.
         const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -3598,7 +3666,7 @@ app.post('/api/cron/pastor-rhythm', async (req, res) => {
             ${line(posts, posts === 1 ? 'post' : 'posts')}${line(prayers, prayers === 1 ? 'prayer' : 'prayers')}${line(newMembers, newMembers === 1 ? 'new member' : 'new members')}
           </tr></table>
           <p style="margin:26px 0"><a href="${churchUrl}" style="display:inline-block;background:#2C1810;color:#FDF8F0;text-decoration:none;border-radius:999px;padding:13px 28px;font-size:15px;font-weight:600">See your church →</a></p>
-        `, unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` }).then(() => sent++).catch((e) => console.error('[pastor-rhythm] digest send:', e.message));
+        `, unsubUrl), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: 'pastor-digest', userId: church.pastor_id }).then(() => sent++).catch((e) => console.error('[pastor-rhythm] digest send:', e.message));
       }
     }
 
@@ -5977,7 +6045,7 @@ async function dmEmailSweep() {
       const senderName = adminNames.get(last.actor_id) || 'Daniel';
       const snippet = String(last.data?.snippet ?? '').slice(0, 200) || 'You have a new message waiting.';
       const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${last.recipient_id}&t=${emailToken(last.recipient_id)}`;
-      await sendEmail(email, `${senderName} sent you a message on kinwove`, dmNudgeEmailHtml(senderName, snippet), { 'List-Unsubscribe': `<${unsubUrl}>` });
+      await sendEmail(email, `${senderName} sent you a message on kinwove`, dmNudgeEmailHtml(senderName, snippet), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: 'dm-nudge', userId: last.recipient_id });
       dmEmailRecent.set(key, Date.now());
       await stampDmRows(group, true);
       sent++;

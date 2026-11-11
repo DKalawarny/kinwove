@@ -1,0 +1,28 @@
+# Checks that kinwove's emails went out (src/emailWatch.js): the welcome after
+# setup, the day 2 / 3 / 5 emails, today's daily verse, and that Resend refused
+# none. A failed run makes GitHub email the repo owner. The flags list account
+# ids and email kinds to look up; no addresses are shown here.
+name: email-watch
+on:
+  schedule:
+    - cron: '30 */6 * * *'   # every 6 hours
+  workflow_dispatch:
+    inputs:
+      test_alert:
+        description: 'Fail on purpose, to check the alert email reaches you'
+        type: boolean
+        default: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test alert (only when asked)
+        if: ${{ inputs.test_alert }}
+        run: echo "Failing on purpose so GitHub sends the alert email."; exit 1
+      - name: kinwove's emails went out
+        run: |
+          code=$(curl -s -o out.json -w '%{http_code}' --max-time 60 https://www.kinwove.com/api/health/emails)
+          cat out.json; echo
+          echo "api/health/emails → $code"
+          [ "$code" = "200" ]
