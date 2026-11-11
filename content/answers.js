@@ -3850,7 +3850,7 @@ export function renderForChurchesPage() {
       <p>kinwove stores no IP address and does no location tracking. Conversations belong to the person who had them.</p>
     </div>
 
-    <p style="margin-top:32px"><a class="cta" href="${SITE}/?church=1">Set up your church page →</a></p>
+    <p style="margin-top:32px"><a class="cta" href="${SITE}/?pastor=1">Set up your church page →</a></p>
     <p style="font-size:14px;color:var(--muted)">Or write to <a href="mailto:hello@kinwove.com" style="color:var(--gold)">hello@kinwove.com</a> and ask a real question first. A person answers.</p>
   `;
 

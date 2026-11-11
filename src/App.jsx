@@ -1797,6 +1797,8 @@ export default function App() {
   const [deepLinkSermonId] = useState(() => new URLSearchParams(window.location.search).get('sermon'));
   const [referralRef] = useState(() => new URLSearchParams(window.location.search).get('ref'));
   const [initialAnonChurchId] = useState(() => new URLSearchParams(window.location.search).get('anon'));
+  // /for-churches "Set up your church page" (and outreach emails) open the pastor sign-up: ?pastor=1.
+  const [deepLinkPastor] = useState(() => new URLSearchParams(window.location.search).get('pastor') === '1');
   const [initialJoinCode, setInitialJoinCode] = useState(() => new URLSearchParams(window.location.search).get('join'));
   const [stripeSuccess] = useState(() => new URLSearchParams(window.location.search).get('stripe_success') === '1');
   const [showUpgrade, setShowUpgrade] = useState(() => new URLSearchParams(window.location.search).get('upgrade') === '1');
@@ -1966,7 +1968,15 @@ export default function App() {
   const [authStage, setAuthStage] = useState('idle'); // idle | auth | profile-setup | profile-view
   const [authInitialMode, setAuthInitialMode] = useState('signin');
   const [profileEditOrigin, setProfileEditOrigin] = useState('idle'); // where edit profile was opened from
-  const [pendingPastorApply, setPendingPastorApply] = useState(false);
+  // Kept in sessionStorage so "Continue with Google" doesn't forget it: the
+  // OAuth round trip reloads the page, and a pastor came back as a member.
+  const [pendingPastorApply, _setPendingPastorApply] = useState(() => {
+    try { return sessionStorage.getItem('kinwove:pendingPastor') === '1'; } catch { return false; }
+  });
+  const setPendingPastorApply = (v) => {
+    try { if (v) sessionStorage.setItem('kinwove:pendingPastor', '1'); else sessionStorage.removeItem('kinwove:pendingPastor'); } catch { /* storage blocked */ }
+    _setPendingPastorApply(v);
+  };
   const [showPastorPrompt, setShowPastorPrompt] = useState(false);
 
   // Import the guest conversation saved before sign-up (silently: it waits in
@@ -2206,6 +2216,16 @@ export default function App() {
         else if (initialAnonChurchId) { setViewingChurchId(initialAnonChurchId); setStage('church-entry'); loadProfile(data.session.user.id); }
         else if (deepLinkSermonId) { if (initialChurchId) setViewingChurchId(initialChurchId); setViewingSermonId(deepLinkSermonId); setStage('sermon-view'); loadProfile(data.session.user.id); }
         else if (initialChurchId) { setViewingChurchId(initialChurchId); setStage('church'); loadProfile(data.session.user.id); }
+        else if (deepLinkPastor || pendingPastorApply) {
+          if (deepLinkPastor) window.history.replaceState({}, '', window.location.pathname);
+          // No profile yet: setup shows first, and its onSave opens pastor-apply.
+          if (deepLinkPastor) setPendingPastorApply(true);
+          loadProfile(data.session.user.id).then((prof) => {
+            if (!prof?.person_type) return;
+            setPendingPastorApply(false);
+            setStage(prof.is_pastor && prof.church_id ? 'church-admin' : 'pastor-apply');
+          });
+        }
         else {
           const local = localStorage.getItem('kw:stage');
           if (local && STAGE_SAFE.has(local)) {
@@ -2248,6 +2268,9 @@ export default function App() {
       } else if (initialAnonChurchId) {
         setViewingChurchId(initialAnonChurchId);
         setStage('church-entry');
+      } else if (deepLinkPastor) {
+        window.history.replaceState({}, '', window.location.pathname);
+        setPendingPastorApply(true); setAuthInitialMode('signup'); setAuthStage('auth');
       } else if (initialChurchId) {
         setViewingChurchId(initialChurchId);
         setStage('church');
