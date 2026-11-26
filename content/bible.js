@@ -7,7 +7,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, shell } from './answers.js';
-import { bibleAlternates } from './bible-i18n.js';
+import { bibleAlternates, guideAlternates } from './bible-i18n.js';
 import { STUDY_GUIDES } from './study-guides.js';
 
 const SITE = 'https://www.kinwove.com';
@@ -179,7 +179,8 @@ export function renderStudyGuidePage(book, n) {
     {
       '@context': 'https://schema.org', '@type': 'Article',
       headline: `${name} Bible study guide: ${c.title}`, description,
-      datePublished: '2026-11-06', dateModified: '2026-11-06',
+      // Romans was written 6 Nov 2026; every other book's guides 25 Nov 2026 (they quote the BSB).
+      datePublished: g.bible === 'BSB' ? '2026-11-25' : '2026-11-06', dateModified: g.bible === 'BSB' ? '2026-11-25' : '2026-11-06',
       author: { '@type': 'Organization', name: 'kinwove' },
       publisher: { '@type': 'Organization', name: 'kinwove', url: SITE },
       mainEntityOfPage: canonical,
@@ -199,6 +200,7 @@ export function renderStudyGuidePage(book, n) {
     <h2>For our lives this week</h2><p>${esc(g.life)}</p>
     <h2>Close in prayer</h2><p>${esc(g.prayer)}</p>
     <h2>Leader tip</h2><p>${esc(g.tip)}</p>
+    ${g.bible === 'BSB' ? '<p class="updated">Bible quotes are from the Berean Standard Bible.</p>' : ''}
     <a class="cta" href="${esc(askUrl)}">Plan this study with Ask →</a>
     <div class="related">
       <div class="cat">Keep going</div>
@@ -212,7 +214,7 @@ export function renderStudyGuidePage(book, n) {
   return shell({
     title: `${name} Bible Study Guide: Questions for Small Groups | kinwove`,
     description: description.slice(0, 155),
-    canonical, jsonLd, bodyHtml,
+    canonical, jsonLd, bodyHtml, alternates: guideAlternates(book.code, n),
   });
 }
 

@@ -252,3 +252,27 @@ export const STUDY_GUIDES = {
     },
   },
 };
+
+// Every other book's guides (Nov 2026 job: NT + core OT, Sonnet 5.5, quotes checked
+// word for word against the Bible text). One JSON file per book:
+// content/study-guides/<lang>/<CODE>.json = { "<chapter>": guide, ... }, each guide
+// with a `bible` field naming the translation it quotes. English lives in
+// STUDY_GUIDES; Spanish and Portuguese in TRANSLATED_GUIDES (see bible-i18n.js).
+import { readFileSync as _read, readdirSync as _list, existsSync as _exists } from 'node:fs';
+import { join as _join, dirname as _dirname } from 'node:path';
+import { fileURLToPath as _path } from 'node:url';
+const GUIDE_DIR = _join(_dirname(_path(import.meta.url)), 'study-guides');
+function loadGuides(lang) {
+  const dir = _join(GUIDE_DIR, lang);
+  if (!_exists(dir)) return {};
+  const out = {};
+  for (const f of _list(dir).filter((x) => x.endsWith('.json'))) {
+    const book = JSON.parse(_read(_join(dir, f), 'utf8'));
+    out[f.replace('.json', '')] = Object.fromEntries(Object.entries(book).map(([n, g]) => [Number(n), g]));
+  }
+  return out;
+}
+for (const [code, chapters] of Object.entries(loadGuides('en'))) {
+  if (!STUDY_GUIDES[code]) STUDY_GUIDES[code] = chapters;
+}
+export const TRANSLATED_GUIDES = { es: loadGuides('es'), pt: loadGuides('pt') };

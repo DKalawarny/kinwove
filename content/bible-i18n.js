@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { esc, shell } from './answers.js';
 import { BOOKS, BIBLE_UPDATED } from './bible.js';
 import { BOOK_NAMES, PSALM_SINGULAR, LABELS, slugify } from './bible-names.js';
+import { STUDY_GUIDES, TRANSLATED_GUIDES } from './study-guides.js';
 
 const SITE = 'https://www.kinwove.com';
 const TR_DIR = join(dirname(fileURLToPath(import.meta.url)), 'translations');
@@ -27,7 +28,10 @@ function load() {
       const chapters = b.chapters.map((_, i) => (existsSync(p(`${i + 1}.json`)) ? JSON.parse(readFileSync(p(`${i + 1}.json`), 'utf8')) : null));
       if (!intro && !chapters.some(Boolean)) continue;
       const name = BOOK_NAMES[lang][b.code];
-      books.push({ en: b, code: b.code, name, slug: slugify(name), intro, chapters, testament: b.testament });
+      // A translated guide only gets a page when its chapter note is translated too.
+      const tg = TRANSLATED_GUIDES[lang]?.[b.code] ?? {};
+      const guides = chapters.map((c, i) => (c && tg[i + 1]) || null);
+      books.push({ en: b, code: b.code, name, slug: slugify(name), intro, chapters, guides, testament: b.testament });
     }
     cache[lang] = { books, bySlug: Object.fromEntries(books.map((x) => [x.slug, x])), byCode: Object.fromEntries(books.map((x) => [x.code, x])) };
   }
@@ -39,6 +43,21 @@ const chapterName = (lang, book, n) => `${book.code === 'PSA' ? PSALM_SINGULAR[l
 const indexUrl = (lang) => `${SITE}/${lang}/${L(lang).path}`;
 const bookUrl = (lang, book) => `${indexUrl(lang)}/${book.slug}`;
 const chapterUrl = (lang, book, n) => `${bookUrl(lang, book)}-${n}`;
+const guideUrl = (lang, book, n) => `${chapterUrl(lang, book, n)}-${L(lang).guidePath}`;
+
+// hreflang set for one study guide page.
+export function guideAlternates(code, n) {
+  const enBook = BOOKS.find((b) => b.code === code);
+  const out = STUDY_GUIDES[code]?.[n] ? [{ lang: 'en', href: `${SITE}/bible/${enBook.slug}-${n}-study-guide` }] : [];
+  const c = load();
+  for (const lang of BIBLE_LANGS) {
+    const book = c[lang].byCode[code];
+    if (book?.guides[n - 1]) out.push({ lang, href: guideUrl(lang, book, n) });
+  }
+  if (out.length < 2) return [];
+  if (out[0].lang === 'en') out.push({ lang: 'x-default', href: out[0].href });
+  return out;
+}
 
 // hreflang set for one Bible page, given its English book code (or null for the index).
 export function bibleAlternates(code, n) {
@@ -60,6 +79,11 @@ export function bibleAlternates(code, n) {
 export function resolveTranslatedBiblePath(lang, path) {
   const c = load()[lang];
   if (!c) return null;
+  const suffix = `-${L(lang).guidePath}`;
+  if (path.endsWith(suffix)) {
+    const hit = resolveTranslatedBiblePath(lang, path.slice(0, -suffix.length));
+    return hit?.n && hit.book.guides[hit.n - 1] ? { ...hit, guide: true } : null;
+  }
   if (c.bySlug[path]) return { book: c.bySlug[path] };
   const m = path.match(/^(.+)-(\d{1,3})$/);
   const book = m && c.bySlug[m[1]];
@@ -76,7 +100,10 @@ export function translatedBibleSitemapEntries() {
     out.push(indexUrl(lang));
     for (const b of c[lang].books) {
       out.push(bookUrl(lang, b));
-      b.chapters.forEach((ch, i) => ch && out.push(chapterUrl(lang, b, i + 1)));
+      b.chapters.forEach((ch, i) => {
+        if (ch) out.push(chapterUrl(lang, b, i + 1));
+        if (b.guides[i]) out.push(guideUrl(lang, b, i + 1));
+      });
     }
   }
   return out;
@@ -101,13 +128,13 @@ function askBox(lang, name) {
     </div>`;
 }
 
-function foot(lang, enHref) {
+function foot(lang, enHref, translatedLine) {
   const l = L(lang);
   return `
     <div class="updated">${esc(l.updated)} ${esc(BIBLE_UPDATED)}</div>
     <div class="foot">
       <p style="font-style:italic;line-height:1.7;margin:0 0 10px">${esc(l.pastorLine)} ${esc(l.differNote)}</p>
-      <p style="font-style:italic;line-height:1.7;margin:0 0 10px">${esc(l.translated)}</p>
+      <p style="font-style:italic;line-height:1.7;margin:0 0 10px">${esc(translatedLine ?? l.translated)}</p>
       <a href="${indexUrl(lang)}">${esc(l.allBooks)}</a> · <a href="${enHref}" hreflang="en">${esc(l.english)}</a> · <a href="${SITE}">kinwove</a>
     </div>`;
 }
@@ -151,6 +178,7 @@ export function renderTranslatedChapterPage(lang, book, n) {
       <div class="cat">${esc(l.keepReading)}</div>
       ${prevN ? `<a href="${chapterUrl(lang, book, prevN)}">← ${esc(chapterName(lang, book, prevN))}</a>` : ''}
       ${nextN ? `<a href="${chapterUrl(lang, book, nextN)}">${esc(chapterName(lang, book, nextN))} →</a>` : ''}
+      ${book.guides[n - 1] ? `<a href="${guideUrl(lang, book, n)}">${esc(l.guideLink(name))}</a>` : ''}
       <a href="${bookUrl(lang, book)}">${esc(l.aboutBook(book.name))} →</a>
     </div>
     ${askBox(lang, name)}
@@ -213,5 +241,49 @@ export function renderTranslatedBibleIndex(lang) {
     title: `${l.indexTitle} | kinwove`, description: l.indexDesc, canonical,
     jsonLd: [{ '@context': 'https://schema.org', '@type': 'CollectionPage', inLanguage: lang, name: l.indexH1, url: canonical }],
     bodyHtml, lang, alternates: bibleAlternates(null, null),
+  });
+}
+
+export function renderTranslatedStudyGuidePage(lang, book, n) {
+  const l = L(lang);
+  const c = book.chapters[n - 1];
+  const g = book.guides[n - 1];
+  const name = chapterName(lang, book, n);
+  const canonical = guideUrl(lang, book, n);
+  const description = l.guideDesc(name, g.questions.length);
+  const prevN = n > 1 && book.guides[n - 2] ? n - 1 : null;
+  const nextN = book.guides[n] ? n + 1 : null;
+  const jsonLd = [
+    article(l.guideH1(name, c.title), description, canonical, lang),
+    crumbs([[l.bible, indexUrl(lang)], [book.name, bookUrl(lang, book)], [name, chapterUrl(lang, book, n)], [l.guideCat, canonical]]),
+  ];
+  const askUrl = `${SITE}/?q=${encodeURIComponent(l.gAskQ(name))}`;
+  const enGuide = STUDY_GUIDES[book.code]?.[n] ? `${SITE}/bible/${book.en.slug}-${n}-study-guide` : `${SITE}/bible/${book.en.slug}-${n}`;
+  const bodyHtml = `
+    <div class="cat"><a href="${indexUrl(lang)}" style="color:inherit;text-decoration:none">${esc(l.bible)}</a> · <a href="${bookUrl(lang, book)}" style="color:inherit;text-decoration:none">${esc(book.name)}</a> · ${esc(l.guideCat)}</div>
+    <h1>${esc(l.guideH1(name, c.title))}</h1>
+    <div class="answer">${esc(c.overview)}</div>
+    <h2>${esc(l.gOpen)}</h2><p>${esc(g.open)}</p>
+    <h2>${esc(l.gRead)}</h2><p>${g.read.map(esc).join(esc(l.gReadThen))}. ${esc(l.gReadNote(name))}</p>
+    <h2>${esc(l.gQuestions)}</h2>
+    <ol>${g.questions.map((q) => `<li><p>${esc(q)}</p></li>`).join('')}</ol>
+    <h2>${esc(l.gLife)}</h2><p>${esc(g.life)}</p>
+    <h2>${esc(l.gPrayer)}</h2><p>${esc(g.prayer)}</p>
+    <h2>${esc(l.gTip)}</h2><p>${esc(g.tip)}</p>
+    <p class="updated">${esc(l.gBible)}</p>
+    <a class="cta" href="${esc(askUrl)}">${esc(l.gAskCta)}</a>
+    <div class="related">
+      <div class="cat">${esc(l.keepReading)}</div>
+      ${prevN ? `<a href="${guideUrl(lang, book, prevN)}">← ${esc(l.guideOf(chapterName(lang, book, prevN)))}</a>` : ''}
+      ${nextN ? `<a href="${guideUrl(lang, book, nextN)}">${esc(l.guideOf(chapterName(lang, book, nextN)))} →</a>` : ''}
+      <a href="${chapterUrl(lang, book, n)}">${esc(l.gExplained(name))}</a>
+      <a href="${bookUrl(lang, book)}">${esc(l.aboutBook(book.name))} →</a>
+    </div>
+    ${askBox(lang, name)}
+    ${foot(lang, enGuide, l.gTranslated)}`;
+  return shell({
+    title: `${l.guideTitle(name)} | kinwove`,
+    description: description.slice(0, 155),
+    canonical, jsonLd, bodyHtml, lang, alternates: guideAlternates(book.code, n),
   });
 }

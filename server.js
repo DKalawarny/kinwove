@@ -14,7 +14,7 @@ import { getDailyVerse } from './src/dailyVerse.js';
 import { dailyPostProblem, DAILY_POST_PROMPT, DAILY_ANGLES } from './src/dailyPostRules.js';
 import { ANSWERS_FA_BY_SLUG } from './content/answers-fa.js';
 import { ANSWERS_ES_BY_SLUG, ANSWERS_PT_BY_SLUG } from './content/answers-i18n.js';
-import { BIBLE_LANGS, resolveTranslatedBiblePath, translatedBibleSitemapEntries, renderTranslatedChapterPage, renderTranslatedBookPage, renderTranslatedBibleIndex } from './content/bible-i18n.js';
+import { BIBLE_LANGS, resolveTranslatedBiblePath, translatedBibleSitemapEntries, renderTranslatedChapterPage, renderTranslatedBookPage, renderTranslatedBibleIndex, renderTranslatedStudyGuidePage } from './content/bible-i18n.js';
 import { LANG_NAMES } from './src/languages.js';
 // Same table the /:lang/answers route serves. Declared here because the route
 // lives in the static-serving block and the sitemap builder does not.
@@ -6759,7 +6759,7 @@ app.get('/:lang/biblia/:path', (req, res, next) => {
   const hit = resolveTranslatedBiblePath(req.params.lang, String(req.params.path).toLowerCase());
   if (!hit) return next();
   res.set('Cache-Control', 'public, max-age=3600').type('html')
-    .send(hit.n ? renderTranslatedChapterPage(req.params.lang, hit.book, hit.n) : renderTranslatedBookPage(req.params.lang, hit.book));
+    .send(hit.guide ? renderTranslatedStudyGuidePage(req.params.lang, hit.book, hit.n) : hit.n ? renderTranslatedChapterPage(req.params.lang, hit.book, hit.n) : renderTranslatedBookPage(req.params.lang, hit.book));
 });
 // Public Bible study pages built from public/study (see content/bible.js).
 app.get('/bible', (_req, res) => {
