@@ -1024,6 +1024,7 @@ function useConversations(userId = null, syncEnabled = false) {
 function BottomNav({ stage, authStage, session, profile, chatOpen,
   onGoHome, onGoChurch, onGoRead, onGoPeople, onGoMe, onToggleChat,
 }) {
+  const { s: str } = useStrings();
   if (authStage === 'auth' || authStage === 'profile-setup') return null;
   if (!session) return null;
   if (stage === 'onboarding' || stage === 'intake') return null;
@@ -1094,7 +1095,7 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </span>
-          <span style={labelStyle('home')}>Feed</span>
+          <span style={labelStyle('home')}>{str.nFeed}</span>
         </button>
 
         <button data-tour-id="church" onClick={onGoChurch} style={tabStyle('church')}>
@@ -1106,14 +1107,14 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
           </span>
-          <span style={labelStyle('church')}>Church</span>
+          <span style={labelStyle('church')}>{str.nChurch}</span>
         </button>
 
         {/* Ask — center slot, slightly elevated with a soft gold halo so it
             reads as the app's signature action without taking up FAB-sized
             real estate. Same action (toggleChat); the halo intensifies when
             chat is open so it doubles as the active-tab indicator. */}
-        <button data-tour-id="ask" onClick={onToggleChat} style={tabStyle('ask')} aria-label="Ask anything">
+        <button data-tour-id="ask" onClick={onToggleChat} style={tabStyle('ask')} aria-label={str.nAskAria}>
           <span style={{
             position: 'relative',
             width: 36, height: 36, borderRadius: '50%',
@@ -1140,7 +1141,7 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
               <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
             </svg>
           </span>
-          <span style={labelStyle('read')}>Bible</span>
+          <span style={labelStyle('read')}>{str.nBible}</span>
         </button>
 
         <button data-tour-id="you" onClick={onGoMe} style={tabStyle('me')}>
@@ -1153,7 +1154,7 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
               style={{ border: `2px solid ${active === 'me' ? T.gold : T.line}` }}
             />
           </span>
-          <span style={labelStyle('me')}>{profile?.display_name?.split(' ')[0] || 'You'}</span>
+          <span style={labelStyle('me')}>{profile?.display_name?.split(' ')[0] || str.nYou}</span>
         </button>
       </div>
     </>
@@ -1161,6 +1162,7 @@ function BottomNav({ stage, authStage, session, profile, chatOpen,
 }
 
 function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, onNew, rightOffset = 0, syncEnabled = false, onToggleSync }) {
+  const { s: str } = useStrings();
   // Escape closes — matches the other modals. Without this the only way
   // out was the Close button or a backdrop click, which didn't read like a
   // modal you could dismiss the usual way.
@@ -1209,8 +1211,8 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
           flexShrink: 0,
         }}>
           <div>
-            <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: T.goldDark, marginBottom: 4 }}>Your history</div>
-            <div style={{ fontFamily: T.serif, fontSize: 22, fontWeight: 600, color: T.ink, letterSpacing: '-0.015em' }}>Conversations</div>
+            <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: T.goldDark, marginBottom: 4 }}>{str.hYourHistory}</div>
+            <div style={{ fontFamily: T.serif, fontSize: 22, fontWeight: 600, color: T.ink, letterSpacing: '-0.015em' }}>{str.hConversations}</div>
             {onToggleSync && (
               <button
                 type="button"
@@ -1228,7 +1230,7 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
                   }} />
                 </div>
                 <span style={{ fontSize: 12, color: T.inkMuted }}>
-                  {syncEnabled ? 'Synced. Ask can look back at these' : 'Sync across devices, lets Ask look back'}
+                  {syncEnabled ? str.hSynced : str.hSyncOff}
                 </span>
               </button>
             )}
@@ -1238,13 +1240,13 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
               onClick={onNew}
               style={{ background: T.ink, color: T.cream, border: 'none', borderRadius: 999, padding: '8px 16px', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
             >
-              + New
+              {str.hNew}
             </button>
             <button
               onClick={onClose}
               style={{ background: 'transparent', border: `1px solid ${T.line}`, borderRadius: 999, padding: '8px 14px', fontSize: 13, color: T.inkSoft, cursor: 'pointer' }}
             >
-              Close
+              {str.hClose}
             </button>
           </div>
         </div>
@@ -1252,8 +1254,7 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
         <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {conversations.filter((c) => c.messages.length > 0).length === 0 && (
           <div style={{ padding: '48px 32px', textAlign: 'center', color: T.inkMuted, fontFamily: T.serif, fontSize: 16, lineHeight: 1.6 }}>
-            No conversations yet.
-            <br />Start asking. Your history will appear here.
+            {rich(str.hEmpty)}
           </div>
         )}
 
@@ -1283,7 +1284,7 @@ function ConversationHistory({ open, onClose, conversations, onLoad, onDelete, o
                 onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
                 style={{ background: 'none', border: 'none', color: T.inkMuted, fontSize: 12, cursor: 'pointer', padding: '4px 8px', flexShrink: 0 }}
               >
-                Delete
+                {str.hDelete}
               </button>
             </div>
           );
@@ -1368,6 +1369,7 @@ function StreakChip({ streak, onClick, compact = false }) {
 }
 
 function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, language, onPickLanguage }) {
+  const { s: str } = useStrings();
   const verse = getDailyVerse();
   return (
     <div className="kw-topbar" style={{
@@ -1389,7 +1391,7 @@ function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, languag
       {/* Verse segment */}
       <button
         onClick={() => onVerseClick ? onVerseClick() : onOpenBible?.(verse.ref)}
-        title="Today's verse, tap to reflect"
+        title={str.nVerseTitle}
         style={{
           flex: 1, minWidth: 0, padding: '0 12px 0 14px',
           display: 'flex', alignItems: 'baseline', gap: 8,
@@ -1424,6 +1426,7 @@ function AppHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, languag
 // Mirrors AppHeader but for mobile — same dark walnut bar, ✦ kinwove, daily
 // verse. Shown on every page when logged in so the brand is always anchored.
 function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, language, onPickLanguage }) {
+  const { s: str } = useStrings();
   const verse = getDailyVerse();
   // The header also hosts 3 overlaid FABs (164px reserved right padding), so on
   // phone widths there's no room for the verse chip — it was clipping mid-word
@@ -1463,7 +1466,7 @@ function MobileHeader({ onOpenBible, onVerseClick, streak, rightOffset = 0, lang
       {showVerse ? (
         <button
           onClick={() => onVerseClick ? onVerseClick() : onOpenBible?.(verse.ref)}
-          title="Today's verse, tap to reflect"
+          title={str.nVerseTitle}
           style={{
             flex: 1, minWidth: 0,
             display: 'flex', alignItems: 'baseline', gap: 7,
@@ -1510,6 +1513,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
   onOpenChurchDisputesQueue, onOpenSponsorAdmin,
   onEditProfile, onOpenAccount, onSignOut, onDeleteAccount, onOpenHelp, onOpenReport, onOpenJournal,
 }) {
+  const { s: str } = useStrings();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const popoverRef = useRef(null);
 
@@ -1585,19 +1589,19 @@ function SidebarNav({ stage, session, profile, chatOpen,
   // Settings menu items — mirrors TopRightMenu but lives in sidebar
   // Find people / Find a church moved to dedicated FindButton FAB
   const settingsItems = [
-    onInviteFriends   && { Icon: UserPlus,   label: 'Invite friends',      onClick: onInviteFriends },
-    hasCareTeamRole   && onOpenCareInbox     && { Icon: Inbox,     label: 'Conversations',      onClick: onOpenCareInbox },
-    hasPastoredChurch && onOpenPastorDashboard && { Icon: Building2, label: 'Manage your church', onClick: onOpenPastorDashboard },
-    onApplyAsPastor && !profile?.is_pastor && !hasPastoredChurch && { Icon: Star, label: 'Apply as a pastor', onClick: onApplyAsPastor },
+    onInviteFriends   && { Icon: UserPlus,   label: str.nInvite,      onClick: onInviteFriends },
+    hasCareTeamRole   && onOpenCareInbox     && { Icon: Inbox,     label: str.nCareConvs,      onClick: onOpenCareInbox },
+    hasPastoredChurch && onOpenPastorDashboard && { Icon: Building2, label: str.nManageChurch, onClick: onOpenPastorDashboard },
+    onApplyAsPastor && !profile?.is_pastor && !hasPastoredChurch && { Icon: Star, label: str.nApplyPastor, onClick: onApplyAsPastor },
     onOpenPastorAdminQueue    && { Icon: ShieldCheck, label: 'Pastor applications', onClick: onOpenPastorAdminQueue },
     onOpenChurchDisputesQueue && { Icon: Flag,        label: 'Listing disputes',    onClick: onOpenChurchDisputesQueue },
     onOpenSponsorAdmin        && { Icon: Megaphone,   label: 'Site analytics',      onClick: onOpenSponsorAdmin },
-    onEditProfile  && { Icon: UserCog,    label: 'Edit profile',    onClick: onEditProfile },
-    onOpenAccount  && { Icon: KeyRound,   label: 'Email & password', onClick: onOpenAccount },
-    onOpenHelp     && { Icon: HelpCircle, label: 'Help',             onClick: onOpenHelp },
-    onOpenReport   && { Icon: Flag,       label: 'Report an issue', onClick: onOpenReport },
-    onSignOut      && { Icon: LogOut,  label: 'Sign out',        onClick: onSignOut,      danger: true },
-    onDeleteAccount && { Icon: Trash2, label: 'Delete account',  onClick: onDeleteAccount, danger: true },
+    onEditProfile  && { Icon: UserCog,    label: str.nEditProfile,    onClick: onEditProfile },
+    onOpenAccount  && { Icon: KeyRound,   label: str.nEmailPw, onClick: onOpenAccount },
+    onOpenHelp     && { Icon: HelpCircle, label: str.nHelp,             onClick: onOpenHelp },
+    onOpenReport   && { Icon: Flag,       label: str.nReport, onClick: onOpenReport },
+    onSignOut      && { Icon: LogOut,  label: str.nSignOut,        onClick: onSignOut,      danger: true },
+    onDeleteAccount && { Icon: Trash2, label: str.nDeleteAcct,  onClick: onDeleteAccount, danger: true },
   ].filter(Boolean);
 
   return (
@@ -1634,26 +1638,26 @@ function SidebarNav({ stage, session, profile, chatOpen,
         {/* Feed */}
         <button data-tour-id="feed" onClick={onGoHome} style={itemSt('home')}>
           <span style={{ fontSize: 17, flexShrink: 0, width: 20, textAlign: 'center', lineHeight: 1 }}>🏠</span>
-          <span style={labelSt('home')}>Feed</span>
+          <span style={labelSt('home')}>{str.nFeed}</span>
         </button>
 
         {/* Church */}
         <button data-tour-id="church" onClick={onGoChurch} style={itemSt('church')}>
           <span style={{ fontSize: 17, flexShrink: 0, width: 20, textAlign: 'center', lineHeight: 1 }}>👥</span>
-          <span style={labelSt('church')}>Church</span>
+          <span style={labelSt('church')}>{str.nChurch}</span>
         </button>
 
         {/* Bible */}
         <button data-tour-id="bible" onClick={onGoRead} style={itemSt('read')}>
           <span style={{ fontSize: 17, flexShrink: 0, width: 20, textAlign: 'center', lineHeight: 1 }}>📖</span>
-          <span style={labelSt('read')}>Bible</span>
+          <span style={labelSt('read')}>{str.nBible}</span>
         </button>
 
         {/* Notes */}
         {onOpenJournal && (
           <button onClick={onOpenJournal} style={itemSt('journal')}>
             <BookOpen size={17} style={{ flexShrink: 0, width: 20, color: active === 'journal' ? sc('journal') : T.inkSoft }} />
-            <span style={labelSt('journal')}>Notes</span>
+            <span style={labelSt('journal')}>{str.nNotes}</span>
           </button>
         )}
 
@@ -1668,7 +1672,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
               style={{ border: `2px solid ${active === 'me' ? T.gold : T.line}` }}
             />
           </span>
-          <span style={labelSt('me')}>{profile?.display_name?.split(' ')[0] || 'You'}</span>
+          <span style={labelSt('me')}>{profile?.display_name?.split(' ')[0] || str.nYou}</span>
         </button>
       </nav>
 
@@ -1684,7 +1688,7 @@ function SidebarNav({ stage, session, profile, chatOpen,
           }}
         >
           <span style={{ fontSize: 16, flexShrink: 0, width: 20, textAlign: 'center', lineHeight: 1 }}>⚙</span>
-          <span style={{ fontSize: 13.5, fontWeight: settingsOpen ? 600 : 450, letterSpacing: 0.05 }}>Settings</span>
+          <span style={{ fontSize: 13.5, fontWeight: settingsOpen ? 600 : 450, letterSpacing: 0.05 }}>{str.nSettings}</span>
         </button>
       </div>
 
