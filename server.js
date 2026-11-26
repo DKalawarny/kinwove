@@ -2450,9 +2450,18 @@ const KW_LOGO = `<img src="https://www.kinwove.com/email/wordmark.png" width="10
 // Shared brand wrapper — keeps all kinwove emails visually consistent.
 // Pass unsubUrl to add a one-click unsubscribe line (required for recurring
 // mail — CASL/CAN-SPAM).
-function emailWrap(bodyHtml, unsubUrl) {
+// Footer lines for readers who chose Spanish or Portuguese (26 Nov 2026).
+const EMAIL_FOOT = {
+  en: { why: "You're receiving this because you have a kinwove account.", unsub: 'Unsubscribe from the daily verse' },
+  es: { why: 'Recibes este correo porque tienes una cuenta en kinwove.', unsub: 'Dejar de recibir el versículo diario' },
+  pt: { why: 'Você está recebendo este e-mail porque tem uma conta no kinwove.', unsub: 'Parar de receber o versículo diário' },
+};
+const emailLang = (l) => (l === 'es' || l === 'pt' ? l : 'en');
+
+function emailWrap(bodyHtml, unsubUrl, lang = 'en') {
+  const f = EMAIL_FOOT[emailLang(lang)];
   const unsub = unsubUrl
-    ? `<br><a href="${unsubUrl}" style="color:#9C7B5E;text-decoration:underline">Unsubscribe from the daily verse</a>`
+    ? `<br><a href="${unsubUrl}" style="color:#9C7B5E;text-decoration:underline">${f.unsub}</a>`
     : '';
   return `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;color:#2C1810;background:#ffffff">
     <!-- Wordmark header: dark chocolate bar with the real KinwoveWordmark -->
@@ -2462,7 +2471,7 @@ function emailWrap(bodyHtml, unsubUrl) {
     <div style="padding:0 32px 40px">
     ${bodyHtml}
     <div style="margin-top:40px;padding-top:20px;border-top:1px solid #E8D5BB;font-size:12px;color:#9C7B5E;line-height:1.7">
-      You're receiving this because you have a kinwove account.<br>
+      ${f.why}<br>
       <a href="https://www.kinwove.com" style="color:#A85530;text-decoration:none">www.kinwove.com</a>${unsub}
     </div>
     </div>
@@ -2675,6 +2684,102 @@ function pastorEmailHtml(firstName) {
   `);
 }
 
+// ── Spanish and Portuguese welcome emails (26 Nov 2026) ───────────────────────
+// Faithful translations of welcomeEmailHtml / inviteEmailHtml / bibleEmailHtml,
+// with two deliberate differences Daniel approved: no line about "a community
+// just beginning" (the community is English-speaking for now), and the day-5
+// email points to the Spanish/Portuguese chapter pages and study guides, since
+// the in-app Bible reader is English only. No dashes. Signed Danny.
+const P = (t, last = false) => `<p style="font-size:16px;color:#6B5344;line-height:1.75;margin:0 0 ${last ? 20 : 14}px">${t}</p>`;
+const H = (t) => `<h1 style="font-size:28px;font-weight:600;margin:0 0 16px;letter-spacing:-0.02em;color:#2C1810">${t}</h1>`;
+const SIGN = `<p style="font-size:15px;color:#6B5344;line-height:1.7;margin:0">Danny</p>`;
+const hi = { es: (n) => (n ? `Hola, ${n}.` : 'Hola.'), pt: (n) => (n ? `Olá, ${n}.` : 'Olá.') };
+const withName = (t, n) => (n ? `${t}, ${n}.` : `${t}.`);
+
+const WELCOME_I18N = {
+  es: {
+    subject: (n) => (n ? `Te damos la bienvenida a kinwove, ${n} ✦` : 'Te damos la bienvenida a kinwove ✦'),
+    p1: 'Soy Danny, creé kinwove. Lo hice porque llegué a la fe por el camino lento, lleno de preguntas, y quería un lugar donde las preguntas sinceras recibieran respuestas sinceras. Sin presión y sin agenda.',
+    p2: 'Algo que lo hace distinto: no impone una opinión ni te sermonea. Se mantiene en las Escrituras, con respuestas sinceras y con fuentes, y te dice con claridad dónde personas fieles llevan mucho tiempo sin ponerse de acuerdo. Tú decides.',
+    p3: 'La mejor manera de empezar es sencilla: <strong>pregúntale algo real.</strong> Ahí es donde kinwove cobra vida. Prueba una:',
+    asks: ['¿Qué dice la Biblia sobre la ansiedad?', '¿Por qué Dios permite el sufrimiento?', '¿Cómo empiezo a leer la Biblia?'],
+    p4: 'Sea lo que sea que cargues, fe, duda o algo en medio, tráelo aquí.',
+  },
+  pt: {
+    subject: (n) => (n ? `Boas-vindas ao kinwove, ${n} ✦` : 'Boas-vindas ao kinwove ✦'),
+    p1: 'Aqui é o Danny, eu criei o kinwove. Fiz isso porque cheguei à fé pelo caminho lento, cheio de perguntas, e queria um lugar onde perguntas sinceras recebessem respostas sinceras. Sem pressão e sem segundas intenções.',
+    p2: 'Uma coisa que faz diferença: ele não empurra uma opinião nem prega para você. Ele se mantém nas Escrituras, com respostas sinceras e com fontes, e diz com clareza onde pessoas fiéis discordam há muito tempo. A decisão é sua.',
+    p3: 'O melhor jeito de começar é simples: <strong>pergunte algo real.</strong> É aí que o kinwove ganha vida. Experimente uma:',
+    asks: ['O que a Bíblia diz sobre ansiedade?', 'Por que Deus permite o sofrimento?', 'Como eu começo a ler a Bíblia?'],
+    p4: 'O que quer que você esteja carregando, fé, dúvida ou algo no meio do caminho, traga para cá.',
+  },
+};
+function welcomeEmailHtmlI18n(firstName, lang) {
+  const w = WELCOME_I18N[lang];
+  const ask = (q) =>
+    `<a href="https://www.kinwove.com/?q=${encodeURIComponent(q)}" style="display:block;text-decoration:none;color:#2C1810;background:#FDF8F0;border:1px solid #E8D5BB;border-radius:10px;padding:12px 16px;margin-bottom:8px;font-size:15px;line-height:1.5">&rsaquo;&nbsp; ${q}</a>`;
+  return emailWrap(`${H(hi[lang](firstName))}${P(w.p1)}${P(w.p2)}${P(w.p3)}<div style="margin:0 0 20px">${w.asks.map(ask).join('')}</div>${P(w.p4, true)}${SIGN}`, undefined, lang);
+}
+
+const INVITE_I18N = {
+  es: {
+    subject: 'kinwove crece de persona en persona',
+    h1: 'kinwove crece de persona en persona',
+    msg: 'Me acordé de ti: kinwove es un lugar para las grandes preguntas: la vida, el sentido, la fe, la duda. Conversación sincera, sin presión y sin agenda. Estés donde estés:',
+    mailSubject: 'Me acordé de ti',
+    p1: 'Soy Danny. Te digo la verdad: la comunidad aquí es joven y todavía está creciendo. Crece de boca en boca, que por ahora casi siempre significa que alguien lo comparte cuando viene al caso.',
+    p2: 'Si te viene alguien a la mente, alguien con curiosidad, alguien pasando por algo, alguien con las mismas preguntas, abajo hay un enlace que puedes enviarle. Y si no se te ocurre nadie, no pasa nada. No hace falta buscar.',
+    sms: 'Enviar por mensaje', mail: 'Enviar por correo',
+    foot: 'O abre kinwove y toca <strong>Invitar amigos</strong> para WhatsApp, QR y más. Danny',
+  },
+  pt: {
+    subject: 'O kinwove cresce de pessoa em pessoa',
+    h1: 'O kinwove cresce de pessoa em pessoa',
+    msg: 'Lembrei de você: o kinwove é um lugar para as grandes perguntas: a vida, o sentido, a fé, a dúvida. Conversa sincera, sem pressão e sem segundas intenções. Onde quer que você esteja:',
+    mailSubject: 'Lembrei de você',
+    p1: 'Aqui é o Danny. Vou ser sincero: a comunidade aqui é jovem e ainda está crescendo. Ela cresce no boca a boca, o que por enquanto quase sempre significa alguém compartilhar quando faz sentido.',
+    p2: 'Se alguém vier à sua mente, alguém curioso, alguém passando por algo, alguém com as mesmas perguntas, tem um link abaixo que você pode enviar. E se ninguém vier à mente, tudo bem. Não precisa procurar.',
+    sms: 'Enviar por mensagem', mail: 'Enviar por e-mail',
+    foot: 'Ou abra o kinwove e toque em <strong>Convidar amigos</strong> para WhatsApp, QR e mais. Danny',
+  },
+};
+function inviteEmailHtmlI18n(firstName, userId, lang) {
+  const v = INVITE_I18N[lang];
+  const ref = userId ? `&ref=${String(userId).slice(0, 8)}` : '';
+  const inviteUrl = `https://www.kinwove.com/?utm_source=welcome-invite&utm_medium=invite&utm_campaign=referral${ref}`;
+  const body = encodeURIComponent(`${v.msg}\n\n${inviteUrl}`);
+  const pill = (label, href) => `<a href="${href}" style="display:inline-block;background:#B8733A;color:#FDF8F0;text-decoration:none;padding:13px 26px;border-radius:999px;font-size:15px;font-weight:600;margin:0 10px 10px 0;letter-spacing:0.01em">${label}</a>`;
+  return emailWrap(`${H(withName(v.h1, firstName))}${P(v.p1)}${P(v.p2, true)}<div style="margin:0 0 18px">${pill(v.sms, `sms:?body=${body}`)}${pill(v.mail, `mailto:?subject=${encodeURIComponent(v.mailSubject)}&body=${body}`)}</div><p style="font-size:13px;color:#9C7B5E;line-height:1.7;margin:0">${v.foot}</p>`, undefined, lang);
+}
+
+const BIBLE_I18N = {
+  es: {
+    subject: 'Cada capítulo de la Biblia, explicado',
+    h1: 'Cada capítulo de la Biblia, explicado',
+    p1: 'Soy Danny. Algo que quizá no has visto: en kinwove hay una explicación sencilla de cada capítulo de la Biblia en español, y guías de estudio con preguntas para grupos pequeños. Lee un capítulo y, cuando un versículo te detenga, pregúntale a Ask.',
+    p2: '¿No sabes por dónde empezar? A mucha gente le ayuda el Evangelio de Juan como primera puerta: es Jesús de cerca.',
+    btn: 'Empezar con Juan 1', url: 'https://www.kinwove.com/es/biblia/juan-1',
+    foot: 'Con un capítulo basta. Danny',
+  },
+  pt: {
+    subject: 'Cada capítulo da Bíblia, explicado',
+    h1: 'Cada capítulo da Bíblia, explicado',
+    p1: 'Aqui é o Danny. Uma coisa que talvez você não tenha visto: no kinwove tem uma explicação simples de cada capítulo da Bíblia em português, e guias de estudo com perguntas para pequenos grupos. Leia um capítulo e, quando um versículo fizer você parar, pergunte ao Ask.',
+    p2: 'Não sabe por onde começar? Muita gente acha o Evangelho de João uma boa primeira porta: é Jesus de perto.',
+    btn: 'Começar por João 1', url: 'https://www.kinwove.com/pt/biblia/joao-1',
+    foot: 'Um capítulo já basta. Danny',
+  },
+};
+function bibleEmailHtmlI18n(firstName, lang) {
+  const v = BIBLE_I18N[lang];
+  return emailWrap(`${H(withName(v.h1, firstName))}${P(v.p1)}${P(v.p2, true)}${btnHtml(v.btn, v.url)}<p style="font-size:13px;color:#9C7B5E;margin:0">${v.foot}</p>`, undefined, lang);
+}
+// Seeker welcome-sequence stages in the reader's language; anything else stays English.
+const SEQ_I18N = {
+  invite: { subject: (l) => INVITE_I18N[l].subject, html: (n, id, l) => inviteEmailHtmlI18n(n, id, l) },
+  bible:  { subject: (l) => BIBLE_I18N[l].subject,  html: (n, id, l) => bibleEmailHtmlI18n(n, l) },
+};
+
 // ── Welcome email (called after profile wizard completes) ─────────────────────
 app.post('/api/email/welcome', requireAuth, async (req, res) => {
   try {
@@ -2682,8 +2787,14 @@ app.post('/api/email/welcome', requireAuth, async (req, res) => {
     if (!email) return res.status(404).json({ error: 'no email found' });
 
     const h = { apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
-    const pr = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}&select=display_name`, { headers: h });
+    const pr = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${req.userId}&select=display_name,preferred_language`, { headers: h });
     const [profile] = await pr.json().catch(() => [{}]);
+    const lang = emailLang(profile?.preferred_language);
+    if (lang !== 'en') {
+      const name = (profile?.display_name ?? '').split(' ')[0] || '';
+      await sendEmail(email, WELCOME_I18N[lang].subject(name), welcomeEmailHtmlI18n(name, lang), undefined, { kind: 'welcome', userId: req.userId });
+      return res.json({ ok: true });
+    }
     const firstName = (profile?.display_name ?? '').split(' ')[0] || 'friend';
 
     await sendEmail(email, `Welcome to kinwove, ${firstName} ✦`, welcomeEmailHtml(firstName), undefined, { kind: 'welcome', userId: req.userId });
@@ -3066,7 +3177,7 @@ app.post('/api/cron/welcome-sequence', async (req, res) => {
     counts[st.name] = 0;
     // created between (olderThan) and (newerThan) hours ago, onboarding finished
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?email_opt_out=eq.false&display_name=not.is.null&created_at=gte.${hrsAgo(st.olderThan)}&created_at=lte.${hrsAgo(st.newerThan)}&select=id,display_name,is_pastor&limit=200`,
+      `${SUPABASE_URL}/rest/v1/profiles?email_opt_out=eq.false&display_name=not.is.null&created_at=gte.${hrsAgo(st.olderThan)}&created_at=lte.${hrsAgo(st.newerThan)}&select=id,display_name,is_pastor,preferred_language&limit=200`,
       { headers: h }
     );
     const rows = await r.json().catch(() => []);
@@ -3079,7 +3190,10 @@ app.post('/api/cron/welcome-sequence', async (req, res) => {
         if (!email || isInternalEmail(email)) continue;
         const firstName = (row.display_name || '').trim().split(/\s+/)[0] || email.split('@')[0] || 'friend';
         const unsubUrl = `https://www.kinwove.com/api/email/unsubscribe?u=${row.id}&t=${emailToken(row.id)}`;
-        await sendEmail(email, st.subject, st.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: `welcome-${st.name}`, userId: row.id });
+        const rl = emailLang(row.preferred_language);
+        const tr = rl !== 'en' && SEQ_I18N[st.name];
+        const trName = (row.display_name || '').trim().split(/\s+/)[0] || '';
+        await sendEmail(email, tr ? tr.subject(rl) : st.subject, tr ? tr.html(trName, row.id, rl) : st.html(firstName, row.id), { 'List-Unsubscribe': `<${unsubUrl}>` }, { kind: `welcome-${st.name}`, userId: row.id });
         counts[st.name]++;
         await new Promise((r) => setTimeout(r, 200)); // gentle rate-limit
       } catch (e) {

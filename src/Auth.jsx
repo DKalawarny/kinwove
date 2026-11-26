@@ -113,6 +113,9 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
           ...(utm?.utm_campaign && { utm_campaign: utm.utm_campaign }),
           ...(utm?.ref          && { referral_ref:  utm.ref }),
           ...(utm?.landing_url  && { landing_url:   utm.landing_url }),
+          // The reading language, so the confirmation email template can
+          // greet Spanish and Portuguese readers in their language.
+          lang,
         },
       },
     });
