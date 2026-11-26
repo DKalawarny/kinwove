@@ -6,6 +6,11 @@ import { markEngaged } from './streak.js';
 import { KinwoveWordmark } from './components/brand/KinwoveWordmark.jsx';
 import { KinwoveStar } from './components/brand/KinwoveStar.jsx';
 import { PERSON_TYPES, STARTERS, DEEPER_STARTERS, ADS } from './constants.js';
+import { useStrings } from './i18n/viewLanguage.js';
+import { STARTERS_I18N } from './i18n/starters.js';
+
+// Mode ids use '-', string keys use '_'.
+const mk = (id) => String(id).replace(/-/g, '_');
 import { getSystemPrompt } from './prompts.js';
 import { useSpeechRecognition } from './useSpeechRecognition.js';
 import { useTextToSpeech } from './useTextToSpeech.js';
@@ -195,6 +200,7 @@ function TopicIcon({ topic, size = 28 }) {
 
 // PersonType welcome illustration — shows above starter questions
 function PersonTypeWelcome({ personType }) {
+  const { s: str } = useStrings();
   // Keys MUST match the real PERSON_TYPES ids in constants.js — otherwise every
   // type falls back to "Curious" and the app misidentifies who it's talking to.
   const config = {
@@ -210,7 +216,8 @@ function PersonTypeWelcome({ personType }) {
     relationships: { icon: 'peace',    label: 'Relationships', desc: 'Real people, real situations, through a faith lens.' },
     life:          { icon: 'scripture',label: 'Life Questions',desc: 'Real life, grounded in scripture.' },
   };
-  const c = config[personType] ?? config.curious;
+  const cfgKey = config[personType] ? personType : 'curious';
+  const c = config[cfgKey];
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -226,20 +233,20 @@ function PersonTypeWelcome({ personType }) {
         <TopicIcon topic={c.icon} size={32} />
       </div>
       <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: T.goldDark, marginBottom: 4, opacity: 0.8 }}>
-        {c.label}
+        {str[`cW_${mk(cfgKey)}_l`] ?? c.label}
       </div>
       <div style={{ fontSize: 13, color: T.inkMuted, fontFamily: T.serif, fontStyle: 'italic', lineHeight: 1.5 }}>
-        {c.desc}
+        {str[`cW_${mk(cfgKey)}_d`] ?? c.desc}
       </div>
     </div>
   );
 }
 
-function getStarters(personType, conversations) {
+function getStarters(personType, conversations, lang = 'en') {
   const totalMessages = conversations.reduce((sum, c) => sum + c.messages.length, 0);
-  const pool = totalMessages >= 15
-    ? (DEEPER_STARTERS[personType] ?? DEEPER_STARTERS.curious)
-    : (STARTERS[personType] ?? STARTERS.curious);
+  const en = totalMessages >= 15 ? DEEPER_STARTERS : STARTERS;
+  const key = en[personType] ? personType : 'curious';
+  const pool = STARTERS_I18N[lang]?.[totalMessages >= 15 ? 'D' : 'S']?.[key] ?? en[key];
   const offset = new Date().getDate() % pool.length;
   return [...pool.slice(offset), ...pool.slice(0, offset)].slice(0, 3);
 }
@@ -320,6 +327,7 @@ function BookmarkIcon({ filled, size = 16 }) {
 }
 
 function GuestWall({ onSignUp }) {
+  const { s: str } = useStrings();
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'rgba(44,24,16,0.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', padding: 24 }}>
       <div style={{ background: T.ink, borderRadius: 24, padding: '44px 32px', maxWidth: 400, width: '100%', textAlign: 'center', border: '1px solid rgba(184,115,58,0.3)', boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
@@ -328,15 +336,15 @@ function GuestWall({ onSignUp }) {
           <line x1="0" y1="14" x2="28" y2="14" stroke="#A85530" strokeWidth="2"/>
         </svg>
         <div style={{ fontFamily: T.serif, fontSize: 30, fontWeight: 600, color: T.cream, letterSpacing: '-0.02em', lineHeight: 1.12, marginBottom: 14 }}>
-          This conversation is worth keeping.
+          {str.cGwTitle}
         </div>
         <div style={{ fontSize: 15, color: 'rgba(253,248,240,0.5)', lineHeight: 1.7, marginBottom: 32 }}>
-          You've had 3 free exchanges. Create a free account to keep going, save your notes, and join the community.
+          {str.cGwBody}
         </div>
         <button onClick={onSignUp} style={{ background: T.gold, color: T.cream, border: 'none', borderRadius: 999, padding: '15px 0', fontSize: 15, fontWeight: 600, cursor: 'pointer', width: '100%', marginBottom: 12, boxShadow: '0 4px 20px rgba(184,115,58,0.4)' }}>
-          Create a free account
+          {str.cGwBtn}
         </button>
-        <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.28)' }}>No credit card needed.</div>
+        <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.28)' }}>{str.cGwNoCard}</div>
       </div>
     </div>
   );
@@ -841,6 +849,7 @@ function _ImgHint({ C }) {
     }, 5000);
     return () => clearInterval(t);
   }, []);
+  const { s: str } = useStrings();
   const h = IMG_HINTS[idx];
   return (
     <div style={{ maxWidth: 720, margin: '0 auto 6px', display: 'flex', alignItems: 'center', gap: 6, minHeight: 18 }}>
@@ -856,7 +865,7 @@ function _ImgHint({ C }) {
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}
       >
-        {h.icon} {h.text}
+        {h.icon} {str[`cHint${idx}`] ?? h.text}
       </span>
     </div>
   );
@@ -918,6 +927,7 @@ export default function Chat({
   function toggleDark() { const next = !dark; setDark(next); syncUiFlag('chat_dark', next ? '1' : '0'); }
 
   const [messages, setMessages] = useState(initialMessages ?? []);
+  const { s: str, lang: viewLang } = useStrings();
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
@@ -977,10 +987,10 @@ export default function Chat({
     e.target.value = '';
     if (!picked) return;
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!validTypes.includes(picked.type)) { alert('Please attach a JPEG, PNG, GIF, or WebP image.'); return; }
+    if (!validTypes.includes(picked.type)) { alert(str.cImgType); return; }
     // Phone photos run 4-12 MB; shrink them the way post photos are shrunk before the size check
     const file = await compressImage(picked).catch(() => picked);
-    if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5 MB.'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert(str.cImgSize); return; }
     const previewUrl = URL.createObjectURL(file);
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -1073,11 +1083,12 @@ export default function Chat({
     return base + languageInstruction(preferredLanguage);
   }, [personType, seekingContext, totalMessages, preferredLanguage]);
   const starters = useMemo(() => {
-    const base = getStarters(personType, conversations ?? []);
+    const base = getStarters(personType, conversations ?? [], viewLang);
     const verse = getDailyVerse();
-    const versePrompt = `Help me understand ${verse.ref}, "${verse.text}"`;
+    // The daily verse text is English, so other languages ask about the reference only.
+    const versePrompt = viewLang === 'en' ? `Help me understand ${verse.ref}, "${verse.text}"` : str.cVerseAsk.replace('{ref}', verse.ref);
     return [versePrompt, ...base.slice(0, 2)];
-  }, [personType, conversations]);
+  }, [personType, conversations, viewLang, str]);
   // GuestQuestion writes person_type values that PERSON_TYPES has never had
   // ('believer', 'agnostic', 'questioning', 'new'), and older profiles carry
   // 'searching'. The mode pill rendered as an empty chip with a lone caret for
@@ -1085,7 +1096,7 @@ export default function Chat({
   // rather than nothing. (The system prompt has the same gap; see prompts.js
   // PER_TYPE — that one is a voice decision, still open.)
   const person = PERSON_TYPES.find((p) => p.id === personType)
-    ?? (personType ? { emoji: '', label: 'Your mode' } : PERSON_TYPES[0]);
+    ?? (personType ? { emoji: '', label: str.cYourMode } : PERSON_TYPES[0]);
 
   useEffect(() => {
     const el = listRef.current;
@@ -1396,13 +1407,13 @@ export default function Chat({
         setMessages((m) => (m.at(-1)?.role === 'assistant' && m.at(-1).content === '' ? m.slice(0, -1) : m));
       }
       if (e?.status === 429) {
-        setError(e.message || 'You’ve reached your questions for now.');
+        setError(e.message || str.cErrLimit);
       } else if (assistantContent) {
-        setError('That answer got cut off partway, sorry about that. Ask again and it’ll pick the thought back up.');
+        setError(str.cErrCut);
       } else if (e?.name === 'AbortError') {
-        setError('That answer took too long to arrive. It happens sometimes. Tap Retry and we’ll try again.');
+        setError(str.cErrSlow);
       } else {
-        setError('That one didn’t come through, a hiccup on our end, not yours. Your question is safe; tap Retry.');
+        setError(str.cErrHiccup);
       }
     } finally {
       clearTimeout(watchdog);
@@ -1484,7 +1495,7 @@ export default function Chat({
                 transition: 'all 0.15s',
               }}
             >
-              {person?.emoji} {person?.label}
+              {person?.emoji} {(person?.id && str[`mT_${mk(person.id)}`]) || person?.label}
               <span style={{ fontSize: 9, opacity: 0.6, marginLeft: 1 }}>▾</span>
             </button>
             {modePickerOpen && (
@@ -1504,7 +1515,7 @@ export default function Chat({
                 maxHeight: '85vh', overflowY: 'auto',
               }}>
                 <div style={{ padding: '2px 4px 8px', fontSize: 10, letterSpacing: '0.07em', textTransform: 'uppercase', color: T.inkMuted, fontWeight: 700 }}>
-                  Switch mode
+                  {str.cSwitchMode}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                   {PERSON_TYPES.map((pt) => {
@@ -1531,8 +1542,8 @@ export default function Chat({
                           }}>✓</span>
                         )}
                         <div style={{ fontSize: 20, marginBottom: 5, lineHeight: 1 }}>{pt.emoji}</div>
-                        <div style={{ fontSize: 12.5, fontWeight: 700, color: active ? T.goldDark : T.ink, marginBottom: 3 }}>{pt.label}</div>
-                        <div style={{ fontSize: 10.5, color: T.inkMuted, lineHeight: 1.45 }}>{pt.description}</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: active ? T.goldDark : T.ink, marginBottom: 3 }}>{str[`mT_${mk(pt.id)}`] ?? pt.label}</div>
+                        <div style={{ fontSize: 10.5, color: T.inkMuted, lineHeight: 1.45 }}>{str[`mD_${mk(pt.id)}`] ?? pt.description}</div>
                       </button>
                     );
                   })}
@@ -1574,7 +1585,7 @@ export default function Chat({
                   padding: '12px 16px', fontSize: 14, color: C.text,
                   cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
                 }}>
-                  <KinwoveStar size={15} style={{ flexShrink: 0 }} /><span style={{ fontWeight: 600 }}>New conversation</span>
+                  <KinwoveStar size={15} style={{ flexShrink: 0 }} /><span style={{ fontWeight: 600 }}>{str.cNewConv}</span>
                 </button>
                 <button onClick={() => { toggleDark(); setMenuOpen(false); }} style={{
                   width: '100%', textAlign: 'left', background: 'none',
@@ -1584,7 +1595,7 @@ export default function Chat({
                 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ fontSize: 15 }}>{dark ? '☀' : '🌙'}</span>
-                    <span>{dark ? 'Light mode' : 'Dark mode'}</span>
+                    <span>{dark ? str.cLight : str.cDark}</span>
                   </span>
                 </button>
                 {onOpenHistory && (
@@ -1594,17 +1605,17 @@ export default function Chat({
                     padding: '12px 16px', fontSize: 14, color: C.text,
                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
                   }}>
-                    <span style={{ fontSize: 13 }}>◷</span><span>Conversation history</span>
+                    <span style={{ fontSize: 13 }}>◷</span><span>{str.cHistory}</span>
                   </button>
                 )}
                 {messages.length > 0 && (
-                  <button onClick={() => { setMenuOpen(false); setShareContent({ text: formatConversation(messages, conversationTitle), label: 'Share conversation', rawMessages: messages, convTitle: conversationTitle }); }} style={{
+                  <button onClick={() => { setMenuOpen(false); setShareContent({ text: formatConversation(messages, conversationTitle), label: str.cShareConv, rawMessages: messages, convTitle: conversationTitle }); }} style={{
                     width: '100%', textAlign: 'left', background: 'none',
                     border: 'none', borderBottom: `1px solid ${C.border}`,
                     padding: '12px 16px', fontSize: 14, color: C.text,
                     cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
                   }}>
-                    <span style={{ fontSize: 13 }}>↗</span><span>Share conversation</span>
+                    <span style={{ fontSize: 13 }}>↗</span><span>{str.cShareConv}</span>
                   </button>
                 )}
                 {messages.length > 0 && onDeleteConversation && (
@@ -1614,7 +1625,7 @@ export default function Chat({
                     color: '#c0392b', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', gap: 10,
                   }}>
-                    <span style={{ fontSize: 13 }}>🗑</span><span>Delete conversation</span>
+                    <span style={{ fontSize: 13 }}>🗑</span><span>{str.cDeleteConv}</span>
                   </button>
                 )}
               </div>
@@ -1633,7 +1644,7 @@ export default function Chat({
         }}>
           <span style={{ fontSize: 11, color: T.goldDark, opacity: 0.8 }}>◷</span>
           <span style={{ fontSize: 11, color: T.inkMuted, letterSpacing: '0.01em' }}>
-            Continuing from a saved note · history unavailable
+            {str.cFromNote}
           </span>
         </div>
       )}
@@ -1663,7 +1674,7 @@ export default function Chat({
             whiteSpace: 'nowrap',
           }}
         >
-          ↓ {busy ? 'Still loading, scroll down' : 'Scroll to bottom'}
+          ↓ {busy ? str.cStillLoading : str.cScrollBottom}
         </button>
       )}
 
@@ -1725,16 +1736,16 @@ export default function Chat({
             >
               <PersonTypeWelcome personType={personType} />
               <div style={{ fontFamily: T.serif, fontSize: 26, color: C.text, marginBottom: 8, fontWeight: 500, letterSpacing: '-0.01em' }}>
-                Take your time.
+                {str.cTakeTime}
               </div>
               <div style={{ fontSize: 14.5, color: C.muted, lineHeight: 1.55, maxWidth: 360, marginBottom: 22 }}>
-                Ask anything: a question, a doubt, a verse you want to understand.
+                {str.cAskAnything}
               </div>
               <div style={{
                 fontSize: 10, letterSpacing: 1.6, textTransform: 'uppercase',
                 color: C.muted, fontWeight: 700, marginBottom: 10,
               }}>
-                Or start here
+                {str.cOrStart}
               </div>
               <div style={{
                 display: 'flex', flexDirection: 'column', gap: 8,
@@ -1773,7 +1784,7 @@ export default function Chat({
               <Tip
                 tipId="chat_save_note"
                 icon="📌"
-                text="Save any answer as a note, tap the bookmark icon on a response to keep it in your Notes."
+                text={str.cTipSave}
                 style={{ marginTop: 20, width: '100%', maxWidth: 440, textAlign: 'left' }}
               />
             </div>
@@ -1847,7 +1858,7 @@ export default function Chat({
                   {m._imagePreview && (
                     <img
                       src={m._imagePreview}
-                      alt="Attached"
+                      alt={str.cAltAttached}
                       style={{ display: 'block', width: '100%', maxWidth: 240, borderRadius: 10, marginBottom: m.content && m.content !== '(image)' ? 8 : 0, objectFit: 'cover' }}
                     />
                   )}
@@ -1871,7 +1882,7 @@ export default function Chat({
                               fontFamily: T.sans, cursor: 'pointer', textAlign: 'left', lineHeight: 1.5,
                             }}
                           >
-                            <span aria-hidden="true">👆</span> The gold references are tappable. Read the verse right here. <span style={{ opacity: 0.6 }}>Got it</span>
+                            <span aria-hidden="true">👆</span> {str.cRefTip} <span style={{ opacity: 0.6 }}>{str.cGotIt}</span>
                           </button>
                         )}
                       </div>
@@ -1884,7 +1895,7 @@ export default function Chat({
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, marginTop: 6 }}>
                     <button
                       onClick={handleSave}
-                      title={saved ? 'Saved to Notes' : 'Save to Notes'}
+                      title={saved ? str.cSavedNotes : str.cSaveNotes}
                       disabled={saved}
                       style={{
                         background: 'transparent',
@@ -1899,11 +1910,11 @@ export default function Chat({
                       }}
                     >
                       <BookmarkIcon filled={saved} size={14} />
-                      {saved ? 'Noted' : 'Note'}
+                      {saved ? str.cNoted : str.cNote}
                     </button>
                     <button
-                      onClick={() => setShareContent({ text: m.content, label: 'Share this response', rawMessages: [{ role: 'assistant', content: m.content }] })}
-                      title="Share this response"
+                      onClick={() => setShareContent({ text: m.content, label: str.cShareResp, rawMessages: [{ role: 'assistant', content: m.content }] })}
+                      title={str.cShareResp}
                       style={{
                         background: 'transparent',
                         border: 'none',
@@ -1917,12 +1928,12 @@ export default function Chat({
                       }}
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                      Share
+                      {str.cShare}
                     </button>
                     {!flaggedMsgs.has(i) ? (
                       <button
                         onClick={() => handleFlag(i, m.content)}
-                        title="Something seems off, flag this response"
+                        title={str.cFlagTitle}
                         style={{
                           background: 'transparent', border: 'none',
                           padding: '4px 8px', cursor: 'pointer',
@@ -1936,10 +1947,10 @@ export default function Chat({
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
                         </svg>
-                        Flag
+                        {str.cFlag}
                       </button>
                     ) : (
-                      <span style={{ padding: '4px 8px', fontSize: 12, color: C.muted }}>Flagged</span>
+                      <span style={{ padding: '4px 8px', fontSize: 12, color: C.muted }}>{str.cFlagged}</span>
                     )}
                     <button
                       onClick={async () => {
@@ -1949,7 +1960,7 @@ export default function Chat({
                           setTimeout(() => setCopiedIdx(null), 2000);
                         } catch {}
                       }}
-                      title="Copy response"
+                      title={str.cCopyResp}
                       style={{
                         background: 'transparent',
                         border: 'none',
@@ -1968,12 +1979,12 @@ export default function Chat({
                       ) : (
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                       )}
-                      {copiedIdx === i ? 'Copied' : 'Copy'}
+                      {copiedIdx === i ? str.cCopied : str.cCopy}
                     </button>
                     {ttsSupported && speakingId !== i && (
                       <button
                         onClick={() => speakMsg(i, m.content)}
-                        title="Read aloud"
+                        title={str.cReadAloud}
                         style={{ background: 'transparent', border: 'none', padding: '4px 8px', cursor: 'pointer', color: C.muted, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 5 }}
                       >
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1981,7 +1992,7 @@ export default function Chat({
                           <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
                           <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
                         </svg>
-                        Listen
+                        {str.cListen}
                       </button>
                     )}
                     {ttsSupported && speakingId === i && (
@@ -1993,28 +2004,28 @@ export default function Chat({
                           ))}
                         </span>
                         {/* −10s */}
-                        <button onClick={() => rewindSpeech(10)} title="Back 10s" style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                        <button onClick={() => rewindSpeech(10)} title={str.cBack10} style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
                           10
                         </button>
                         {/* Pause / Resume */}
-                        <button onClick={() => ttsPaused ? resumeSpeech() : pauseSpeech()} title={ttsPaused ? 'Resume' : 'Pause'} style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: T.gold, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                        <button onClick={() => ttsPaused ? resumeSpeech() : pauseSpeech()} title={ttsPaused ? str.cResume : str.cPause} style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: T.gold, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                           {ttsPaused ? (
                             <svg width="13" height="13" viewBox="0 0 24 24" fill={T.gold} stroke={T.gold} strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                           ) : (
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/></svg>
                           )}
-                          {ttsPaused ? 'Resume' : 'Pause'}
+                          {ttsPaused ? str.cResume : str.cPause}
                         </button>
                         {/* +10s */}
-                        <button onClick={() => forwardSpeech(10)} title="Forward 10s" style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                        <button onClick={() => forwardSpeech(10)} title={str.cFwd10} style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.5"/></svg>
                           10
                         </button>
                         {/* Stop */}
-                        <button onClick={stopSpeech} title="Stop" style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                        <button onClick={stopSpeech} title={str.cStop} style={{ background: 'transparent', border: 'none', padding: '4px 6px', cursor: 'pointer', color: C.muted, fontSize: 11, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                          Stop
+                          {str.cStop}
                         </button>
                       </span>
                     )}
@@ -2104,7 +2115,7 @@ export default function Chat({
                     flexShrink: 0,
                   }}
                 >
-                  Retry
+                  {str.cRetry}
                 </button>
               )}
             </div>
@@ -2212,7 +2223,7 @@ export default function Chat({
             <div style={{ position: 'relative', display: 'inline-block' }}>
               <img
                 src={attachedImg.previewUrl}
-                alt="Attached"
+                alt={str.cAltAttached}
                 style={{ height: 64, width: 64, objectFit: 'cover', borderRadius: 10, border: `2px solid ${T.gold}`, display: 'block' }}
               />
               <button
@@ -2222,7 +2233,7 @@ export default function Chat({
                 ×
               </button>
             </div>
-            <div style={{ fontSize: 12, color: C.muted, fontStyle: 'italic' }}>Image attached. Ask a question about it</div>
+            <div style={{ fontSize: 12, color: C.muted, fontStyle: 'italic' }}>{str.cImgAttachedNote}</div>
           </div>
         ) : !showGuestWall && (
           /* Capability hint — rotates every 5 s to surface image features */
@@ -2244,7 +2255,7 @@ export default function Chat({
           <button
             onClick={pickImage}
             disabled={busy || showGuestWall || !!attachedImg}
-            title={attachedImg ? 'Image attached' : 'Attach an image'}
+            title={attachedImg ? str.cImgAttached : str.cAttachImg}
             style={{
               background: attachedImg ? 'rgba(184,115,58,0.15)' : 'transparent',
               border: `1px solid ${attachedImg ? T.gold : C.border}`,
@@ -2271,7 +2282,7 @@ export default function Chat({
                 send();
               }
             }}
-            placeholder={attachedImg ? 'Ask about this image…' : 'Ask anything about faith, God, or the Bible…'}
+            placeholder={attachedImg ? str.cAskImg : str.cAskPh}
             rows={1}
             disabled={busy || showGuestWall}
             style={{
@@ -2294,7 +2305,7 @@ export default function Chat({
           {micSupported && (
             <button
               onClick={() => toggleMic(input)}
-              title={micListening ? 'Stop listening' : 'Speak your question'}
+              title={micListening ? str.cStopListening : str.cSpeak}
               style={{
                 background: micListening ? 'rgba(220,38,38,0.1)' : 'transparent',
                 border: `1px solid ${micListening ? 'rgba(220,38,38,0.4)' : C.border}`,
@@ -2327,7 +2338,7 @@ export default function Chat({
               boxShadow: busy || (!input.trim() && !attachedImg) ? 'none' : '0 4px 14px rgba(184,115,58,0.35)',
             }}
           >
-            Send
+            {str.cSend}
           </button>
         </div>
         {(
@@ -2340,7 +2351,7 @@ export default function Chat({
               textAlign: 'center',
             }}
           >
-            Built to honour scripture, not replace it. Always verify references in your own Bible.
+            {str.cDisclaimer}
           </div>
         )}
       </div>
@@ -2376,7 +2387,7 @@ export default function Chat({
               >×</button>
             </div>
             {versePopover.text === null ? (
-              <div style={{ fontSize: 15, color: '#9C7B5E', fontStyle: 'italic' }}>Loading…</div>
+              <div style={{ fontSize: 15, color: '#9C7B5E', fontStyle: 'italic' }}>{str.cLoading}</div>
             ) : (
               <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, lineHeight: 1.75, color: '#2C1810', margin: '0 0 16px', maxHeight: '55vh', overflowY: 'auto' }}>
                 {versePopover.text}
@@ -2395,7 +2406,7 @@ export default function Chat({
           boxShadow: '0 4px 20px rgba(44,24,16,0.4)',
           animation: 'fadeIn 0.2s ease both',
         }}>
-          Thanks, we'll take a look at this response.
+          {str.cFlagThanks}
         </div>
       )}
       {showGuestWall && <GuestWall onSignUp={onSignUp} />}
