@@ -7,6 +7,7 @@ import { getStoredUtm } from './utm.js';
 import ShareSheet from './ShareSheet.jsx';
 import { languageInstruction } from './languages.js';
 import { useStrings } from './i18n/viewLanguage.js';
+import { rich } from './i18n/rich.jsx';
 import { enterSends } from './lib/enterSends.js';
 
 // Keep in sync with server.js anon /api/chat limit (3/day) and Chat.jsx
@@ -190,6 +191,7 @@ function markFromWall() {
 // Google first: one tap instead of email, password and captcha. The 13+ and
 // Terms box is the same one the sign-up form has, and it gates Google the same way.
 function WallSignup({ onSignUp, firstQuestion }) {
+  const { s: str } = useStrings();
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [error, setError] = useState(null);
 
@@ -223,7 +225,7 @@ function WallSignup({ onSignUp, firstQuestion }) {
             cursor: 'pointer', boxShadow: '0 4px 20px rgba(184,115,58,0.4)',
           }}
         >
-          Join free. Keep going →
+          {str.gJoinKeepGoing}
         </button>
         <LeadCapture firstQuestion={firstQuestion} />
       </>
@@ -240,9 +242,9 @@ function WallSignup({ onSignUp, firstQuestion }) {
           style={{ marginTop: 3, accentColor: T.gold, width: 16, height: 16, flexShrink: 0 }}
         />
         <span style={{ fontSize: 12.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.5 }}>
-          I am 13 or older and I agree to the{' '}
-          <a href="/terms" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>Terms</a> and{' '}
-          <a href="/privacy" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>Privacy Policy</a>.
+          {str.gAgePre}{' '}
+          <a href="/terms" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>{str.gTerms}</a> {str.gAnd}{' '}
+          <a href="/privacy" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldLight }}>{str.gPrivacy}</a>.
         </span>
       </label>
       <button
@@ -262,12 +264,12 @@ function WallSignup({ onSignUp, firstQuestion }) {
           <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/>
           <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
         </svg>
-        Continue with Google
+        {str.gGoogle}
       </button>
       {error && <div style={{ fontSize: 12.5, color: '#E8A08A', marginTop: 10 }}>{error}</div>}
       <div style={{ marginTop: 14 }}>
         <button onClick={() => { markFromWall(); onSignUp(); }} style={linkStyle}>
-          or sign up with email
+          {str.gEmailSignup}
         </button>
       </div>
       <LeadCapture firstQuestion={firstQuestion} />
@@ -276,6 +278,7 @@ function WallSignup({ onSignUp, firstQuestion }) {
 }
 
 function LeadCapture({ firstQuestion }) {
+  const { s: str } = useStrings();
   const [email, setEmail]   = useState('');
   const [state, setState]   = useState('idle'); // idle | open | sending | done | error
   if (!firstQuestion) return null;
@@ -283,7 +286,7 @@ function LeadCapture({ firstQuestion }) {
   if (state === 'done') {
     return (
       <div style={{ marginTop: 18, fontSize: 13, color: 'rgba(253,248,240,0.55)', lineHeight: 1.6 }}>
-        Sent. We'll follow up once on that question. Nothing after it.
+        {str.gSent}
       </div>
     );
   }
@@ -318,7 +321,7 @@ function LeadCapture({ firstQuestion }) {
           cursor: 'pointer', fontFamily: 'inherit',
         }}
       >
-        or just email me this answer
+        {str.gEmailMe}
       </button>
     );
   }
@@ -342,11 +345,11 @@ function LeadCapture({ firstQuestion }) {
           color: '#1A1108', cursor: state === 'sending' ? 'wait' : 'pointer',
         }}
       >
-        {state === 'sending' ? 'Sending…' : 'Send it'}
+        {state === 'sending' ? str.gSending : str.gSendIt}
       </button>
       {state === 'error' && (
         <div style={{ width: '100%', fontSize: 12.5, color: '#E8A87C', marginTop: 4 }}>
-          That didn't go through. Try again?
+          {str.gSendFailed}
         </div>
       )}
     </form>
@@ -570,7 +573,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
       }
     } catch {
       setMessages((prev) => prev.map((m, i) =>
-        i === assistantIdx ? { ...m, content: 'Something went wrong. Try again.', streaming: false } : m
+        i === assistantIdx ? { ...m, content: str.gWentWrong, streaming: false } : m
       ));
     }
 
@@ -596,7 +599,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); ask(); } }}
                   placeholder={str.askPlaceholder}
-                  aria-label="Ask a question"
+                  aria-label={str.gAskAria}
                   style={{ flex: 1, minWidth: 0, border: 0, outline: 0, background: 'none', fontFamily: T.serif, fontSize: 18, color: '#1A110A' }}
                 />
                 <button onClick={() => ask()} disabled={!input.trim()}
@@ -724,13 +727,13 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
           {/* Leads on keeping the conversation rather than listing features.
               At three questions in, someone is mid-thought — not shopping. */}
           <div style={{ fontFamily: T.serif, fontSize: 22, color: T.cream, fontWeight: 600, letterSpacing: '-0.015em', lineHeight: 1.2, marginBottom: 10 }}>
-            Your conversation is saved.
+            {str.gSavedTitle}
           </div>
           <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.65, marginBottom: 6 }}>
-            Create a free account to pick it back up<br />whenever the question comes back.
+            {rich(str.gSavedBody)}
           </div>
           <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.3)', marginBottom: 22 }}>
-            No credit card. Takes 30 seconds.
+            {str.gNoCard}
           </div>
           <WallSignup onSignUp={onSignUp} firstQuestion={firstQuestion} />
         </div>
@@ -816,9 +819,9 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
           {/* ── Told in the moment, and only then, that we kept going ── */}
           {showInput && grace.extra > 0 && exchangeCount >= MAX_EXCHANGES && (
             <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.7)', lineHeight: 1.65, textAlign: 'center', margin: '0 8px 12px' }} className="fade-up">
-              It sounds like you're carrying something heavy, so let's keep talking.
-              {' '}You have {limit - exchangeCount === 1 ? 'one more question' : `${limit - exchangeCount} more questions`} here.
-              {' '}After that, a free account lets you keep going.
+              {str.gGraceHeavy}
+              {' '}{limit - exchangeCount === 1 ? str.gGraceOneLeft : str.gGraceNLeft.replace('{n}', limit - exchangeCount)}
+              {' '}{str.gGraceAfter}
             </div>
           )}
 
@@ -830,7 +833,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                 onChange={setInput}
                 onSend={() => ask()}
                 taRef={taRef}
-                placeholder="Ask a follow-up…"
+                placeholder={str.gFollowUp}
                 autoFocus
               />
             </div>
@@ -844,7 +847,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                 onChange={setInput}
                 onSend={holdQuestion}
                 taRef={taRef}
-                placeholder="Type your next question…"
+                placeholder={str.gTypeNext}
               />
             </div>
           )}
@@ -861,21 +864,21 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
               marginBottom: 12,
             }}>
               <div style={{ fontFamily: T.serif, fontSize: 22, color: T.cream, fontWeight: 600, letterSpacing: '-0.015em', lineHeight: 1.2, marginBottom: 10 }}>
-                {pendingAsk ? 'Your question is ready for Ask.' : grace.extra > 0 ? "I'm glad you kept talking." : "You're asking the right questions."}
+                {pendingAsk ? str.gWallReady : grace.extra > 0 ? str.gWallGlad : str.gWallRight}
               </div>
               <div style={{ fontSize: 13.5, color: 'rgba(253,248,240,0.6)', lineHeight: 1.65, marginBottom: 6 }}>
                 {pendingAsk
-                  ? <>Create a free account and Ask will answer it right away.<br />Your whole conversation comes with you.</>
+                  ? rich(str.gWallReadyBody)
                   : grace.extra > 0
-                  ? <>Create a free account to keep going.<br />Your whole conversation comes with you.</>
-                  : <>Join free to keep this conversation going, go deeper in scripture,<br />and connect with people on the same road.</>}
+                  ? rich(str.gWallGraceBody)
+                  : rich(str.gWallBody)}
               </div>
               <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.3)', marginBottom: grace.extra > 0 ? 10 : 22 }}>
-                No credit card. Takes 30 seconds.
+                {str.gNoCard}
               </div>
               {grace.extra > 0 && (
                 <div style={{ fontSize: 12.5, color: 'rgba(253,248,240,0.55)', lineHeight: 1.6, marginBottom: 22 }}>
-                  If you ever feel unsafe, call or text 988 (US and Canada), or find a line near you at findahelpline.com.
+                  {str.gCrisis}
                 </div>
               )}
               <WallSignup onSignUp={onSignUp} firstQuestion={firstQuestion} />
@@ -894,7 +897,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
                   onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(184,115,58,0.4)'; e.currentTarget.style.color = 'rgba(253,248,240,0.75)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(253,248,240,0.15)'; e.currentTarget.style.color = 'rgba(253,248,240,0.5)'; }}
                 >
-                  ↗ Share this
+                  {str.gShare}
                 </button>
               </div>
             </div>
@@ -917,6 +920,7 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
 }
 
 function InputRow({ value, onChange, onSend, taRef, placeholder, tall, autoFocus }) {
+  const { s: str } = useStrings();
   return (
     <div style={{ position: 'relative' }}>
       <textarea
@@ -925,7 +929,7 @@ function InputRow({ value, onChange, onSend, taRef, placeholder, tall, autoFocus
         autoFocus={autoFocus}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => { if (enterSends(e)) { e.preventDefault(); onSend(); } }}
-        placeholder={placeholder ?? 'Type your question…'}
+        placeholder={placeholder ?? str.gTypeQuestion}
         rows={tall ? 3 : 2}
         style={{
           width: '100%', boxSizing: 'border-box',
