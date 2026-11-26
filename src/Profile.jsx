@@ -8,6 +8,14 @@ import { PERSON_TYPES } from './constants.js';
 import HomeFound from './HomeFound.jsx';
 import FlagPicker from './FlagPicker.jsx';
 import { COUNTRIES, codeToFlag } from './countries.js';
+import { useStrings } from './i18n/viewLanguage.js';
+
+// Country names in the reader's language from the browser itself ("México",
+// "Brasil"); the saved value stays the English name from COUNTRIES.
+function countryName(code, englishName, lang) {
+  if (lang === 'en') return englishName;
+  try { return new Intl.DisplayNames([lang], { type: 'region' }).of(code) || englishName; } catch { return englishName; }
+}
 
 // Spiritual-state options only — chat-mode types (group, guided, kids) are
 // intentionally excluded here; they live in constants.js for the AI prompts.
@@ -127,18 +135,18 @@ function Toggle({ checked, onChange, label }) {
 // Order matters: person type comes second so explorers can be DONE in two
 // steps — a real skeptic told us the full wizard made them want to bail.
 const WIZARD_STEPS = [
-  { key: 'name',              question: 'What\'s your name?',                  hint: 'First and last name.' },
+  { key: 'name',              question: 'What\'s your name?',                  hint: 'First and last name.', q: 'wQname', h: 'wHname' },
   // Second on purpose. FAST_TRACK_TYPES finish right after person_type, so a
   // step placed any later is skipped by curious and skeptical signups — the
   // strangers whose country Daniel most wants to know. Pre-selected from the
   // browser so it is a confirm rather than a decision, which keeps the wizard
   // short for the people the fast track exists to protect.
-  { key: 'country',           question: 'Where are you from?',                 hint: 'Shows as a flag on your profile.' },
-  { key: 'person_type',       question: 'Where are you at right now?',          hint: 'Be honest. There\'s no wrong answer here.' },
-  { key: 'preferred_language',question: 'What language do you prefer?',        hint: 'Your AI companion will respond in your language.' },
-  { key: 'tradition',         question: 'Any tradition you identify with?',     hint: null },
-  { key: 'exploring_since',   question: 'How long have you been on this path?', hint: null },
-  { key: 'what_brought',      question: 'What brought you here?',               hint: 'One honest line, or skip.', optional: true },
+  { key: 'country',           question: 'Where are you from?',                 hint: 'Shows as a flag on your profile.', q: 'wQcountry', h: 'wHcountry' },
+  { key: 'person_type',       question: 'Where are you at right now?',          hint: 'Be honest. There\'s no wrong answer here.', q: 'wQperson', h: 'wHperson' },
+  { key: 'preferred_language',question: 'What language do you prefer?',        hint: 'Your AI companion will respond in your language.', q: 'wQlang', h: 'wHlang' },
+  { key: 'tradition',         question: 'Any tradition you identify with?',     hint: null, q: 'wQtrad' },
+  { key: 'exploring_since',   question: 'How long have you been on this path?', hint: null, q: 'wQsince' },
+  { key: 'what_brought',      question: 'What brought you here?',               hint: 'One honest line, or skip.', optional: true, q: 'wQbrought', h: 'wHbrought' },
 ];
 
 // Curious/skeptical signups skip everything after picking their mode — the
@@ -160,6 +168,7 @@ function WizardDots({ step, total }) {
 }
 
 function ProfileWizard({ user, existing, onSave, quick = false }) {
+  const { s: str, lang } = useStrings();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     first_name:         '',
@@ -207,10 +216,10 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
     setError(null);
     const displayName = [form.first_name.trim(), form.last_name.trim()].filter(Boolean).join(' ');
     if (isReservedName(displayName)) {
-      return setError('That name is reserved, please pick a different one.');
+      return setError(str.wErrReserved);
     }
     if (containsProfanity(displayName)) {
-      return setError('Please use a respectful name that\'s appropriate for our community.');
+      return setError(str.wErrRude);
     }
     setSaving(true);
     const payload = {
@@ -247,7 +256,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
             position: 'absolute', left: 24, background: 'none', border: 'none',
             color: T.gold, fontSize: 14, fontWeight: 500, cursor: 'pointer', padding: '4px 0',
             fontFamily: T.serif,
-          }}>← Back</button>
+          }}>{str.wBack}</button>
         )}
         <div style={{ fontFamily: T.serif, fontSize: 20, fontWeight: 500, color: T.ink, letterSpacing: '-0.02em' }}>
           kinwove
@@ -264,11 +273,11 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
           fontFamily: T.serif, fontSize: 30, fontWeight: 600, color: T.ink,
           letterSpacing: '-0.025em', lineHeight: 1.15, margin: '0 0 8px', textAlign: 'center',
         }}>
-          {current.question}
+          {str[current.q] ?? current.question}
         </h1>
         {current.hint && (
           <p style={{ fontSize: 14, color: T.inkMuted, textAlign: 'center', margin: '0 0 36px', lineHeight: 1.5 }}>
-            {current.hint}
+            {str[current.h] ?? current.hint}
           </p>
         )}
         {!current.hint && <div style={{ marginBottom: 36 }} />}
@@ -281,7 +290,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
               value={form.first_name}
               onChange={(e) => set('first_name', e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && canAdvance() && advance()}
-              placeholder="First name"
+              placeholder={str.wFirst}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 border: 'none', borderBottom: `2px solid ${T.gold}`,
@@ -293,7 +302,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
               value={form.last_name}
               onChange={(e) => set('last_name', e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && canAdvance() && advance()}
-              placeholder="Last name (optional)"
+              placeholder={str.wLast}
               style={{
                 width: '100%', boxSizing: 'border-box',
                 border: 'none', borderBottom: `2px solid ${T.gold}`,
@@ -309,7 +318,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
             <div style={{ textAlign: 'center', marginBottom: 14 }}>
               <div style={{ fontSize: 64, lineHeight: 1.1 }}>{codeToFlag(form.country) || '🏳️'}</div>
               <div style={{ fontSize: 15, color: T.inkSoft, marginTop: 4 }}>
-                {(COUNTRIES.find(([c]) => c === form.country) ?? [])[1] ?? 'Pick your country'}
+                {form.country ? countryName(form.country, (COUNTRIES.find(([c]) => c === form.country) ?? [])[1], lang) : str.wPickCountry}
               </div>
             </div>
             <select
@@ -321,8 +330,10 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
                 fontSize: 15, fontFamily: T.serif, color: T.ink, cursor: 'pointer',
               }}
             >
-              <option value="">Choose…</option>
-              {COUNTRIES.map(([code, name]) => (
+              <option value="">{str.wChoose}</option>
+              {COUNTRIES.map(([code, name]) => [code, countryName(code, name, lang)])
+                .sort((a, b) => (lang === 'en' ? 0 : a[1].localeCompare(b[1], lang)))
+                .map(([code, name]) => (
                 <option key={code} value={code}>{codeToFlag(code)}  {name}</option>
               ))}
             </select>
@@ -371,7 +382,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
                 }}
               >
                 <span style={{ fontSize: 20 }}>{p.emoji}</span>
-                {p.label}
+                {str[`wType_${p.id.replace('-', '_')}`] ?? p.label}
                 {form.person_type === p.id && <Check size={16} color={T.gold} style={{ marginLeft: 'auto' }} />}
               </button>
             ))}
@@ -380,7 +391,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
 
         {current.key === 'tradition' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {TRADITIONS.map((t) => (
+            {TRADITIONS.map((t, ti) => (
               <button
                 key={t}
                 onClick={() => set('tradition', t)}
@@ -394,7 +405,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
                   transition: 'all 0.15s',
                 }}
               >
-                {t}
+                {str[`wTrad${ti}`] ?? t}
                 {form.tradition === t && <Check size={15} color={T.gold} />}
               </button>
             ))}
@@ -403,7 +414,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
 
         {current.key === 'exploring_since' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {EXPLORING_SINCE.map((o) => (
+            {EXPLORING_SINCE.map((o, oi) => (
               <button
                 key={o}
                 onClick={() => set('exploring_since', o)}
@@ -417,7 +428,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
                   transition: 'all 0.15s',
                 }}
               >
-                {o}
+                {str[`wSince${oi}`] ?? o}
                 {form.exploring_since === o && <Check size={15} color={T.gold} />}
               </button>
             ))}
@@ -429,7 +440,7 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
             autoFocus
             value={form.what_brought}
             onChange={(e) => set('what_brought', e.target.value)}
-            placeholder="e.g. A conversation that wouldn't leave me alone."
+            placeholder={str.wBroughtPh}
             rows={3}
             style={{
               width: '100%', boxSizing: 'border-box',
@@ -461,14 +472,14 @@ function ProfileWizard({ user, existing, onSave, quick = false }) {
               opacity: saving ? 0.7 : 1,
             }}
           >
-            {saving ? 'Saving…' : isLast ? 'Finish' : 'Continue'}
+            {saving ? str.wSaving : isLast ? str.wFinish : str.wContinue}
           </button>
           {current.optional && (
             <button onClick={advance} style={{
               width: '100%', marginTop: 12, background: 'none', border: 'none',
               color: T.inkMuted, fontSize: 13, cursor: 'pointer', padding: '8px',
             }}>
-              Skip for now
+              {str.wSkip}
             </button>
           )}
         </div>
