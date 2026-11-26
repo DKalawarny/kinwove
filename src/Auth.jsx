@@ -6,6 +6,13 @@ import { Turnstile, TURNSTILE_ENABLED } from './Turnstile.jsx';
 import { isNativeApp } from './native.js';
 import { recordTermsAcceptance, markTermsPending } from './termsConsent.js';
 import { KinwoveWordmark } from './components/brand/KinwoveWordmark.jsx';
+import { useStrings } from './i18n/viewLanguage.js';
+import { rich } from './i18n/rich.jsx';
+
+// Supabase's error text is English. For the few common ones, show the reader's
+// language; anything else (and every message in English) stays exactly as sent.
+const ERR_KEYS = { 'User already registered': 'aErrRegistered', 'Invalid login credentials': 'aErrBadLogin', 'Email not confirmed': 'aErrNotConfirmed' };
+const errText = (msg, str, lang) => (lang === 'en' || !msg ? msg : (str[ERR_KEYS[msg]] ?? msg));
 
 function Field({ label, children }) {
   return (
@@ -37,6 +44,7 @@ const DEV_LOGIN_ENABLED =
   !!import.meta.env.VITE_DEV_LOGIN_PASSWORD;
 
 function ResendButton({ email }) {
+  const { s: str } = useStrings();
   const [state, setState] = useState('idle'); // idle | sending | sent | error
   async function resend() {
     setState('sending');
@@ -55,12 +63,13 @@ function ResendButton({ email }) {
         opacity: state === 'sending' ? 0.7 : 1, marginTop: 4,
       }}
     >
-      {state === 'sending' ? 'Sending…' : state === 'sent' ? '✓ Email sent!' : state === 'error' ? 'Try again' : 'Resend confirmation email'}
+      {state === 'sending' ? str.aSending : state === 'sent' ? str.aEmailSent : state === 'error' ? str.aTryAgain : str.aResend}
     </button>
   );
 }
 
 export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
+  const { s: str, lang } = useStrings();
   const [mode, setMode] = useState(initialMode); // signin | signup | verify
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -194,28 +203,27 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
       <div style={wrap}>
         <div style={card}>
           <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
-          <h2 style={title}>Reset your password</h2>
+          <h2 style={title}>{str.aResetTitle}</h2>
           {resetSent ? (
             <>
               <p style={{ color: T.inkSoft, fontSize: 15, lineHeight: 1.6 }}>
-                If an account exists for <strong>{email}</strong>, a reset link is on its way.
-                Click it and you'll set a new password.
+                {str.aResetSentPre} <strong>{email}</strong>, {str.aResetSentPost}
               </p>
               <button onClick={() => { setMode('signin'); setResetSent(false); setError(null); }} style={{ ...btn, background: 'transparent', color: T.inkMuted, border: `1px solid ${T.line}`, marginTop: 10 }}>
-                Back to sign in
+                {str.aBackToSignIn}
               </button>
             </>
           ) : (
             <form onSubmit={handleReset}>
               <p style={{ color: T.inkSoft, fontSize: 14, lineHeight: 1.6, margin: '0 0 14px' }}>
-                Enter your email and we'll send a link to set a new one.
+                {str.aResetIntro}
               </p>
-              <Field label="Email">
+              <Field label={str.aEmail}>
                 <input style={input} type="email" name="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@somewhere.com" required />
               </Field>
-              {error && <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{error}</div>}
-              <button type="submit" style={btn} disabled={loading}>{loading ? 'Sending…' : 'Send reset link'}</button>
-              <button type="button" onClick={() => { setMode('signin'); setError(null); }} style={{ background: 'none', border: 'none', color: T.goldDark, fontSize: 13, cursor: 'pointer', marginTop: 14, width: '100%' }}>← Back to sign in</button>
+              {error && <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{errText(error, str, lang)}</div>}
+              <button type="submit" style={btn} disabled={loading}>{loading ? str.aSending : str.aSendReset}</button>
+              <button type="button" onClick={() => { setMode('signin'); setError(null); }} style={{ background: 'none', border: 'none', color: T.goldDark, fontSize: 13, cursor: 'pointer', marginTop: 14, width: '100%' }}>{str.aBackToSignInArrow}</button>
             </form>
           )}
         </div>
@@ -228,13 +236,13 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
       <div style={wrap}>
         <div style={card}>
           <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
-          <h2 style={title}>Set a new password</h2>
+          <h2 style={title}>{str.aNewPwTitle}</h2>
           <form onSubmit={handleUpdatePassword}>
-            <Field label="New password">
-              <input style={input} type={showPassword ? 'text' : 'password'} name="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" minLength={8} required />
+            <Field label={str.aNewPw}>
+              <input style={input} type={showPassword ? 'text' : 'password'} name="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={str.aMin8} minLength={8} required />
             </Field>
-            {error && <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{error}</div>}
-            <button type="submit" style={btn} disabled={loading}>{loading ? 'Saving…' : 'Save new password'}</button>
+            {error && <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{errText(error, str, lang)}</div>}
+            <button type="submit" style={btn} disabled={loading}>{loading ? str.aSaving : str.aSaveNewPw}</button>
           </form>
         </div>
       </div>
@@ -246,17 +254,16 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
       <div style={wrap}>
         <div style={card}>
           <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
-          <h2 style={title}>Check your email</h2>
+          <h2 style={title}>{str.aCheckEmail}</h2>
           <p style={{ color: T.inkSoft, fontSize: 15, lineHeight: 1.6 }}>
-            We sent a confirmation link to <strong>{email}</strong>. Click it and
-            you're in. No need to come back here.
+            {str.aVerifyPre} <strong>{email}</strong>. {str.aVerifyPost}
           </p>
           <p style={{ color: T.inkMuted, fontSize: 13, lineHeight: 1.6, marginTop: 0 }}>
-            No email? Check spam, or tap below to send another.
+            {str.aNoEmail}
           </p>
           <ResendButton email={email} />
           <button onClick={() => setMode('signin')} style={{ ...btn, background: 'transparent', color: T.inkMuted, border: `1px solid ${T.line}`, marginTop: 10 }}>
-            Back to sign in
+            {str.aBackToSignIn}
           </button>
         </div>
       </div>
@@ -267,10 +274,10 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
     <div style={wrap}>
       <div style={card}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: T.goldDark, fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 16 }}>
-          ← Back
+          {str.aBack}
         </button>
         <div style={eyebrow}><KinwoveWordmark size={26} textColor={T.ink} starColor={T.honey} /></div>
-        <h2 style={title}>{mode === 'signin' ? 'Welcome back' : 'Join the journey'}</h2>
+        <h2 style={title}>{mode === 'signin' ? str.aWelcomeBack : str.aJoin}</h2>
 
         {/* Google blocks OAuth inside embedded webviews (disallowed_useragent)
             and the redirect can't land back in the app shell — email-only
@@ -293,27 +300,27 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
             <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/>
             <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
           </svg>
-          Continue with Google
+          {str.gGoogle}
         </button>}
 
         {/* Signing in shows no checkbox — but Google creates an account for
             anyone who has never used it, so the terms still need naming here. */}
         {!isNativeApp && mode === 'signin' && (
           <p style={{ fontSize: 11.5, color: T.inkMuted, lineHeight: 1.5, margin: '10px 0 0', textAlign: 'center' }}>
-            By continuing you agree to our{' '}
-            <a href="/terms" target="_blank" rel="noopener" style={{ color: T.goldDark }}>Terms</a> and{' '}
-            <a href="/privacy" target="_blank" rel="noopener" style={{ color: T.goldDark }}>Privacy Policy</a>.
+            {str.aByContinuing}{' '}
+            <a href="/terms" target="_blank" rel="noopener" style={{ color: T.goldDark }}>{str.gTerms}</a> {str.gAnd}{' '}
+            <a href="/privacy" target="_blank" rel="noopener" style={{ color: T.goldDark }}>{str.gPrivacy}</a>.
           </p>
         )}
 
         {!isNativeApp && <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '18px 0' }}>
           <div style={{ flex: 1, height: 1, background: T.line }} />
-          <span style={{ fontSize: 12, color: T.inkMuted }}>or</span>
+          <span style={{ fontSize: 12, color: T.inkMuted }}>{str.aOr}</span>
           <div style={{ flex: 1, height: 1, background: T.line }} />
         </div>}
 
         <form onSubmit={mode === 'signin' ? handleSignIn : handleSignUp}>
-          <Field label="Email">
+          <Field label={str.aEmail}>
             <input
               style={input}
               type="email"
@@ -325,7 +332,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
               required
             />
           </Field>
-          <Field label="Password">
+          <Field label={str.aPassword}>
             <div style={{ position: 'relative' }}>
               <input
                 style={{ ...input, paddingRight: 44 }}
@@ -334,7 +341,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
                 autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === 'signup' ? 'At least 8 characters' : ''}
+                placeholder={mode === 'signup' ? str.aMin8 : ''}
                 minLength={8}
                 required
               />
@@ -347,19 +354,19 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
                   fontSize: 12, color: T.inkMuted, padding: '2px 4px',
                 }}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? str.aHide : str.aShow}
               </button>
             </div>
           </Field>
 
           {mode === 'signin' && (
             <button type="button" onClick={() => { setMode('reset'); setError(null); }} style={{ background: 'none', border: 'none', color: T.goldDark, fontSize: 13, cursor: 'pointer', padding: '6px 0 8px', margin: '0 0 6px', textDecoration: 'underline', textUnderlineOffset: 3 }}>
-              Forgot password?
+              {str.aForgot}
             </button>
           )}
 
           {error && (
-            <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{error}</div>
+            <div style={{ color: T.error, fontSize: 13, marginBottom: 10 }}>{errText(error, str, lang)}</div>
           )}
 
           {mode === 'signup' && (
@@ -371,11 +378,11 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
                 style={{ marginTop: 3, accentColor: T.gold, width: 16, height: 16, flexShrink: 0 }}
               />
               <span style={{ fontSize: 13, color: T.inkSoft, lineHeight: 1.5 }}>
-                I am 13 or older and I agree to the{' '}
-                <a href="/terms" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldDark }}>Terms</a> and{' '}
-                <a href="/privacy" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldDark }}>Privacy Policy</a>.
+                {str.gAgePre}{' '}
+                <a href="/terms" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldDark }}>{str.gTerms}</a> {str.gAnd}{' '}
+                <a href="/privacy" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} style={{ color: T.goldDark }}>{str.gPrivacy}</a>.
                 <span style={{ display: 'block', color: T.inkMuted, fontSize: 11.5, marginTop: 3 }}>
-                  Under 13? Your church can add you through the youth program.
+                  {str.aUnder13}
                 </span>
               </span>
             </label>
@@ -387,7 +394,7 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
             const disabled = loading || (mode === 'signup' && !ageConfirmed) || (TURNSTILE_ENABLED && !captchaToken);
             return (
           <button type="submit" style={{ ...btn, opacity: disabled ? 0.6 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }} disabled={disabled}>
-            {loading ? 'One moment…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+            {loading ? str.aOneMoment : mode === 'signin' ? str.signIn : str.aCreateAccount}
           </button>
             );
           })()}
@@ -412,30 +419,29 @@ export default function Auth({ onAuth, onBack, initialMode = 'signin' }) {
         <div style={{ marginTop: 16, textAlign: 'center', fontSize: 13, color: T.inkMuted }}>
           {mode === 'signin' ? (
             <>
-              New here?{' '}
+              {str.aNewHere}{' '}
               <button
                 onClick={() => { setMode('signup'); setError(null); }}
                 style={{ background: 'none', border: 'none', color: T.goldDark, cursor: 'pointer', fontSize: 13 }}
               >
-                Create an account
+                {str.aCreateAnAccount}
               </button>
             </>
           ) : (
             <>
-              Already have one?{' '}
+              {str.aHaveOne}{' '}
               <button
                 onClick={() => { setMode('signin'); setError(null); }}
                 style={{ background: 'none', border: 'none', color: T.goldDark, cursor: 'pointer', fontSize: 13 }}
               >
-                Sign in
+                {str.signIn}
               </button>
             </>
           )}
         </div>
 
         <div style={{ marginTop: 20, fontSize: 12, color: T.inkMuted, textAlign: 'center', lineHeight: 1.5 }}>
-          By joining you agree to keep this space safe and honest.
-          <br />kinwove is for users 13 and older. No real name required.
+          {rich(str.aSafeSpace)}
         </div>
       </div>
     </div>
