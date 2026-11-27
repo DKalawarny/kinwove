@@ -29,6 +29,7 @@ import { isWiderCanonText, WiderCanonTag } from './widerCanon.jsx';
 import { syncUiFlag, useUiFlagState } from './uiFlags.js';
 import { useEscape } from './useEscape.js';
 import { enterSends } from './lib/enterSends.js';
+import { avatarUrl } from './AvatarPicker.jsx';
 import { fitMessage } from './lib/fitMessage.js';
 import { compressImage } from './imageAttach.jsx';
 
@@ -419,10 +420,12 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
 
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, display_name, avatar_config')
+        .select('id, display_name, avatar_config, avatar_url, is_system_account')
         .in('id', ids.slice(0, 12));
 
-      if (profiles?.length) setContacts(profiles);
+      // The kinwove system account is followed by everyone; it is not a friend to send to.
+      const people = (profiles ?? []).filter((p) => !p.is_system_account);
+      if (people.length) setContacts(people);
     }
     loadContacts();
   }, [session]);
@@ -590,14 +593,10 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
     }
   }
 
+  // Same face the person has everywhere else in kinwove (photo, chosen avatar, or the default).
   function getAvatarUrl(contact) {
-    const cfg = contact.avatar_config;
-    if (cfg) {
-      const params = new URLSearchParams({ ...cfg, size: 48 });
-      return `https://api.dicebear.com/7.x/${cfg.style ?? 'avataaars'}/svg?${params}`;
-    }
-    const seed = encodeURIComponent(contact.display_name || 'friend');
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&size=48&backgroundColor=fdf8f0`;
+    if (contact.avatar_url) return contact.avatar_url;
+    return avatarUrl(contact.avatar_config ?? { style: 'lorelei', seed: contact.display_name || 'friend', bgColor: 'fdf8f0' });
   }
 
   const items = [
@@ -727,7 +726,7 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
                             alt={c.display_name}
                             width={54}
                             height={54}
-                            style={{ borderRadius: '50%' }}
+                            style={{ borderRadius: '50%', objectFit: 'cover' }}
                           />
                         )}
                       </div>
