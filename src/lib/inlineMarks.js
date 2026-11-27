@@ -47,3 +47,39 @@ export function parseTable(para) {
   const cells = (l) => l.trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
   return { before: lines.slice(0, start).join('\n').trim(), rows: [cells(body[0]), ...body.slice(2).map(cells)] };
 }
+
+// A saved note shown in Notes: **bold** / *italic* render styled, and the
+// asterisks stay in the text as hidden pieces. Keeping them (not deleting
+// them) matters: highlights are stored as character offsets into this exact
+// text, and a selection's offset is read from the rendered text, which still
+// includes hidden pieces. `hl` are [start,end) highlight ranges over `s`.
+// Returns [{ v, hl, hide, bold, italic }] covering every character of `s`.
+export function noteSegments(s, hl = [], italics = false) {
+  s = String(s ?? '');
+  const marks = []; // [start, end, kind]
+  const add = (re, kind, w) => {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(s)) !== null) {
+      const a = m.index, b = a + m[0].length;
+      marks.push([a, a + w, 'hide'], [a + w, b - w, kind], [b - w, b, 'hide']);
+    }
+  };
+  add(italics ? BOLD_NESTING : BOLD, 'bold', 2);
+  if (italics) add(ITALIC, 'italic', 1);
+  const cuts = new Set([0, s.length]);
+  for (const [a, b] of [...marks, ...hl]) { cuts.add(a); cuts.add(b); }
+  const pts = [...cuts].filter((x) => x >= 0 && x <= s.length).sort((x, y) => x - y);
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    if (b <= a) continue;
+    const has = (kind) => marks.some(([x, y, k]) => k === kind && x <= a && b <= y);
+    out.push({
+      v: s.slice(a, b),
+      hl: hl.some(([x, y]) => x <= a && b <= y),
+      hide: has('hide'), bold: has('bold'), italic: has('italic'),
+    });
+  }
+  return out;
+}

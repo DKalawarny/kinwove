@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Search, X } from 'lucide-react';
 import { T } from './theme.js';
 import { supabase } from './supabase.js';
+import { noteSegments } from './lib/inlineMarks.js';
 
 const BOOK_ORDER = [
   'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth',
@@ -71,14 +72,21 @@ function sourceLabel(source) {
 // == while editing and render as a gold tint in view mode.
 const HL_TINT = 'rgba(212,162,74,0.38)';
 
-function renderHighlighted(text) {
+function renderHighlighted(text, italics = false) {
   const s = String(text ?? '');
-  if (!s.includes('==')) return s;
-  const parts = s.split(/==([^=]+)==/g);
-  if (parts.length === 1) return s;
-  return parts.map((p, i) => (i % 2
-    ? <span key={i} style={{ background: HL_TINT, borderRadius: 3, padding: '0 1px' }}>{p}</span>
-    : p));
+  if (!s.includes('==') && !s.includes('*')) return s;
+  const { stripped, ranges } = hlRanges(s);
+  return noteSegments(stripped, ranges, italics).map((p, i) => {
+    if (p.hide) return <span key={i} style={{ display: 'none' }}>{p.v}</span>;
+    if (!p.hl && !p.bold && !p.italic) return p.v;
+    return (
+      <span key={i} style={{
+        ...(p.hl ? { background: HL_TINT, borderRadius: 3, padding: '0 1px' } : {}),
+        ...(p.bold ? { fontWeight: 700 } : {}),
+        ...(p.italic ? { fontStyle: 'italic' } : {}),
+      }}>{p.v}</span>
+    );
+  });
 }
 
 function stripHl(text) { return String(text ?? '').replace(/==([^=]+)==/g, '$1'); }
@@ -149,7 +157,7 @@ function selectionIn(el) {
 }
 
 // Note body that renders highlights and offers a chip while text is selected.
-function HighlightableBody({ text, onChange, style }) {
+function HighlightableBody({ text, onChange, style, italics = false }) {
   const ref = useRef(null);
   const [chip, setChip] = useState(null);
 
@@ -171,7 +179,7 @@ function HighlightableBody({ text, onChange, style }) {
   return (
     <div style={{ position: 'relative' }}>
       <div ref={ref} onMouseUp={showChip} onTouchEnd={showChip} style={style}>
-        {renderHighlighted(text)}
+        {renderHighlighted(text, italics)}
       </div>
       {chip && (
         <button
@@ -316,6 +324,7 @@ function UserNoteCard({ note, onDelete, onSave, onContinueChat }) {
             )}
             <HighlightableBody
               text={note.body}
+              italics={isAiSave}
               onChange={async (newBody) => {
                 await supabase.from('user_notes').update({ body: newBody, updated_at: new Date().toISOString() }).eq('id', note.id);
                 setDraftBody(newBody);

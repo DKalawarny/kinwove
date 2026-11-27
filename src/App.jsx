@@ -1809,6 +1809,9 @@ export default function App() {
   const [joinResult, setJoinResult] = useState(null); // { ok: bool, message: string, churchName? }
   const [careTeamRecord, setCareTeamRecord] = useState(null);
   const [pastorChurchId, setPastorChurchId] = useState(null);
+  // True once loadChurchRoles has answered for this session, so a screen gated
+  // on a church role can tell "not loaded yet" from "no longer has the role".
+  const [churchRolesLoaded, setChurchRolesLoaded] = useState(false);
   // What this person may do in the church they lead or help lead. The owner gets
   // everything; a second pastor gets the switches the owner turned on for them
   // (sermons, posts, moderate, people, settings, prayers). Null = no church role.
@@ -2211,6 +2214,18 @@ export default function App() {
 
   const STAGE_SAFE = new Set(['home','feed','read','church','me','messages','groups','prayer','walks','care-inbox','journal','church-admin']);
 
+  // A restored screen (localStorage or profiles.last_stage) can be one the
+  // person can no longer open, e.g. church-admin after losing the pastor role.
+  // Those screens render nothing without access, which left a blank page.
+  // Once roles have loaded, send them home instead. Conditions mirror the
+  // render guards for these stages further down.
+  useEffect(() => {
+    if (!session || !profile || !churchRolesLoaded) return;
+    const canAdmin = !!(pastorChurchId || (profile.is_pastor && profile.church_id));
+    const canCare = !!(careTeamRecord || pastorChurchId || profile.church_id);
+    if ((stage === 'church-admin' && !canAdmin) || (stage === 'care-inbox' && !canCare)) setStage('home');
+  }, [stage, session, profile, churchRolesLoaded, pastorChurchId, careTeamRecord]);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       _setSession(data.session ?? null);
@@ -2342,6 +2357,7 @@ export default function App() {
         setProfile(null);
         setCareTeamRecord(null);
         setPastorChurchId(null);
+        setChurchRolesLoaded(false);
         setPastorChurch(null);
         setChurchPerms(null);
         // Only wipe saved stage on explicit sign-out. TOKEN_REFRESHED can fire
@@ -2666,6 +2682,7 @@ export default function App() {
     setPastorChurchId(church?.id ?? null);
     setPastorChurch(church ?? null);
     setChurchPerms(perms);
+    setChurchRolesLoaded(true);
   }
 
 
