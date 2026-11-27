@@ -525,6 +525,13 @@ export default function GuestQuestion({ onSignUp, initialQuestion, landingMode =
         setBusy(false);
         return;
       }
+      if (res.status === 451) {
+        // Ask is not offered in this region (server.js AI_UNSUPPORTED): show why.
+        const msg = await res.json().then((j) => j?.message, () => null);
+        setMessages((prev) => prev.map((m, i) => (i === assistantIdx ? { ...m, content: msg || str.gWentWrong, streaming: false } : m)));
+        setBusy(false);
+        return;
+      }
       if (!res.ok || !res.body) throw new Error('Network error');
 
       const reader = res.body.getReader();

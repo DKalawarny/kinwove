@@ -84,6 +84,36 @@ app.use((req, res, next) => {
   express.json({ limit })(req, res, next);
 });
 
+// ── AI only where Anthropic supports it (26 Nov 2026) ─────────────────────────
+// Anthropic's Supported Regions Policy (anthropic.com/supported-countries,
+// effective 12 Nov 2026) does not allow use by people physically located in an
+// unsupported region. Every route that calls Claude for a visitor is refused
+// for these countries, with a kind message pointing to the Bible pages (which
+// use no AI). Country comes from Cloudflare's CF-IPCountry header for this one
+// decision only: it is never stored or logged, and no IP is kept. Territories of
+// supported countries (Puerto Rico, Guam, Greenland...) count as supported.
+// Re-check this list against the policy page when it changes.
+const AI_UNSUPPORTED = new Set(['AF', 'BY', 'CN', 'CU', 'EH', 'HK', 'IR', 'KP', 'MM', 'MO', 'RU', 'SY', 'VE', 'XK', 'YE']);
+const AI_ROUTES = new Set([
+  '/api/chat', '/api/anon/ask', '/api/walk/generate', '/api/sermon/repurpose', '/api/sermon/generate',
+  '/api/ai/update-memory', '/api/research/update-memory', '/api/moderate-image', '/api/care/screen-message',
+]);
+const REGION_MSG = {
+  en: "Ask isn't available where you are right now. You can still read every chapter of the Bible explained in plain words at kinwove.com/bible.",
+  es: 'Ask no está disponible donde te encuentras ahora. Aun así puedes leer cada capítulo de la Biblia explicado en palabras sencillas en kinwove.com/es/biblia.',
+  pt: 'O Ask não está disponível onde você está agora. Mesmo assim, você pode ler cada capítulo da Bíblia explicado em palavras simples em kinwove.com/pt/biblia.',
+  fa: 'Ask در حال حاضر در محل شما در دسترس نیست. همچنان می‌توانید توضیح ساده‌ی هر فصل کتاب‌مقدس را در kinwove.com/bible بخوانید.',
+  zh: 'Ask 目前在你所在的地区无法使用。你仍然可以在 kinwove.com/bible 阅读每一章圣经的浅白解释。',
+  ru: 'Ask сейчас недоступен там, где вы находитесь. Но вы по-прежнему можете читать простое объяснение каждой главы Библии на kinwove.com/bible.',
+};
+app.use((req, res, next) => {
+  if (!AI_ROUTES.has(req.path)) return next();
+  const cc = String(req.headers['cf-ipcountry'] ?? '').toUpperCase();
+  if (!AI_UNSUPPORTED.has(cc)) return next();
+  const lang = String(req.headers['accept-language'] ?? '').slice(0, 2).toLowerCase();
+  res.status(451).json({ error: 'region_unsupported', message: REGION_MSG[lang] ?? REGION_MSG.en });
+});
+
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON = process.env.VITE_SUPABASE_ANON_KEY;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -241,8 +271,9 @@ function safeError(res, err, ctx) {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = (v) => typeof v === 'string' && UUID_RE.test(v);
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true });
+app.get('/api/health', (req, res) => {
+  // geo: whether Cloudflare's country header reaches the app (the region check above needs it).
+  res.json({ ok: true, geo: !!req.headers['cf-ipcountry'] });
 });
 
 // ── Cron health (dead-man's switch) ──────────────────────────────────────────

@@ -1401,12 +1401,14 @@ export default function Chat({
         // Nothing arrived — roll the failed turn back so Retry replays it cleanly.
         // (No Retry on 429: replaying a limit error would just fail again.)
         setMessages(messages);
-        if (e?.status !== 429) setRetryPayload({ prompt, img });
+        if (e?.status !== 429 && e?.status !== 451) setRetryPayload({ prompt, img });
       } else {
         // A partial answer is on screen — keep it, just drop an empty tail bubble.
         setMessages((m) => (m.at(-1)?.role === 'assistant' && m.at(-1).content === '' ? m.slice(0, -1) : m));
       }
-      if (e?.status === 429) {
+      if (e?.status === 451) {
+        setError(e.message); // Ask is not offered in this region (server.js AI_UNSUPPORTED)
+      } else if (e?.status === 429) {
         setError(e.message || str.cErrLimit);
       } else if (assistantContent) {
         setError(str.cErrCut);
