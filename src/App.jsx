@@ -1752,6 +1752,8 @@ export default function App() {
   const [readHomeKey, setReadHomeKey] = useState(0);
   const [bibleJumpRef, setBibleJumpRef] = useState(null);
   const [personType, setPersonType] = useState(null);
+  // True once the profile query has answered (with a row or without one).
+  const [profileChecked, setProfileChecked] = useState(false);
   const [seekingContext, setSeekingContext] = useState(null);
   const [peopleSearchOpen, setPeopleSearchOpen] = useState(false);
   // Find-people is a full-screen overlay with no route of its own, so tapping a
@@ -1907,8 +1909,10 @@ export default function App() {
   // Ask with the question auto-sent, instead of silently dropping it. (Placed AFTER
   // createConv/currentConvId/initialQ are declared — referencing them earlier is a
   // temporal-dead-zone crash.)
+  // Waits for the profile: a ?q= link reloads the app, and reading person_type
+  // before it loads opened every signed-in person's question in 'curious' mode.
   useEffect(() => {
-    if (!session || !initialQ) return;
+    if (!session || !initialQ || !profileChecked) return;
     const pt = profile?.person_type ?? personType ?? 'curious';
     if (!currentConvId) { const conv = createConv(pt); setCurrentConvId(conv.id); }
     setPersonType(pt);
@@ -1916,7 +1920,7 @@ export default function App() {
     setChatPanelOpen(true);
     setInitialQ(null);
     try { const u = new URL(window.location.href); u.searchParams.delete('q'); window.history.replaceState({}, '', u); } catch {}
-  }, [session, initialQ, profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [session, initialQ, profile, profileChecked]); // eslint-disable-line react-hooks/exhaustive-deps
   useMoveBoardToNotes(session?.user?.id ?? null);
   // Keep a ref so stage-save effect can access the current session without
   // needing session in its dependency array (would cause double-saves).
@@ -2369,6 +2373,7 @@ export default function App() {
       }
       else {
         setProfile(null);
+        setProfileChecked(false);
         setCareTeamRecord(null);
         setPastorChurchId(null);
         setChurchRolesLoaded(false);
@@ -2609,6 +2614,7 @@ export default function App() {
     // had already dropped the pastor to the free quota.
     if (data) data = { ...data, plan: effectivePersonalPlan(data) };
     setProfile(data ?? null);
+    setProfileChecked(true);
     // Account-synced tour flags: apply before deciding to show the welcome
     // tour so a new device/browser doesn't replay onboarding (uiFlags.js).
     applyUiFlags(data?.notif_prefs?.ui);
