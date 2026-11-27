@@ -11,6 +11,8 @@ import { bibleAlternates, guideAlternates } from './bible-i18n.js';
 import { STUDY_GUIDES } from './study-guides.js';
 
 const SITE = 'https://www.kinwove.com';
+// The one-minute "Bible study for small groups" video, shown on every English study guide.
+const GUIDE_VIDEO = 'https://sgeziqwlhhzivnxqzbhh.supabase.co/storage/v1/object/public/site-video/small-group';
 const STUDY_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'study');
 // When the notes were written; used as lastmod for every Bible page.
 export const BIBLE_UPDATED = '2026-10-29';
@@ -187,6 +189,13 @@ export function renderStudyGuidePage(book, n) {
       about: { '@type': 'CreativeWork', name: `${name} (Bible)` },
     },
     crumbs([['Bible', `${SITE}/bible`], [book.name, bookUrl(book)], [name, chapterUrl(book, n)], ['Study guide', canonical]]),
+    {
+      '@context': 'https://schema.org', '@type': 'VideoObject',
+      name: 'Bible study for small groups with kinwove',
+      description: 'How a small group leader opens a free study guide, plans the study with Ask, sends it to a friend in the group, and keeps it in Notes.',
+      thumbnailUrl: `${GUIDE_VIDEO}-poster.jpg`, contentUrl: `${GUIDE_VIDEO}-720.mp4`,
+      uploadDate: '2026-11-27', duration: 'PT59S',
+    },
   ];
   const askUrl = `${SITE}/?q=${encodeURIComponent(`Help me lead a group study on ${name}`)}`;
   const bodyHtml = `
@@ -201,6 +210,12 @@ export function renderStudyGuidePage(book, n) {
     <h2>Close in prayer</h2><p>${esc(g.prayer)}</p>
     <h2>Leader tip</h2><p>${esc(g.tip)}</p>
     ${g.bible === 'BSB' ? '<p class="updated">Bible quotes are from the Berean Standard Bible.</p>' : ''}
+    <h2>See it in one minute</h2>
+    <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later.</p>
+    <video controls playsinline preload="none" poster="${GUIDE_VIDEO}-poster.jpg"
+      style="display:block;width:100%;max-width:300px;aspect-ratio:9/16;margin:16px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
+      <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
+    </video>
     <a class="cta" href="${esc(askUrl)}">Plan this study with Ask →</a>
     <div class="related">
       <div class="cat">Keep going</div>
