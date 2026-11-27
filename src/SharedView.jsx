@@ -4,6 +4,7 @@ import { T } from './theme.js';
 import { PERSON_TYPES } from './constants.js';
 import GuestQuestion from './GuestQuestion.jsx';
 import ShareSheet from './ShareSheet.jsx';
+import MsgText from './MsgText.jsx';
 
 export default function SharedView({ shareId, onBegin }) {
   const [data, setData] = useState(null);
@@ -110,7 +111,8 @@ export default function SharedView({ shareId, onBegin }) {
                 lineHeight: m.role === 'user' ? 1.5 : 1.75,
                 whiteSpace: 'pre-wrap',
               }}>
-                {m.content}
+                {/* Ask's replies are markdown: render them like the app does, not as raw ** text. */}
+                {m.role === 'assistant' ? <MsgText text={m.content} plain /> : m.content}
               </div>
             </div>
           ))}

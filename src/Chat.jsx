@@ -29,6 +29,7 @@ import { isWiderCanonText, WiderCanonTag } from './widerCanon.jsx';
 import { syncUiFlag, useUiFlagState } from './uiFlags.js';
 import { useEscape } from './useEscape.js';
 import { enterSends } from './lib/enterSends.js';
+import { fitMessage } from './lib/fitMessage.js';
 import { compressImage } from './imageAttach.jsx';
 
 const GUEST_COUNT_KEY = 'kinwove:guest_count';
@@ -370,6 +371,7 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
   const [shareUrl, setShareUrl] = useState('');
   const [contacts, setContacts] = useState([]);
   const [sentTo, setSentTo] = useState(null);
+  const [sendFailed, setSendFailed] = useState(null);
   const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
   const isMobile = typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   const imageDrafts = useImageDrafts(4);
@@ -554,31 +556,37 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
     } catch {}
   }
 
+  // Supabase returns errors rather than throwing, so each step is checked:
+  // this used to show "Sent!" for every long answer the database refused.
   async function handleContactShare(contact) {
     setSentTo(contact.id);
+    setSendFailed(null);
     try {
       const uid = session.user.id;
       const sorted = [uid, contact.id].sort();
-      const { data: existing } = await supabase
+      const { data: existing, error: findErr } = await supabase
         .from('dm_conversations').select('id')
         .contains('participant_ids', sorted).maybeSingle();
+      if (findErr) throw findErr;
       let convId = existing?.id;
       if (!convId) {
-        const { data: created } = await supabase
+        const { data: created, error: createErr } = await supabase
           .from('dm_conversations').insert({ participant_ids: sorted })
           .select('id').single();
+        if (createErr) throw createErr;
         convId = created?.id;
       }
-      if (convId) {
-        await supabase.from('dm_messages').insert({
-          conversation_id: convId,
-          sender_id: uid,
-          body: getBody(),
-        });
-      }
+      if (!convId) throw new Error('no conversation');
+      const { error: sendErr } = await supabase.from('dm_messages').insert({
+        conversation_id: convId,
+        sender_id: uid,
+        body: fitMessage(heading, text, shareUrl),
+      });
+      if (sendErr) throw sendErr;
       setTimeout(onClose, 1500);
     } catch {
       setSentTo(null);
+      setSendFailed(contact.id);
     }
   }
 
@@ -740,6 +748,11 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
                 );
               })}
             </div>
+            {sendFailed && (
+              <div role="alert" style={{ fontSize: 12.5, color: '#b4443a', margin: '2px 0 6px' }}>
+                That didn't send. Tap their picture to try again.
+              </div>
+            )}
             <div style={{ height: 1, background: T.line, marginTop: 4 }} />
           </div>
         )}
