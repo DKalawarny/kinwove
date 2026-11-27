@@ -22,8 +22,20 @@ function isClause(sentence, first) {
   return !RELATIVE.test(sentence.slice(0, v.index))
 }
 const DASH = /\s*[—–]\s*|\s+-\s+/
+// One line at a time, and a markdown list marker at the start of a line is
+// left alone. Run over a whole answer at once, "\n- 8:1-11" read as a dash
+// between words: the bullet and its line break became ", 8:1-11" (27 Nov, a
+// real Ask answer), and a dash on one line could pair with one on the next.
 export function plainDashes(text) {
   if (typeof text !== 'string' || !/[—–]|\s-\s/.test(text)) return text
+  if (text.includes('\n')) return text.split('\n').map(plainDashes).join('\n')
+  const marker = /^\s*(?:[-*•]|\d+[.)])\s+/.exec(text)?.[0]
+  if (marker) return marker + plainDashesLine(text.slice(marker.length))
+  return plainDashesLine(text)
+}
+
+function plainDashesLine(text) {
+  if (!/[—–]|\s-\s/.test(text)) return text
   if (/^\s*[—–-]\s*$/.test(text)) return text
   let t = text.replace(/(\d[\d.,]*[kKmMbB%+]?)(\s*)[–—](\s*)(\$?\d)/g, '$1$2\u0000$3$4')
   t = t.replace(/\s*[—–]\s*([.!?]|$)/g, '$1')                      // dash at the very end of a clause
