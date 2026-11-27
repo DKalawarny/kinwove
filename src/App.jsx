@@ -1736,6 +1736,19 @@ function SidebarNav({ stage, session, profile, chatOpen,
 
 export default function App() {
   const [stage, setStage] = useState('landing');
+  // A signed-in person arriving from a public page (/bible, a study guide,
+  // "Plan this study with Ask") used to see the signed-out homepage flash for a
+  // moment while the saved login was checked. If this browser holds a saved
+  // kinwove login, keep the homepage back until that check settles; an expired
+  // login falls through to it as before. The timer means it can never stay blank.
+  const [authBooting, setAuthBooting] = useState(() => {
+    try { return Object.keys(localStorage).some((k) => /^sb-.+-auth-token$/.test(k)); } catch { return false; }
+  });
+  useEffect(() => {
+    if (!authBooting) return;
+    const t = setTimeout(() => setAuthBooting(false), 5000);
+    return () => clearTimeout(t);
+  }, [authBooting]);
   const [readHomeKey, setReadHomeKey] = useState(0);
   const [bibleJumpRef, setBibleJumpRef] = useState(null);
   const [personType, setPersonType] = useState(null);
@@ -2229,6 +2242,7 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       _setSession(data.session ?? null);
+      if (!data.session) setAuthBooting(false);
       if (data.session) {
         if (deepLinkInviteId) { loadInvite(deepLinkInviteId); loadProfile(data.session.user.id); }
         else if (deepLinkPostId) { localStorage.removeItem('kw:stage'); setStage('feed'); loadProfile(data.session.user.id); window.history.replaceState({}, '', window.location.pathname); }
@@ -2362,6 +2376,7 @@ export default function App() {
         setChurchPerms(null);
         // Only wipe saved stage on explicit sign-out. TOKEN_REFRESHED can fire
         // with s=null briefly — don't treat that as signed-out.
+        setAuthBooting(false);
         if (event === 'SIGNED_OUT') {
           localStorage.removeItem('kw:stage');
           const uid = sessionRef.current?.user?.id;
@@ -3003,7 +3018,7 @@ export default function App() {
           onBack={() => setGuestPost(null)}
         />
       )}
-      {stage === 'landing' && !guestPost && (
+      {stage === 'landing' && !guestPost && !authBooting && (
         <Landing
           onBegin={() => { setAuthInitialMode('signup'); setAuthStage('auth'); }}
           onSignIn={() => { setAuthInitialMode('signin'); setAuthStage('auth'); }}
