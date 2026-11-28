@@ -342,6 +342,7 @@ export function renderSmallGroupVideoPage() {
       thumbnailUrl: `${GUIDE_VIDEO}-cover.jpg`, contentUrl: `${GUIDE_VIDEO}-720.mp4`,
       uploadDate: '2026-11-27', duration: 'PT59S',
       transcript: lines.join(' '),
+      embedUrl: 'https://www.youtube.com/embed/7aP_TAHzNOE',
       publisher: { '@type': 'Organization', name: 'kinwove', url: SITE },
     },
     crumbs([['Bible', `${SITE}/bible`], ['Small group video', VIDEO_PAGE]]),
@@ -356,6 +357,7 @@ export function renderSmallGroupVideoPage() {
     <div class="answer" style="margin-top:28px">${esc(description)}</div>
     <h2>What the video shows</h2>
     ${lines.map((l) => `<p>${esc(l)}</p>`).join('')}
+    <p style="text-align:center"><a href="https://www.youtube.com/shorts/7aP_TAHzNOE">Watch it on YouTube</a></p>
     <a class="cta" href="${SITE}/bible/romans-8-study-guide">Open the Romans 8 study guide →</a>
     <div class="related">
       <div class="cat">Keep going</div>
