@@ -372,3 +372,17 @@ export function renderSmallGroupVideoPage() {
     canonical: VIDEO_PAGE, jsonLd, bodyHtml,
   });
 }
+
+// Short links for videos: kinwove.com/romans8, /1corinthians13, /john3. A Short can't carry a
+// clickable link, so the address has to be one a person can remember and type. Goes to the
+// chapter's study guide (or its plain-words note when there is no guide), tagged as YouTube.
+const SHORT_BOOKS = Object.fromEntries(BOOKS.map((b) => [b.slug.replace(/-/g, ''), b]));
+export function resolveShortLink(path) {
+  const m = /^\/?([1-3]?[a-z]+)(\d{1,3})\/?$/i.exec(String(path ?? ''));
+  if (!m) return null;
+  const book = SHORT_BOOKS[m[1].toLowerCase()];
+  const n = Number(m[2]);
+  if (!book || n < 1 || n > book.chapters.length) return null;
+  const tag = `utm_source=youtube&utm_medium=short&utm_campaign=${book.slug.replace(/-/g, '')}${n}`;
+  return `${guideFor(book, n) ? guideUrl(book, n) : chapterUrl(book, n)}?${tag}`;
+}

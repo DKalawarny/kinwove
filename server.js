@@ -20,7 +20,7 @@ import { LANG_NAMES } from './src/languages.js';
 // lives in the static-serving block and the sitemap builder does not.
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG, es: ANSWERS_ES_BY_SLUG, pt: ANSWERS_PT_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
-import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage, renderSmallGroupVideoPage, VIDEO_PAGE } from './content/bible.js';
+import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage, renderSmallGroupVideoPage, VIDEO_PAGE, resolveShortLink } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { LOOKS_BACKWARD, ASKS_TO_SAVE } from './src/recallTriggers.js';
 import { auditAnswer, AUDIT_RULES } from './src/askAudit.js';
@@ -6908,6 +6908,11 @@ app.get('/:lang/biblia/:path', (req, res, next) => {
     .send(hit.guide ? renderTranslatedStudyGuidePage(req.params.lang, hit.book, hit.n) : hit.n ? renderTranslatedChapterPage(req.params.lang, hit.book, hit.n) : renderTranslatedBookPage(req.params.lang, hit.book));
 });
 // Public Bible study pages built from public/study (see content/bible.js).
+// Short links shown in videos: /romans8 -> that chapter's study guide.
+app.get(/^\/[1-3]?[a-zA-Z]+\d{1,3}\/?$/, (req, res, next) => {
+  const to = resolveShortLink(req.path);
+  return to ? res.redirect(302, to) : next();
+});
 app.get('/videos/small-group-bible-study', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderSmallGroupVideoPage());
 });
