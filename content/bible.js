@@ -193,7 +193,7 @@ export function renderStudyGuidePage(book, n) {
       '@context': 'https://schema.org', '@type': 'VideoObject',
       name: 'Bible study for small groups with kinwove',
       description: 'How a small group leader opens a free study guide, plans the study with Ask, sends it to a friend in the group, and keeps it in Notes.',
-      thumbnailUrl: `${GUIDE_VIDEO}-poster.jpg`, contentUrl: `${GUIDE_VIDEO}-720.mp4`,
+      thumbnailUrl: `${GUIDE_VIDEO}-cover.jpg`, contentUrl: `${GUIDE_VIDEO}-720.mp4`,
       uploadDate: '2026-11-27', duration: 'PT59S',
     },
   ];
@@ -202,6 +202,12 @@ export function renderStudyGuidePage(book, n) {
     <div class="cat"><a href="${SITE}/bible" style="color:inherit;text-decoration:none">Bible</a> · <a href="${bookUrl(book)}" style="color:inherit;text-decoration:none">${esc(book.name)}</a> · Study guide</div>
     <h1>${esc(name)} Bible study guide: ${esc(c.title)}</h1>
     <div class="answer">${esc(c.overview)}</div>
+    <h2>See it in one minute</h2>
+    <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later.</p>
+    <video controls playsinline preload="none" poster="${GUIDE_VIDEO}-cover.jpg"
+      style="display:block;width:100%;max-width:240px;aspect-ratio:9/16;margin:16px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
+      <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
+    </video>
     <h2>Open with</h2><p>${esc(g.open)}</p>
     <h2>Read together</h2><p>${g.read.map(esc).join(', then ')}. If you are leading, read the plain-words note on ${esc(name)} first (linked below).</p>
     <h2>Discussion questions</h2>
@@ -210,12 +216,6 @@ export function renderStudyGuidePage(book, n) {
     <h2>Close in prayer</h2><p>${esc(g.prayer)}</p>
     <h2>Leader tip</h2><p>${esc(g.tip)}</p>
     ${g.bible === 'BSB' ? '<p class="updated">Bible quotes are from the Berean Standard Bible.</p>' : ''}
-    <h2>See it in one minute</h2>
-    <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later.</p>
-    <video controls playsinline preload="none" poster="${GUIDE_VIDEO}-poster.jpg"
-      style="display:block;width:100%;max-width:300px;aspect-ratio:9/16;margin:16px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
-      <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
-    </video>
     <a class="cta" href="${esc(askUrl)}">Plan this study with Ask →</a>
     <div class="related">
       <div class="cat">Keep going</div>
