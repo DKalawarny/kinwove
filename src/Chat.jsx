@@ -30,6 +30,8 @@ import { syncUiFlag, useUiFlagState } from './uiFlags.js';
 import { useEscape } from './useEscape.js';
 import { enterSends } from './lib/enterSends.js';
 import { avatarUrl } from './AvatarPicker.jsx';
+import { shareText } from './lib/shareText.js';
+import { plainDashes } from './lib/plainDashes.js';
 import { fitMessage } from './lib/fitMessage.js';
 import { compressImage } from './imageAttach.jsx';
 
@@ -470,9 +472,11 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
     generateHeading();
   }, []);
 
+  // Outside apps get plain text: no ** or ### showing as literal marks.
   function getBody() {
     const h = heading.trim();
-    const body = h ? `${h}\n\n${text}` : text;
+    const plain = shareText(text);
+    const body = h ? `${h}\n\n${plain}` : plain;
     return shareUrl ? `${body}\n\n${shareUrl}` : body;
   }
 
@@ -583,7 +587,7 @@ function ChatShareSheet({ text, label, rawMessages, convTitle, session, profile,
       const { error: sendErr } = await supabase.from('dm_messages').insert({
         conversation_id: convId,
         sender_id: uid,
-        body: fitMessage(heading, text, shareUrl),
+        body: fitMessage(heading, plainDashes(text), shareUrl),   // the chat shows bold; dashes follow the AI no-dash rule
       });
       if (sendErr) throw sendErr;
       setTimeout(onClose, 1500);
