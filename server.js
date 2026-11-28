@@ -20,7 +20,7 @@ import { LANG_NAMES } from './src/languages.js';
 // lives in the static-serving block and the sitemap builder does not.
 const TRANSLATED = { fa: ANSWERS_FA_BY_SLUG, es: ANSWERS_ES_BY_SLUG, pt: ANSWERS_PT_BY_SLUG };
 import { ANSWERS, ANSWERS_BY_SLUG, renderAnswerPage, renderAnswerIndex, renderForChurchesPage } from './content/answers.js';
-import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage } from './content/bible.js';
+import { BIBLE_UPDATED, bibleSitemapEntries, resolveBiblePath, renderChapterPage, renderBookPage, renderBibleIndex, renderStudyGuidePage, renderSmallGroupVideoPage, VIDEO_PAGE } from './content/bible.js';
 import { PLAN_LIMITS, churchHasAccess, TRIAL_DAYS, effectivePersonalPlan } from './src/planConfig.js';
 import { LOOKS_BACKWARD, ASKS_TO_SAVE } from './src/recallTriggers.js';
 import { auditAnswer, AUDIT_RULES } from './src/askAudit.js';
@@ -6703,6 +6703,7 @@ if (process.env.NODE_ENV !== 'development') {
       // Answers library — crawlable faith-question pages (Google + AI engines)
       `<url><loc>${host}/answers</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>${today}</lastmod></url>`,
       // Bible study pages: /bible, every book intro, every chapter note.
+      `<url><loc>${VIDEO_PAGE}</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>2026-11-27</lastmod></url>`,
       ...[...bibleSitemapEntries(), ...translatedBibleSitemapEntries()].map((u) =>
         `<url><loc>${escapeXml(u)}</loc><changefreq>monthly</changefreq><priority>0.7</priority><lastmod>${BIBLE_UPDATED}</lastmod></url>`),
       ...ANSWERS.map((a) =>
@@ -6907,6 +6908,9 @@ app.get('/:lang/biblia/:path', (req, res, next) => {
     .send(hit.guide ? renderTranslatedStudyGuidePage(req.params.lang, hit.book, hit.n) : hit.n ? renderTranslatedChapterPage(req.params.lang, hit.book, hit.n) : renderTranslatedBookPage(req.params.lang, hit.book));
 });
 // Public Bible study pages built from public/study (see content/bible.js).
+app.get('/videos/small-group-bible-study', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderSmallGroupVideoPage());
+});
 app.get('/bible', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=3600').type('html').send(renderBibleIndex());
 });

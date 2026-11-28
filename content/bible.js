@@ -203,7 +203,7 @@ export function renderStudyGuidePage(book, n) {
     <h1>${esc(name)} Bible study guide: ${esc(c.title)}</h1>
     <div class="answer">${esc(c.overview)}</div>
     <h2>See it in one minute</h2>
-    <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later.</p>
+    <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later. <a href="${VIDEO_PAGE}">What it shows</a></p>
     <video controls playsinline preload="none" poster="${GUIDE_VIDEO}-cover.jpg"
       style="display:block;width:100%;max-width:240px;aspect-ratio:9/16;margin:16px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
       <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
@@ -316,4 +316,57 @@ export function chapterLinksForRefs(refs) {
     out.push({ url: chapterUrl(hit.book, hit.n), label: chapterName(hit.book, hit.n), title: hit.book.chapters[hit.n - 1].title });
   }
   return out;
+}
+
+// A page whose main content is the small-group video, so search engines can list it
+// as a video result (they skip a video that is only part of a page, like the guides).
+export const VIDEO_PAGE = `${SITE}/videos/small-group-bible-study`;
+export function renderSmallGroupVideoPage() {
+  const description = 'A one-minute look at planning a small group Bible study with kinwove: open a free study guide, shape it for your group with Ask, send it to a friend, and keep it in your Notes.';
+  const lines = [
+    'Leading a small group this week? This is kinwove.',
+    'Open the Bible and pick your chapter. This week, Romans 8.',
+    'Every chapter has a free study guide: what it means, questions to talk through, and a tip for leading.',
+    'Want it shaped for your group? Just ask.',
+    '"My group is mostly people new to faith." And it adjusts.',
+    'Save it.',
+    'Send it to a friend in your group.',
+    "It's waiting in your Notes whenever you need it.",
+    'kinwove. Free, for anyone leading a study.',
+  ];
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org', '@type': 'VideoObject',
+      name: 'How to plan a small group Bible study in a minute (Romans 8)',
+      description,
+      thumbnailUrl: `${GUIDE_VIDEO}-cover.jpg`, contentUrl: `${GUIDE_VIDEO}-720.mp4`,
+      uploadDate: '2026-11-27', duration: 'PT59S',
+      transcript: lines.join(' '),
+      publisher: { '@type': 'Organization', name: 'kinwove', url: SITE },
+    },
+    crumbs([['Bible', `${SITE}/bible`], ['Small group video', VIDEO_PAGE]]),
+  ];
+  const bodyHtml = `
+    <div class="cat"><a href="${SITE}/bible" style="color:inherit;text-decoration:none">Bible</a> · Video</div>
+    <h1>How to plan a small group Bible study in a minute</h1>
+    <video controls playsinline preload="metadata" poster="${GUIDE_VIDEO}-cover.jpg"
+      style="display:block;width:100%;max-width:340px;aspect-ratio:9/16;margin:20px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
+      <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
+    </video>
+    <div class="answer" style="margin-top:28px">${esc(description)}</div>
+    <h2>What the video shows</h2>
+    ${lines.map((l) => `<p>${esc(l)}</p>`).join('')}
+    <a class="cta" href="${SITE}/bible/romans-8-study-guide">Open the Romans 8 study guide →</a>
+    <div class="related">
+      <div class="cat">Keep going</div>
+      <a href="${SITE}/bible">Every book of the Bible, with a study guide for each chapter →</a>
+      <a href="${SITE}/?q=${encodeURIComponent('Help me lead a group study on Romans 8')}">Plan a study with Ask →</a>
+    </div>
+    ${askBox('Ask anything about leading your group…')}
+    ${foot()}`;
+  return shell({
+    title: 'How to Plan a Small Group Bible Study in a Minute (Video) | kinwove',
+    description: description.slice(0, 155),
+    canonical: VIDEO_PAGE, jsonLd, bodyHtml,
+  });
 }
