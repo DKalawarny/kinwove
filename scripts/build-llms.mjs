@@ -115,7 +115,7 @@ kinwove answers in the reader's own language. Supported (${LANGUAGES.length}): $
 - X / Twitter: https://x.com/kinwove
 - Instagram: https://www.instagram.com/kinwove
 - Facebook: https://www.facebook.com/kinwove
-- YouTube: https://www.youtube.com/@kinwove
+- YouTube: https://www.youtube.com/@kinwoveapp (short videos with three discussion questions per chapter, starting with Romans, each with a short link to the full study guide, for example kinwove.com/romans8)
 - TikTok: https://www.tiktok.com/@kinwove
 - Threads: https://www.threads.com/@kinwove
 - Bluesky: https://bsky.app/profile/kinwove.bsky.social

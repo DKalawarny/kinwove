@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { esc, shell } from './answers.js';
 import { bibleAlternates, guideAlternates } from './bible-i18n.js';
 import { STUDY_GUIDES } from './study-guides.js';
+import { guideShort } from './youtube.js';
 
 const SITE = 'https://www.kinwove.com';
 // The one-minute "Bible study for small groups" video, shown on every English study guide.
@@ -174,6 +175,7 @@ export function renderStudyGuidePage(book, n) {
   const g = guideFor(book, n);
   const name = chapterName(book, n);
   const canonical = guideUrl(book, n);
+  const short = guideShort(book.code, n);
   const description = `${name} Bible study guide for small groups: an icebreaker, ${g.questions.length} discussion questions, how it applies this week, and a closing prayer.`;
   const prev = guideFor(book, n - 1) ? [guideUrl(book, n - 1), `${chapterName(book, n - 1)} study guide`] : null;
   const next = guideFor(book, n + 1) ? [guideUrl(book, n + 1), `${chapterName(book, n + 1)} study guide`] : null;
@@ -189,7 +191,15 @@ export function renderStudyGuidePage(book, n) {
       about: { '@type': 'CreativeWork', name: `${name} (Bible)` },
     },
     crumbs([['Bible', `${SITE}/bible`], [book.name, bookUrl(book)], [name, chapterUrl(book, n)], ['Study guide', canonical]]),
-    {
+    short ? {
+      '@context': 'https://schema.org', '@type': 'VideoObject',
+      name: `${name} Bible study questions for your small group`,
+      description: `Three discussion questions from the free ${name} study guide, in under a minute.`,
+      thumbnailUrl: `https://i.ytimg.com/vi/${short.id}/hqdefault.jpg`,
+      embedUrl: `https://www.youtube.com/embed/${short.id}`,
+      url: `https://www.youtube.com/shorts/${short.id}`,
+      uploadDate: short.at,
+    } : {
       '@context': 'https://schema.org', '@type': 'VideoObject',
       name: 'Bible study for small groups with kinwove',
       description: 'How a small group leader opens a free study guide, plans the study with Ask, sends it to a friend in the group, and keeps it in Notes.',
@@ -202,12 +212,17 @@ export function renderStudyGuidePage(book, n) {
     <div class="cat"><a href="${SITE}/bible" style="color:inherit;text-decoration:none">Bible</a> · <a href="${bookUrl(book)}" style="color:inherit;text-decoration:none">${esc(book.name)}</a> · Study guide</div>
     <h1>${esc(name)} Bible study guide: ${esc(c.title)}</h1>
     <div class="answer">${esc(c.overview)}</div>
+    ${short ? `<h2>Three questions from this guide, in under a minute</h2>
+    <iframe src="https://www.youtube-nocookie.com/embed/${short.id}" title="${esc(name)} Bible study questions" loading="lazy"
+      allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen
+      style="display:block;width:100%;max-width:240px;aspect-ratio:9/16;margin:16px auto 0;border:0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)"></iframe>` : `
     <h2>See it in one minute</h2>
     <p>How a leader plans this kind of study with kinwove, shares it with the group, and keeps it for later. <a href="${VIDEO_PAGE}">What it shows</a></p>
     <video controls playsinline preload="none" poster="${GUIDE_VIDEO}-cover.jpg"
       style="display:block;width:100%;max-width:240px;aspect-ratio:9/16;margin:16px auto 0;border-radius:18px;background:#1A1108;box-shadow:0 10px 40px rgba(26,17,8,.18)">
       <source src="${GUIDE_VIDEO}-720.mp4" type="video/mp4">
     </video>
+    `}
     <h2>Open with</h2><p>${esc(g.open)}</p>
     <h2>Read together</h2><p>${g.read.map(esc).join(', then ')}. If you are leading, read the plain-words note on ${esc(name)} first (linked below).</p>
     <h2>Discussion questions</h2>
